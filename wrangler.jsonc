@@ -1,0 +1,8 @@
+{
+  // Serves public/ as a static site. No server code: all data stays in each user's browser.
+  "name": "secondaries-tracker",
+  "compatibility_date": "2026-06-01",
+  "assets": { "directory": "./public" },
+  // Lets non-main branches (like dev) get their own preview link.
+  "previews": {}
+}

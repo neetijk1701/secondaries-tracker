@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Secondaries Tracker</title>
+<meta name="description" content="Track med school secondary essays: due dates, shared base essays across schools, and what to work on next.">
+<meta name="theme-color" content="#0E6B66">
+<meta name="robots" content="noindex">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Secondaries">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* Layout: one working column (max 960px); sticky tab bar; lists are divided rows, not card grids; essay text in a serif "page". */
+:root{
+  --bg:#F2F5F7; --surface:#FFFFFF; --ink:#15202B; --muted:#5A6774; --line:#D7DEE4; --line-soft:#E7ECF0;
+  --accent:#0E6B66; --accent-ink:#FFFFFF; --accent-soft:#DCEEEB;
+  --warn:#9A5800; --warn-soft:#FBEED6; --bad:#A1322A; --bad-soft:#F8E1DD; --good:#2C7537; --good-soft:#E0F0E2;
+  --ins:#CDEBD3; --del:#F5D6D1;
+  --f-display:"Bricolage Grotesque", "Figtree", system-ui, sans-serif;
+  --f-ui:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-essay:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0E141A; --surface:#161F28; --ink:#E3E9EF; --muted:#94A2AF; --line:#2A3641; --line-soft:#212B35;
+  --accent:#55BDB4; --accent-ink:#0B1A19; --accent-soft:#16332F;
+  --warn:#E5A84E; --warn-soft:#3A2A11; --bad:#EF887E; --bad-soft:#3E1D1A; --good:#80CB8D; --good-soft:#18311E;
+  --ins:#1F4228; --del:#4A2420; color-scheme:dark; } }
+:root[data-theme="dark"]{
+  --bg:#0E141A; --surface:#161F28; --ink:#E3E9EF; --muted:#94A2AF; --line:#2A3641; --line-soft:#212B35;
+  --accent:#55BDB4; --accent-ink:#0B1A19; --accent-soft:#16332F;
+  --warn:#E5A84E; --warn-soft:#3A2A11; --bad:#EF887E; --bad-soft:#3E1D1A; --good:#80CB8D; --good-soft:#18311E;
+  --ins:#1F4228; --del:#4A2420; color-scheme:dark; }
+
+*{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0; -webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+.tour{position:fixed; inset:0; z-index:50; background:rgba(10,20,25,.55); display:flex; align-items:flex-end; justify-content:center; padding:16px max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+@media (min-width:600px){ .tour{align-items:center} }
+.tour .card2{background:var(--surface); color:var(--ink); border-radius:16px; width:100%; max-width:460px; padding:22px 20px 18px; display:flex; flex-direction:column; gap:12px; box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.tour .step-n{font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); font-weight:700}
+.tour h2{font-family:var(--f-display); font-size:21px}
+.tour p{margin:0; color:var(--muted)}
+.tour .dots{display:flex; gap:6px; justify-content:center}
+.tour .dots i{width:7px; height:7px; border-radius:50%; background:var(--line)}
+.tour .dots i.on{background:var(--accent)}
+.tour .acts{display:flex; justify-content:space-between; align-items:center; gap:10px}
+.install{background:var(--warn-soft); border-radius:var(--r); padding:12px 14px; margin-top:14px}
+.hero-empty{padding:28px 20px; display:flex; flex-direction:column; gap:12px; align-items:flex-start}
+.hero-empty p{margin:0; color:var(--muted); max-width:60ch}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-ui); font-size:15px; line-height:1.5; font-variant-numeric:tabular-nums}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:10; background:var(--surface)}
+.wrap{max-width:960px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px))}
+header.top{background:var(--surface); border-bottom:1px solid var(--line); position:sticky; top:env(safe-area-inset-top,0px); z-index:5}
+.top-row{display:flex; align-items:center; gap:12px; padding-block:12px 0; flex-wrap:wrap}
+.brand{font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:-.01em; margin:0}
+.brand span{color:var(--accent)}
+.pill{display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; padding:2px 8px; border-radius:999px; background:var(--line-soft); color:var(--muted); white-space:nowrap}
+.top-row .grow{flex:1}
+nav.tabs{display:flex; gap:4px; overflow-x:auto; padding-block:8px 0; scrollbar-width:none}
+nav.tabs a{padding:8px 12px 10px; color:var(--muted); text-decoration:none; font-weight:600; border-bottom:2.5px solid transparent; white-space:nowrap}
+nav.tabs a[aria-current="page"]{color:var(--ink); border-color:var(--accent)}
+nav.tabs a .n{font-size:12px; margin-left:4px; color:var(--muted)}
+main{padding-block:20px 60px}
+h1{font-family:var(--f-display); font-weight:700; font-size:26px; line-height:1.15; margin:0 0 4px; text-wrap:balance; letter-spacing:-.01em}
+h2{font-size:17px; margin:0; font-weight:700}
+h3{font-size:12px; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin:0; font-weight:700}
+.sub{color:var(--muted); margin:0 0 18px; max-width:65ch}
+.stack{display:flex; flex-direction:column; gap:16px}
+.row{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+a{color:var(--accent)}
+button, .btn{font:inherit; font-weight:600; font-size:14px; border-radius:8px; border:1px solid var(--line); background:var(--surface); color:var(--ink); padding:7px 12px; cursor:pointer; line-height:1.2}
+button:hover{border-color:var(--muted)}
+button.primary{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+button.ghost{border-color:transparent; background:transparent; color:var(--accent); padding-inline:6px}
+button.danger{color:var(--bad)}
+button:disabled{opacity:.5; cursor:not-allowed}
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible{outline:2.5px solid var(--accent); outline-offset:2px}
+input, select, textarea{font:inherit; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:7px 9px; min-width:0}
+label.f{display:flex; flex-direction:column; gap:4px; font-size:13px; font-weight:600; color:var(--muted)}
+label.f input, label.f select{font-weight:400; color:var(--ink)}
+label.chk{display:inline-flex; gap:8px; align-items:center; font-weight:600; font-size:14px}
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:var(--r)}
+.panel > .ph{padding:12px 16px; border-bottom:1px solid var(--line-soft); display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.panel > .pb{padding:14px 16px}
+.list{list-style:none; margin:0; padding:0}
+.list > li{padding:14px 16px; border-top:1px solid var(--line-soft); display:flex; gap:14px; align-items:flex-start}
+.list > li:first-child{border-top:0}
+.list .main{flex:1; min-width:0}
+.rank-n{font-family:var(--f-display); font-weight:700; font-size:22px; color:var(--muted); width:28px; flex:none; line-height:1.1; text-align:right}
+.chips{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px}
+.chip{font-size:12px; font-weight:600; padding:2px 8px; border-radius:6px; background:var(--line-soft); color:var(--muted); white-space:nowrap}
+.chip.bad{background:var(--bad-soft); color:var(--bad)}
+.chip.warn{background:var(--warn-soft); color:var(--warn)}
+.chip.good{background:var(--good-soft); color:var(--good)}
+.chip.acc{background:var(--accent-soft); color:var(--accent)}
+.next{margin-top:8px; font-size:14px}
+.next b{font-weight:700}
+.stars{color:var(--accent); letter-spacing:1px; font-size:13px}
+.stars .off{color:var(--line)}
+.back{display:inline-flex; gap:6px; margin-bottom:10px}
+.grid-f{display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:12px}
+.computed{font-size:15px; font-weight:600; color:var(--ink); padding:7px 0}
+.etable{width:100%; border-collapse:collapse}
+.etable td{padding:12px 16px; border-top:1px solid var(--line-soft); vertical-align:top}
+.etable tr:first-child td{border-top:0}
+.prompt-t{font-weight:600}
+.meter{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted)}
+.bar{width:80px; height:6px; border-radius:3px; background:var(--line-soft); overflow:hidden; flex:none}
+.bar i{display:block; height:100%; background:var(--accent)}
+.bar.over i{background:var(--bad)}
+.meter.over{color:var(--bad); font-weight:600}
+.banner{border-radius:var(--r); padding:12px 14px; display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+.banner.warn{background:var(--warn-soft); color:var(--ink)}
+.banner.warn strong{color:var(--warn)}
+.banner.info{background:var(--accent-soft)}
+.banner .grow{flex:1; min-width:200px}
+.page{font-family:var(--f-essay); font-size:17px; line-height:1.65; width:100%; min-height:260px; padding:16px 18px; resize:vertical; border-radius:var(--r)}
+.promptbox{font-family:var(--f-essay); font-size:17px; line-height:1.5; margin:4px 0 0; max-width:70ch}
+.diff{font-family:var(--f-essay); font-size:16px; line-height:1.8; white-space:pre-wrap; overflow-wrap:anywhere}
+.diff del{background:var(--del); text-decoration:line-through; text-decoration-color:var(--bad); border-radius:3px; padding:1px 1px}
+.diff ins{background:var(--ins); text-decoration:none; border-radius:3px; padding:1px 1px}
+.hacts{display:inline-flex; gap:4px; vertical-align:middle; margin:0 4px; white-space:nowrap}
+.hacts button{font-family:var(--f-ui); font-size:12px; padding:2px 7px; border-radius:6px}
+.hacts .nf{font-family:var(--f-ui); font-size:12px; color:var(--muted); font-style:italic}
+.legend{display:flex; gap:14px; flex-wrap:wrap; font-size:13px; color:var(--muted)}
+.legend del, .legend ins{padding:0 4px; border-radius:3px}
+.legend del{background:var(--del)} .legend ins{background:var(--ins); text-decoration:none}
+.two{display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:16px; align-items:start}
+@media (max-width:760px){ .two{grid-template-columns:minmax(0,1fr)} }
+.fam-head{display:flex; gap:10px; align-items:baseline; flex-wrap:wrap}
+details.how{margin-top:20px}
+details.how summary{cursor:pointer; font-weight:600; color:var(--accent)}
+details.how div{padding-top:8px; color:var(--muted); max-width:65ch}
+.toast{position:fixed; left:50%; transform:translateX(-50%); bottom:calc(20px + env(safe-area-inset-bottom,0px)); background:var(--ink); color:var(--bg); padding:9px 14px; border-radius:8px; font-weight:600; font-size:14px; z-index:20; max-width:calc(100% - 32px)}
+.empty{padding:18px 16px; color:var(--muted)}
+.lib-s{display:flex; gap:10px; align-items:center; margin-bottom:14px}
+.lib-s input{flex:1}
+textarea.code{font-family:ui-monospace, Menlo, monospace; font-size:12px; width:100%; min-height:90px}
+footer.foot{border-top:1px solid var(--line); padding-block:18px 30px; color:var(--muted); font-size:13px}
+@media (max-width:600px){
+  .etable, .etable tbody, .etable tr, .etable td{display:block; width:100%}
+  .etable td{border-top:0; padding:4px 16px}
+  .etable tr{border-top:1px solid var(--line-soft); padding-block:10px}
+  .etable tr:first-child{border-top:0}
+  h1{font-size:23px}
+}
+@media (prefers-reduced-motion:no-preference){ .toast{animation:up .18s ease-out} @keyframes up{from{opacity:.4; transform:translate(-50%,6px)}} }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="top-row">
+      <p class="brand">Second<span>aries</span></p>
+      <span class="pill" id="demo-pill" hidden>Example data</span>
+      <span class="grow"></span>
+      <span class="small muted" id="today-l"></span>
+    </div>
+    <nav class="tabs" id="tabs" aria-label="Sections"></nav>
+  </div>
+</header>
+<div class="wrap" id="install-wrap" hidden><div class="install small"><b>Add this to your Home Screen first.</b> In Safari, tap Share, then Add to Home Screen, and use the icon from now on. On iPhone, essays saved in Safari don’t carry over to the Home Screen app.</div></div>
+<main class="wrap" id="main"></main>
+<footer class="wrap foot" id="foot"></footer>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<div class="tour" id="tour" role="dialog" aria-modal="true" aria-labelledby="tour-title" hidden></div>
+<input type="file" id="restore-file" accept="application/json,.json" hidden>
+
+<script>
+(function(){
+"use strict";
+const KEY = "secondaries-v1";
+const TOURKEY = "secondaries-tour-v1";
+const SHOW_LIBRARY = false; // turn on once the shared prompt sheet has real prompts
+const FAM = {
+  diversity:"Diversity & perspective", challenge:"Challenge or failure", why:"Why this school",
+  gap:"Gap year / current activities", team:"Teamwork & conflict", anything:"Anything else", other:"Other"
+};
+const STATUS = {todo:"Not started", drafting:"Drafting", ready:"Ready", pasted:"In portal"};
+const DEFAULT_TURNAROUND = 14;
+
+/* ---------- dates ---------- */
+const DAY = 864e5;
+function today(){ const d=new Date(); d.setHours(0,0,0,0); return d; }
+function iso(d){ const z=n=>String(n).padStart(2,"0"); return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate()); }
+function parse(s){ if(!s) return null; const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); }
+function off(n){ return iso(new Date(today().getTime()+n*DAY)); }
+function fmt(s){ const d=parse(s); return d? d.toLocaleDateString(undefined,{month:"short", day:"numeric"}) : "—"; }
+function daysUntil(s){ const d=parse(s); return d? Math.round((d-today())/DAY) : null; }
+function addDays(s,n){ const d=parse(s); return d? iso(new Date(d.getTime()+n*DAY)) : null; }
+
+/* ---------- sample content (fictional schools and applicant) ---------- */
+const D1 = "Every Saturday for three years, I sat between patients and physicians at the Eastside Free Clinic, translating between Spanish and English. At first I thought my job was words. Then a patient told me she had stopped her blood pressure pills because the label said to take them “once” daily, and in Spanish “once” means eleven. The gap was not vocabulary. It was context and trust. I started asking patients to repeat their plan back at the end of each visit, and I wrote a one-page guide for new volunteer interpreters. As a physician, I will bring that habit of checking what was understood, not just what was said, to every patient.";
+const D2 = D1.replace("for three years","for four years").replace("new volunteer interpreters.","new volunteer interpreters. The clinic now hands that guide to every new interpreter.");
+const D3 = D2.replace("At first I thought my job was words.","At first I believed my job was only words.").replace("As a physician, I will bring that habit of checking what was understood, not just what was said, to every patient.","As a physician, I want every patient to leave knowing their plan, and I will keep checking what was understood, not only what was said.");
+const LAKE_D = D1.replace("As a physician, I will bring that habit of checking what was understood, not just what was said, to every patient.","Lakeshore’s student-run clinic serves many Spanish-speaking families, and I want to bring that habit of checking what was understood, not just what was said, to my work there.");
+const PRAIRIE_D = "For four years I interpreted Spanish and English at the Eastside Free Clinic. At first I believed my job was only words. Then a patient told me she had stopped her blood pressure pills because the label said to take them “once” daily, and in Spanish “once” means eleven. The gap was context and trust. I began asking patients to repeat their plan back and wrote a guide for new interpreters that the clinic still uses. As a physician, I want every patient to leave knowing their plan.";
+const C1 = "I failed my first organic chemistry exam with a 41. I had studied the way I always had, by rereading notes, and it had always worked. Sitting in office hours, I learned that I could recognize every mechanism but could not draw one from a blank page. I rebuilt how I studied: blank-page practice, a weekly group where we each taught one reaction, and spaced review on Sundays. I finished the course with an A minus and later tutored nine students in the same class. The grade mattered less than what it taught me: when something stops working, I look for the reason before I work harder.";
+const LAKE_C = "I failed my first organic chemistry exam with a 41. I had studied the way I always had, by rereading notes, and it had always worked. In office hours I learned that I could recognize every mechanism but could not draw one from a blank page.";
+const PRAIRIE_W = "Prairie View’s longitudinal rural track is the reason I applied. I grew up two hours from the nearest hospital, and I want to train where continuity with one community is built into the curriculum rather than added on. The interpreter work I describe elsewhere taught me that trust takes years; a three-year rural placement gives me time to earn it.";
+
+const LIBRARY = [
+  {school:"Lakeshore School of Medicine", prompts:[
+    {p:"Describe how your background or experiences would add to the diversity of our class.", limit:150, unit:"words", fam:"diversity"},
+    {p:"Tell us about a challenge or failure and what you learned from it.", limit:200, unit:"words", fam:"challenge"},
+    {p:"Why Lakeshore?", limit:250, unit:"words", fam:"why"}]},
+  {school:"Prairie View College of Medicine", prompts:[
+    {p:"What unique perspective would you bring to our community?", limit:1000, unit:"chars", fam:"diversity"},
+    {p:"Why are you interested in Prairie View?", limit:1500, unit:"chars", fam:"why"}]},
+  {school:"Granite Ridge University School of Medicine", prompts:[
+    {p:"Share an experience that shaped how you see people different from yourself.", limit:300, unit:"words", fam:"diversity"},
+    {p:"What draws you to Granite Ridge specifically?", limit:250, unit:"words", fam:"why"},
+    {p:"If you are not currently in school, describe what you are doing this year.", limit:200, unit:"words", fam:"gap"}]},
+  {school:"Harbor City Medical College", prompts:[
+    {p:"Describe a setback and how you responded.", limit:2000, unit:"chars", fam:"challenge"},
+    {p:"Why Harbor City?", limit:1500, unit:"chars", fam:"why"}]},
+  {school:"Northern Pines School of Medicine", prompts:[
+    {p:"How will you contribute to a diverse learning environment?", limit:250, unit:"words", fam:"diversity"},
+    {p:"Describe a time you failed.", limit:250, unit:"words", fam:"challenge"}]},
+  {school:"Cedar Valley School of Medicine", prompts:[
+    {p:"Describe a time you worked on a team with a conflict. What was your role?", limit:300, unit:"words", fam:"team"},
+    {p:"Describe your background and how it would add to our class.", limit:2500, unit:"chars", fam:"diversity"},
+    {p:"Is there anything else you would like the committee to know?", limit:1000, unit:"chars", fam:"anything"}]},
+  {school:"Bayfront University College of Medicine", prompts:[
+    {p:"Tell us about the most difficult challenge you have faced.", limit:350, unit:"words", fam:"challenge"},
+    {p:"Why Bayfront?", limit:200, unit:"words", fam:"why"}]}
+];
+
+let seq = 1;
+function id(p){ return p + (seq++).toString(36) + Math.random().toString(36).slice(2,6); }
+
+function seed(){
+  const now = new Date().toISOString();
+  const bD = {id:"b_div", family:"diversity", title:"Clinic interpreter", draft:D3, versions:[
+    {v:1, text:D1, at:off(-30), note:"First full draft"},
+    {v:2, text:D2, at:off(-14), note:"Four years; guide now used clinic-wide"},
+    {v:3, text:D3, at:off(-2), note:"Stronger closing line"}]};
+  const bC = {id:"b_chal", family:"challenge", title:"Organic chemistry exam", draft:C1, versions:[
+    {v:1, text:C1, at:off(-20), note:"First full draft"}]};
+  const S = (o)=>Object.assign({id:id("s"), turnaround:DEFAULT_TURNAROUND, hard:"", interest:2, submitted:false, fee:false, pinned:false}, o);
+  const lake = S({name:"Lakeshore School of Medicine", received:off(-9), interest:3});
+  const prai = S({name:"Prairie View College of Medicine", received:off(-12), interest:2});
+  const gran = S({name:"Granite Ridge University School of Medicine", received:off(-3), hard:off(20), interest:3});
+  const harb = S({name:"Harbor City Medical College", received:off(-16), interest:1});
+  const nort = S({name:"Northern Pines School of Medicine", received:off(-25), interest:2, submitted:true, fee:true});
+  const E = (s, libIdx, pi, o)=>{ const L=LIBRARY[libIdx].prompts[pi]; return Object.assign({id:id("e"), schoolId:s.id, prompt:L.p, limit:L.limit, unit:L.unit, family:L.fam, baseId:null, basedOnV:null, text:"", status:"todo", localEdit:false}, o||{}); };
+  const essays = [
+    E(lake,0,0,{baseId:"b_div", basedOnV:1, text:LAKE_D, status:"drafting", localEdit:true}),
+    E(lake,0,1,{baseId:"b_chal", basedOnV:1, text:LAKE_C, status:"drafting"}),
+    E(lake,0,2),
+    E(prai,1,0,{baseId:"b_div", basedOnV:3, text:PRAIRIE_D, status:"ready"}),
+    E(prai,1,1,{text:PRAIRIE_W, status:"ready"}),
+    E(gran,2,0,{baseId:"b_div"}),
+    E(gran,2,1), E(gran,2,2),
+    E(harb,3,0,{baseId:"b_chal"}),
+    E(harb,3,1),
+    E(nort,4,0,{baseId:"b_div", basedOnV:2, text:D2, status:"pasted"}),
+    E(nort,4,1,{baseId:"b_chal", basedOnV:1, text:C1, status:"pasted"})
+  ];
+  return {v:1, demo:true, schools:[lake,prai,gran,harb,nort], bases:[bD,bC], essays, created:now};
+}
+
+/* ---------- storage ---------- */
+let S;
+function blank(){ return {v:1, demo:false, schools:[], bases:[], essays:[]}; }
+function load(){ try{ const raw=localStorage.getItem(KEY); if(raw){ const o=JSON.parse(raw); if(o && o.schools) return o; } }catch(e){} return blank(); }
+let saveT=null;
+function save(){ clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }, 250); }
+function flush(){ if(saveT){ clearTimeout(saveT); saveT=null; try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} } }
+window.addEventListener("pagehide", flush);
+document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="hidden") flush(); });
+S = load();
+
+/* ---------- model helpers ---------- */
+const school = id=>S.schools.find(s=>s.id===id);
+const essay = id=>S.essays.find(e=>e.id===id);
+const base = id=>S.bases.find(b=>b.id===id);
+const essaysOf = sid=>S.essays.filter(e=>e.schoolId===sid);
+function latest(b){ return b && b.versions.length ? b.versions[b.versions.length-1] : {v:0, text:"", note:"", at:""}; }
+function ver(b,v){ return b.versions.find(x=>x.v===v); }
+function unsaved(b){ return b.draft !== latest(b).text; }
+function behind(e){ const b=base(e.baseId); if(!b||e.basedOnV==null) return false; const sc=school(e.schoolId); if(sc&&sc.submitted) return false; return e.basedOnV < latest(b).v; }
+function words(t){ const m=t.trim().match(/\S+/g); return m? m.length : 0; }
+function count(e){ return e.unit==="chars" ? e.text.length : words(e.text); }
+function unitL(u, n){ return u==="chars" ? "characters" : (n===1?"word":"words"); }
+function limitL(e){ return e.limit ? e.limit.toLocaleString()+" "+(e.unit==="chars"?"chars":"words") : "No limit"; }
+function target(s){ return addDays(s.received, Number(s.turnaround)||DEFAULT_TURNAROUND); }
+function due(s){ const t=target(s); if(s.hard && (!t || s.hard < t)) return {date:s.hard, kind:"deadline"}; return {date:t, kind:"target"}; }
+function hasBaseText(e){ const b=base(e.baseId); return !!(b && latest(b).text.trim()); }
+function effort(e){
+  let w=0;
+  if(e.status==="todo") w = hasBaseText(e)? .4 : 1;
+  else if(e.status==="drafting") w = e.baseId? .3 : .6;
+  if(behind(e) && e.status!=="pasted") w += .15;
+  return w;
+}
+function plan(s){
+  const es = essaysOf(s.id);
+  const work = es.reduce((a,e)=>a+effort(e),0);
+  const d = due(s); const left = daysUntil(d.date);
+  const urg = 10/(Math.max(left==null?30:left,-2)+3);
+  const im = [0.7,1,1.35][(s.interest||2)-1];
+  const quick = work<=1 ? 1.25 : 1;
+  const score = (s.submitted? -1000 : 0) + (s.pinned? 100 : 0) + urg*im*quick;
+  const reasons=[];
+  if(left!=null){
+    const what = d.kind==="deadline" ? "school deadline" : "your target";
+    if(left<0) reasons.push({t:Math.abs(left)+(Math.abs(left)===1?" day":" days")+" past "+what, c:"bad"});
+    else if(left===0) reasons.push({t:"Due today ("+what+")", c:"bad"});
+    else reasons.push({t:"Due in "+left+(left===1?" day":" days")+" ("+what+", "+fmt(d.date)+")", c:left<=3?"warn":""});
+  }
+  if(s.interest===3) reasons.push({t:"Top choice", c:"acc"});
+  if(s.interest===1) reasons.push({t:"Lower interest", c:""});
+  const open = es.filter(e=>e.status!=="ready"&&e.status!=="pasted");
+  const reuse = open.filter(e=>hasBaseText(e)).length;
+  if(open.length && reuse) reasons.push({t:reuse+" of "+open.length+" open essays start from a base", c:"good"});
+  const bh = es.filter(behind).length;
+  if(bh) reasons.push({t:bh+(bh===1?" essay is":" essays are")+" behind its base", c:"warn"});
+  if(!open.length && !s.submitted) reasons.push({t:"Essays ready", c:"good"});
+  return {work, left, d, score, reasons, next:nextAction(s, es)};
+}
+function shortP(p){ return p.length>60? p.slice(0,57).replace(/\s+\S*$/,"")+"…" : p; }
+function nextAction(s, es){
+  if(s.submitted) return null;
+  const b1 = es.find(e=>behind(e) && e.status!=="pasted");
+  if(b1){ const b=base(b1.baseId); return {e:b1, html:"Review base changes in <b>"+esc(FAM[b1.family])+"</b> (adapted from v"+b1.basedOnV+", base is v"+latest(b).v+")"}; }
+  const dr = es.find(e=>e.status==="drafting");
+  if(dr) return {e:dr, html:"Finish <b>"+esc(FAM[dr.family])+"</b> ("+count(dr).toLocaleString()+" / "+limitL(dr)+")"};
+  const tb = es.find(e=>e.status==="todo" && hasBaseText(e));
+  if(tb){ const b=base(tb.baseId); return {e:tb, html:"Adapt base “"+esc(b.title)+"” v"+latest(b).v+" to <b>"+limitL(tb)+"</b>"}; }
+  const tn = es.find(e=>e.status==="todo");
+  if(tn) return {e:tn, html:"Write <b>"+esc(FAM[tn.family])+"</b>"+(tn.family==="why"?" (school-specific)":" (no base yet)")};
+  const rd = es.find(e=>e.status==="ready");
+  if(rd) return {e:rd, html:"Paste ready essays into the portal, then submit and pay the fee"};
+  return {e:null, html:"Submit and pay the fee"};
+}
+
+/* ---------- diff (word level) ---------- */
+function tok(t){ return t.match(/\s+|[^\s]+/g) || []; }
+function diff(aText, bText){
+  const a=tok(aText), b=tok(bText); const n=a.length, m=b.length;
+  let p=0; while(p<n && p<m && a[p]===b[p]) p++;
+  let q=0; while(q<n-p && q<m-p && a[n-1-q]===b[m-1-q]) q++;
+  const A=a.slice(p,n-q), B=b.slice(p,m-q), N=A.length, M=B.length;
+  const ops=[]; for(let i=0;i<p;i++) ops.push(["=",a[i]]);
+  if(N*M > 4e6){ A.forEach(x=>ops.push(["-",x])); B.forEach(x=>ops.push(["+",x])); }
+  else {
+    const W=M+1, dp=new Uint32Array((N+1)*W);
+    for(let i=N-1;i>=0;i--) for(let j=M-1;j>=0;j--)
+      dp[i*W+j] = A[i]===B[j] ? dp[(i+1)*W+j+1]+1 : Math.max(dp[(i+1)*W+j], dp[i*W+j+1]);
+    let i=0,j=0;
+    while(i<N && j<M){
+      if(A[i]===B[j]){ ops.push(["=",A[i]]); i++; j++; }
+      else if(dp[(i+1)*W+j] >= dp[i*W+j+1]) ops.push(["-",A[i++]]);
+      else ops.push(["+",B[j++]]);
+    }
+    while(i<N) ops.push(["-",A[i++]]); while(j<M) ops.push(["+",B[j++]]);
+  }
+  for(let i=n-q;i<n;i++) ops.push(["=",a[i]]);
+  // group
+  let segs=[], cur=null;
+  for(const [o,t] of ops){
+    if(o==="="){ if(!cur||cur.type!=="eq"){ cur={type:"eq",a:[],b:[]}; segs.push(cur);} cur.a.push(t); cur.b.push(t); }
+    else { if(!cur||cur.type!=="chg"){ cur={type:"chg",a:[],b:[]}; segs.push(cur);} (o==="-"?cur.a:cur.b).push(t); }
+  }
+  // merge changes separated only by whitespace or a single short word
+  let merged=true;
+  while(merged){ merged=false;
+    for(let k=1;k<segs.length-1;k++){
+      const s=segs[k];
+      const words = s.a.filter(x=>/\S/.test(x));
+      if(s.type==="eq" && segs[k-1].type==="chg" && segs[k+1].type==="chg" && (words.length===0 || (words.length===1 && words[0].length<=3))){
+        const L=segs[k-1], R=segs[k+1];
+        segs.splice(k-1,3,{type:"chg", a:L.a.concat(s.a,R.a), b:L.b.concat(s.b,R.b)}); merged=true; break;
+      }
+    }
+  }
+  // whitespace-only changes become equal
+  segs = segs.map(s=> s.type==="chg" && !/\S/.test(s.a.join("")) && !/\S/.test(s.b.join("")) ? {type:"eq", a:s.a, b:s.b} : s);
+  return segs;
+}
+const takeB = (segs,i)=>segs.map((s,k)=> s.type==="eq"? s.a.join("") : (k===i? s.b : s.a).join("")).join("");
+const takeA = (segs,i)=>segs.map((s,k)=> s.type==="eq"? s.b.join("") : (k===i? s.a : s.b).join("")).join("");
+const nChanges = segs=>segs.filter(s=>s.type==="chg").length;
+function locate(segs, i, target){
+  const s=segs[i];
+  const prev = segs[i-1] && segs[i-1].type==="eq" ? segs[i-1].a : [];
+  const next = segs[i+1] && segs[i+1].type==="eq" ? segs[i+1].a : [];
+  const tries=[[8,8],[4,4],[8,0],[4,0],[0,8],[0,4],[2,2],[2,0],[0,2],[0,0]];
+  for(const [x,y] of tries){
+    const before = prev.slice(Math.max(0,prev.length-x)).join("");
+    const after = next.slice(0,y).join("");
+    const mid = s.a.join("");
+    const oldStr = before+mid+after;
+    if(!/\S/.test(oldStr)) continue;
+    if(x===0 && y===0 && mid.trim().split(/\s+/).length<2) continue;
+    const at = target.indexOf(oldStr);
+    if(at>=0 && target.indexOf(oldStr, at+1)<0) return {at, oldStr, newStr:before+s.b.join("")+after};
+  }
+  return null;
+}
+function applyLoc(text, loc){ return text.slice(0,loc.at) + loc.newStr + text.slice(loc.at+loc.oldStr.length); }
+
+/* ---------- UI state ---------- */
+const ui = {tab:"next", schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, libQ:"", restore:false};
+const TABS = [["next","Do next"],["schools","Schools"],["essays","Base essays"]].concat(SHOW_LIBRARY? [["library","Prompt library"]] : []);
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function stars(n){ let h=""; for(let i=1;i<=3;i++) h+= i<=n? "●" : '<span class="off">●</span>'; return '<span class="stars" aria-label="Interest '+n+' of 3">'+h+'</span>'; }
+let toastT;
+function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, 2400); }
+function go(tab, extra){ Object.assign(ui, {schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false}, extra||{}); ui.tab=tab; if(location.hash!=="#"+tab){ try{ history.replaceState(null,"","#"+tab);}catch(e){ location.hash=tab; } } render(); window.scrollTo(0,0); }
+
+function render(){
+  document.getElementById("today-l").textContent = "Today: " + today().toLocaleDateString(undefined,{weekday:"short", month:"short", day:"numeric"});
+  document.getElementById("demo-pill").hidden = !S.demo;
+  const open = S.schools.filter(s=>!s.submitted).length;
+  document.getElementById("tabs").innerHTML = TABS.map(([k,l])=>'<a href="#'+k+'" data-tab="'+k+'"'+(ui.tab===k?' aria-current="page"':'')+'>'+l+(k==="schools"?'<span class="n">'+open+' open</span>':'')+'</a>').join("");
+  const m = document.getElementById("main");
+  let h="";
+  if(ui.essayId && essay(ui.essayId)) h = vEssay(essay(ui.essayId));
+  else if(ui.baseId && base(ui.baseId)) h = vBase(base(ui.baseId));
+  else if(ui.schoolId && school(ui.schoolId)) h = vSchool(school(ui.schoolId));
+  else if(ui.tab==="schools") h = vSchools();
+  else if(ui.tab==="essays") h = vEssays();
+  else if(ui.tab==="library") h = vLibrary();
+  else h = vNext();
+  m.innerHTML = h;
+  document.getElementById("foot").innerHTML = vFoot();
+}
+
+/* ---------- views ---------- */
+function vNext(){
+  const rows = S.schools.filter(s=>!s.submitted).map(s=>({s, p:plan(s)})).sort((a,b)=>b.p.score-a.p.score);
+  const done = S.schools.filter(s=>s.submitted);
+  const flagged = S.essays.filter(behind);
+  let h = '<h1>Do next</h1><p class="sub">Schools ranked by how soon they are due, how much you want them, and how much writing is left. Schools you can finish quickly move up.</p>';
+  if(flagged.length){
+    h += '<div class="banner warn" style="margin-bottom:16px"><div class="grow"><strong>'+flagged.length+(flagged.length===1?' school version is':' school versions are')+' behind its base essay.</strong> You changed a base after adapting it for these schools.</div><button data-act="go-essays">Review in Base essays</button></div>';
+  }
+  if(!S.schools.length) h += '<div class="panel hero-empty"><h2>Add a school when its secondary arrives</h2><p>Paste each prompt and its limit. Prompts that ask the same thing at different schools can share one base essay, and this list will rank your schools by what to work on first.</p><div class="row"><button class="primary" data-act="first-school">Add your first school</button><button data-act="try-examples">Try with examples</button></div><p class="small">Everything you enter stays on this device. Nothing is sent anywhere.</p></div>';
+  else if(!rows.length) h += '<div class="panel empty">Nothing open. Add a school when a secondary arrives.</div>';
+  else {
+    h += '<div class="panel"><ol class="list">';
+    rows.forEach((r,i)=>{
+      const s=r.s, p=r.p;
+      h += '<li><div class="rank-n">'+(i+1)+'</div><div class="main"><div class="row"><h2>'+esc(s.name)+'</h2>'+stars(s.interest)+(s.pinned?' <span class="chip acc">Pinned</span>':'')+'</div>'+
+        '<div class="chips">'+p.reasons.map(c=>'<span class="chip '+c.c+'">'+esc(c.t)+'</span>').join("")+'</div>'+
+        (p.next? '<div class="next">Next: '+p.next.html+'</div>' : '')+
+        '</div><div class="row">'+(p.next&&p.next.e? '<button class="primary" data-act="open-essay" data-id="'+p.next.e.id+'">Start</button>':'')+'<button data-act="open-school" data-id="'+s.id+'">School</button></div></li>';
+    });
+    h += '</ol></div>';
+  }
+  if(done.length) h += '<p class="small muted" style="margin-top:14px">Submitted: '+done.map(s=>esc(s.name)).join(", ")+'</p>';
+  h += '<details class="how"><summary>How the order works</summary><div><p>Each school gets a due date: the date you received the secondary plus your turnaround (default '+DEFAULT_TURNAROUND+' days), or the school’s own deadline if that comes first. Schools due sooner rank higher; overdue schools rank highest.</p><p>Interest multiplies that: top choice ×1.35, middle ×1, lower ×0.7. Schools with about one essay’s worth of work left get a small boost, since finishing them clears your list fastest. Essays that can start from a base count as less work than ones you write from scratch.</p><p>Pin a school on its page to keep it at the top regardless.</p></div></details>';
+  return h;
+}
+
+function vSchools(){
+  const list = S.schools.map(s=>({s,p:plan(s)})).sort((a,b)=> (a.s.submitted-b.s.submitted) || ((a.p.d.date||"9")<(b.p.d.date||"9")?-1:1));
+  let h = '<div class="row" style="justify-content:space-between; align-items:flex-end; margin-bottom:14px"><div><h1>Schools</h1><p class="sub" style="margin:0">Sorted by due date.</p></div><div class="row">'+(SHOW_LIBRARY?'<button data-act="go-library">Add from prompt library</button>':'')+'<button class="primary" data-act="toggle-add-school">Add school</button></div></div>';
+  if(ui.addSchool) h += addSchoolForm();
+  h += '<div class="panel"><ul class="list">';
+  list.forEach(({s,p})=>{
+    const es=essaysOf(s.id); const fin=es.filter(e=>e.status==="ready"||e.status==="pasted").length;
+    h += '<li><div class="main"><div class="row"><h2>'+esc(s.name)+'</h2>'+stars(s.interest)+'</div><div class="chips">'+
+      (s.submitted? '<span class="chip good">Submitted'+(s.fee?' · fee paid':' · fee not paid')+'</span>' : p.reasons.slice(0,1).map(c=>'<span class="chip '+c.c+'">'+esc(c.t)+'</span>').join(""))+
+      '<span class="chip">'+fin+' of '+es.length+' essays ready</span>'+(es.some(behind)?'<span class="chip warn">Base updated</span>':'')+'</div></div><button data-act="open-school" data-id="'+s.id+'">Open</button></li>';
+  });
+  if(!S.schools.length) h+='<li class="empty">No schools yet.</li>';
+  h += '</ul></div>';
+  return h;
+}
+function addSchoolForm(){
+  return '<form class="panel" data-form="add-school" style="margin-bottom:16px"><div class="pb stack"><div class="grid-f">'+
+    '<label class="f">School name<input id="ns-name" required placeholder="e.g. Cedar Valley School of Medicine"></label>'+
+    '<label class="f">Secondary received<input id="ns-rec" type="date" value="'+iso(today())+'"></label>'+
+    '<label class="f">Turnaround (days)<input id="ns-turn" type="number" min="1" max="60" value="'+DEFAULT_TURNAROUND+'"></label>'+
+    '<label class="f">School deadline (optional)<input id="ns-hard" type="date"></label>'+
+    '<label class="f">Interest<select id="ns-int"><option value="3">Top choice</option><option value="2" selected>Middle</option><option value="1">Lower</option></select></label>'+
+    '</div><div class="row"><button class="primary" type="submit">Add school</button><button type="button" data-act="toggle-add-school">Cancel</button></div></div></form>';
+}
+
+function vSchool(s){
+  const p=plan(s), es=essaysOf(s.id);
+  let h = '<button class="ghost back" data-act="back-schools">← Schools</button>';
+  h += '<div class="row" style="justify-content:space-between"><h1>'+esc(s.name)+'</h1><label class="chk"><input type="checkbox" id="pin-'+s.id+'" data-bind="school:'+s.id+':pinned" '+(s.pinned?'checked':'')+'> Pin to top of Do next</label></div>';
+  h += '<div class="chips" style="margin-bottom:16px">'+p.reasons.map(c=>'<span class="chip '+c.c+'">'+esc(c.t)+'</span>').join("")+'</div>';
+  h += '<div class="panel" style="margin-bottom:16px"><div class="pb grid-f">'+
+    '<label class="f">Secondary received<input type="date" id="rec-'+s.id+'" data-bind="school:'+s.id+':received" value="'+esc(s.received)+'"></label>'+
+    '<label class="f">Turnaround (days)<input type="number" min="1" max="60" id="turn-'+s.id+'" data-bind="school:'+s.id+':turnaround" value="'+esc(s.turnaround)+'"></label>'+
+    '<div class="f"><span class="small muted" style="font-weight:600">Your target</span><span class="computed">'+fmt(target(s))+'</span></div>'+
+    '<label class="f">School deadline<input type="date" id="hard-'+s.id+'" data-bind="school:'+s.id+':hard" value="'+esc(s.hard)+'"></label>'+
+    '<label class="f">Interest<select id="int-'+s.id+'" data-bind="school:'+s.id+':interest">'+[[3,"Top choice"],[2,"Middle"],[1,"Lower"]].map(([v,l])=>'<option value="'+v+'"'+(s.interest===v?' selected':'')+'>'+l+'</option>').join("")+'</select></label>'+
+    '<div class="f" style="gap:8px"><label class="chk"><input type="checkbox" id="sub-'+s.id+'" data-bind="school:'+s.id+':submitted" '+(s.submitted?'checked':'')+'> Submitted</label><label class="chk"><input type="checkbox" id="fee-'+s.id+'" data-bind="school:'+s.id+':fee" '+(s.fee?'checked':'')+'> Fee paid</label></div>'+
+    '</div></div>';
+  h += '<div class="panel"><div class="ph"><h2 style="flex:1">Essays</h2><button data-act="toggle-add-prompt">Add prompt</button></div>';
+  if(ui.addPrompt) h += addPromptForm(s);
+  if(!es.length) h += '<div class="empty">No prompts yet. Add each prompt from the school’s secondary.</div>';
+  else {
+    h += '<table class="etable"><tbody>';
+    es.forEach(e=>{
+      const b=base(e.baseId);
+      h += '<tr><td style="width:46%"><div class="prompt-t">'+esc(shortP(e.prompt))+'</div><div class="chips"><span class="chip">'+esc(FAM[e.family])+'</span>'+(b?'<span class="chip acc">Base: '+esc(b.title)+(e.basedOnV?' · from v'+e.basedOnV:'')+'</span>':'')+(behind(e)?'<span class="chip warn">Base now v'+latest(b).v+'</span>':'')+(e.localEdit&&b&&!s.submitted?'<span class="chip">Edited here</span>':'')+'</div></td>'+
+        '<td>'+meter(e)+'</td>'+
+        '<td><select aria-label="Status" id="st-'+e.id+'" data-bind="essay:'+e.id+':status">'+Object.entries(STATUS).map(([k,l])=>'<option value="'+k+'"'+(e.status===k?' selected':'')+'>'+l+'</option>').join("")+'</select></td>'+
+        '<td style="text-align:right"><button data-act="open-essay" data-id="'+e.id+'">Open</button></td></tr>';
+    });
+    h += '</tbody></table>';
+  }
+  h += '</div>';
+  h += '<div class="row" style="margin-top:18px">'+confirmBtn("del-school:"+s.id, "Delete school", "Delete "+esc(s.name)+" and its essays")+'</div>';
+  return h;
+}
+function confirmBtn(key, label, sure){
+  return ui.confirm===key ? '<button class="danger" data-act="confirm" data-key="'+key+'">'+sure+'</button><button data-act="cancel-confirm">Cancel</button>' : '<button class="danger" data-act="ask-confirm" data-key="'+key+'">'+label+'</button>';
+}
+function addPromptForm(s){
+  return '<form data-form="add-prompt" data-id="'+s.id+'" class="pb stack" style="border-bottom:1px solid var(--line-soft)">'+
+    '<label class="f">Prompt (paste it from the school’s portal)<textarea id="np-p" rows="3" required></textarea></label>'+
+    '<div class="grid-f"><label class="f">Limit<input id="np-l" type="number" min="0" placeholder="e.g. 300"></label>'+
+    '<label class="f">Counted in<select id="np-u"><option value="words">Words</option><option value="chars">Characters</option></select></label>'+
+    '<label class="f">Prompt type<select id="np-f">'+Object.entries(FAM).map(([k,l])=>'<option value="'+k+'">'+l+'</option>').join("")+'</select></label></div>'+
+    '<p class="small muted" id="np-hint" style="margin:0">Prompt type is guessed from the wording. Prompts of the same type can share one base essay.</p>'+
+    '<div class="row"><button class="primary" type="submit">Add prompt</button><button type="button" data-act="toggle-add-prompt">Cancel</button></div></form>';
+}
+function guessFam(p){
+  const t=p.toLowerCase();
+  if(/why .*(us|school|our|interest)|draws you|specifically|why [A-Z]/i.test(p) || /^why\b/.test(t)) return "why";
+  if(/divers|background|perspective|unique|different from|contribute to/.test(t)) return "diversity";
+  if(/challeng|fail|setback|adversit|difficult|obstacle/.test(t)) return "challenge";
+  if(/gap|this year|not currently|time since|since graduat|current activit/.test(t)) return "gap";
+  if(/team|conflict|leader|collaborat/.test(t)) return "team";
+  if(/anything else|additional information/.test(t)) return "anything";
+  return "other";
+}
+function meter(e){
+  const c=count(e);
+  if(!e.limit) return '<div class="meter" id="m-'+e.id+'">'+c.toLocaleString()+' '+unitL(e.unit,c)+'</div>';
+  const pct=Math.min(100, Math.round(c/e.limit*100)); const over=c>e.limit;
+  return '<div class="meter'+(over?' over':'')+'" id="m-'+e.id+'"><span class="bar'+(over?' over':'')+'"><i style="width:'+pct+'%"></i></span><span>'+c.toLocaleString()+' / '+e.limit.toLocaleString()+' '+(e.unit==="chars"?"chars":"words")+(over?' · '+(c-e.limit).toLocaleString()+' over':'')+'</span></div>';
+}
+
+function vEssay(e){
+  const s=school(e.schoolId), b=base(e.baseId), L=latest(b);
+  const fams = S.bases.filter(x=>x.family===e.family);
+  let h = '<button class="ghost back" data-act="open-school" data-id="'+s.id+'">← '+esc(s.name)+'</button>';
+  h += '<h3>'+esc(FAM[e.family])+' · '+limitL(e)+'</h3><p class="promptbox">'+esc(e.prompt)+'</p>';
+  h += '<div class="two" style="margin-top:16px"><div class="stack" style="min-width:0">';
+  if(behind(e)){
+    h += '<div class="banner warn"><div class="grow"><strong>Base updated.</strong> You adapted this from “'+esc(b.title)+'” v'+e.basedOnV+'. The base is now v'+L.v+' ('+esc(ver(b,L.v).note||"no note")+').</div><button class="primary" data-act="panel" data-p="review">Review changes</button></div>';
+  }
+  if(b && !e.text.trim() && L.text.trim()){
+    h += '<div class="banner info"><div class="grow">This prompt uses the base “'+esc(b.title)+'”. Start from v'+L.v+' and trim it to '+limitL(e)+'.</div><button class="primary" data-act="start-from-base">Start from base v'+L.v+'</button></div>';
+  }
+  if(ui.panel==="review" && b) h += reviewPanel(e,b);
+  if(ui.panel==="compare" && b) h += comparePanel(e,b);
+  h += '<textarea class="page" id="essay-text" data-bind="essay:'+e.id+':text" aria-label="Essay for '+esc(s.name)+'" placeholder="Write or paste this school’s version here.">'+esc(e.text)+'</textarea>';
+  h += '<div class="row" style="justify-content:space-between">'+meter(e)+'<label class="chk small">Status <select id="st2-'+e.id+'" data-bind="essay:'+e.id+':status">'+Object.entries(STATUS).map(([k,l])=>'<option value="'+k+'"'+(e.status===k?' selected':'')+'>'+l+'</option>').join("")+'</select></label></div>';
+  h += '</div><aside class="stack">';
+  // base box
+  h += '<div class="panel"><div class="ph"><h3 style="flex:1">Base essay</h3></div><div class="pb stack" style="gap:10px">';
+  if(b){
+    h += '<div><b>'+esc(b.title)+'</b> <span class="muted">· v'+L.v+(unsaved(b)?' + unsaved edits':'')+'</span></div>';
+    h += '<div class="small muted">'+(e.basedOnV? 'This version is from v'+e.basedOnV+'.' : 'Not adapted yet.')+(e.localEdit&&!s.submitted?' You have edited it here since.':'')+'</div>';
+    h += '<div class="row"><button data-act="panel" data-p="compare">Compare with base</button>'+(e.basedOnV&&e.basedOnV<L.v?'':'')+'<button class="ghost" data-act="open-base" data-id="'+b.id+'">Open base</button></div>';
+    h += '<button class="ghost danger" data-act="unlink" style="align-self:flex-start">Unlink from base</button>';
+  } else {
+    if(fams.length) h += '<label class="f">Use an existing base<select id="link-sel">'+fams.map(x=>'<option value="'+x.id+'">'+esc(x.title)+' (v'+latest(x).v+')</option>').join("")+'</select></label><button data-act="link">Link</button>';
+    if(e.family!=="why") h += '<p class="small muted" style="margin:0">'+(fams.length?'Or make':'No base for this prompt type yet. Make')+' this essay the base, so other schools with a '+esc(FAM[e.family].toLowerCase())+' prompt can start from it.</p><button data-act="make-base"'+(e.text.trim()?'':' disabled')+'>Make this the base</button>';
+    else h += '<p class="small muted" style="margin:0">“Why us” essays are usually written fresh for each school.</p>';
+  }
+  h += '</div></div>';
+  // siblings
+  if(b){
+    const sib = S.essays.filter(x=>x.baseId===b.id && x.id!==e.id);
+    h += '<div class="panel"><div class="ph"><h3>Other schools using this base</h3></div>';
+    if(!sib.length) h += '<div class="empty small">None yet.</div>';
+    else h += '<ul class="list">'+sib.map(x=>sibRow(x,b)).join("")+'</ul>';
+    h += '</div>';
+  }
+  h += '</aside></div>';
+  return h;
+}
+function sibRow(x,b){
+  const sc=school(x.schoolId);
+  let st = sc.submitted? '<span class="chip good">Submitted</span>' : behind(x)? '<span class="chip warn">From v'+x.basedOnV+' · base is v'+latest(b).v+'</span>' : x.basedOnV? '<span class="chip">Up to date · v'+x.basedOnV+'</span>' : '<span class="chip">Not adapted yet</span>';
+  return '<li><div class="main"><div class="small" style="font-weight:600">'+esc(sc.name)+'</div><div class="chips">'+st+'<span class="chip">'+STATUS[x.status]+'</span><span class="chip">'+limitL(x)+'</span></div></div><button class="ghost" data-act="open-essay" data-id="'+x.id+'">Open</button></li>';
+}
+function reviewPanel(e,b){
+  const L=latest(b), old=ver(b,e.basedOnV);
+  const segs=diff(old.text, L.text);
+  let fits=0;
+  const body = segs.map((s,i)=>{
+    if(s.type==="eq") return esc(s.a.join(""));
+    const loc=locate(segs,i,e.text); if(loc) fits++;
+    return '<del>'+esc(s.a.join(""))+'</del><ins>'+esc(s.b.join(""))+'</ins><span class="hacts">'+(loc?'<button data-act="rv-apply" data-i="'+i+'">Apply here</button>':'<span class="nf">Wording differs here; edit by hand</span>')+'</span>';
+  }).join("");
+  return '<div class="panel"><div class="ph"><h2 style="flex:1">What changed in the base, v'+e.basedOnV+' → v'+L.v+'</h2><button class="ghost" data-act="panel" data-p="">Close</button></div><div class="pb stack">'+
+    '<div class="legend"><span><del>removed</del> from base</span><span><ins>added</ins> to base</span><span>'+nChanges(segs)+' changes; '+fits+' can be applied to this version automatically</span></div>'+
+    '<div class="diff">'+body+'</div>'+
+    '<div class="row">'+(fits?'<button data-act="rv-all">Apply all that fit</button>':'')+'<button class="primary" data-act="caught-up">Mark caught up to v'+L.v+'</button></div>'+
+    '<p class="small muted" style="margin:0">“Mark caught up” records that you have considered every base change for this school, even ones you chose to skip.</p></div></div>';
+}
+function comparePanel(e,b){
+  const segs=diff(b.draft, e.text);
+  const body = segs.map((s,i)=>{
+    if(s.type==="eq") return esc(s.a.join(""));
+    return '<del>'+esc(s.a.join(""))+'</del><ins>'+esc(s.b.join(""))+'</ins><span class="hacts"><button data-act="cmp-tobase" data-i="'+i+'" title="Replace the base wording with this school’s wording">Send to base</button><button data-act="cmp-here" data-i="'+i+'" title="Replace this school’s wording with the base wording">Use base</button></span>';
+  }).join("");
+  const n=nChanges(segs);
+  return '<div class="panel"><div class="ph"><h2 style="flex:1">This version vs. base “'+esc(b.title)+'”</h2><button class="ghost" data-act="panel" data-p="">Close</button></div><div class="pb stack">'+
+    '<div class="legend"><span><del>base wording</del></span><span><ins>this school’s wording</ins></span><span>'+n+(n===1?' difference':' differences')+'</span></div>'+
+    '<p class="small muted" style="margin:0">Send a change to the base when it would improve every school’s version, not just this one. School-specific lines (names, programs) should stay here.</p>'+
+    '<div class="diff">'+(n||b.draft? body : '<span class="muted">Both are empty.</span>')+'</div>'+
+    (unsaved(b)? '<div class="banner info"><div class="grow">The base has unsaved changes. Save them as v'+(latest(b).v+1)+' so the other schools get flagged.</div><input id="cmp-note" placeholder="What changed? (optional)" style="flex:1; min-width:160px"><button class="primary" data-act="cmp-save">Save base v'+(latest(b).v+1)+'</button></div>' : '')+
+    '<div class="row"><button data-act="cmp-done">Done comparing</button></div></div></div>';
+}
+
+function vEssays(){
+  let h='<h1>Base essays</h1><p class="sub">One base per prompt type. School versions link to a base and remember which version they came from, so when you improve the base, every school still on an older version gets flagged.</p>';
+  const famsUsed = Object.keys(FAM).filter(f=>S.essays.some(e=>e.family===f) || S.bases.some(b=>b.family===f));
+  h += '<div class="stack">';
+  famsUsed.forEach(f=>{
+    const es=S.essays.filter(e=>e.family===f); const bs=S.bases.filter(b=>b.family===f);
+    const limits = es.map(e=>limitL(e));
+    h += '<div class="panel"><div class="ph"><div style="flex:1; min-width:0"><div class="fam-head"><h2>'+esc(FAM[f])+'</h2><span class="small muted">'+es.length+' school prompt'+(es.length===1?'':'s')+'</span></div>'+(limits.length?'<div class="small muted">Limits: '+limits.join(" · ")+'</div>':'')+'</div></div>';
+    if(f==="why" && !bs.length) h += '<div class="empty small">Written fresh for each school. Track them on each school’s page.</div>';
+    else if(!bs.length) h += '<div class="empty small">No base yet. Open one of these essays and choose “Make this the base” once you have a draft.</div>';
+    else {
+      h += '<ul class="list">';
+      bs.forEach(b=>{
+        const linked=S.essays.filter(e=>e.baseId===b.id); const bh=linked.filter(behind).length; const L=latest(b);
+        h += '<li><div class="main"><div class="row"><b>'+esc(b.title)+'</b><span class="chip">v'+L.v+(L.at?' · saved '+fmt(L.at):'')+'</span>'+(unsaved(b)?'<span class="chip warn">Unsaved edits</span>':'')+'</div><div class="chips"><span class="chip">'+linked.length+' school'+(linked.length===1?'':'s')+'</span>'+(bh?'<span class="chip warn">'+bh+' behind</span>':'<span class="chip good">All up to date</span>')+'</div></div><button data-act="open-base" data-id="'+b.id+'">Open</button></li>';
+      });
+      const unl = es.filter(e=>!e.baseId && f!=="why");
+      if(unl.length) h += '<li><div class="main small muted">Not linked to a base: '+unl.map(e=>esc(school(e.schoolId).name)).join(", ")+'</div></li>';
+      h += '</ul>';
+    }
+    h += '</div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+function vBase(b){
+  const L=latest(b); const linked=S.essays.filter(e=>e.baseId===b.id);
+  const unl=S.essays.filter(e=>e.family===b.family && !e.baseId);
+  let h='<button class="ghost back" data-act="go-essays">← Base essays</button>';
+  h += '<h3>'+esc(FAM[b.family])+' base</h3><div class="row" style="margin:4px 0 14px"><input id="btitle" data-bind="base:'+b.id+':title" value="'+esc(b.title)+'" aria-label="Base title" style="font-family:var(--f-display); font-weight:700; font-size:22px; flex:1; min-width:0; border-color:transparent; padding-inline:0; background:transparent"></div>';
+  h += '<div class="two"><div class="stack" style="min-width:0">';
+  h += '<textarea class="page" id="base-text" data-bind="base:'+b.id+':draft" aria-label="Base essay text">'+esc(b.draft)+'</textarea>';
+  h += '<div class="row" style="justify-content:space-between"><span class="small muted" id="bmeter">'+words(b.draft)+' words · '+b.draft.length.toLocaleString()+' characters</span><span class="small" id="bstate">'+(unsaved(b)?'<span class="chip warn">Unsaved edits since v'+L.v+'</span>':'<span class="chip">Matches v'+L.v+'</span>')+'</span></div>';
+  h += '<div class="panel"><div class="pb row"><input id="bnote" placeholder="What changed? (optional)" style="flex:1; min-width:160px"><button class="primary" data-act="save-ver">Save as v'+(L.v+1)+'</button></div><p class="small muted" style="margin:0; padding:0 16px 14px">Saving a version flags every school still on an older one. Edits you don’t save stay private to the base.</p></div>';
+  if(ui.histV){
+    const cur=ver(b,ui.histV), prev=ver(b,ui.histV-1);
+    const segs=diff(prev?prev.text:"", cur.text);
+    h += '<div class="panel"><div class="ph"><h2 style="flex:1">v'+(ui.histV-1)+' → v'+ui.histV+'</h2><button class="ghost" data-act="hist" data-v="">Close</button></div><div class="pb diff">'+segs.map(s=>s.type==="eq"?esc(s.a.join("")):'<del>'+esc(s.a.join(""))+'</del><ins>'+esc(s.b.join(""))+'</ins>').join("")+'</div></div>';
+  }
+  h += '</div><aside class="stack">';
+  h += '<div class="panel"><div class="ph"><h3>School versions</h3></div>'+(linked.length?'<ul class="list">'+linked.map(x=>sibRow(x,b)).join("")+'</ul>':'<div class="empty small">None linked.</div>');
+  if(unl.length) h += '<div class="pb small" style="border-top:1px solid var(--line-soft)"><div class="muted" style="margin-bottom:6px">Same prompt type, not linked:</div>'+unl.map(x=>'<div class="row" style="justify-content:space-between; margin-bottom:4px"><span>'+esc(school(x.schoolId).name)+'</span><button class="ghost" data-act="link-from-base" data-id="'+x.id+'">Link</button></div>').join("")+'</div>';
+  h += '</div>';
+  h += '<div class="panel"><div class="ph"><h3>Versions</h3></div><ul class="list">'+b.versions.slice().reverse().map(x=>'<li><div class="main small"><b>v'+x.v+'</b> · '+fmt(x.at)+'<div class="muted">'+esc(x.note||"No note")+'</div></div>'+(x.v>1?'<button class="ghost" data-act="hist" data-v="'+x.v+'">Changes</button>':'')+'</li>').join("")+'</ul></div>';
+  h += '<div class="row">'+confirmBtn("del-base:"+b.id,"Delete base","Delete base (school versions keep their text)")+'</div>';
+  h += '</aside></div>';
+  return h;
+}
+
+function vLibrary(){
+  const q=ui.libQ.trim().toLowerCase();
+  const list = LIBRARY.filter(x=>!q || x.school.toLowerCase().includes(q) || x.prompts.some(p=>p.p.toLowerCase().includes(q)));
+  let h='<h1>Prompt library</h1><p class="sub">Each school’s prompts, limits and prompt type, so adding a school takes one tap. In the full app this comes from a shared sheet applicants can correct. Schools change prompts every cycle, so check against the portal.</p>';
+  h += '<div class="banner info" style="margin-bottom:14px"><div class="grow small">These schools and prompts are made-up examples for this prototype.</div></div>';
+  h += '<div class="lib-s"><input id="libq" type="search" placeholder="Search schools or prompts" value="'+esc(ui.libQ)+'" data-libq="1"></div>';
+  h += '<div class="panel"><ul class="list">';
+  list.forEach(x=>{
+    const have = S.schools.some(s=>s.name===x.school);
+    h += '<li><div class="main"><h2>'+esc(x.school)+'</h2><ul style="margin:6px 0 0; padding-left:18px">'+x.prompts.map(p=>'<li style="margin-bottom:4px">'+esc(p.p)+' <span class="small muted">· '+p.limit.toLocaleString()+' '+(p.unit==="chars"?"chars":"words")+' · '+esc(FAM[p.fam])+'</span></li>').join("")+'</ul></div>'+(have?'<span class="chip good">Added</span>':'<button class="primary" data-act="lib-add" data-school="'+esc(x.school)+'">Add</button>')+'</li>';
+  });
+  if(!list.length) h += '<li class="empty">No match. Add the school by hand on the Schools tab.</li>';
+  h += '</ul></div>';
+  return h;
+}
+
+function vFoot(){
+  const hasWork = S.essays.some(e=>e.text.trim()) || S.bases.length;
+  const since = S.lastBackup ? daysUntil(S.lastBackup) : null;
+  let h='';
+  if(hasWork && !S.demo && (since==null || since<=-7)) h += '<div class="banner warn" style="margin-bottom:12px"><div class="grow small"><strong>'+(since==null?'You haven’t saved a backup yet.':'Last backup was '+Math.abs(since)+' days ago.')+'</strong> Your essays live only in this browser. Clearing site data or losing this device erases them.</div><button data-act="backup">Download backup</button></div>';
+  h += '<div class="stack" style="gap:10px"><div class="row" style="justify-content:space-between"><span>Your entries are saved only on this device.'+(S.lastBackup?' Last backup '+fmt(S.lastBackup)+'.':'')+'</span><span class="row"><button class="ghost" data-act="backup">Download backup</button><button class="ghost" data-act="restore">Restore backup</button>'+(S.demo?confirmBtn("clear","Clear examples","Erase the examples and start empty"):confirmBtn("clear","Erase everything","Erase all schools and essays on this device"))+'</span></div>'+
+    '<div class="row" style="justify-content:space-between"><span>Student-built tool. Not affiliated with AMCAS, the AAMC, or any medical school. Always check prompts, limits and deadlines in each school’s portal.</span><button class="ghost" data-act="tour">How to use this app</button></div></div>';
+  return h;
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", ev=>{
+  const tab = ev.target.closest("[data-tab]");
+  if(tab){ ev.preventDefault(); go(tab.dataset.tab); return; }
+  const el = ev.target.closest("[data-act]"); if(!el) return;
+  const a = el.dataset.act; const d = el.dataset;
+  const e = ui.essayId && essay(ui.essayId);
+  switch(a){
+    case "go-essays": go("essays"); break;
+    case "go-library": go("library"); break;
+    case "back-schools": go("schools"); break;
+    case "open-school": go("schools",{schoolId:d.id}); break;
+    case "open-essay": { const x=essay(d.id); ui.tab="schools"; go("schools",{schoolId:x.schoolId, essayId:d.id}); break; }
+    case "open-base": go("essays",{baseId:d.id}); break;
+    case "toggle-add-school": ui.addSchool=!ui.addSchool; render(); if(ui.addSchool) document.getElementById("ns-name").focus(); break;
+    case "toggle-add-prompt": ui.addPrompt=!ui.addPrompt; render(); if(ui.addPrompt) document.getElementById("np-p").focus(); break;
+    case "panel": ui.panel = d.p||null; render(); break;
+    case "start-from-base": { const b=base(e.baseId); const L=latest(b); e.text=L.text; e.basedOnV=L.v; e.localEdit=false; if(e.status==="todo") e.status="drafting"; save(); render(); toast("Copied base v"+L.v+". Trim it to "+limitL(e)+"."); break; }
+    case "rv-apply": { const b=base(e.baseId); const segs=diff(ver(b,e.basedOnV).text, latest(b).text); const loc=locate(segs,+d.i,e.text); if(loc){ e.text=applyLoc(e.text,loc); save(); render(); toast("Applied to this version"); } break; }
+    case "rv-all": { const b=base(e.baseId); const segs=diff(ver(b,e.basedOnV).text, latest(b).text); let n=0; segs.forEach((s,i)=>{ if(s.type!=="chg") return; const loc=locate(segs,i,e.text); if(loc){ e.text=applyLoc(e.text,loc); n++; } }); save(); render(); toast("Applied "+n+" change"+(n===1?"":"s")); break; }
+    case "caught-up": { const b=base(e.baseId); e.basedOnV=latest(b).v; ui.panel=null; save(); render(); toast("Marked caught up to v"+e.basedOnV); break; }
+    case "cmp-tobase": { const b=base(e.baseId); const segs=diff(b.draft,e.text); b.draft=takeB(segs,+d.i); save(); render(); toast("Sent to base (unsaved until you save a version)"); break; }
+    case "cmp-here": { const b=base(e.baseId); const segs=diff(b.draft,e.text); e.text=takeA(segs,+d.i); save(); render(); toast("Used base wording here"); break; }
+    case "cmp-save": { const b=base(e.baseId); const note=(document.getElementById("cmp-note")||{}).value||"Changes from "+school(e.schoolId).name; saveVersion(b, note); e.basedOnV=latest(b).v; save(); render(); flagToast(b); break; }
+    case "cmp-done": e.localEdit=false; ui.panel=null; save(); render(); break;
+    case "unlink": e.baseId=null; e.basedOnV=null; e.localEdit=false; ui.panel=null; save(); render(); break;
+    case "link": { const bid=document.getElementById("link-sel").value; const b=base(bid); e.baseId=bid; if(e.text.trim()){ e.basedOnV=latest(b).v; e.localEdit=true; } save(); render(); toast(e.text.trim()?"Linked. Compare with the base to line them up.":"Linked to base"); break; }
+    case "make-base": { const nb={id:id("b"), family:e.family, title:FAM[e.family]+" base", draft:e.text, versions:[{v:1,text:e.text,at:iso(today()),note:"From "+school(e.schoolId).name}]}; S.bases.push(nb); e.baseId=nb.id; e.basedOnV=1; e.localEdit=false; save(); render(); toast("Base created. Rename it on the Base essays tab."); break; }
+    case "save-ver": { const b=base(ui.baseId); if(!unsaved(b) && b.versions.length){ toast("No changes since v"+latest(b).v); break; } saveVersion(b, document.getElementById("bnote").value); save(); render(); flagToast(b); break; }
+    case "hist": ui.histV = d.v? +d.v : null; render(); break;
+    case "link-from-base": { const x=essay(d.id); const b=base(ui.baseId); x.baseId=b.id; if(x.text.trim()){ x.basedOnV=latest(b).v; x.localEdit=true; } save(); render(); break; }
+    case "lib-add": addFromLibrary(d.school); break;
+    case "ask-confirm": ui.confirm=d.key; render(); break;
+    case "cancel-confirm": ui.confirm=null; render(); break;
+    case "confirm": doConfirm(d.key); break;
+    case "backup": downloadBackup(); break;
+    case "restore": { const f=document.getElementById("restore-file"); f.value=""; f.click(); break; }
+    case "try-examples": S=seed(); save(); go("next"); toast("Examples loaded. Clear them from the bottom of the page."); break;
+    case "first-school": go("schools",{addSchool:true}); setTimeout(()=>{ const n=document.getElementById("ns-name"); if(n) n.focus(); },0); break;
+    case "tour": openTour(); break;
+  }
+});
+function saveVersion(b, note){ const v=latest(b).v+1; b.versions.push({v, text:b.draft, at:iso(today()), note:(note||"").trim()}); }
+function flagToast(b){ const n=S.essays.filter(e=>e.baseId===b.id && behind(e)).length; toast("Saved v"+latest(b).v+(n?". "+n+" school version"+(n===1?"":"s")+" flagged.":".")); }
+function doConfirm(key){
+  const [k,idv]=key.split(":"); ui.confirm=null;
+  if(k==="del-school"){ S.schools=S.schools.filter(s=>s.id!==idv); S.essays=S.essays.filter(e=>e.schoolId!==idv); save(); go("schools"); toast("School deleted"); }
+  else if(k==="del-base"){ S.bases=S.bases.filter(b=>b.id!==idv); S.essays.forEach(e=>{ if(e.baseId===idv){ e.baseId=null; e.basedOnV=null; e.localEdit=false; }}); save(); go("essays"); toast("Base deleted"); }
+  else if(k==="clear"){ S=blank(); save(); go("next"); toast("Erased. This device now has no schools or essays."); }
+}
+function downloadBackup(){
+  if(!S.demo){ S.lastBackup = iso(today()); save(); }
+  const blob = new Blob([JSON.stringify(S, null, 1)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href=url; a.download="secondaries-backup-"+iso(today())+".json";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+  render(); toast("Backup downloaded. Keep it somewhere safe, like email or cloud storage.");
+}
+document.getElementById("restore-file").addEventListener("change", ev=>{
+  const file = ev.target.files && ev.target.files[0]; if(!file) return;
+  const r = new FileReader();
+  r.onload = ()=>{ try{ const o=JSON.parse(r.result); if(!o||!Array.isArray(o.schools)||!Array.isArray(o.essays)||!Array.isArray(o.bases)) throw 0; S=o; save(); go("next"); toast("Restored "+o.schools.length+" schools and "+o.essays.length+" essays"); }catch(e){ toast("That file isn’t a backup from this app."); } };
+  r.readAsText(file);
+});
+
+/* ---------- first-time tour ---------- */
+const TOUR = [
+  {t:"Track every secondary in one place", p:"Add a school when its secondary arrives, with the date you got it. Your target is two weeks later by default; add the school’s own deadline if it has one."},
+  {t:"Write each kind of essay once", p:"Prompts that ask the same thing (diversity, a challenge, gap year) share one base essay. Each school gets its own copy, trimmed to that school’s word or character limit."},
+  {t:"Keep the copies in sync", p:"When you improve a base and save a new version, every school still on an older version is flagged. Review the changes and apply them in one tap. Fixed something in one school’s copy? Send it back to the base."},
+  {t:"Know what to work on next", p:"Do next ranks schools by due date, how much you want them, and how much writing is left. Everything stays on this device, so download a backup now and then."}
+];
+let tourStep=0, tourReturn=null;
+function renderTour(){
+  const s=TOUR[tourStep], last=tourStep===TOUR.length-1;
+  document.getElementById("tour").innerHTML='<div class="card2"><div class="step-n">'+(tourStep+1)+' of '+TOUR.length+'</div><h2 id="tour-title">'+s.t+'</h2><p>'+s.p+'</p><div class="dots" aria-hidden="true">'+TOUR.map((_,i)=>'<i class="'+(i===tourStep?'on':'')+'"></i>').join("")+'</div><div class="acts">'+(last?'<span></span>':'<button class="ghost" id="tour-skip" style="color:var(--muted)">Skip</button>')+'<div class="row">'+(tourStep?'<button id="tour-back">Back</button>':'')+'<button class="primary" id="tour-next">'+(last?'Get started':'Next')+'</button></div></div></div>';
+  document.getElementById("tour-next").focus();
+}
+function openTour(){ tourReturn=document.activeElement; tourStep=0; document.getElementById("tour").hidden=false; renderTour(); }
+function closeTour(){ document.getElementById("tour").hidden=true; try{ localStorage.setItem(TOURKEY,"1"); }catch(e){} if(tourReturn&&tourReturn.focus) tourReturn.focus(); }
+document.getElementById("tour").addEventListener("click", ev=>{
+  ev.stopPropagation();
+  const t=ev.target.closest("button")||ev.target;
+  if(t.id==="tour"||t.id==="tour-skip"){ closeTour(); return; }
+  if(t.id==="tour-back"){ tourStep=Math.max(0,tourStep-1); renderTour(); return; }
+  if(t.id==="tour-next"){ if(tourStep<TOUR.length-1){ tourStep++; renderTour(); } else closeTour(); }
+});
+document.addEventListener("keydown", ev=>{ if(ev.key==="Escape" && !document.getElementById("tour").hidden) closeTour(); });
+function addFromLibrary(name){
+  const L=LIBRARY.find(x=>x.school===name); if(!L) return;
+  const s={id:id("s"), name:L.school, received:iso(today()), turnaround:DEFAULT_TURNAROUND, hard:"", interest:2, submitted:false, fee:false, pinned:false};
+  S.schools.push(s);
+  L.prompts.forEach(p=>{ const b=S.bases.find(x=>x.family===p.fam); S.essays.push({id:id("e"), schoolId:s.id, prompt:p.p, limit:p.limit, unit:p.unit, family:p.fam, baseId: (b && p.fam!=="why")? b.id : null, basedOnV:null, text:"", status:"todo", localEdit:false}); });
+  save(); go("schools",{schoolId:s.id}); toast("Added with "+L.prompts.length+" prompts. Set the date you received it.");
+}
+document.addEventListener("submit", ev=>{
+  const f=ev.target; ev.preventDefault();
+  if(f.dataset.form==="add-school"){
+    const name=document.getElementById("ns-name").value.trim(); if(!name) return;
+    const s={id:id("s"), name, received:document.getElementById("ns-rec").value||iso(today()), turnaround:+document.getElementById("ns-turn").value||DEFAULT_TURNAROUND, hard:document.getElementById("ns-hard").value, interest:+document.getElementById("ns-int").value, submitted:false, fee:false, pinned:false};
+    S.schools.push(s); save(); go("schools",{schoolId:s.id, addPrompt:true}); toast("School added. Paste its first prompt.");
+  }
+  if(f.dataset.form==="add-prompt"){
+    const p=document.getElementById("np-p").value.trim(); if(!p) return;
+    const fam=document.getElementById("np-f").value; const b=S.bases.find(x=>x.family===fam);
+    S.essays.push({id:id("e"), schoolId:f.dataset.id, prompt:p, limit:+document.getElementById("np-l").value||0, unit:document.getElementById("np-u").value, family:fam, baseId:(b&&fam!=="why")?b.id:null, basedOnV:null, text:"", status:"todo", localEdit:false});
+    ui.addPrompt=false; save(); render(); toast(b&&fam!=="why"?"Added and linked to base “"+b.title+"”":"Prompt added");
+  }
+});
+document.addEventListener("input", ev=>{
+  const el=ev.target;
+  if(el.id==="np-p"){ const g=guessFam(el.value); const sel=document.getElementById("np-f"); if(sel && !sel.dataset.touched) sel.value=g; const b=S.bases.find(x=>x.family===g); document.getElementById("np-hint").textContent = b&&g!=="why" ? "Looks like a "+FAM[g].toLowerCase()+" prompt. It will link to your base “"+b.title+"” (v"+latest(b).v+")." : "Looks like: "+FAM[g]+". Prompts of the same type can share one base essay."; return; }
+  if(el.id==="np-f"){ el.dataset.touched="1"; return; }
+  if(el.dataset.libq){ ui.libQ=el.value; const pos=el.selectionStart; render(); const n=document.getElementById("libq"); n.focus(); try{ n.setSelectionRange(pos,pos);}catch(e){} return; }
+  const bnd=el.dataset.bind; if(!bnd) return;
+  const [kind,idv,field]=bnd.split(":");
+  if(el.type==="checkbox"||el.tagName==="SELECT"||el.type==="date"||el.type==="number") return; // handled on change
+  if(kind==="essay"){ const x=essay(idv); x[field]=el.value; if(field==="text"){ if(x.baseId && x.basedOnV) x.localEdit=true; if(x.status==="todo" && x.text.trim()) x.status="drafting"; const m=document.getElementById("m-"+x.id); if(m) m.outerHTML=meter(x); } save(); }
+  if(kind==="base"){ const b=base(idv); b[field]=el.value; if(field==="draft"){ document.getElementById("bmeter").textContent=words(b.draft)+" words · "+b.draft.length.toLocaleString()+" characters"; document.getElementById("bstate").innerHTML = unsaved(b)?'<span class="chip warn">Unsaved edits since v'+latest(b).v+'</span>':'<span class="chip">Matches v'+latest(b).v+'</span>'; } save(); }
+});
+document.addEventListener("change", ev=>{
+  const el=ev.target; const bnd=el.dataset.bind; if(!bnd) return;
+  const [kind,idv,field]=bnd.split(":");
+  let val = el.type==="checkbox"? el.checked : el.value;
+  if(field==="interest"||field==="turnaround") val = +val || (field==="turnaround"?DEFAULT_TURNAROUND:2);
+  const obj = kind==="school"? school(idv) : kind==="essay"? essay(idv) : base(idv);
+  if(!obj) return;
+  if(el.tagName==="TEXTAREA"||(el.tagName==="INPUT"&&el.type==="text")) return;
+  obj[field]=val; save(); render();
+});
+window.addEventListener("hashchange", ()=>{ const t=location.hash.slice(1); if(TABS.some(x=>x[0]===t) && t!==ui.tab) go(t); });
+const h0=location.hash.slice(1); if(TABS.some(x=>x[0]===h0)) ui.tab=h0;
+render();
+
+// Install note, tour, offline copy, and asking the browser not to evict saved essays.
+const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
+const standalone = window.navigator.standalone===true || window.matchMedia("(display-mode: standalone)").matches;
+if(ios && !standalone) document.getElementById("install-wrap").hidden=false;
+let seen=false; try{ seen = localStorage.getItem(TOURKEY)==="1"; }catch(e){}
+if(!seen && !(ios && !standalone)) openTour();
+try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+if("serviceWorker" in navigator) window.addEventListener("load", ()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); });
+})();
+</script>
+</body>
+</html>
