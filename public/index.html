@@ -262,7 +262,7 @@ const SHOW_LIBRARY = LIB.schools.length > 0;
 const FAM = {
   diversity:"Diversity & perspective", challenge:"Challenge or failure", why:"Why this school",
   gap:"Gap year / current activities", team:"Teamwork & conflict", career:"Career goals & interests",
-  service:"Service & community", ethics:"Ethical dilemma", anything:"Anything else", other:"Other"
+  service:"Service & community", ethics:"Ethical dilemma", osteo:"Why osteopathic medicine", anything:"Anything else", other:"Other"
 };
 const STATUS = {todo:"Not started", drafting:"Drafting", ready:"Ready", pasted:"In portal"};
 const DEFAULT_TURNAROUND = 14;
@@ -723,7 +723,7 @@ function vec(text, name){
   return {v, norm:Math.sqrt(norm)||1};
 }
 function cos(a,b){ let d=0; const [s1,s2]=a.v.size<b.v.size?[a,b]:[b,a]; s1.v.forEach((x,w)=>{ const y=s2.v.get(w); if(y) d+=x*y; }); return d/(a.norm*b.norm); }
-const CLUSTER_LABEL = {diversity:"a diversity or perspective essay", challenge:"a challenge or failure essay", gap:"about your gap year or current activities", team:"a teamwork or leadership essay", service:"a service or community essay", career:"about your career goals or interests", ethics:"an ethical dilemma essay", anything:"an optional “anything else” box", reapp:"a reapplicant essay", clinical:"about your clinical experience", research:"about your research", academic:"to explain academic records"};
+const CLUSTER_LABEL = {diversity:"a diversity or perspective essay", challenge:"a challenge or failure essay", gap:"about your gap year or current activities", team:"a teamwork or leadership essay", service:"a service or community essay", career:"about your career goals or interests", ethics:"an ethical dilemma essay", osteo:"why you want to be an osteopathic physician", anything:"an optional “anything else” box", reapp:"a reapplicant essay", clinical:"about your clinical experience", research:"about your research", academic:"to explain academic records"};
 function clusterKey(e){
   if(e.family==="why") return null;
   if(e.family!=="other") return e.family;
@@ -816,7 +816,7 @@ function suggPanel(list, title, mobile){
 }
 
 /* ---------- UI state ---------- */
-const ui = {tab:"next", schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, libQ:"", libState:"", libOpen:null, restore:false, pick:null, pickQ:"", pickI:0, editPrompt:false, sgAll:false, sgOpen:false};
+const ui = {tab:"next", schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, libQ:"", libState:"", libDeg:"", libOpen:null, restore:false, pick:null, pickQ:"", pickI:0, editPrompt:false, sgAll:false, sgOpen:false};
 const TABS = [["next","Do next"],["schools","Schools"],["essays","Base essays"]].concat(SHOW_LIBRARY? [["library","Prompt library"]] : []);
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function stars(n){ let h=""; for(let i=1;i<=3;i++) h+= i<=n? "●" : '<span class="off">●</span>'; return '<span class="stars" aria-label="Interest '+n+' of 3">'+h+'</span>'; }
@@ -955,7 +955,7 @@ function schoolTaken(name){ const n=(name||"").trim().toLowerCase(); return S.sc
 function pickMatches(q){
   q=(q||"").trim().toLowerCase();
   const words=q.split(/\s+/).filter(Boolean);
-  const hit=x=>{ const n=(x.name+" "+x.state).toLowerCase(); return words.every(w=>n.includes(w)); };
+  const hit=x=>{ const n=(x.name+" "+x.state+" "+(x.deg||"MD")).toLowerCase(); return words.every(w=> w==="md"||w==="do" ? (x.deg||"MD").toLowerCase()===w : n.includes(w)); };
   return (words.length? LIB.schools.filter(hit) : LIB.schools).slice(0, 60);
 }
 function pickOptions(){
@@ -972,19 +972,19 @@ function pickListHTML(){
     if(o.kind==="custom") return '<li role="option" id="pick-o'+i+'" class="custom" data-pick="custom" data-i="'+i+'"'+sel+'>'+(o.name? '+ Add “'+esc(o.name)+'” as a school not in the list' : '+ My school isn’t in the list')+'</li>';
     const taken=schoolTaken(o.name);
     const meta = taken? 'Already added' : (o.x.prompts.length? o.x.prompts.length+(o.x.prompts.length===1?' prompt':' prompts') : 'No prompts posted');
-    return '<li role="option" id="pick-o'+i+'" data-pick="lib" data-name="'+esc(o.name)+'" data-i="'+i+'"'+sel+(taken?' aria-disabled="true"':'')+'><span class="nm">'+esc(o.name)+' <span class="muted" style="font-weight:400">· '+esc(o.x.state)+'</span></span><span class="meta">'+meta+'</span></li>';
+    return '<li role="option" id="pick-o'+i+'" data-pick="lib" data-name="'+esc(o.name)+'" data-i="'+i+'"'+sel+(taken?' aria-disabled="true"':'')+'><span class="nm">'+esc(o.name)+' <span class="muted" style="font-weight:400">· '+esc(o.x.state)+(o.x.deg==="DO"?' · DO':'')+'</span></span><span class="meta">'+meta+'</span></li>';
   }).join("");
 }
 function addSchoolForm(){
   const pk=ui.pick;
   let h='<form class="panel" data-form="add-school" style="margin-bottom:16px" autocomplete="off"><div class="pb stack">';
   if(!pk){
-    h += '<div class="picker"><label class="f" for="pick-q">School</label><input id="pick-q" type="search" role="combobox" aria-expanded="true" aria-controls="pick-list" aria-autocomplete="list" aria-activedescendant="pick-o'+ui.pickI+'" placeholder="Search '+LIB.schools.length+' MD schools by name or state" value="'+esc(ui.pickQ)+'" style="width:100%"><ul class="pick-list" id="pick-list" role="listbox" aria-label="Schools">'+pickListHTML()+'</ul></div>';
+    h += '<div class="picker"><label class="f" for="pick-q">School</label><input id="pick-q" type="search" role="combobox" aria-expanded="true" aria-controls="pick-list" aria-autocomplete="list" aria-activedescendant="pick-o'+ui.pickI+'" placeholder="Search '+libCountText()+' by name, state, MD or DO" value="'+esc(ui.pickQ)+'" style="width:100%"><ul class="pick-list" id="pick-list" role="listbox" aria-label="Schools">'+pickListHTML()+'</ul></div>';
     h += '<div class="row"><button type="button" data-act="toggle-add-school">Cancel</button></div>';
     return h+'</div></form>';
   }
   const L = pk.kind==="lib" ? libFind(pk.name) : null;
-  h += '<div class="chosen"><b>'+esc(L?L.name:'')+(L?' <span class="muted" style="font-weight:400">· '+esc(L.state)+'</span>':'')+'</b>'+(L?'':'')+'<button type="button" class="ghost" data-act="pick-change">Change school</button></div>';
+  h += '<div class="chosen"><b>'+esc(L?L.name:'')+(L?' <span class="muted" style="font-weight:400">· '+esc(L.state)+(L.deg==="DO"?' · DO':'')+'</span>':'')+'</b>'+(L?'':'')+'<button type="button" class="ghost" data-act="pick-change">Change school</button></div>';
   if(!L) h += '<label class="f">School name<input id="ns-name" required value="'+esc(pk.name)+'" placeholder="Full name of the school"></label><p class="small muted" style="margin:0">This school isn’t in the prompt library, so you’ll add its prompts yourself on the next screen.</p>';
   else if(!L.prompts.length) h += '<p class="small muted" style="margin:0">'+esc(L.none||"No prompts posted")+' on its SDN thread. You can add prompts yourself after adding the school.</p>';
   else {
@@ -1057,6 +1057,7 @@ function addPromptForm(s, missing){
 }
 function guessFam(p){
   const t=p.toLowerCase();
+  if(/osteopath|observ\w* a do\b/.test(t) && !/^why .*(school|college|attend)/.test(t)) return "osteo";
   if(/why .*(us|school|our|interest)|draws you|specifically|why [A-Z]/i.test(p) || /^why\b/.test(t)) return "why";
   if(/divers|background|perspective|unique|different from|contribute to/.test(t)) return "diversity";
   if(/challeng|fail|setback|adversit|difficult|obstacle/.test(t)) return "challenge";
@@ -1213,22 +1214,24 @@ function vBase(b){
   return h;
 }
 
+function libCounts(){ const md=LIB.schools.filter(x=>x.deg!=="DO").length, dO=LIB.schools.filter(x=>x.deg==="DO").length; return {md, dO, all:LIB.schools.length}; }
+function libCountText(){ const c=libCounts(); return c.dO ? c.all+" schools ("+c.md+" MD, "+c.dO+" DO)" : c.all+" MD schools"; }
 function libFind(name){ const n=(name||"").trim().toLowerCase(); return LIB.schools.find(x=>x.name.toLowerCase()===n); }
 function limTxt(p){ return p.limit ? p.limit.toLocaleString()+" "+(p.unit==="chars"?"chars":"words") : "No limit given"; }
 function vLibrary(){
   const q=ui.libQ.trim().toLowerCase();
   const states=[...new Set(LIB.schools.map(x=>x.state))].sort();
-  const list = LIB.schools.filter(x=>(!ui.libState || x.state===ui.libState) && (!q || x.name.toLowerCase().includes(q) || x.prompts.some(p=>p.p.toLowerCase().includes(q))));
+  const list = LIB.schools.filter(x=>(!ui.libState || x.state===ui.libState) && (!ui.libDeg || (x.deg||"MD")===ui.libDeg) && (!q || x.name.toLowerCase().includes(q) || x.prompts.some(p=>p.p.toLowerCase().includes(q))));
   const withP = LIB.schools.filter(x=>x.prompts.length).length;
-  let h='<h1>Prompt library</h1><p class="sub">'+LIB.schools.length+' MD schools, with prompts for '+withP+'. Add a school and its prompts, limits and prompt types come with it, already linked to your matching base essays.</p>';
+  let h='<h1>Prompt library</h1><p class="sub">'+libCountText()+', with prompts for '+withP+'. Add a school and its prompts, limits and prompt types come with it, already linked to your matching base essays.</p>';
   h += '<div class="banner info small" style="margin-bottom:14px"><div class="grow">Prompts are from the '+esc(LIB.cycle)+' cycle, as applicants posted them on each school’s Student Doctor Network thread (collected '+fmt(LIB.updated)+'). Schools can change wording and limits, so check each one in the school’s portal.</div></div>';
-  h += '<div class="lib-s"><input id="libq" type="search" placeholder="Search schools or prompt wording" value="'+esc(ui.libQ)+'" data-libq="1"><select id="lib-state" aria-label="State" data-libstate="1"><option value="">All states</option>'+states.map(st=>'<option'+(ui.libState===st?' selected':'')+'>'+st+'</option>').join("")+'</select></div>';
+  h += '<div class="lib-s"><input id="libq" type="search" placeholder="Search schools or prompt wording" value="'+esc(ui.libQ)+'" data-libq="1"><select id="lib-deg" aria-label="MD or DO" data-libdeg="1"><option value="">MD and DO</option><option value="MD"'+(ui.libDeg==="MD"?' selected':'')+'>MD only</option><option value="DO"'+(ui.libDeg==="DO"?' selected':'')+'>DO only</option></select><select id="lib-state" aria-label="State" data-libstate="1"><option value="">All states</option>'+states.map(st=>'<option'+(ui.libState===st?' selected':'')+'>'+st+'</option>').join("")+'</select></div>';
   h += '<p class="small muted" style="margin:-4px 0 10px">'+list.length+(list.length===1?' school':' schools')+'</p>';
   h += '<div class="panel"><ul class="list">';
   list.forEach(x=>{
     const have = S.schools.some(s=>s.name.toLowerCase()===x.name.toLowerCase());
     const open = ui.libOpen===x.name || (q && x.prompts.some(p=>p.p.toLowerCase().includes(q)));
-    h += '<li><div class="main"><div class="row"><h2>'+esc(x.name)+'</h2><span class="chip">'+esc(x.state)+'</span></div>';
+    h += '<li><div class="main"><div class="row"><h2>'+esc(x.name)+'</h2><span class="chip">'+esc(x.state)+'</span>'+(x.deg==="DO"?'<span class="chip acc">DO</span>':'')+'</div>';
     if(!x.prompts.length) h += '<div class="small muted" style="margin-top:4px">'+esc(x.none||"No prompts posted")+'. <a href="'+esc(x.url)+'" target="_blank" rel="noopener">SDN thread</a></div>';
     else {
       const fams=[...new Set(x.prompts.map(p=>p.fam))];
@@ -1365,8 +1368,8 @@ function tourCards(){
   return [
     {t:"Your secondaries, in one place", p:"Track every school’s prompts and due dates, write each kind of essay once and reuse it, and see what to work on next. Here’s how it works in about a minute.",
      d:'<div class="r"><span class="fake">Do next</span><span class="fake">Schools</span><span class="fake">Base essays</span><span class="fake">Prompt library</span></div><div class="muted">Four tabs. Do next is home base.</div>'},
-    {t:"Add a school when its secondary arrives", p:"Click <b>Add school</b> and search the list of 165 MD schools. Pick one to see its prompts and limits, uncheck any you won’t write, and add it. School not listed? Type its name and add it yourself, then paste in the prompts.",
-     d:'<div class="r"><span class="fake" style="flex:1; font-weight:400; color:var(--muted)">Search 165 MD schools…</span></div><div class="r"><span class="fake good">✓ Why us · 300 words</span><span class="fake good">✓ Challenge · 2,000 chars</span></div>'},
+    {t:"Add a school when its secondary arrives", p:"Click <b>Add school</b> and search the list of "+libCountText()+". Pick one to see its prompts and limits, uncheck any you won’t write, and add it. School not listed? Type its name and add it yourself, then paste in the prompts.",
+     d:'<div class="r"><span class="fake" style="flex:1; font-weight:400; color:var(--muted)">Search '+libCountText()+'…</span></div><div class="r"><span class="fake good">✓ Why us · 300 words</span><span class="fake good">✓ Challenge · 2,000 chars</span></div>'},
     {t:"Write each kind of essay once", p:"Many schools ask the same things: diversity, a challenge, your gap year. Write one <b>base essay</b> for each kind, then each school gets its own copy that you trim to its limit. “Why us” essays are written fresh for each school.",
      d:'<div class="r"><span class="fake acc">Base: Challenge v2</span><span>→</span><span class="fake">WashU · 3,000 chars</span><span class="fake">Duke · 400 words</span></div>'},
     {t:"Keep the copies in sync", p:"Improve a base and save a new version, and every school still on the older one is flagged. Click <b>Review changes</b> to apply edits in one click. Fixed something in one school’s copy? <b>Compare with base</b> sends it back to the base.",
@@ -1465,6 +1468,7 @@ document.addEventListener("input", ev=>{
   if(el.id==="np-f"){ el.dataset.touched="1"; return; }
   if(el.id==="pick-q"){ ui.pickQ=el.value; ui.pickI=0; const l=document.getElementById("pick-list"); if(l) l.innerHTML=pickListHTML(); el.setAttribute("aria-activedescendant","pick-o0"); return; }
   if(el.dataset.libstate){ ui.libState=el.value; render(); return; }
+  if(el.dataset.libdeg){ ui.libDeg=el.value; render(); return; }
   if(el.dataset.libq){ ui.libQ=el.value; const pos=el.selectionStart; render(); const n=document.getElementById("libq"); n.focus(); try{ n.setSelectionRange(pos,pos);}catch(e){} return; }
   const bnd=el.dataset.bind; if(!bnd) return;
   const [kind,idv,field]=bnd.split(":");
