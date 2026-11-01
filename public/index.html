@@ -90,6 +90,14 @@ details.side-m > summary::-webkit-details-marker{display:none}
 details.side-m > summary::after{content:"Show"; margin-left:auto; font-weight:600; color:var(--accent); font-size:13px}
 details.side-m[open] > summary::after{content:"Hide"}
 details.side-m .sugg{padding:0 12px 12px}
+.brief{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:14px 16px; margin-bottom:16px; display:grid; grid-template-columns:auto minmax(0,1fr); gap:8px 14px; align-items:baseline}
+.brief dt{font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); white-space:nowrap}
+.brief dd{margin:0; font-size:15px; line-height:1.45}
+.brief dd .od{color:var(--bad); font-weight:600}
+.brief dd button{margin-left:6px; vertical-align:baseline; font-size:13px; padding:4px 10px}
+.brief .first dt{color:var(--accent)}
+.brief .first dd{font-weight:600}
+@media (max-width:520px){ .brief{grid-template-columns:minmax(0,1fr)} .brief dt{margin-top:4px} }
 .badge{display:inline-flex; min-width:20px; height:20px; padding:0 6px; border-radius:10px; background:var(--accent); color:var(--accent-ink); font-size:12px; font-weight:700; align-items:center; justify-content:center}
 h1{font-family:var(--f-display); font-weight:700; font-size:26px; line-height:1.15; margin:0 0 4px; text-wrap:balance; letter-spacing:-.01em}
 h2{font-size:17px; margin:0; font-weight:700}
@@ -543,25 +551,25 @@ function suggestions(onlyEssay){
     if(!b && bases.length && members.every(e=>e.baseId===bases[0].id)) return; // all linked to a base still being written
     const written = members.filter(e=>e.text.trim()).sort((x,y)=>words(y.text)-words(x.text));
     const plist = '<details class="small"><summary style="cursor:pointer; color:var(--accent); font-weight:600">See the '+members.length+' prompts</summary><ul style="margin:6px 0 0; padding-left:16px">'+members.map(e=>'<li style="margin-bottom:4px"><b>'+esc(schoolShort(e.schoolId))+'</b> ('+limitL(e)+'): '+esc(shortP(e.prompt))+'</li>').join("")+'</ul></details>';
-    let label, msg, acts;
+    let label, msg, acts, brief="";
     const head = schools.size+' of your schools ask '+(CLUSTER_LABEL[k]||"a similar question")+': '+esc(listSchools(members))+'.';
     if(b){
       label="Link to your base"; msg=head+' Your base “'+esc(b.title)+'” covers '+(members.length-unlinked.length)+'; link the other '+unlinked.length+' so they start from it and stay in sync.';
       acts=[["Link "+unlinked.length+" to “"+b.title+"”","sg-link-all",{ids:unlinked.map(e=>e.id).join(","), base:b.id}]];
     } else if(written.length){
       const src=written[0];
-      label="Reuse what you wrote"; msg=head+' You’ve already written '+esc(schoolShort(src.schoolId))+'’s ('+words1(src)+'). Make it the base and the others can start from it, trimmed to '+esc(limitRange(members.filter(e=>e.id!==src.id)))+'.';
+      label="Reuse what you wrote"; brief='Turn your '+esc(schoolShort(src.schoolId))+' '+esc((FAM[fam]||"").toLowerCase()||"essay")+(fam==="other"?"":" essay")+' into a base for '+schools.size+' schools'; msg=head+' You’ve already written '+esc(schoolShort(src.schoolId))+'’s ('+words1(src)+'). Make it the base and the others can start from it, trimmed to '+esc(limitRange(members.filter(e=>e.id!==src.id)))+'.';
       acts=[["Make "+schoolShort(src.schoolId)+"’s the base","sg-cluster-base",{from:src.id, ids:members.map(e=>e.id).join(",")}]];
     } else {
       label="Write once, use at "+schools.size+" schools"; msg=head+' Write one base essay and trim it for each limit ('+esc(limitRange(members))+').';
       acts=[["Start a base for these","sg-cluster-new",{ids:members.map(e=>e.id).join(","), fam, k}]];
     }
-    out.push({key, kind:"", label, score:(written.length?3:b?2.5:2)+schools.size/10-(k==="anything"?1.2:0), html:'<p>'+msg+'</p>'+plist, acts});
+    out.push({key, kind:"", label, brief, score:(written.length?3:b?2.5:2)+schools.size/10-(k==="anything"?1.2:0), html:'<p>'+msg+'</p>'+plist, acts});
   });
   crossPairs(es).forEach(({a,b,c,dupe})=>{
     if(onlyEssay && a.id!==onlyEssay && b.id!==onlyEssay) return;
     if(dupe){ const k=sKey("dupe",a.id,b.id); if(dis.has(k)) return;
-      out.push({key:k, kind:"warn", label:"Possible duplicate", score:5,
+      out.push({key:k, kind:"warn", label:"Possible duplicate", brief:"Check a possible duplicate prompt at "+esc(schoolShort(a.schoolId)), score:5,
         html:'<p>'+esc(schoolShort(a.schoolId))+' has two prompts that read almost the same ('+pct(c)+'% match). One may have been added twice.</p><q>'+esc(shortP(a.prompt))+'</q>',
         acts:[["Open the first","open-essay",{id:a.id}],["Open the second","open-essay",{id:b.id}]]}); return; }
     const k=sKey("type",a.id,b.id); if(dis.has(k)) return;
@@ -613,7 +621,7 @@ function render(){
   if(showSide){
     const list=suggestions();
     side = '<aside class="side" aria-label="Suggestions">'+suggPanel(list,"Suggestions")+'</aside>';
-    if(list.length) h = '<details class="side-m"'+(ui.sgOpen?' open':'')+' id="side-m"><summary>Suggestions <span class="badge">'+list.length+'</span></summary>'+suggPanel(list,"Suggestions",true)+'</details>'+h;
+    if(list.length){ const dm='<details class="side-m"'+(ui.sgOpen?' open':'')+' id="side-m"><summary>Suggestions <span class="badge">'+list.length+'</span></summary>'+suggPanel(list,"Suggestions",true)+'</details>'; h = h.includes('<!--SIDE-M-->') ? h.replace('<!--SIDE-M-->', dm) : dm+h; }
   }
   m.innerHTML = '<div class="layout'+(showSide?' has-side':'')+'"><div style="min-width:0">'+h+'</div>'+side+'</div>';
   const dm=document.getElementById("side-m"); if(dm) dm.addEventListener("toggle",()=>{ ui.sgOpen=dm.open; });
@@ -621,14 +629,71 @@ function render(){
 }
 
 /* ---------- views ---------- */
+function dayLabel(iso_){
+  const n=daysUntil(iso_); if(n===0) return "today"; if(n===1) return "tomorrow";
+  if(n>1 && n<7) return parse(iso_).toLocaleDateString(undefined,{weekday:"short"});
+  return fmt(iso_);
+}
+function nameList(items){ const n=items.length; if(n<=3) return items.join(", ").replace(/, ([^,]*)$/, n>2?", and $1":" and $1"); return items.slice(0,3).join(", ")+", and "+(n-3)+" more"; }
+function vBrief(rows){
+  const all=S.schools; if(!all.length) return "";
+  const open=rows.map(r=>({s:r.s, p:r.p}));
+  const recent=all.filter(s=>s.submitted && s.submittedAt && daysUntil(s.submittedAt)>=-6).length;
+  if(!open.length) return '<dl class="brief"><dt>Status</dt><dd>All '+all.length+(all.length===1?' school':' schools')+' submitted.'+(recent?' '+recent+' this week.':'')+' Add a school when another secondary arrives.</dd></dl>';
+  let h='<dl class="brief">';
+  // line 1: what's due
+  const dated=open.filter(r=>r.p.left!=null).sort((a,b)=>a.p.left-b.p.left);
+  const over=dated.filter(r=>r.p.left<0);
+  const has7=dated.some(r=>r.p.left>=0 && r.p.left<=7);
+  const W=has7?7:14;
+  const soon=dated.filter(r=>r.p.left>=0 && r.p.left<=W);
+  const parts=[];
+  if(soon.length){ const byDay=[]; soon.forEach(r=>{ const lab=dayLabel(r.p.d.date); const g=byDay.find(x=>x.lab===lab); g? g.names.push(schoolShort(r.s.id)) : byDay.push({lab, names:[schoolShort(r.s.id)]}); });
+    const txt = byDay.length>3 ? nameList(soon.map(r=>schoolShort(r.s.id)))+', first one '+byDay[0].lab : byDay.map(g=>nameList(g.names)+' '+g.lab).join('; ');
+    parts.push(byDay.length===1 ? (soon.length===1? esc(byDay[0].names[0])+' due '+byDay[0].lab : soon.length+' schools due '+byDay[0].lab+' ('+esc(nameList(byDay[0].names))+')') : soon.length+' schools due ('+esc(txt)+')'); }
+  if(over.length) parts.push('<span class="od">'+over.length+' overdue ('+esc(nameList(over.map(r=>schoolShort(r.s.id)+' by '+Math.abs(r.p.left)+(Math.abs(r.p.left)===1?' day':' days'))))+')</span>');
+  if(!parts.length){ const nx=dated.find(r=>r.p.left>W); parts.push('Nothing due in the next 2 weeks'+(nx?'. Next up: '+esc(schoolShort(nx.s.id))+' on '+fmt(nx.p.d.date):'')); }
+  h+='<dt>'+(has7||!soon.length?'This week':'Next 2 weeks')+'</dt><dd>'+parts.join(', ')+'.'+(recent?' <span class="muted">Submitted '+recent+' this week.</span>':'')+'</dd>';
+  // line 2: what's left to write
+  const es=S.essays.filter(e=>{ const sc=school(e.schoolId); return sc && !sc.submitted; });
+  const todo=es.filter(e=>e.status==="todo"||e.status==="drafting");
+  const req=todo.filter(e=>!e.optional), opt=todo.length-req.length;
+  const inProg=req.filter(e=>e.status==="drafting").length;
+  const fromBase=req.filter(e=>e.status==="todo" && hasBaseText(e)).length;
+  const scratch=req.length-inProg-fromBase;
+  const toPaste=es.filter(e=>e.status==="ready").length;
+  const bh=es.filter(behind).length;
+  let left;
+  if(!req.length) left = 'All required essays are written'+(opt?' ('+opt+' optional left)':'')+'.';
+  else {
+    const bits=[]; if(inProg) bits.push(inProg+' in progress'); if(fromBase) bits.push(fromBase+' can start from a base'); if(scratch) bits.push(scratch+' from scratch');
+    left = req.length+(req.length===1?' essay':' essays')+(bits.length>1?': '+bits.join(', '):bits.length?' ('+bits[0]+')':'')+'.'+(opt?' Plus '+opt+' optional.':'');
+  }
+  const extra=[]; if(toPaste) extra.push(toPaste+' ready to paste into portals'); if(bh) extra.push('<a href="#essays" data-tab="essays">'+bh+(bh===1?' is':' are')+' behind its base</a>');
+  h+='<dt>Left to write</dt><dd>'+left+(extra.length?' <span class="muted">'+extra.join('; ')+'.</span>':'')+'</dd>';
+  // line 3: the single best next move
+  const top=rows[0]; const tp=top&&top.p;
+  let first='', btn='';
+  const sg=(suggestions()||[])[0];
+  const urgent = tp && tp.left!=null && tp.left<=2;
+  if(!urgent && sg && sg.brief){
+    const a=sg.acts[0]; first=sg.brief+'.';
+    btn='<button class="primary" data-act="'+a[1]+'"'+Object.entries(a[2]).map(([k,v])=>' data-'+k+'="'+esc(v)+'"').join("")+'>'+esc(a[0])+'</button>';
+  } else if(tp && tp.next){
+    first=esc(schoolShort(top.s.id))+': '+tp.next.html.replace(/<\/?b>/g,"")+(tp.left!=null&&tp.left<0?' ('+Math.abs(tp.left)+(Math.abs(tp.left)===1?' day':' days')+' overdue)':tp.left!=null&&tp.left<=2?' (due '+dayLabel(tp.d.date)+')':'')+'.';
+    first=first.charAt(0).toUpperCase()+first.slice(1);
+    if(tp.next.e) btn='<button class="primary" data-act="open-essay" data-id="'+tp.next.e.id+'">Start</button>';
+    else btn='<button class="primary" data-act="open-school" data-id="'+top.s.id+'">Open</button>';
+  }
+  if(first) h+='<div class="first" style="display:contents"><dt>Do first</dt><dd>'+first+btn+'</dd></div>';
+  return h+'</dl>';
+}
 function vNext(){
   const rows = S.schools.filter(s=>!s.submitted).map(s=>({s, p:plan(s)})).sort((a,b)=>b.p.score-a.p.score);
   const done = S.schools.filter(s=>s.submitted);
   const flagged = S.essays.filter(behind);
   let h = '<h1>Do next</h1><p class="sub">Schools ranked by how soon they are due, how much you want them, and how much writing is left. Schools you can finish quickly move up.</p>';
-  if(flagged.length){
-    h += '<div class="banner warn" style="margin-bottom:16px"><div class="grow"><strong>'+flagged.length+(flagged.length===1?' school version is':' school versions are')+' behind its base essay.</strong> You changed a base after adapting it for these schools.</div><button data-act="go-essays">Review in Base essays</button></div>';
-  }
+  h += vBrief(rows) + '<!--SIDE-M-->';
   if(!S.schools.length) h += '<div class="panel hero-empty"><h2>Add a school when its secondary arrives</h2><p>Pick it from the prompt library and its prompts come with it, or paste them yourself. Prompts that ask the same thing at different schools can share one base essay, and this list will rank your schools by what to work on first.</p><div class="row"><button class="primary" data-act="first-school">Add your first school</button>'+(SHOW_LIBRARY?'<button data-act="go-library">Browse the prompt library</button>':'')+'<button data-act="try-examples">Try with examples</button></div><p class="small">Everything you enter stays on this device. Nothing is sent anywhere.</p></div>';
   else if(!rows.length) h += '<div class="panel empty">Nothing open. Add a school when a secondary arrives.</div>';
   else {
@@ -1142,7 +1207,9 @@ document.addEventListener("change", ev=>{
   const obj = kind==="school"? school(idv) : kind==="essay"? essay(idv) : base(idv);
   if(!obj) return;
   if(el.tagName==="TEXTAREA"||(el.tagName==="INPUT"&&el.type==="text")) return;
-  obj[field]=val; save(); render();
+  obj[field]=val;
+  if(kind==="school" && field==="submitted") obj.submittedAt = val ? iso(today()) : null;
+  save(); render();
 });
 function choosePick(li){
   if(!li || li.getAttribute("aria-disabled")==="true"){ if(li) toast("Already on your list"); return; }
@@ -1161,6 +1228,8 @@ document.addEventListener("keydown", ev=>{
   } else if(ev.key==="Enter"){ ev.preventDefault(); choosePick(opts[ui.pickI]); }
   else if(ev.key==="Escape"){ ui.addSchool=false; render(); }
 });
+let lastDay=iso(today());
+document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState!=="visible") return; const a=document.activeElement; if(a && (a.tagName==="TEXTAREA" || a.tagName==="INPUT")) return; if(iso(today())!==lastDay){ lastDay=iso(today()); } render(); });
 window.addEventListener("hashchange", ()=>{ const t=location.hash.slice(1); if(TABS.some(x=>x[0]===t) && t!==ui.tab) go(t); });
 const h0=location.hash.slice(1); if(TABS.some(x=>x[0]===h0)) ui.tab=h0;
 render();
