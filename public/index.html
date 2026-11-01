@@ -86,7 +86,7 @@ button.danger{color:var(--bad)}
 button:disabled{opacity:.5; cursor:not-allowed}
 button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible{outline:2.5px solid var(--accent); outline-offset:2px}
 input, select, textarea{font:inherit; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:7px 9px; min-width:0}
-label.f{display:flex; flex-direction:column; gap:4px; font-size:13px; font-weight:600; color:var(--muted)}
+label.f, div.f{display:flex; flex-direction:column; gap:4px; font-size:13px; font-weight:600; color:var(--muted)}
 label.f input, label.f select{font-weight:400; color:var(--ink)}
 label.chk{display:inline-flex; gap:8px; align-items:center; font-weight:600; font-size:14px}
 .panel{background:var(--surface); border:1px solid var(--line); border-radius:var(--r)}
@@ -143,6 +143,22 @@ details.how summary{cursor:pointer; font-weight:600; color:var(--accent)}
 details.how div{padding-top:8px; color:var(--muted); max-width:65ch}
 .toast{position:fixed; left:50%; transform:translateX(-50%); bottom:calc(20px + env(safe-area-inset-bottom,0px)); background:var(--ink); color:var(--bg); padding:9px 14px; border-radius:8px; font-weight:600; font-size:14px; z-index:20; max-width:calc(100% - 32px)}
 .empty{padding:18px 16px; color:var(--muted)}
+.picker{position:relative}
+.pick-list{list-style:none; margin:6px 0 0; padding:4px; border:1px solid var(--line); border-radius:8px; background:var(--surface); max-height:320px; overflow-y:auto}
+.pick-list li{padding:8px 10px; border-radius:6px; cursor:pointer; display:flex; gap:10px; align-items:baseline; justify-content:space-between}
+.pick-list li .nm{font-weight:600; min-width:0}
+.pick-list li .meta{font-size:12px; color:var(--muted); white-space:nowrap}
+.pick-list li[aria-selected="true"], .pick-list li:hover{background:var(--accent-soft)}
+.pick-list li[aria-disabled="true"]{cursor:default; opacity:.55; background:none}
+.pick-list li.custom{border-top:1px solid var(--line-soft); margin-top:4px; color:var(--accent)}
+.chosen{display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:10px 12px; border-radius:8px; background:var(--accent-soft)}
+.chosen b{flex:1; min-width:0}
+.plist{list-style:none; margin:0; padding:0; border:1px solid var(--line-soft); border-radius:8px}
+.plist li{padding:10px 12px; border-top:1px solid var(--line-soft)}
+.plist li:first-child{border-top:0}
+.plist label{display:flex; gap:10px; align-items:flex-start; cursor:pointer}
+.plist input{margin-top:4px; flex:none}
+.plist .pm{font-size:12px; color:var(--muted); margin-top:2px}
 .lib-s{display:flex; gap:10px; align-items:center; margin-bottom:14px}
 .lib-s input{flex:1}
 textarea.code{font-family:ui-monospace, Menlo, monospace; font-size:12px; width:100%; min-height:90px}
@@ -415,13 +431,13 @@ function locate(segs, i, target){
 function applyLoc(text, loc){ return text.slice(0,loc.at) + loc.newStr + text.slice(loc.at+loc.oldStr.length); }
 
 /* ---------- UI state ---------- */
-const ui = {tab:"next", schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, libQ:"", libState:"", libOpen:null, restore:false};
+const ui = {tab:"next", schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, libQ:"", libState:"", libOpen:null, restore:false, pick:null, pickQ:"", pickI:0, editPrompt:false};
 const TABS = [["next","Do next"],["schools","Schools"],["essays","Base essays"]].concat(SHOW_LIBRARY? [["library","Prompt library"]] : []);
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function stars(n){ let h=""; for(let i=1;i<=3;i++) h+= i<=n? "●" : '<span class="off">●</span>'; return '<span class="stars" aria-label="Interest '+n+' of 3">'+h+'</span>'; }
 let toastT;
 function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, 2400); }
-function go(tab, extra){ Object.assign(ui, {schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false}, extra||{}); ui.tab=tab; if(location.hash!=="#"+tab){ try{ history.replaceState(null,"","#"+tab);}catch(e){ location.hash=tab; } } render(); window.scrollTo(0,0); }
+function go(tab, extra){ Object.assign(ui, {schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, editPrompt:false, pick:null, pickQ:"", pickI:0}, extra||{}); ui.tab=tab; if(location.hash!=="#"+tab){ try{ history.replaceState(null,"","#"+tab);}catch(e){ location.hash=tab; } } render(); window.scrollTo(0,0); }
 
 function render(){
   document.getElementById("today-l").textContent = "Today: " + today().toLocaleDateString(undefined,{weekday:"short", month:"short", day:"numeric"});
@@ -483,14 +499,59 @@ function vSchools(){
   h += '</ul></div>';
   return h;
 }
+function schoolTaken(name){ const n=(name||"").trim().toLowerCase(); return S.schools.some(s=>s.name.toLowerCase()===n); }
+function pickMatches(q){
+  q=(q||"").trim().toLowerCase();
+  const words=q.split(/\s+/).filter(Boolean);
+  const hit=x=>{ const n=(x.name+" "+x.state).toLowerCase(); return words.every(w=>n.includes(w)); };
+  return (words.length? LIB.schools.filter(hit) : LIB.schools).slice(0, 60);
+}
+function pickOptions(){
+  const q=ui.pickQ.trim();
+  const opts=pickMatches(q).map(x=>({kind:"lib", name:x.name, x}));
+  if(q && !LIB.schools.some(x=>x.name.toLowerCase()===q.toLowerCase())) opts.push({kind:"custom", name:q});
+  if(!q) opts.push({kind:"custom", name:""});
+  return opts;
+}
+function pickListHTML(){
+  const opts=pickOptions(); if(ui.pickI>=opts.length) ui.pickI=Math.max(0,opts.length-1);
+  return opts.map((o,i)=>{
+    const sel = i===ui.pickI ? ' aria-selected="true"' : ' aria-selected="false"';
+    if(o.kind==="custom") return '<li role="option" id="pick-o'+i+'" class="custom" data-pick="custom" data-i="'+i+'"'+sel+'>'+(o.name? '+ Add “'+esc(o.name)+'” as a school not in the list' : '+ My school isn’t in the list')+'</li>';
+    const taken=schoolTaken(o.name);
+    const meta = taken? 'Already added' : (o.x.prompts.length? o.x.prompts.length+(o.x.prompts.length===1?' prompt':' prompts') : 'No prompts posted');
+    return '<li role="option" id="pick-o'+i+'" data-pick="lib" data-name="'+esc(o.name)+'" data-i="'+i+'"'+sel+(taken?' aria-disabled="true"':'')+'><span class="nm">'+esc(o.name)+' <span class="muted" style="font-weight:400">· '+esc(o.x.state)+'</span></span><span class="meta">'+meta+'</span></li>';
+  }).join("");
+}
 function addSchoolForm(){
-  return '<form class="panel" data-form="add-school" style="margin-bottom:16px"><div class="pb stack"><div class="grid-f">'+
-    '<label class="f">School name<input id="ns-name" required list="lib-names" autocomplete="off" placeholder="Start typing a school"></label><datalist id="lib-names">'+LIB.schools.map(x=>'<option value="'+esc(x.name)+'"></option>').join("")+'</datalist>'+
+  const pk=ui.pick;
+  let h='<form class="panel" data-form="add-school" style="margin-bottom:16px" autocomplete="off"><div class="pb stack">';
+  if(!pk){
+    h += '<div class="picker"><label class="f" for="pick-q">School</label><input id="pick-q" type="search" role="combobox" aria-expanded="true" aria-controls="pick-list" aria-autocomplete="list" aria-activedescendant="pick-o'+ui.pickI+'" placeholder="Search '+LIB.schools.length+' MD schools by name or state" value="'+esc(ui.pickQ)+'" style="width:100%"><ul class="pick-list" id="pick-list" role="listbox" aria-label="Schools">'+pickListHTML()+'</ul></div>';
+    h += '<div class="row"><button type="button" data-act="toggle-add-school">Cancel</button></div>';
+    return h+'</div></form>';
+  }
+  const L = pk.kind==="lib" ? libFind(pk.name) : null;
+  h += '<div class="chosen"><b>'+esc(L?L.name:'')+(L?' <span class="muted" style="font-weight:400">· '+esc(L.state)+'</span>':'')+'</b>'+(L?'':'')+'<button type="button" class="ghost" data-act="pick-change">Change school</button></div>';
+  if(!L) h += '<label class="f">School name<input id="ns-name" required value="'+esc(pk.name)+'" placeholder="Full name of the school"></label><p class="small muted" style="margin:0">This school isn’t in the prompt library, so you’ll add its prompts yourself on the next screen.</p>';
+  else if(!L.prompts.length) h += '<p class="small muted" style="margin:0">'+esc(L.none||"No prompts posted")+' on its SDN thread. You can add prompts yourself after adding the school.</p>';
+  else {
+    h += '<div class="stack" style="gap:8px"><div class="row" style="justify-content:space-between"><h3>Prompts to add</h3><span class="row"><button type="button" class="ghost small" data-act="pick-all" data-v="1">Select all</button><button type="button" class="ghost small" data-act="pick-all" data-v="0">Select none</button></span></div>'+
+      '<ul class="plist">'+L.prompts.map((p,i)=>'<li><label><input type="checkbox" class="pick-p" value="'+i+'" checked><span><span>'+esc(p.p)+'</span><div class="pm">'+limTxt(p)+' · '+esc(FAM[p.fam]||"Other")+(p.opt?' · optional':'')+(p.group?' · '+esc(p.group):'')+'</div></span></label></li>').join("")+'</ul>'+
+      '<p class="small muted" style="margin:0">Uncheck any you won’t write. You can add or remove prompts later on the school’s page. Prompts come from the school’s <a href="'+esc(L.url)+'" target="_blank" rel="noopener">SDN thread</a>; check them against the portal.</p></div>';
+  }
+  h += '<div class="grid-f">'+
     '<label class="f">Secondary received<input id="ns-rec" type="date" value="'+iso(today())+'"></label>'+
     '<label class="f">Turnaround (days)<input id="ns-turn" type="number" min="1" max="60" value="'+DEFAULT_TURNAROUND+'"></label>'+
     '<label class="f">School deadline (optional)<input id="ns-hard" type="date"></label>'+
     '<label class="f">Interest<select id="ns-int"><option value="3">Top choice</option><option value="2" selected>Middle</option><option value="1">Lower</option></select></label>'+
     '</div><div class="row"><button class="primary" type="submit">Add school</button><button type="button" data-act="toggle-add-school">Cancel</button></div></div></form>';
+  return h;
+}
+function libPromptsMissing(s){
+  const L=libFind(s.libName||s.name); if(!L) return [];
+  const have=new Set(essaysOf(s.id).map(e=>e.prompt.trim()));
+  return L.prompts.map((p,i)=>({p,i})).filter(o=>!have.has(o.p.p.trim()));
 }
 
 function vSchool(s){
@@ -506,8 +567,10 @@ function vSchool(s){
     '<label class="f">Interest<select id="int-'+s.id+'" data-bind="school:'+s.id+':interest">'+[[3,"Top choice"],[2,"Middle"],[1,"Lower"]].map(([v,l])=>'<option value="'+v+'"'+(s.interest===v?' selected':'')+'>'+l+'</option>').join("")+'</select></label>'+
     '<div class="f" style="gap:8px"><label class="chk"><input type="checkbox" id="sub-'+s.id+'" data-bind="school:'+s.id+':submitted" '+(s.submitted?'checked':'')+'> Submitted</label><label class="chk"><input type="checkbox" id="fee-'+s.id+'" data-bind="school:'+s.id+':fee" '+(s.fee?'checked':'')+'> Fee paid</label></div>'+
     '</div></div>';
-  h += '<div class="panel"><div class="ph"><h2 style="flex:1">Essays</h2><button data-act="toggle-add-prompt">Add prompt</button></div>';
-  if(ui.addPrompt) h += addPromptForm(s);
+  const missing=libPromptsMissing(s);
+  h += '<div class="panel"><div class="ph"><h2 style="flex:1">Essays</h2><button data-act="toggle-add-prompt">'+(ui.addPrompt?'Close':'Add prompt')+'</button></div>';
+  if(ui.addPrompt) h += addPromptForm(s, missing);
+  else if(missing.length && es.length) h += '<div class="pb small muted" style="border-bottom:1px solid var(--line-soft)">'+(missing.length===1?'1 more prompt from the library isn’t':missing.length+' more prompts from the library aren’t')+' on your list. <button class="ghost small" data-act="toggle-add-prompt" style="padding:0">Show them</button></div>';
   if(!es.length) h += '<div class="empty">No prompts yet. Add each prompt from the school’s secondary.</div>';
   else {
     h += '<table class="etable"><tbody>';
@@ -516,7 +579,7 @@ function vSchool(s){
       h += '<tr><td style="width:46%"><div class="prompt-t">'+esc(shortP(e.prompt))+'</div><div class="chips"><span class="chip">'+esc(FAM[e.family]||"Other")+'</span>'+(e.optional?'<span class="chip">Optional</span>':'')+(e.group?'<span class="chip">'+esc(e.group)+'</span>':'')+(b?'<span class="chip acc">Base: '+esc(b.title)+(e.basedOnV?' · from v'+e.basedOnV:'')+'</span>':'')+(behind(e)?'<span class="chip warn">Base now v'+latest(b).v+'</span>':'')+(e.localEdit&&b&&!s.submitted?'<span class="chip">Edited here</span>':'')+'</div></td>'+
         '<td>'+meter(e)+'</td>'+
         '<td><select aria-label="Status" id="st-'+e.id+'" data-bind="essay:'+e.id+':status">'+Object.entries(STATUS).map(([k,l])=>'<option value="'+k+'"'+(e.status===k?' selected':'')+'>'+l+'</option>').join("")+'</select></td>'+
-        '<td style="text-align:right"><button data-act="open-essay" data-id="'+e.id+'">Open</button></td></tr>';
+        '<td style="text-align:right"><div class="row" style="justify-content:flex-end; flex-wrap:nowrap">'+(ui.confirm==="del-essay:"+e.id? '<button class="danger" data-act="confirm" data-key="del-essay:'+e.id+'">'+(e.text.trim()?'Remove and delete text':'Remove')+'</button><button data-act="cancel-confirm">Keep</button>' : '<button data-act="open-essay" data-id="'+e.id+'">Open</button><button class="ghost danger" data-act="ask-confirm" data-key="del-essay:'+e.id+'" aria-label="Remove this prompt">Remove</button>')+'</div></td></tr>';
     });
     h += '</tbody></table>';
   }
@@ -527,8 +590,12 @@ function vSchool(s){
 function confirmBtn(key, label, sure){
   return ui.confirm===key ? '<button class="danger" data-act="confirm" data-key="'+key+'">'+sure+'</button><button data-act="cancel-confirm">Cancel</button>' : '<button class="danger" data-act="ask-confirm" data-key="'+key+'">'+label+'</button>';
 }
-function addPromptForm(s){
-  return '<form data-form="add-prompt" data-id="'+s.id+'" class="pb stack" style="border-bottom:1px solid var(--line-soft)">'+
+function addPromptForm(s, missing){
+  let lib='';
+  if(missing && missing.length){
+    lib = '<div class="pb stack" style="gap:8px; border-bottom:1px solid var(--line-soft)"><h3>From the prompt library</h3><ul class="plist">'+missing.map(o=>'<li><div class="row" style="justify-content:space-between; align-items:flex-start; flex-wrap:nowrap"><span style="min-width:0">'+esc(o.p.p)+'<div class="pm">'+limTxt(o.p)+' · '+esc(FAM[o.p.fam]||"Other")+(o.p.opt?' · optional':'')+'</div></span><button type="button" data-act="lib-addback" data-i="'+o.i+'">Add</button></div></li>').join("")+'</ul></div><div class="pb" style="padding-bottom:0"><h3>Or add your own</h3></div>';
+  }
+  return lib+'<form data-form="add-prompt" data-id="'+s.id+'" class="pb stack" style="border-bottom:1px solid var(--line-soft)">'+
     '<label class="f">Prompt (paste it from the school’s portal)<textarea id="np-p" rows="3" required></textarea></label>'+
     '<div class="grid-f"><label class="f">Limit<input id="np-l" type="number" min="0" placeholder="e.g. 300"></label>'+
     '<label class="f">Counted in<select id="np-u"><option value="words">Words</option><option value="chars">Characters</option></select></label>'+
@@ -562,6 +629,14 @@ function vEssay(e){
   let h = '<button class="ghost back" data-act="open-school" data-id="'+s.id+'">← '+esc(s.name)+'</button>';
   h += '<h3>'+esc(FAM[e.family]||"Other")+' · '+limitL(e)+(e.optional?' · Optional':'')+(e.group?' · '+esc(e.group):'')+'</h3><p class="promptbox">'+esc(e.prompt)+'</p>';
   if(e.cut) h += '<p class="small muted" style="margin:6px 0 0">This prompt was shortened in the library. Copy the full wording from the school’s portal.</p>';
+  if(ui.editPrompt) h += '<form class="panel" data-form="edit-prompt" data-id="'+e.id+'" style="margin-top:12px"><div class="pb stack">'+
+    '<label class="f">Prompt<textarea id="ep-p" rows="3" required>'+esc(e.prompt)+'</textarea></label>'+
+    '<div class="grid-f"><label class="f">Limit<input id="ep-l" type="number" min="0" value="'+(e.limit||"")+'" placeholder="No limit"></label>'+
+    '<label class="f">Counted in<select id="ep-u"><option value="words"'+(e.unit!=="chars"?' selected':'')+'>Words</option><option value="chars"'+(e.unit==="chars"?' selected':'')+'>Characters</option></select></label>'+
+    '<label class="f">Prompt type<select id="ep-f">'+Object.entries(FAM).map(([k,l])=>'<option value="'+k+'"'+(e.family===k?' selected':'')+'>'+l+'</option>').join("")+'</select></label>'+
+    '<div class="f" style="justify-content:flex-end"><label class="chk"><input type="checkbox" id="ep-o"'+(e.optional?' checked':'')+'> Optional</label></div></div>'+
+    '<div class="row"><button class="primary" type="submit">Save prompt</button><button type="button" data-act="edit-prompt">Cancel</button></div></div></form>';
+  else h += '<button class="ghost small" data-act="edit-prompt" style="padding-left:0; margin-top:4px">Edit prompt, limit or type</button>';
   h += '<div class="two" style="margin-top:16px"><div class="stack" style="min-width:0">';
   if(behind(e)){
     h += '<div class="banner warn"><div class="grow"><strong>Base updated.</strong> You adapted this from “'+esc(b.title)+'” v'+e.basedOnV+'. The base is now v'+L.v+' ('+esc(ver(b,L.v).note||"no note")+').</div><button class="primary" data-act="panel" data-p="review">Review changes</button></div>';
@@ -738,7 +813,11 @@ document.addEventListener("click", ev=>{
     case "open-school": go("schools",{schoolId:d.id}); break;
     case "open-essay": { const x=essay(d.id); ui.tab="schools"; go("schools",{schoolId:x.schoolId, essayId:d.id}); break; }
     case "open-base": go("essays",{baseId:d.id}); break;
-    case "toggle-add-school": ui.addSchool=!ui.addSchool; render(); if(ui.addSchool) document.getElementById("ns-name").focus(); break;
+    case "toggle-add-school": ui.addSchool=!ui.addSchool; ui.pick=null; ui.pickQ=""; ui.pickI=0; render(); if(ui.addSchool){ const q=document.getElementById("pick-q"); if(q) q.focus(); } break;
+    case "pick-change": ui.pick=null; render(); { const q=document.getElementById("pick-q"); if(q){ q.focus(); q.select(); } } break;
+    case "pick-all": document.querySelectorAll(".pick-p").forEach(c=>c.checked=d.v==="1"); break;
+    case "edit-prompt": ui.editPrompt=!ui.editPrompt; render(); if(ui.editPrompt) document.getElementById("ep-p").focus(); break;
+    case "lib-addback": { const sc=school(ui.schoolId); const L=libFind(sc.libName||sc.name); const lp=L&&L.prompts[+d.i]; if(lp){ const [ne]=libEssays({prompts:[lp]}, sc.id); S.essays.push(ne); save(); render(); toast("Added"+(ne.baseId?" and linked to base “"+base(ne.baseId).title+"”":"")); } break; }
     case "toggle-add-prompt": ui.addPrompt=!ui.addPrompt; render(); if(ui.addPrompt) document.getElementById("np-p").focus(); break;
     case "panel": ui.panel = d.p||null; render(); break;
     case "start-from-base": { const b=base(e.baseId); const L=latest(b); e.text=L.text; e.basedOnV=L.v; e.localEdit=false; if(e.status==="todo") e.status="drafting"; save(); render(); toast("Copied base v"+L.v+". Trim it to "+limitL(e)+"."); break; }
@@ -755,7 +834,7 @@ document.addEventListener("click", ev=>{
     case "save-ver": { const b=base(ui.baseId); if(!unsaved(b) && b.versions.length){ toast("No changes since v"+latest(b).v); break; } saveVersion(b, document.getElementById("bnote").value); save(); render(); flagToast(b); break; }
     case "hist": ui.histV = d.v? +d.v : null; render(); break;
     case "link-from-base": { const x=essay(d.id); const b=base(ui.baseId); x.baseId=b.id; if(x.text.trim()){ x.basedOnV=latest(b).v; x.localEdit=true; } save(); render(); break; }
-    case "lib-add": addFromLibrary(d.school); break;
+    case "lib-add": go("schools",{addSchool:true, pick:{kind:"lib", name:d.school}}); break;
     case "lib-toggle": ui.libOpen = ui.libOpen===d.school ? null : d.school; render(); break;
     case "ask-confirm": ui.confirm=d.key; render(); break;
     case "cancel-confirm": ui.confirm=null; render(); break;
@@ -763,7 +842,7 @@ document.addEventListener("click", ev=>{
     case "backup": downloadBackup(); break;
     case "restore": { const f=document.getElementById("restore-file"); f.value=""; f.click(); break; }
     case "try-examples": S=seed(); save(); go("next"); toast("Examples loaded. Clear them from the bottom of the page."); break;
-    case "first-school": go("schools",{addSchool:true}); setTimeout(()=>{ const n=document.getElementById("ns-name"); if(n) n.focus(); },0); break;
+    case "first-school": go("schools",{addSchool:true}); setTimeout(()=>{ const n=document.getElementById("pick-q"); if(n) n.focus(); },0); break;
     case "tour": openTour(); break;
   }
 });
@@ -818,25 +897,42 @@ document.addEventListener("keydown", ev=>{ if(ev.key==="Escape" && !document.get
 function libEssays(L, sid){
   return L.prompts.map(p=>{ const b=S.bases.find(x=>x.family===p.fam); return {id:id("e"), schoolId:sid, prompt:p.p, limit:p.limit||0, unit:p.unit, family:p.fam, baseId:(b && p.fam!=="why")? b.id : null, basedOnV:null, text:"", status:"todo", localEdit:false, optional:!!p.opt, group:p.group||"", cut:!!p.cut}; });
 }
-function addFromLibrary(name, extra){
+function addFromLibrary(name, extra, only){
   const L=libFind(name); if(!L) return;
   if(S.schools.some(s=>s.name.toLowerCase()===L.name.toLowerCase())){ toast(L.name+" is already on your list"); return; }
-  const s=Object.assign({id:id("s"), name:L.name, received:iso(today()), turnaround:DEFAULT_TURNAROUND, hard:"", interest:2, submitted:false, fee:false, pinned:false}, extra||{});
+  const s=Object.assign({id:id("s"), name:L.name, libName:L.name, received:iso(today()), turnaround:DEFAULT_TURNAROUND, hard:"", interest:2, submitted:false, fee:false, pinned:false}, extra||{});
   S.schools.push(s);
-  const es=libEssays(L, s.id); S.essays.push(...es);
+  const chosen = only ? {prompts:L.prompts.filter((p,i)=>only.includes(i))} : L;
+  const es=libEssays(chosen, s.id); S.essays.push(...es);
   const linked=es.filter(e=>e.baseId).length;
   save(); go("schools",{schoolId:s.id});
-  toast(es.length? "Added with "+es.length+" prompts"+(linked?", "+linked+" linked to your base essays":"")+". Set the date you received it." : "Added. No prompts were posted for this school, so add them from the portal.");
+  if(!es.length) ui.addPrompt=true, render();
+  toast(es.length? "Added with "+es.length+(es.length===1?" prompt":" prompts")+(linked?", "+linked+" linked to your base essays":"") : (L.prompts.length? "Added with no prompts. Add the ones you need below." : "Added. No prompts were posted for this school, so add them from the portal."));
 }
 document.addEventListener("submit", ev=>{
   const f=ev.target; ev.preventDefault();
   if(f.dataset.form==="add-school"){
+    const pk=ui.pick; if(!pk) return;
+    const extra={received:document.getElementById("ns-rec").value||iso(today()), turnaround:+document.getElementById("ns-turn").value||DEFAULT_TURNAROUND, hard:document.getElementById("ns-hard").value, interest:+document.getElementById("ns-int").value};
+    if(pk.kind==="lib"){
+      const only=[...document.querySelectorAll(".pick-p")].filter(c=>c.checked).map(c=>+c.value);
+      const L=libFind(pk.name);
+      addFromLibrary(pk.name, extra, L && L.prompts.length ? only : null);
+      return;
+    }
     const name=document.getElementById("ns-name").value.trim(); if(!name) return;
-    const s={id:id("s"), name, received:document.getElementById("ns-rec").value||iso(today()), turnaround:+document.getElementById("ns-turn").value||DEFAULT_TURNAROUND, hard:document.getElementById("ns-hard").value, interest:+document.getElementById("ns-int").value, submitted:false, fee:false, pinned:false};
-    const L=libFind(name);
-    if(L && L.prompts.length){ delete s.id; delete s.name; addFromLibrary(L.name, s); return; }
-    if(L) s.name=L.name;
-    S.schools.push(s); save(); go("schools",{schoolId:s.id, addPrompt:true}); toast("School added. Paste its first prompt.");
+    if(schoolTaken(name)){ toast(name+" is already on your list"); return; }
+    const s=Object.assign({id:id("s"), name, submitted:false, fee:false, pinned:false}, extra);
+    S.schools.push(s); save(); go("schools",{schoolId:s.id, addPrompt:true}); toast("School added. Paste its first prompt from the portal.");
+    setTimeout(()=>{ const t=document.getElementById("np-p"); if(t) t.focus(); },0);
+  }
+  if(f.dataset.form==="edit-prompt"){
+    const x=essay(f.dataset.id); if(!x) return;
+    const np=document.getElementById("ep-p").value.trim(); if(!np) return;
+    const nf=document.getElementById("ep-f").value;
+    if(nf!==x.family){ const b=S.bases.find(b=>b.family===nf); x.baseId=(b&&nf!=="why")?b.id:null; x.basedOnV=null; x.localEdit=false; }
+    x.prompt=np; x.limit=+document.getElementById("ep-l").value||0; x.unit=document.getElementById("ep-u").value; x.family=nf; x.optional=document.getElementById("ep-o").checked; x.cut=false;
+    ui.editPrompt=false; save(); render(); toast("Prompt saved");
   }
   if(f.dataset.form==="add-prompt"){
     const p=document.getElementById("np-p").value.trim(); if(!p) return;
@@ -849,6 +945,7 @@ document.addEventListener("input", ev=>{
   const el=ev.target;
   if(el.id==="np-p"){ const g=guessFam(el.value); const sel=document.getElementById("np-f"); if(sel && !sel.dataset.touched) sel.value=g; const b=S.bases.find(x=>x.family===g); document.getElementById("np-hint").textContent = b&&g!=="why" ? "Looks like a "+FAM[g].toLowerCase()+" prompt. It will link to your base “"+b.title+"” (v"+latest(b).v+")." : "Looks like: "+FAM[g]+". Prompts of the same type can share one base essay."; return; }
   if(el.id==="np-f"){ el.dataset.touched="1"; return; }
+  if(el.id==="pick-q"){ ui.pickQ=el.value; ui.pickI=0; const l=document.getElementById("pick-list"); if(l) l.innerHTML=pickListHTML(); el.setAttribute("aria-activedescendant","pick-o0"); return; }
   if(el.dataset.libstate){ ui.libState=el.value; render(); return; }
   if(el.dataset.libq){ ui.libQ=el.value; const pos=el.selectionStart; render(); const n=document.getElementById("libq"); n.focus(); try{ n.setSelectionRange(pos,pos);}catch(e){} return; }
   const bnd=el.dataset.bind; if(!bnd) return;
@@ -866,6 +963,23 @@ document.addEventListener("change", ev=>{
   if(!obj) return;
   if(el.tagName==="TEXTAREA"||(el.tagName==="INPUT"&&el.type==="text")) return;
   obj[field]=val; save(); render();
+});
+function choosePick(li){
+  if(!li || li.getAttribute("aria-disabled")==="true"){ if(li) toast("Already on your list"); return; }
+  ui.pick = li.dataset.pick==="lib" ? {kind:"lib", name:li.dataset.name} : {kind:"custom", name:ui.pickQ.trim()};
+  render();
+  const n=document.getElementById(ui.pick.kind==="custom"?"ns-name":"ns-rec"); if(n) n.focus();
+}
+document.addEventListener("click", ev=>{ const li=ev.target.closest("#pick-list li"); if(li) choosePick(li); });
+document.addEventListener("keydown", ev=>{
+  if(ev.target.id!=="pick-q") return;
+  const opts=document.querySelectorAll("#pick-list li"); if(!opts.length) return;
+  if(ev.key==="ArrowDown"||ev.key==="ArrowUp"){
+    ev.preventDefault(); ui.pickI=Math.max(0,Math.min(opts.length-1, ui.pickI+(ev.key==="ArrowDown"?1:-1)));
+    opts.forEach((o,i)=>o.setAttribute("aria-selected", i===ui.pickI?"true":"false"));
+    ev.target.setAttribute("aria-activedescendant","pick-o"+ui.pickI); opts[ui.pickI].scrollIntoView({block:"nearest"});
+  } else if(ev.key==="Enter"){ ev.preventDefault(); choosePick(opts[ui.pickI]); }
+  else if(ev.key==="Escape"){ ui.addSchool=false; render(); }
 });
 window.addEventListener("hashchange", ()=>{ const t=location.hash.slice(1); if(TABS.some(x=>x[0]===t) && t!==ui.tab) go(t); });
 const h0=location.hash.slice(1); if(TABS.some(x=>x[0]===h0)) ui.tab=h0;
