@@ -98,6 +98,16 @@ details.side-m .sugg{padding:0 12px 12px}
 .brief .first dt{color:var(--accent)}
 .brief .first dd{font-weight:600}
 @media (max-width:520px){ .brief{grid-template-columns:minmax(0,1fr)} .brief dt{margin-top:4px} }
+#sync-chip{display:inline-flex}
+.schip{display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; padding:4px 10px; border-radius:999px; border:1px solid var(--line); background:var(--surface); color:var(--muted); cursor:pointer; white-space:nowrap}
+.schip i{width:8px; height:8px; border-radius:50%; background:var(--muted); flex:none}
+.schip.ok i{background:var(--good)} .schip.busy i{background:var(--accent)} .schip.warn{color:var(--warn); border-color:var(--warn)} .schip.warn i{background:var(--warn)} .schip.local i{background:var(--line)}
+@media (max-width:520px){ #today-l{display:none} }
+.lockout{position:fixed; inset:0; z-index:60; background:rgba(10,20,25,.6); display:flex; align-items:center; justify-content:center; padding:16px}
+.lockout .card2{background:var(--surface); color:var(--ink); border-radius:16px; max-width:420px; padding:22px 20px; display:flex; flex-direction:column; gap:12px}
+.lockout h2{font-family:var(--f-display); font-size:21px} .lockout p{margin:0; color:var(--muted)}
+.gbtn{display:inline-flex; align-items:center; gap:8px}
+.gbtn svg{width:16px; height:16px}
 .badge{display:inline-flex; min-width:20px; height:20px; padding:0 6px; border-radius:10px; background:var(--accent); color:var(--accent-ink); font-size:12px; font-weight:700; align-items:center; justify-content:center}
 h1{font-family:var(--f-display); font-weight:700; font-size:26px; line-height:1.15; margin:0 0 4px; text-wrap:balance; letter-spacing:-.01em}
 h2{font-size:17px; margin:0; font-weight:700}
@@ -210,6 +220,7 @@ footer.foot{border-top:1px solid var(--line); padding-block:18px 30px; color:var
       <p class="brand">Second<span>aries</span></p>
       <span class="pill" id="demo-pill" hidden>Example data</span>
       <span class="grow"></span>
+      <span id="sync-chip"></span>
       <span class="small muted" id="today-l"></span>
     </div>
     <nav class="tabs" id="tabs" aria-label="Sections"></nav>
@@ -219,8 +230,10 @@ footer.foot{border-top:1px solid var(--line); padding-block:18px 30px; color:var
 <main class="wrap" id="main"></main>
 <footer class="wrap foot" id="foot"></footer>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<div class="lockout" id="lockout" hidden><div class="card2"><h2>Open in another tab</h2><p>Secondaries is open in another tab or window. To keep your work from being overwritten, only one can be used at a time.</p><button class="primary" id="lock-take">Use it here instead</button></div></div>
 <div class="tour" id="tour" role="dialog" aria-modal="true" aria-labelledby="tour-title" hidden></div>
 <input type="file" id="restore-file" accept="application/json,.json" hidden>
+<script src="config.js"></script>
 <script src="library.js"></script>
 
 <script>
@@ -321,14 +334,208 @@ function seed(){
 
 /* ---------- storage ---------- */
 let S;
-function blank(){ return {v:1, demo:false, schools:[], bases:[], essays:[]}; }
-function load(){ try{ const raw=localStorage.getItem(KEY); if(raw){ const o=JSON.parse(raw); if(o && o.schools) return o; } }catch(e){} return blank(); }
-let saveT=null;
-function save(){ clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }, 250); }
-function flush(){ if(saveT){ clearTimeout(saveT); saveT=null; try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} } }
+function blank(){ return {v:1, demo:false, schools:[], bases:[], essays:[], del:{}}; }
+function load(){ try{ const raw=localStorage.getItem(KEY); if(raw){ const o=JSON.parse(raw); if(o && o.schools){ o.del=o.del||{}; return o; } } }catch(e){} return blank(); }
+const COLLS=["schools","bases","essays"];
+let SNAP=new Map();
+function recJson(r){ const {u, ...rest}=r; return JSON.stringify(rest); }
+function snapshot(){ SNAP=new Map(); COLLS.forEach(c=>(S[c]||[]).forEach(r=>SNAP.set(c+":"+r.id, recJson(r)))); SNAP.set("meta", JSON.stringify(S.dismissed||[])); }
+function stamp(){
+  // mark records changed since the last save with a timestamp, and remember deletions
+  const now=Date.now(), seen=new Set(); let changed=false; S.del=S.del||{};
+  COLLS.forEach(c=>(S[c]||[]).forEach(r=>{ const k=c+":"+r.id, j=recJson(r); seen.add(k); if(SNAP.get(k)!==j){ r.u=now; SNAP.set(k,j); changed=true; } }));
+  [...SNAP.keys()].forEach(k=>{ if(k!=="meta" && !seen.has(k)){ S.del[k]=now; SNAP.delete(k); changed=true; } });
+  const mj=JSON.stringify(S.dismissed||[]); if(SNAP.get("meta")!==mj){ S.mu=now; SNAP.set("meta",mj); changed=true; }
+  return changed;
+}
+let saveT=null, saveError=false, locked=false;
+function writeLocal(){
+  if(locked) return;
+  const changed=stamp();
+  try{ localStorage.setItem(KEY, JSON.stringify(S)); if(saveError){ saveError=false; render(); } }
+  catch(e){ if(!saveError){ saveError=true; render(); } }
+  if(changed) Sync.changed();
+}
+function save(){ clearTimeout(saveT); saveT=setTimeout(()=>{ saveT=null; writeLocal(); }, 250); }
+function flush(){ if(saveT){ clearTimeout(saveT); saveT=null; writeLocal(); } }
 window.addEventListener("pagehide", flush);
 document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="hidden") flush(); });
-S = load();
+S = load(); snapshot();
+
+/* ---------- Google Drive sync ---------- */
+// Essays are saved in a hidden app folder in the applicant's own Google Drive (drive.appdata scope).
+// This site never receives them. The browser copy stays as a fast, offline cache.
+const GOOGLE_CLIENT_ID = (window.SECONDARIES_CONFIG && window.SECONDARIES_CONFIG.googleClientId) || "";
+const SYNC_KEY = "secondaries-sync-v1";
+const DRIVE_FILE = "secondaries.json";
+const Sync = (function(){
+  let st = {connected:false, email:"", fileId:"", version:"", syncedAt:0, dirty:false};
+  try{ Object.assign(st, JSON.parse(localStorage.getItem(SYNC_KEY)||"{}")); }catch(e){}
+  let token="", tokenExp=0, tokenClient=null, gisLoading=null;
+  try{ const t=JSON.parse(sessionStorage.getItem(SYNC_KEY+"-t")||"{}"); if(t.exp>Date.now()+60e3){ token=t.token; tokenExp=t.exp; } }catch(e){}
+  let status = st.connected ? (token? "ok" : "paused") : "local";   // local | busy | ok | paused | offline | error
+  let lastOk = st.syncedAt||0, timer=null, running=false, again=false, errMsg="";
+  const available = ()=> !!GOOGLE_CLIENT_ID || !!window.__DRIVE_MOCK;
+  function persist(){ try{ localStorage.setItem(SYNC_KEY, JSON.stringify(st)); }catch(e){} }
+  function setStatus(x, msg){ status=x; errMsg=msg||""; paintChip(); }
+
+  // --- auth (Google Identity Services token model) ---
+  function loadGis(){
+    if(window.google && google.accounts && google.accounts.oauth2) return Promise.resolve();
+    if(gisLoading) return gisLoading;
+    gisLoading = new Promise((res,rej)=>{ const sc=document.createElement("script"); sc.src="https://accounts.google.com/gsi/client"; sc.async=true; sc.onload=()=>res(); sc.onerror=()=>{ gisLoading=null; rej(new Error("Couldn’t reach Google")); }; document.head.appendChild(sc); });
+    return gisLoading;
+  }
+  function getToken(interactive){
+    if(window.__DRIVE_MOCK) return Promise.resolve("mock");
+    if(token && tokenExp>Date.now()+60e3) return Promise.resolve(token);
+    return loadGis().then(()=>new Promise((res,rej)=>{
+      if(!tokenClient) tokenClient = google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID, scope:"https://www.googleapis.com/auth/drive.appdata openid email", callback:()=>{}});
+      tokenClient.callback = (r)=>{ if(r && r.access_token){ token=r.access_token; tokenExp=Date.now()+(+r.expires_in||3600)*1000; try{ sessionStorage.setItem(SYNC_KEY+"-t", JSON.stringify({token, exp:tokenExp})); }catch(e){} res(token); } else rej(new Error((r&&r.error)||"Sign-in was cancelled")); };
+      tokenClient.error_callback = (e)=>rej(new Error(e && e.type==="popup_closed" ? "Sign-in window was closed" : "Sign-in was blocked"));
+      tokenClient.requestAccessToken(interactive ? {prompt: st.connected? "" : "consent", login_hint: st.email||undefined} : {prompt:"", login_hint: st.email||undefined});
+    }));
+  }
+  // --- Drive REST (or a test double) ---
+  async function api(path, opt){
+    if(window.__DRIVE_MOCK) return window.__DRIVE_MOCK(path, opt||{});
+    const t = await getToken(false);
+    const r = await fetch(path, Object.assign({}, opt, {headers:Object.assign({Authorization:"Bearer "+t}, (opt&&opt.headers)||{})}));
+    if(r.status===401){ token=""; tokenExp=0; throw Object.assign(new Error("auth"), {auth:true}); }
+    if(!r.ok) throw new Error("Drive error "+r.status);
+    const ct=r.headers.get("content-type")||""; return ct.includes("json") ? r.json() : r.text();
+  }
+  const D = "https://www.googleapis.com/drive/v3/files", U = "https://www.googleapis.com/upload/drive/v3/files";
+  const findFile = ()=> api(D+"?spaces=appDataFolder&fields=files(id,version,modifiedTime)&q="+encodeURIComponent("name='"+DRIVE_FILE+"'"));
+  const meta = id=> api(D+"/"+id+"?fields=id,version,modifiedTime");
+  const readFile = id=> api(D+"/"+id+"?alt=media").then(x=> typeof x==="string" ? JSON.parse(x) : x);
+  function createFile(data){
+    const b="sec"+Math.random().toString(36).slice(2);
+    const body="--"+b+"\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n"+JSON.stringify({name:DRIVE_FILE, parents:["appDataFolder"], mimeType:"application/json"})+"\r\n--"+b+"\r\nContent-Type: application/json\r\n\r\n"+JSON.stringify(data)+"\r\n--"+b+"--";
+    return api(U+"?uploadType=multipart&fields=id,version", {method:"POST", headers:{"Content-Type":"multipart/related; boundary="+b}, body});
+  }
+  const updateFile = (id,data)=> api(U+"/"+id+"?uploadType=media&fields=id,version", {method:"PATCH", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data)});
+  async function whoAmI(){ if(window.__DRIVE_MOCK) return "test@example.com"; try{ const r=await fetch("https://www.googleapis.com/oauth2/v3/userinfo",{headers:{Authorization:"Bearer "+token}}); if(r.ok){ const j=await r.json(); return j.email||""; } }catch(e){} return ""; }
+
+  // --- merge two copies record by record; newest edit wins, deletions win over older edits ---
+  function mergeInto(local, remote){
+    const out={...local}; out.del={...(remote.del||{}), ...(local.del||{})};
+    Object.keys(remote.del||{}).forEach(k=>{ out.del[k]=Math.max(remote.del[k], (local.del||{})[k]||0); });
+    // a true conflict: edited here since our last sync AND edited elsewhere since we last saw the Drive copy
+    const since = st.syncedAt||0, seen = st.remoteMaxU||0; let conflicts=0;
+    COLLS.forEach(c=>{
+      const L=new Map((local[c]||[]).map(r=>[r.id,r])), R=new Map((remote[c]||[]).map(r=>[r.id,r]));
+      const ids=new Set([...L.keys(), ...R.keys()]); const res=[];
+      ids.forEach(id=>{
+        const a=L.get(id), b=R.get(id); const tomb=out.del[c+":"+id]||0;
+        let win = !a ? b : !b ? a : ((b.u||0) > (a.u||0) ? b : a);
+        const lose = a && b ? (win===a ? b : a) : null;
+        if(tomb && tomb >= (win.u||0)) return;
+        win = JSON.parse(JSON.stringify(win));
+        const la=a&&(a.u||0)>since, rb=b&&(b.u||0)>seen;
+        if(lose && la && rb){
+          if(c==="essays" && lose.text && lose.text.trim() && lose.text!==win.text){ win.prev=(win.prev||[]).filter(p=>p.text!==lose.text).concat([{text:lose.text, at:lose.u||Date.now()}]).slice(-3); conflicts++; }
+          if(c==="bases"){ const texts=new Set(win.versions.map(v=>v.text)); lose.versions.forEach(v=>{ if(!texts.has(v.text)){ win.versions.push({...v, v:(win.versions.length? win.versions[win.versions.length-1].v:0)+1, note:(v.note?v.note+" ":"")+"(from another computer)"}); texts.add(v.text); conflicts++; } }); }
+        }
+        res.push(win);
+      });
+      // keep the local order, then anything new from the other copy
+      const order=new Map((local[c]||[]).map((r,i)=>[r.id,i])), rord=new Map((remote[c]||[]).map((r,i)=>[r.id,i]));
+      res.sort((x,y)=> (order.has(x.id)?order.get(x.id):1e6+(rord.get(x.id)||0)) - (order.has(y.id)?order.get(y.id):1e6+(rord.get(y.id)||0)));
+      out[c]=res;
+    });
+    out.dismissed=[...new Set([...(local.dismissed||[]), ...(remote.dismissed||[])])];
+    out.lastBackup = [local.lastBackup, remote.lastBackup].filter(Boolean).sort().pop();
+    out.demo=false;
+    return {merged:out, conflicts};
+  }
+  function maxU(o){ let m=0; COLLS.forEach(c=>(o[c]||[]).forEach(r=>{ if((r.u||0)>m) m=r.u; })); return m; }
+  function payload(){ const o=JSON.parse(JSON.stringify(S)); delete o.demo; return o; }
+  const editing = ()=>{ const a=document.activeElement; return a && (a.tagName==="TEXTAREA" || (a.tagName==="INPUT" && a.type!=="checkbox")); };
+  let pendingRender=false;
+  function applyMerged(m){
+    S=m; snapshot();
+    try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){}
+    if(editing()) pendingRender=true; else render();
+  }
+  document.addEventListener("focusout", ()=>{ setTimeout(()=>{ if(pendingRender && !editing()){ pendingRender=false; render(); } }, 50); });
+
+  // --- one sync pass ---
+  async function run(){
+    if(!st.connected || S.demo || locked) return;
+    if(running){ again=true; return; }
+    if(!navigator.onLine && !window.__DRIVE_MOCK){ setStatus("offline"); return; }
+    running=true; setStatus("busy");
+    try{
+      if(saveT) flush();
+      if(!st.fileId){ const f=await findFile(); if(f.files && f.files.length){ st.fileId=f.files[0].id; st.version=""; } }
+      let conflicts=0;
+      if(!st.fileId){
+        const r=await createFile(payload()); st.fileId=r.id; st.version=String(r.version||""); st.dirty=false;
+      } else {
+        const m=await meta(st.fileId);
+        if(String(m.version)!==String(st.version)){
+          const remote=await readFile(st.fileId);
+          const res=mergeInto(S, remote||{}); conflicts=res.conflicts;
+          applyMerged(res.merged);
+          st.version=String(m.version);
+          st.dirty = JSON.stringify(payload())!==JSON.stringify(remote||{});
+        }
+        if(st.dirty){ const r=await updateFile(st.fileId, payload()); st.version=String(r.version||""); st.dirty=false; }
+      }
+      st.syncedAt=Date.now(); st.remoteMaxU=maxU(S); lastOk=st.syncedAt; persist(); setStatus("ok");
+      if(conflicts) toast("Some essays were edited on two computers. The other versions were kept on those essays.");
+    } catch(e){
+      if(e.auth || /Sign-in|blocked|cancel/i.test(e.message)) setStatus("paused");
+      else if(!navigator.onLine) setStatus("offline");
+      else setStatus("error", e.message);
+    } finally { running=false; if(again){ again=false; setTimeout(run, 300); } }
+  }
+  let changeT=null;
+  function changed(){ if(!st.connected || S.demo) return; st.dirty=true; persist(); clearTimeout(changeT); changeT=setTimeout(run, 3000); if(status==="ok") setStatus("ok"); }
+  async function connect(){
+    try{
+      setStatus("busy");
+      await getToken(true);
+      if(!st.email) st.email = await whoAmI();
+      if(S.demo){ S=blank(); snapshot(); try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+      st.connected=true; st.dirty=true; persist();
+      await run();
+      if(status==="ok"){ render(); toast("Connected. Your work now saves to your Google Drive"+(st.email?" ("+st.email+")":"")+"."); }
+    } catch(e){ setStatus(st.connected?"paused":"local"); toast(e.message||"Couldn’t connect to Google Drive"); }
+  }
+  async function resume(){ try{ await getToken(true); await run(); }catch(e){ setStatus("paused"); toast(e.message||"Couldn’t reconnect"); } }
+  function disconnect(){
+    try{ if(token && window.google && google.accounts) google.accounts.oauth2.revoke(token, ()=>{}); }catch(e){}
+    token=""; tokenExp=0; try{ sessionStorage.removeItem(SYNC_KEY+"-t"); }catch(e){}
+    st={connected:false, email:"", fileId:"", version:"", syncedAt:0, dirty:false}; persist(); setStatus("local"); render();
+    toast("Disconnected. Your work stays in this browser; your Drive copy is untouched.");
+  }
+  // keep in step: on return to the app, when back online, and every minute while visible
+  document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="visible" && st.connected && status!=="paused") run(); });
+  window.addEventListener("online", ()=>{ if(st.connected) run(); });
+  window.addEventListener("offline", ()=>{ if(st.connected) setStatus("offline"); });
+  setInterval(()=>{ if(document.visibilityState==="visible" && st.connected && status!=="paused" && !running) run(); }, 60000);
+  // the first click after the hour-long Google token runs out quietly renews it (browsers allow sign-in windows only from a click)
+  document.addEventListener("click", ev=>{ if(st.connected && status==="paused" && !ev.target.closest("#sync-chip") && !window.__DRIVE_MOCK){ resume(); } }, true);
+
+  function chipHTML(){
+    if(!available() || locked) return "";
+    const ago = lastOk ? (Date.now()-lastOk<60e3 ? "just now" : Math.round((Date.now()-lastOk)/60e3)+" min ago") : "";
+    if(S.demo && !st.connected) return "";
+    switch(status){
+      case "local": return '<button class="schip local" data-act="sync-connect" title="Your work is saved only in this browser"><i></i>This browser only · Save to Google Drive</button>';
+      case "busy": return '<span class="schip busy"><i></i>Saving to Drive…</span>';
+      case "ok": return '<button class="schip ok" data-act="sync-info" title="Saved to Google Drive'+(st.email?" ("+esc(st.email)+")":"")+(ago?", "+ago:"")+'"><i></i>Saved to Drive</button>';
+      case "paused": return '<button class="schip warn" data-act="sync-resume" title="Google sign-in expired. Your changes are kept in this browser until you reconnect."><i></i>Drive paused · Reconnect</button>';
+      case "offline": return '<span class="schip warn" title="Your changes are saved in this browser and will go to Drive when you’re back online"><i></i>Offline · will sync</span>';
+      default: return '<button class="schip warn" data-act="sync-run" title="'+esc(errMsg)+'"><i></i>Drive error · Retry</button>';
+    }
+  }
+  function paintChip(){ const c=document.getElementById("sync-chip"); if(c) c.innerHTML=chipHTML(); }
+  return {connect, resume, disconnect, run, changed, paintChip, available, state:()=>({...st, status, lastOk}), _merge:mergeInto};
+})();
+
 
 /* ---------- model helpers ---------- */
 const school = id=>S.schools.find(s=>s.id===id);
@@ -604,6 +811,7 @@ function go(tab, extra){ Object.assign(ui, {schoolId:null, essayId:null, baseId:
 function render(){
   document.getElementById("today-l").textContent = "Today: " + today().toLocaleDateString(undefined,{weekday:"short", month:"short", day:"numeric"});
   document.getElementById("demo-pill").hidden = !S.demo;
+  Sync.paintChip();
   const open = S.schools.filter(s=>!s.submitted).length;
   document.getElementById("tabs").innerHTML = TABS.map(([k,l])=>'<a href="#'+k+'" data-tab="'+k+'"'+(ui.tab===k?' aria-current="page"':'')+'>'+l+(k==="schools"?'<span class="n">'+open+' open</span>':'')+'</a>').join("");
   const m = document.getElementById("main");
@@ -623,7 +831,7 @@ function render(){
     side = '<aside class="side" aria-label="Suggestions">'+suggPanel(list,"Suggestions")+'</aside>';
     if(list.length){ const dm='<details class="side-m"'+(ui.sgOpen?' open':'')+' id="side-m"><summary>Suggestions <span class="badge">'+list.length+'</span></summary>'+suggPanel(list,"Suggestions",true)+'</details>'; h = h.includes('<!--SIDE-M-->') ? h.replace('<!--SIDE-M-->', dm) : dm+h; }
   }
-  m.innerHTML = '<div class="layout'+(showSide?' has-side':'')+'"><div style="min-width:0">'+h+'</div>'+side+'</div>';
+  m.innerHTML = '<div class="layout'+(showSide?' has-side':'')+'"><div style="min-width:0">'+topBanners()+h+'</div>'+side+'</div>';
   const dm=document.getElementById("side-m"); if(dm) dm.addEventListener("toggle",()=>{ ui.sgOpen=dm.open; });
   document.getElementById("foot").innerHTML = vFoot();
 }
@@ -872,6 +1080,7 @@ function vEssay(e){
   if(b && !e.text.trim() && L.text.trim()){
     h += '<div class="banner info"><div class="grow">This prompt uses the base “'+esc(b.title)+'”. Start from v'+L.v+' and trim it to '+limitL(e)+'.</div><button class="primary" data-act="start-from-base">Start from base v'+L.v+'</button></div>';
   }
+  if(e.prev && e.prev.length) h += '<div class="banner info"><div class="grow small"><strong>This essay was edited on two computers at once.</strong> The version shown is the newer one. The other '+(e.prev.length===1?'version is':e.prev.length+' versions are')+' kept here:'+e.prev.map((p,i)=>'<details style="margin-top:6px"><summary style="cursor:pointer">Version from '+new Date(p.at).toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})+' ('+words(p.text)+' words)</summary><div style="white-space:pre-wrap; font-family:var(--f-essay); margin:6px 0">'+esc(p.text)+'</div><button class="small" data-act="prev-use" data-i="'+i+'">Use this version</button> <button class="ghost small" data-act="prev-drop" data-i="'+i+'">Discard it</button></details>').join("")+'</div></div>';
   if(ui.panel==="review" && b) h += reviewPanel(e,b);
   if(ui.panel==="compare" && b) h += comparePanel(e,b);
   h += '<textarea class="page" id="essay-text" data-bind="essay:'+e.id+':text" aria-label="Essay for '+esc(s.name)+'" placeholder="Write or paste this school’s version here.">'+esc(e.text)+'</textarea>';
@@ -1018,12 +1227,22 @@ function vLibrary(){
   return h;
 }
 
+function topBanners(){
+  let h='';
+  const ss=Sync.state();
+  if(saveError) h+='<div class="banner warn" style="margin-bottom:16px"><div class="grow"><strong>Your latest changes couldn’t be saved in this browser.</strong> Its storage is full or blocked. '+(ss.connected?'They’re still going to your Google Drive, but download a backup to be safe.':'Download a backup now so nothing is lost.')+'</div><button data-act="backup">Download backup</button></div>';
+  const hasWork = S.schools.length && !S.demo;
+  let snooze=0; try{ snooze=+localStorage.getItem("secondaries-drive-nudge")||0; }catch(e){}
+  if(Sync.available() && !ss.connected && hasWork && Date.now()>snooze && !ui.essayId) h+='<div class="banner info" style="margin-bottom:16px"><div class="grow"><strong>Keep your essays safe on any computer.</strong> Right now they’re saved only in this browser. Connect Google Drive and they’ll save to a private app folder in your own Drive, and open on any computer you sign in on.</div><button class="primary gbtn" data-act="sync-connect">'+GICON+'Save to Google Drive</button><button class="ghost" data-act="sync-snooze">Not now</button></div>';
+  return h;
+}
+const GICON='<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
 function vFoot(){
   const hasWork = S.essays.some(e=>e.text.trim()) || S.bases.length;
   const since = S.lastBackup ? daysUntil(S.lastBackup) : null;
   let h='';
-  if(hasWork && !S.demo && (since==null || since<=-7)) h += '<div class="banner warn" style="margin-bottom:12px"><div class="grow small"><strong>'+(since==null?'You haven’t saved a backup yet.':'Last backup was '+Math.abs(since)+' days ago.')+'</strong> Your essays live only in this browser. Clearing site data or losing this device erases them.</div><button data-act="backup">Download backup</button></div>';
-  h += '<div class="stack" style="gap:10px"><div class="row" style="justify-content:space-between"><span>Your entries are saved only on this device.'+(S.lastBackup?' Last backup '+fmt(S.lastBackup)+'.':'')+'</span><span class="row"><button class="ghost" data-act="backup">Download backup</button><button class="ghost" data-act="restore">Restore backup</button>'+(S.demo?confirmBtn("clear","Clear examples","Erase the examples and start empty"):confirmBtn("clear","Erase everything","Erase all schools and essays on this device"))+'</span></div>'+
+  if(hasWork && !S.demo && !Sync.state().connected && (since==null || since<=-7)) h += '<div class="banner warn" style="margin-bottom:12px"><div class="grow small"><strong>'+(since==null?'You haven’t saved a backup yet.':'Last backup was '+Math.abs(since)+' days ago.')+'</strong> Your essays live only in this browser. Clearing site data or losing this device erases them.</div><button data-act="backup">Download backup</button></div>';
+  h += '<div class="stack" style="gap:10px"><div class="row" style="justify-content:space-between"><span>'+(Sync.state().connected? 'Saved to your Google Drive'+(Sync.state().email?' ('+esc(Sync.state().email)+')':'')+' and in this browser. <button class="ghost small" data-act="sync-disconnect" style="padding:0">Disconnect</button>' : 'Your entries are saved only in this browser.'+(Sync.available()?' <button class="ghost small" data-act="sync-connect" style="padding:0">Save to Google Drive</button>':''))+(S.lastBackup?' Last backup '+fmt(S.lastBackup)+'.':'')+'</span><span class="row"><button class="ghost" data-act="backup">Download backup</button><button class="ghost" data-act="restore">Restore backup</button>'+(S.demo?confirmBtn("clear","Clear examples","Erase the examples and start empty"):confirmBtn("clear","Erase everything",Sync.state().connected?"Erase all schools and essays here and in Google Drive":"Erase all schools and essays on this device"))+'</span></div>'+
     '<div class="row" style="justify-content:space-between"><span>Student-built tool. Not affiliated with AMCAS, the AAMC, or any medical school. Always check prompts, limits and deadlines in each school’s portal.</span><button class="ghost" data-act="tour">How to use this app</button></div></div>';
   return h;
 }
@@ -1085,8 +1304,16 @@ document.addEventListener("click", ev=>{
     case "cancel-confirm": ui.confirm=null; render(); break;
     case "confirm": doConfirm(d.key); break;
     case "backup": downloadBackup(); break;
+    case "sync-connect": Sync.connect(); break;
+    case "sync-resume": Sync.resume(); break;
+    case "sync-run": Sync.run(); break;
+    case "sync-info": { const ss=Sync.state(); toast("Saved to Google Drive"+(ss.email?" ("+ss.email+")":"")+". Open this site on any computer and sign in to pick up where you left off."); break; }
+    case "sync-disconnect": Sync.disconnect(); break;
+    case "sync-snooze": try{ localStorage.setItem("secondaries-drive-nudge", String(Date.now()+7*864e5)); }catch(e){} render(); break;
+    case "prev-use": { const x=essay(ui.essayId); const i2=+d.i; if(x&&x.prev&&x.prev[i2]){ const old=x.text; x.text=x.prev[i2].text; x.prev[i2]={text:old, at:Date.now()}; save(); render(); toast("Switched to the other version. The one you had is kept below."); } break; }
+    case "prev-drop": { const x=essay(ui.essayId); if(x&&x.prev){ x.prev.splice(+d.i,1); if(!x.prev.length) delete x.prev; save(); render(); } break; }
     case "restore": { const f=document.getElementById("restore-file"); f.value=""; f.click(); break; }
-    case "try-examples": S=seed(); save(); go("next"); toast("Examples loaded. Clear them from the bottom of the page."); break;
+    case "try-examples": S=seed(); S.del={}; snapshot(); save(); go("next"); toast("Examples loaded. Clear them from the bottom of the page."); break;
     case "first-school": go("schools",{addSchool:true}); setTimeout(()=>{ const n=document.getElementById("pick-q"); if(n) n.focus(); },0); break;
     case "tour": openTour(); break;
   }
@@ -1228,6 +1455,17 @@ document.addEventListener("keydown", ev=>{
   } else if(ev.key==="Enter"){ ev.preventDefault(); choosePick(opts[ui.pickI]); }
   else if(ev.key==="Escape"){ ui.addSchool=false; render(); }
 });
+// Only one tab at a time: a newer tab takes over and older ones lock, so they can't overwrite each other.
+(function(){
+  if(!("BroadcastChannel" in window)) return;
+  const me=Math.random().toString(36).slice(2), ch=new BroadcastChannel("secondaries-tabs");
+  const lockUI=document.getElementById("lockout");
+  function lock(){ if(locked) return; flush(); locked=true; lockUI.hidden=false; Sync.paintChip(); }
+  function take(){ ch.postMessage({t:"hello", id:me}); if(locked){ locked=false; lockUI.hidden=true; S=load(); snapshot(); render(); Sync.run(); } }
+  ch.onmessage = ev=>{ const m=ev.data||{}; if(m.t==="hello" && m.id!==me) lock(); };
+  document.getElementById("lock-take").addEventListener("click", take);
+  take();
+})();
 let lastDay=iso(today());
 document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState!=="visible") return; const a=document.activeElement; if(a && (a.tagName==="TEXTAREA" || a.tagName==="INPUT")) return; if(iso(today())!==lastDay){ lastDay=iso(today()); } render(); });
 window.addEventListener("hashchange", ()=>{ const t=location.hash.slice(1); if(TABS.some(x=>x[0]===t) && t!==ui.tab) go(t); });
@@ -1241,6 +1479,8 @@ if(ios && !standalone) document.getElementById("install-wrap").hidden=false;
 let seen=false; try{ seen = localStorage.getItem(TOURKEY)==="1"; }catch(e){}
 if(!seen && !(ios && !standalone)) openTour();
 try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+if(Sync.state().connected) setTimeout(()=>Sync.run(), 400);
+if(window.__DRIVE_MOCK) window.__syncNow=()=>Sync.run();
 if("serviceWorker" in navigator) window.addEventListener("load", ()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); });
 })();
 </script>
