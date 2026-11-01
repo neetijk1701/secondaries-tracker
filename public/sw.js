@@ -1,5 +1,5 @@
 // Keeps an offline copy. Bump VERSION when you publish changes.
-const VERSION = "sec-v9";
+const VERSION = "sec-v10";
 const FILES = ["./", "index.html", "library.js", "config.js", "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png", "favicon.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
@@ -12,7 +12,7 @@ self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
   // Site files: try the network first so changes arrive, fall back to the saved copy offline.
   if (url.origin === location.origin) {
-    e.respondWith(fetch(e.request).then(r => {
+    e.respondWith(fetch(e.request, {cache:"no-cache"}).then(r => {
       if (r.ok) { const copy = r.clone(); caches.open(VERSION).then(c => c.put(e.request.mode === "navigate" ? "./" : e.request, copy)); }
       return r;
     }).catch(() => caches.match(e.request.mode === "navigate" ? "./" : e.request).then(r => r || caches.match("index.html"))));
