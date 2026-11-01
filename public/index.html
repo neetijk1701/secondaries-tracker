@@ -1543,6 +1543,8 @@ let seenThisVisit=false; try{ seenThisVisit = sessionStorage.getItem("secondarie
 if(!tourHidden() && !seenThisVisit && !(ios && !standalone)) openTour();
 try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
 if(Sync.state().connected) setTimeout(()=>Sync.run(), 400);
+// load Google's sign-in script early, so clicking the Drive button opens the sign-in window straight away (browsers block windows opened after a delay)
+if(GOOGLE_CLIENT_ID && !window.__DRIVE_MOCK){ const sc=document.createElement("script"); sc.src="https://accounts.google.com/gsi/client"; sc.async=true; document.head.appendChild(sc); }
 if(window.__DRIVE_MOCK) window.__syncNow=()=>Sync.run();
 if("serviceWorker" in navigator) window.addEventListener("load", ()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); });
 })();
