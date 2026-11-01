@@ -1,0 +1,23 @@
+/* Shared styles for the About and Privacy pages (the app itself has its own inline styles). */
+:root{--bg:#F2F5F7;--surface:#FFFFFF;--ink:#15202B;--muted:#5A6774;--line:#D7DEE4;--accent:#0E6B66;--accent-ink:#FFFFFF;--accent-soft:#DCEEEB;
+  --f-display:"Bricolage Grotesque","Figtree",system-ui,sans-serif;--f-ui:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif}
+@media (prefers-color-scheme: dark){:root{--bg:#0E141A;--surface:#161F28;--ink:#E3E9EF;--muted:#94A2AF;--line:#2A3641;--accent:#55BDB4;--accent-ink:#0B1A19;--accent-soft:#16332F;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:16px;line-height:1.6}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+header{background:var(--surface);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;gap:16px;padding-block:14px;flex-wrap:wrap}
+.brand{font-family:var(--f-display);font-weight:700;font-size:21px;color:var(--ink);text-decoration:none}
+.brand span{color:var(--accent)}
+nav{margin-left:auto;display:flex;gap:16px;font-weight:600;font-size:14px}
+nav a{color:var(--muted);text-decoration:none} nav a[aria-current]{color:var(--ink)}
+main{padding-block:36px 64px}
+h1{font-family:var(--f-display);font-size:34px;line-height:1.15;margin:0 0 12px;text-wrap:balance;letter-spacing:-.01em}
+h2{font-size:20px;margin:34px 0 8px}
+p,li{max-width:66ch} a{color:var(--accent)}
+.lead{font-size:19px;color:var(--muted);margin:0 0 24px}
+.cta{display:inline-block;background:var(--accent);color:var(--accent-ink);font-weight:700;padding:11px 18px;border-radius:10px;text-decoration:none;margin:8px 0 4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin:18px 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.card h3{margin:0 0 4px;font-size:16px} .card p{margin:0;color:var(--muted);font-size:15px}
+.muted{color:var(--muted)} footer{border-top:1px solid var(--line);padding-block:20px 36px;color:var(--muted);font-size:14px}
