@@ -1,0 +1,1449 @@
+[
+  {
+    "school": "Albert Einstein College of Medicine (NY)",
+    "state": "NY",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-albert-einstein-in-college-of-medicine.1517672/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-albert-einstein-in-college-of-medicine.1517672/page-2",
+    "source_note": "SDN post #53, Jul 23 2026 (jessisamess, 'MSTP questions:', replying to a question whether MSTP prompts are the same as the MD ones; not answered). Prompts 1–3 quoted in consecutive pieces and joined. Checked pages 1–2 (thread is 2 pages). Omitted: checkbox list of scientific fields in which applicant has done research (no essay; exact lead-in not quoted). Program evidence: Post #47 (Jul 13 2026) '+1 IS Secondary (MSTP)'; #53 lists MSTP questions; #83 (Sep 16 2026) '+1 MSTP II!'",
+    "cycle": "2026-2027",
+    "md_secondary": "unknown",
+    "prompts": [
+      {
+        "text": "Please describe briefly the field(s) in which you plan to pursue your future research. We are looking for the big picture, Aging, Neuroscience, Cell Biology, Immunology, etc., not the specific focus.",
+        "limit": 250,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      },
+      {
+        "text": "Please list your previous scientific presentations and abstracts. List all authors, abstract titles, name of meeting, and date of meeting. List each meeting on a separate line. Please do not include the text of the abstract.",
+        "limit": 9999,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research",
+        "abridged": false
+      },
+      {
+        "text": "Please list publications on which you are a co-author. List each on a separate line. Include names of all authors, title, journal, year of publication, and volume and page number(s). Please do not list papers that are \"in preparation.\"",
+        "limit": 9999,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research",
+        "abridged": false
+      },
+      {
+        "text": "Please indicate which was your favorite course in college and why.",
+        "limit": 3000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Baylor College of Medicine (TX)",
+    "state": "TX",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-baylor-college-of-medicine.1517674/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-baylor-college-of-medicine.1517674/",
+    "source_note": "Checked pages 1–3 (thread is 3 pages). MSTP applicants mention a secondary (#40–42) but no MD/PhD prompts posted. #79 notes MSTP applicants mostly post in a separate MD/PhD interview thread. Program evidence: Post #40 (Jul 25 2026) 'has anyone who applied MSTP got the secondary yet?'; #42 (Jul 27 2026) MSTP applicant got email to fill out secondary; #78 (Sep 1 2026) 'Any MSTP IIs so far?' No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Boston University (MA)",
+    "state": "MA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-boston-university.1517675/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-boston-university.1517675/",
+    "source_note": "Checked pages 1–2 (thread is 2 pages). No post mentions MD/PhD, MSTP, physician-scientist or dual-degree applicants. No MD/PhD mention in the MD thread; program evidence from the MD/PhD forum: 2026-2027 MD/PhD Interview Invites, tracker list in post #60 (cwmwldraig), Sep 24, 2026; 2026-2027 MD/PhD Rejections, post #4, Sep 16, 2026 ('Boston University') No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Brown University Warren Alpert Medical School (RI)",
+    "state": "RI",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-brown-university-warren-alpert-medical-school.1517676/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-brown-university-warren-alpert-medical-school.1517676/",
+    "source_note": "SDN post #6, Jul 24 2026 (starnosedmole): lists general essays, then 'Additional essays for the MudPhuds:'; poster says 'I believe this is all, but someone correct me if I missed one.' Prompt quoted in two consecutive pieces and joined. Thread is 1 page (posts #1–29). Omitted: checkbox of research areas of interest (Pathobiology, Neuroscience, etc.). Also lists MD-ScM additional essays (not MD/PhD). Program evidence: Post #6 MD/PhD additional essays; #12 (Jul 27 2026) '+1 OOS MD/PhD Secondary'",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "Please identify potential research mentors at Brown University and describe how your research background and interests align with the research of those mentors.",
+        "limit": 2000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Carle Illinois College of Medicine (IL)",
+    "state": "IL",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-carle-illinois-college-of-medicine.1517691/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-carle-illinois-college-of-medicine.1517691/",
+    "source_note": "Thread is 1 page (posts #1–18). Post #11 describes MD/PhD direct admits (secondhand); no MD/PhD prompts posted. Program evidence: Post #11 (Aug 6 2026) 'They started doing MD/PhD direct admits this year and have a class size of 2.' No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Case Western Reserve University (OH)",
+    "state": "OH",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-case-western-reserve-university.1517692/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-case-western-reserve-university.1517692/",
+    "source_note": "Checked pages 1–2 (thread is 2 pages). MSTP secondary/interviews mentioned but no MSTP prompts posted (thread links to case.edu for prompts). Program evidence: Post #11 (Jul 15 2026) '+1 OOS MSTP Secondary'; #42–43 (Oct 1 2026) MSTP IIs; #54 (Oct 12 2026) MD/PhD interview No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Chicago Medical School at Rosalind Franklin (IL)",
+    "state": "IL",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-chicago-medical-school-at-rosalind-franklin.1517695/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-chicago-medical-school-at-rosalind-franklin.1517695/",
+    "source_note": "Thread is 1 page (posts #1–45; page-2 URL returned same posts). Only MSTP mention is #18; no MD/PhD prompts posted. Program evidence: Post #18 (Jul 13 2026, user md_phd_applicant) '+1 OOS Secondary (MSTP)' No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Columbia Vagelos University College of Physicians and Surgeons (NY)",
+    "state": "NY",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-columbia-vagelos-university-college-of-physicians-and-surgeons.1518230/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-columbia-vagelos-university-college-of-physicians-and-surgeons.1518230/",
+    "source_note": "Thread is 1 page (posts #1–29). #20 (Jul 21 2026) asks if there are MSTP-specific prompts and whether they are in addition to MD ones; unanswered. No MSTP prompts posted. Program evidence: Post #6 (Jul 18 2026) '+1 OOS MSTP Secondary' No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Donald and Barbara Zucker School of Medicine at Hofstra/Northwell (NY)",
+    "state": "NY",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-hofstra-zucker.1518237/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-hofstra-zucker.1518237/",
+    "source_note": "Thread is 1 page (posts #1-#27); read all. Only mention: #13 (Aug 4) 'MSTP or MD? Congrats!' and #14 reply 'MD' - poster applied MD. No MD/PhD prompts; only regular MD prompts (post #5). Program evidence: Post #13 (glitterdolphin, Aug 4 2026) asks another poster 'MSTP or MD?' (answer: MD) - only an indirect implication of an MSTP track. No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Duke University School of Medicine (NC)",
+    "state": "NC",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-duke-university-school-of-medicine.1517702/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-duke-university-school-of-medicine.1517702/",
+    "source_note": "SDN post #14, Jul 9 2026 (desolationrow, '+1 OOS MSTP') lists 2 essays ('Share with us your story.' and 'Drawing from your clinical experiences, how have you fostered a connection with people?', 400 words each) plus additional info; #16 (Jul 10 2026): 'MD/PhD-only is those 2 prompts.' Both are prompts from the regular 9-prompt MD list (#7), so MSTP applicants appear to answer a reduced subset of the MD essays rather than extra MD/PhD-only prompts; none recorded. Thread is 1 page (posts #1–33). Program evidence: Post #6 (Jul 8 2026) MSTP secondary opens in July; #9 (Jul 9 2026) '+1 OOS MSTP Secondary'; #14, #21 MSTP secondaries",
+    "cycle": "2026-2027",
+    "md_secondary": "instead",
+    "prompts": []
+  },
+  {
+    "school": "Emory University School of Medicine (GA)",
+    "state": "GA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-emory-university-school-of-medicine.1517707/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-emory-university-school-of-medicine.1517707/",
+    "source_note": "SDN post #10, Jul 17 2026 (desolationrow, '+1 OOS MSTP Additional MSTP prompts'); #22 (Jul 30 2026) answers 'yes' to whether these are in addition to the MD prompts. Poster says the research-narrative prompt is 'the same prompt as the one above, and it's optional' and 'The other 2 are mandatory' (which two is unclear, so required left null for the others). Checked pages 1–2 (thread is 2 pages). Omitted: required selection of five research faculty to meet (with per-faculty description of how their research relates to your goals as a physician-scientist); template form for NEW research since AMCAS (experience type, dates, hours, PI, etc.); letters-of-recommendation instructions ('You may submit additional letters of recommendation…', 2000 words listed). Program evidence: Post #9 (Jul 17 2026) '+1 OOS MSTP Secondary'; #10 MSTP prompts; page 2 #58 (Oct 9 2026) '+1 MSTP II!'",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "Enter NEW publications since you have submitted the AMCAS primary application using standard citation format.",
+        "limit": 2000,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "research",
+        "abridged": false
+      },
+      {
+        "text": "Enter NEW research since you have submitted the AMCAS primary application, using standard citation format.",
+        "limit": 1000,
+        "unit": "words",
+        "required": false,
+        "group": null,
+        "type": "research",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Georgetown University School of Medicine (DC)",
+    "state": "DC",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-georgetown-university-school-of-medicine.1517715/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-georgetown-university-school-of-medicine.1517715/",
+    "source_note": "Thread is 2 pages (posts #1-#61); read all. Post #17 (Jul 13) asked 'are there MD/PhD specific prompts?' and #19 (Jul 19) asked 'if there are any additional MD/PhD questions? or the same ones as MD?' - both unanswered. No MD/PhD prompts posted. Program evidence: Post #16 (md_phd_applicant, Jul 13 2026): '+1 OOS Secondary (MD/PhD)'; #17, #19 ask about MD/PhD prompts. No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Harvard Medical School (MA)",
+    "state": "MA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-harvard-medical-school.1517717/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-harvard-medical-school.1517717/",
+    "source_note": "Thread is 1 page (posts #1-#23); read all. Post #9 (Jun 30) asked 'Could you share the MSTP secondary prompts?' - never posted. Post #12 (EngineeringGuilty, Jul 6 2026, an MSTP applicant): 'I just had to respond to the HST prompt and enter any publications.' Post #13 unsure whether MSTP must answer HST. HST prompt is listed under 'If Applying to HST', not MSTP-only, so not recorded. Program evidence: Post #3 (EngineeringGuilty, Jun 30 2026): '+1 MSTP Secondary'; #9 asks for MSTP prompts; #13 (Jul 14) 'a lot of MSTP applicants like myself also applied to HST'.",
+    "cycle": "2026-2027",
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Icahn School of Medicine at Mount Sinai (NY)",
+    "state": "NY",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-icahn-school-of-medicine-at-mount-sinai.1517720/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-icahn-school-of-medicine-at-mount-sinai.1517720/",
+    "source_note": "Thread is 1 page (posts #1-#28); read all. No mention of MD/PhD/MSTP. Post #5 (Jun 29 2026) says 'MD only prompts are same as last cycle' without naming other programs. No MD/PhD prompts. No MD/PhD mention in the MD thread; program evidence from the MD/PhD forum: 2026-2027 MD/PhD Interview Invites, tracker list in post #60 (cwmwldraig), Sep 24, 2026 No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Indiana University School of Medicine (IN)",
+    "state": "IN",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-indiana-university-school-of-medicine.1517721/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-indiana-university-school-of-medicine.1517721/",
+    "source_note": "SDN post #11 (sydelix, Jul 13 2026, '+1 MSTP Secondary'): full Indiana MSTP secondary, 7 prompts. Prompts 1-3 and 4-6 were retrieved in consecutive quoted pieces and joined; required/optional not stated (none marked optional). Thread has 5 pages; checked pages 1-3. md_secondary unknown: nobody says directly, but posts #3/#6/#7 (Jul 2) and #128 (Sep 21) say IU MD has no secondary (only a no-essay supplemental after interview invite), so the MSTP secondary appears to be a separate set. Program evidence: Post #11 (Jul 13 2026) MSTP secondary prompts; #83 (Aug 17) '+1 MSTP II! MSTP secondary sent 7/17. Interview scheduled for 10/7.'; #110 (Sep 2) mentions MD-PhD acceptance timing.",
+    "cycle": "2026-2027",
+    "md_secondary": "unknown",
+    "prompts": [
+      {
+        "text": "How did you find out about the Indiana MSTP? Why are you interested in MD/PhD training at Indiana University/Purdue University in particular?",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "Please describe your research interests and describe how the opportunities at the Indiana MSTP fit with your goals for graduate training. Please include names of up to five IU (and for BME applicants, Purdue) investigators whose research programs interest you.",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      },
+      {
+        "text": "The Indiana MSTP seeks students whose individual strengths and viewpoints can help advance the future of medicine. Please describe the unique perspective or experience you would contribute to the incoming class. You may also share any personally significant or challenging circumstances from your background that shape the outlook you bring.",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "diversity",
+        "abridged": false
+      },
+      {
+        "text": "Briefly describe a specific instance when you faced adversity, how you met that challenge, and how you demonstrated resilience.",
+        "limit": 250,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "challenge",
+        "abridged": false
+      },
+      {
+        "text": "If you have any updates or new information to report since you have submitted your AMCAS primary application, please briefly describe below.",
+        "limit": 250,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "anything_else",
+        "abridged": false
+      },
+      {
+        "text": "If you are currently not a fulltime student, please briefly describe the activities you are participating in this academic year.",
+        "limit": 250,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "If you are a re-applicant, what have you done to enhance your re-application?",
+        "limit": 250,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Johns Hopkins University School of Medicine (MD)",
+    "state": "MD",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-johns-hopkins-university-school-of-medicine.1517722/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-johns-hopkins-university-school-of-medicine.1517722/",
+    "source_note": "Thread is 1 page (posts #1-#26); read all. SDN post #11 (EngineeringGuilty, Jul 10 2026), answering #10 'Are the MSTP prompts the same as MD? Any additional prompts?': 'Same prompts. There's an additional section where you select graduate program/research interest and list faculty.' No MSTP-only essay prompts posted. Omitted: graduate program/research interest selection and faculty list section (described, no wording). Program evidence: Post #2 (EngineeringGuilty, Jul 10 2026): '+1 OOS MSTP Secondary'; #11 describes MSTP secondary; #24 (Oct 13) 'have any mstp ii been sent out yet?'",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": []
+  },
+  {
+    "school": "Kaiser Permanente Tyson School of Medicine (CA)",
+    "state": "CA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-kaiser-permanente-tyson-school-of-medicine.1517723/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-kaiser-permanente-tyson-school-of-medicine.1517723/",
+    "source_note": "SDN post #2 (dewylongshoes, Jun 30 2026, '+1 OOS MD/PhD secondary'): post lists the regular MD essays, scholarship question, then a section headed 'MD/PhD:'. Thread is 1 page (posts #1-#36); read all. No limit or required/optional stated. Omitted: 'Please provide the names of faculty at Caltech with whom you'd like to meet.' / 'Briefly state why you'd like to meet with this person: (Up to ten people)' (faculty list form). md_secondary 'also' inferred from the single post listing MD prompts plus the MD/PhD section in one secondary. Program evidence: Post #2 (dewylongshoes, Jun 30 2026): '+1 OOS MD/PhD secondary' with MD/PhD section (Caltech faculty).",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "Please list publications and papers submitted. Include one or two sentences describing your role on each publication.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "research",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Loyola University Chicago Stritch School of Medicine (IL)",
+    "state": "IL",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-loyola-university-chicago-stritch-school-of-medicine.1517727/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-loyola-university-chicago-stritch-school-of-medicine.1517727/",
+    "source_note": "Thread is 1 page (posts #1-#30); read all. No mention of MD/PhD/MSTP; only regular MD prompts (post #3, Jul 6 2026). No MD/PhD mention in the MD thread; program evidence from the MD/PhD forum: 2026-2027 MD/PhD Interview Invites, post #60, Sep 24, 2026 ('old' invite) No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Mayo Clinic Alix Minnesota (MN)",
+    "state": "MN",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-mayo-clinic-alix-minnesota.1517729/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-mayo-clinic-alix-minnesota.1517729/",
+    "source_note": "SDN post #14 (sydelix, Jul 10 2026): 'Only one prompt for MSTP applicants:'; confirmed verbatim in #17 (EngineeringGuilty, Jul 16 2026), replying 'No. MSTP has one prompt that has stayed the same.' to #16 'Are the MSTP questions the same as MD? are there additional questions?'. #14 also: 'Very thankful not to have to deal with the AI prompt...' (an MD prompt). Quote retrieved in two pieces and joined. Thread is 1 page (posts #1-#34); read all. Program evidence: Posts #12 (Jul 8), #14 (Jul 10), #15 (Jul 13) MSTP secondaries; #25 (Sep 11 2026) '+1 MSTP II for Minnesota campus!!!'.",
+    "cycle": "2026-2027",
+    "md_secondary": "instead",
+    "prompts": [
+      {
+        "text": "In the space below, write a brief paragraph (max. 500 characters) explaining why you are specifically applying to the Mayo Clinic M.D.-Ph.D. Program.",
+        "limit": 500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "McGovern Medical School at UT Health Houston (TX)",
+    "state": "TX",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-mcgovern-medical-school-at-ut-health-houston.1517858/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-mcgovern-medical-school-at-ut-health-houston.1517858/",
+    "source_note": "SDN post #34, EngineeringGuilty, Jul 17 2026, answering post #33 ('Could you confirm the MSTP prompts? Are they the same as the MD ones?'): lists Questions 1-4 (matching the MD prompts) plus 'Question 5: Why would our MD/PhD program be a good fit for your goals? (1000 character limit)'. 'Question 5:' label dropped from text. md_secondary 'also' inferred from Q1-4 matching MD prompts (post does not state it explicitly). Checked pages 1-2 (of 3). Program evidence: Post #21 (Jun 26 2026) '+1 IS MSTP Secondary'; #30-31 (Jul 16) MSTP video interview; #34 MSTP prompts.",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "Why would our MD/PhD program be a good fit for your goals?",
+        "limit": 1000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Michigan State University College of Human Medicine (MI)",
+    "state": "MI",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-michigan-state-university-college-of-human-medicine.1517738/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-michigan-state-university-college-of-human-medicine.1517738/",
+    "source_note": "Thread is 1 page (posts #1-#30); read all. No mention of MD/PhD/MSTP; only regular MD prompts (post #4, Jul 1 2026). No MD/PhD mention in the MD thread; program evidence from the MD/PhD forum: 2026-2027 MD/PhD Interview Invites, tracker list in post #60 (cwmwldraig), Sep 24, 2026 ('Michigan State' could also mean MSUCOM; assumed MSU CHM.) No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Northwestern University Feinberg School of Medicine (IL)",
+    "state": "IL",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-northwestern-university-feinberg-school-of-medicine.1517743/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-northwestern-university-feinberg-school-of-medicine.1517743/",
+    "source_note": "SDN post #7, Jun 30 2026 ('+1 OOS MSTP Secondary (6/29/26 2:10 PM CDT)'), a full MSTP prompt set differing from the MD set in post #2 (Jun 29 2026). Single-page thread (posts #1-24). Prompts 2, 3 and 8 were quoted in consecutive pieces and joined. Omitted: MSTP-set items that also appear in the MD set (post-undergraduate year(s), reapplicant, Feinberg 'totality of experiences' prompt) and the Yes/No Feinberg-relationship question. md_secondary 'instead' inferred: post #7 is a distinct 'MSTP Secondary' including its own copies of shared prompts; no poster states it explicitly. Program evidence: #7 (Jun 30) OOS MSTP Secondary; #9 (Jul 13) '+1 OOS Secondary (MSTP)'; #15 (Aug 11) and #19 (Aug 20) MSTP IIs",
+    "cycle": "2026-2027",
+    "md_secondary": "instead",
+    "prompts": [
+      {
+        "text": "Why did you choose your undergraduate major? How does the subject appeal to you?",
+        "limit": 200,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "Name a scientific paper that you have read recently that had a strong impact on you and describe what impact it had.",
+        "limit": 200,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      },
+      {
+        "text": "Discuss a current unanswered question in biomedical research that you find particularly interesting and what research you would like to see done to address it.",
+        "limit": 200,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      },
+      {
+        "text": "What is the most gratifying research experience you have had to date and why? What was the greatest obstacle you had to overcome in research and how did you overcome it?",
+        "limit": 200,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "research",
+        "abridged": false
+      },
+      {
+        "text": "Please provide a brief statement explaining why you are specifically applying to the Northwestern University Medical Scientist Training Program. We encourage you to comment of relevant research, clinical and/or educational opportunities of interest to you.",
+        "limit": 200,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Ohio State University College of Medicine (OH)",
+    "state": "OH",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-ohio-state-university-college-of-medicine.1517752/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-ohio-state-university-college-of-medicine.1517752/",
+    "source_note": "Checked pages 1-2 (all; posts #1-63). MSTP secondary received (post #5) but prompts never posted; post #8 (Jul 16 2026) asked 'Could you please confirm the MSTP prompts?' with no answer. Program evidence: #5 (Jul 9 2026) '+1 OOS MSTP Secondary'; #45 (Sep 1 2026) '+1 OOS MSTP II' No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Oregon Health and Science University School of Medicine (OR)",
+    "state": "OR",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-oregon-health-and-science-university-school-of-medicine.1517753/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-oregon-health-and-science-university-school-of-medicine.1517753/",
+    "source_note": "SDN post #17, Aug 19 2026 (maemows, '+1 OOS MSTP secondary. Prompts below:'; MD prompts listed first, then 'MSTP additional questions (all 1500 characters maximum):'). Checked pages 1-2 (all; posts #1-71). Prompts 2, 3 and 4 quoted in consecutive pieces and joined. Omitted: prompt 6 (list the OHSU graduate program(s) you are most interested in, from a linked list). Program evidence: #17 and #23 (Aug 19 2026) OOS MSTP secondaries; page 2 #55 (Sep 25 2026) '+1 OOS MSTP II'",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "What specifically in the OHSU MD/PhD program interests you?",
+        "limit": 1500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "Please list 3-5 faculty members at OHSU whose research interests you. Please add a very brief statement for each faculty member explaining why. If possible, your research interview will be pulled from this list of faculty. Please disclose if you have worked with or are associated with any faculty members listed.",
+        "limit": 1500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      },
+      {
+        "text": "Thinking about one of your research projects, how could the results affect the way we diagnose and treat patients? If your research is non-biomedical, describe how it advances scientific knowledge.",
+        "limit": 1500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research",
+        "abridged": false
+      },
+      {
+        "text": "Please list publications that have been published or submitted & pending. Please note your authorship and a brief description of contribution to each publication. If possible, please provide a link to your direct online bibliography in pubmed or other online source. Do not list anything that is in the process of being written. Write N/A if nothing has been submitted or published.",
+        "limit": 1500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research",
+        "abridged": false
+      },
+      {
+        "text": "Please list successful grants, poster presentation, or invited speaking engagements. Write N/A if nothing has been awarded or presented.",
+        "limit": 1500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Rutgers New Jersey Medical School (NJ)",
+    "state": "NJ",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-rutgers-new-jersey-medical-school.1517761/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-rutgers-new-jersey-medical-school.1517761/",
+    "source_note": "Checked pages 1-3 (all; posts #1-125). Post #120 (page 3, Aug 4 2026) says the secondary has '2 separate MD-PhD tabs ... with different number of questions to answer' but no prompt text was posted and no one replied. Program evidence: Page 3 #120 (Aug 4 2026): 'has anyone applying MD-PhD noticed that there are 2 separate MD-PhD tabs on the secondary'",
+    "cycle": "2026-2027",
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Rutgers Robert Woods Johnson Medical School (NJ)",
+    "state": "NJ",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-rutgers-robert-woods-johnson-medical-school.1517762/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-rutgers-robert-woods-johnson-medical-school.1517762/",
+    "source_note": "Single-page thread (posts #1-11). No MD/PhD, MSTP, or dual-degree mentions; only regular MD prompts (post #4). No MD/PhD mention in the MD thread; program evidence from the MD/PhD forum: 2026-2027 MD/PhD Interview Invites, post #52, Sep 18, 2026; 2026-2027 MD/PhD Waitlists/Deferrals, post #2 ('RWJMS', date shown as 'Yesterday at 12:42 PM') No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Saint Louis University School of Medicine (MO)",
+    "state": "MO",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-saint-louis-university-school-of-medicine.1517763/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-saint-louis-university-school-of-medicine.1517763/",
+    "source_note": "Single-page thread (posts #1-18). Only MD/PhD content is a Yes/No item in the regular secondary posted in #2 (Jun 29 2026): '12. Would you like to apply for the MD/PhD program?' (omitted as yes/no). No MD/PhD-only prompts. Program evidence: #2 (Jun 29 2026) secondary includes 'Would you like to apply for the MD/PhD program?' No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Sidney Kimmel Medical College at Thomas Jefferson (PA)",
+    "state": "PA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-sidney-kimmel-medical-college-at-thomas-jefferson.1517764/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-sidney-kimmel-medical-college-at-thomas-jefferson.1517764/",
+    "source_note": "Checked pages 1-2 (all; posts #1-84). No MD/PhD prompts posted. Program evidence: #45 (Jul 18 2026) '+1 OOS MD/PhD Interview'; #49 (Jul 20 2026) asks if IIs are for MD/PhD No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Stanford University School of Medicine (CA)",
+    "state": "CA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-stanford-university-school-of-medicine.1517778/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-stanford-university-school-of-medicine.1517778/",
+    "source_note": "SDN post #27, Aug 16 2026 (prompt quoted by a poster who chose MD and still saw it; 'online, I have seen that this prompt is just for MSTP'). #28: 'definitely not apart of the regular MD program. Have you selected either the PSTP or MSTP option?'; #29: selecting PSTP 'added the two extra prompts (why PS and describe research...)'. So this prompt is shown to MSTP and PSTP (MD track) applicants, not only MD/PhD. The second extra prompt ('why PS') was described but its wording was never posted. Prompt quoted in two pieces and joined. Single-page thread (posts #1-48; page-2 URL returned the same page). Not strictly MD/PhD-only: posts #28–29 say PSTP (MD-only track) applicants also get it. Program evidence: #22 (Aug 14 2026) '+1 MSTP rejection, still under MD consideration'; #27-28 (Aug 16 2026) MSTP option on secondary",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "Describe your most significant research experience. Include the rationale, results, and conclusions, and the role you played in each of these components.",
+        "limit": 2500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Stony Brook University Renaissance School of Medicine (NY)",
+    "state": "NY",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-stony-brook-university-renaissance-school-of-medicine.1517779/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-stony-brook-university-renaissance-school-of-medicine.1517779/",
+    "source_note": "SDN post #3, Jul 13 2026 (md_phd_applicant, '+1 IS Secondary (MSTP)'; prompt labeled 'MSTP Specific prompt (500 word max):' listed alongside three general prompts). Quoted in three pieces and joined. Single-page thread (posts #1-13). Program evidence: #3 (Jul 13 2026) '+1 IS Secondary (MSTP)' with MSTP-specific prompt",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "Please describe the basic and/or clinical research fields that you think you might like to explore and/or develop expertise in during your MSTP training. To the extent that you have defined potential specific future clinical interests, please describe the type(s) of medicine that you might be interested in pursuing once you have completed the MSTP.",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Texas Tech University Hsc School of Medicine at Lubbock (TX)",
+    "state": "TX",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-texas-tech-university-hsc-school-of-medicine-at-lubbock.1517786/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-texas-tech-university-hsc-school-of-medicine-at-lubbock.1517786/",
+    "source_note": "Checked pages 1–3 (all). No MD/PhD-only prompts. Regular secondary has a dual-degree ranking question ('If you are applying to a dual degree program, please rank them in order of preference', posts #1/#2/#8/#12; #13 Jun 11 2026 list includes MD/PhD) — omitted (ranking, not MD/PhD-only). Post #122 (page 3) quotes interview policy only. Program evidence: Post #13 (Jun 11 2026) dual-degree ranking list includes 'MD/PhD'; post #122 (page 3) quotes policy: 'MD/PhD Program. This program will conduct a panel interview with the MD/PhD faculty in addition to the two interviews with the Interview Subcommittee.' No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Tufts University School of Medicine (MA)",
+    "state": "MA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-tufts-university-school-of-medicine.1517787/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-tufts-university-school-of-medicine.1517787/",
+    "source_note": "SDN post #15, Jul 1 2026 (choppedliver765: 'MSTP specific questions are:'); post #34 Jul 16 2026: 'They are in addition to the MD.' Prompt text joined from consecutive verbatim pieces returned by the fetch tool. Checked pages 1–2 (all). Omitted: 'I am interested in the MDPhD program in (can select multiple):' checkbox list (CTS, GMCB, Immunology, Molecular Microbiology, Neuroscience, Undecided). Required/optional not stated. Program evidence: Posts #12, #13, #15 (Jul 1 2026) '+1 OOS MSTP Secondary'; #28, #43, #44.",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "Describe your research interests. If the research of a Tufts faculty member is of particular interest to you, identify the faculty member and describe your interest in his/her work.",
+        "limit": 3000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      },
+      {
+        "text": "If you have already completed your bachelor's degree, list in resume format your full-time activities since graduation. If you have not yet graduated, please list any activities or work experiences that you feel are relevant to your interest in our MD/PhD program.",
+        "limit": 3000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Tulane University School of Medicine (LA)",
+    "state": "LA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-tulane-university-school-of-medicine.1517788/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-tulane-university-school-of-medicine.1517788/",
+    "source_note": "Checked pages 1–3 (of 4). No MD/PhD-only prompts posted; regular prompts in post #6 (Jun 30 2026) have no MD/PhD section. Program evidence: Post #49 (Jul 21 2026) links NIH physician-scientist training grant news: 'Tulane is doubling their number of MD-PhD spots!' No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Alabama Birmingham Heersink (AL)",
+    "state": "AL",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-alabama-birmingham-heersink.1518238/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-alabama-birmingham-heersink.1518238/",
+    "source_note": "SDN post #7, Jul 9 2026 (desolationrow, '+1 OOS MSTP'), section headed 'MD/PHD' after the general prompts in the same post. Conference prompt joined from consecutive verbatim pieces. Thread is 1 page (posts #1–18). md_secondary left unknown: the MD/PHD section follows the general set in an MSTP applicant's post and #8 (MSTP applicant) asks about the general ties question, but nobody states it. 'List 3-5 key phrases' and 'List 3 unique qualities' kept as short-answer prompts; no limits given. Required/optional not stated. Program evidence: Posts #6, #7, #10 (Jul 9–10 2026) '+1 OOS MSTP'; #8 'OOS MSTP applicant'.",
+    "cycle": "2026-2027",
+    "md_secondary": "unknown",
+    "prompts": [
+      {
+        "text": "List 3-5 key phrases that best describe your science/research interests:",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      },
+      {
+        "text": "Please list any regional or national conferences you will be attending during this academic year. If you will be presenting your work, please list the title and authors of your presentation/poster (ABRCMS, ATS, EB, SFN, SACNAS, Biomed Eng Society, etc.).",
+        "limit": 750,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research",
+        "abridged": false
+      },
+      {
+        "text": "If you have already graduated from college (or will graduate), please give a brief description of your activities following graduation.",
+        "limit": 1500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "What factors prompted you to apply to UAB for MD/PhD training?",
+        "limit": 1500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "List 3 unique qualities that will contribute to you becoming a successful physician scientist.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "mdphd_why",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "University of Arizona College of Medicine Tucson (AZ)",
+    "state": "AZ",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-arizona-college-of-medicine-tucson.1517793/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-arizona-college-of-medicine-tucson.1517793/",
+    "source_note": "SDN post #8, Aug 6 2026 (desolationrow, '+1 OOS MSTP'), prompts joined from consecutive verbatim pieces. Checked pages 1–2 (all). Post also says 'Also there are 2 asynchronous video interview questions' (text not given). Nobody says whether the regular MD essays are also required; reapplicant prompt may be shared with MD (post #14 suggests MD secondary has a reapplicant question). Required/optional not stated. Omitted at merge: 'Please list faculty members…' (faculty list). The re-applicant prompt may also be in the regular MD secondary; kept because it was posted in the MSTP set. Program evidence: Post #8 (Aug 6 2026) '+1 OOS MSTP' with MSTP prompts.",
+    "cycle": "2026-2027",
+    "md_secondary": "unknown",
+    "prompts": [
+      {
+        "text": "Have you applied to medical school before? If you have applied to medical school before, please share what you have done since you last applied.",
+        "limit": 350,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "Please describe your activities during gaps between your graduation from college and matriculation in MSTP.",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "What was your rationale behind choosing your undergraduate major? Would you choose a different major if you could start all over again?",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "Discuss your research project(s) and your contribution to the project(s).",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "research",
+        "abridged": false
+      },
+      {
+        "text": "In your opinion, what is the most exciting area of scientific research in biomedicine? How would you address this question?",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "University of Arkansas for Medical Sciences College of Medicine (AR)",
+    "state": "AR",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-arkansas.1518239/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-arkansas.1518239/",
+    "source_note": "Thread is 1 page (27 posts). No prompts posted. Program evidence: Post #16 (Oct 4 2026): 'Any other applicants get the MD/PhD email?' No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Buffalo Jacobs School of Medicine (NY)",
+    "state": "NY",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-buffalo-jacobs-school-of-medicine.1517795/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-buffalo-jacobs-school-of-medicine.1517795/",
+    "source_note": "Thread is 1 page (24 posts). Post #5 asked for the MD/PhD prompts; no reply. Program evidence: Post #4 (Jul 13 2026): '+1 IS Secondary (MD/PhD)' No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of California Irvine School of Medicine (CA)",
+    "state": "CA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-california-irvine-school-of-medicine.1517797/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-california-irvine-school-of-medicine.1517797/",
+    "source_note": "Checked pages 1–2 (all). MSTP secondaries reported but no MSTP prompts quoted. Program evidence: Posts #7, #8 (Jul 28 2026) '+1 IS MSTP secondary'; #58 (Oct 19 2026) '+1 mstp II'. No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of California Los Angeles David Geffen School of Medicine (CA)",
+    "state": "CA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-california-los-angeles-david-geffen-school-of-medicine.1517801/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-california-los-angeles-david-geffen-school-of-medicine.1517801/",
+    "source_note": "Checked pages 1–2 (all). MSTP prompts were shared only as an attached file 'UCLA MSTP.docx' (post #50, Jul 27 2026), not readable; posts describe a 'Role in Lab' box (#32) and a ~4,000-character 'Personal Comments' essay (#50) without wording. No prompts recorded. Program evidence: Post #32 (Jul 17 2026) '+1 IS MSTP secondary!'; #50 (Jul 27 2026) shares MSTP prompts as attachment; #22 quotes 'Prime-LA or MSTP track you have selected'. No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of California San Diego School of Medicine (CA)",
+    "state": "CA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-california-san-diego-school-of-medicine.1517799/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-california-san-diego-school-of-medicine.1517799/",
+    "source_note": "SDN post #8, Jul 7 2026 (starnosedmole): MD/PhD-only instruction inside the first essay of the all-applicant secondary (autobiographical statement, 6000 characters shared; 'This section should be completed by all applicants'). Sentence joined from two verbatim halves. Recorded only the MD/PhD sentence, not the regular MD essay. Checked pages 1–2 (all). Not recorded as a prompt: the only MD/PhD item is an instruction inside the autobiographical essay all applicants write: \"If you are applying to the MD/PhD program, use this essay to incorporate comments explaining why you are specifically interested in seeking MD/PhD training at UCSD.\" Program evidence: Posts #16, #18 (Jul 7 2026) '+1 OOS/IS MSTP secondary'; #52 (page 2) asks about MD/PhD status in portal.",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": []
+  },
+  {
+    "school": "University of California San Francisco School of Medicine (CA)",
+    "state": "CA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-california-san-francisco-school-of-medicine.1517800/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-california-san-francisco-school-of-medicine.1517800/",
+    "source_note": "SDN post #18, Jul 16 2026 (desolationrow, '+1 OOS MSTP'); post #23 Jul 17 2026: 'In addition to' the 3 MD-only prompts. Page 1 of 2 settled it. Omitted: research-interest checkboxes and research project list form (projects, titles, dates, PI, addresses). Required/optional not stated. Program evidence: Posts #18, #20, #21 (Jul 16 2026) MSTP secondaries.",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "Please describe your most recent research project, its importance and how it captured your interest.",
+        "limit": 750,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "research",
+        "abridged": false
+      },
+      {
+        "text": "Please list publications, honors and presentations resulting from your research experiences.",
+        "limit": 750,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "research",
+        "abridged": false
+      },
+      {
+        "text": "Please describe briefly your reasons for applying to the UCSF MSTP.",
+        "limit": 750,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "How did you learn about UCSF MSTP?",
+        "limit": 100,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "University of Chicago Pritzker School of Medicine (IL)",
+    "state": "IL",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-chicago-pritzker-school-of-medicine.1517802/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-chicago-pritzker-school-of-medicine.1517802/",
+    "source_note": "Thread is 1 page (posts #1–45; page-2 URL returned page 1). No MD/PhD-only prompts. Post #4 (Jul 11 2026, '+1 MSTP') lists four regular prompts and omits the research prompt labeled '(450 words - MD only)', suggesting MSTP applicants skip it, but nobody states this. Program evidence: Post #4 (Jul 11 2026) '+1 MSTP'; #31 (Sep 4 2026) '+1 MSTP' II; #29, #43 ask about MSTP IIs. No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Cincinnati College of Medicine (OH)",
+    "state": "OH",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-cincinnati-college-of-medicine.1517804/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-cincinnati-college-of-medicine.1517804/",
+    "source_note": "SDN post #4, Jul 6 2026 (EngineeringGuilty, after '+1 OOS MSTP Secondary' in #2); post #6: 'Those are the only prompts I have to answer as an MSTP applicant.' Prompts joined from consecutive verbatim pieces. Prompt 1 also appears in the regular MD list (post #17) but is part of the MSTP set. Thread is 1 page (posts #1–39). Required/optional not stated. Program evidence: Posts #2, #4, #6 (Jul 6 2026) MSTP secondary; #21 (Jul 22 2026) '+1 OOS MD/PhD II'; #34 (Sep 30 2026) '+1 MSTP II'.",
+    "cycle": "2026-2027",
+    "md_secondary": "instead",
+    "prompts": [
+      {
+        "text": "Describe your interest in the University of Cincinnati College of Medicine. Which opportunities or resources would you pursue as a student, and why are they important to your goals?",
+        "limit": 2000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "Please summarize your past research experience(s). Discuss your role and contributions to the project(s). Explain how these experience(s) have prepared you for a career as a physician-scientist.",
+        "limit": 4000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research",
+        "abridged": false
+      },
+      {
+        "text": "Please discuss your motivation and goals for joining an MD/PhD program. Elaborate on future career plans and how the University of Cincinnati MSTP will help you achieve those goals.",
+        "limit": 2000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "mdphd_why",
+        "abridged": false
+      },
+      {
+        "text": "Please discuss your research interests and how these align with the research opportunities provided at the University of Cincinnati/Cincinnati Children's. Discuss potential MSTP faculty mentors whose research is of interest to you.",
+        "limit": 2000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "University of Colorado Anschutz School of Medicine (CO)",
+    "state": "CO",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-colorado-anschutz-school-of-medicine.1517805/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-colorado-anschutz-school-of-medicine.1517805/",
+    "source_note": "Thread is 1 page (44 posts). No MD/PhD prompts; dual-degree essays listed are MD-MS, MD-MBA, MPH only (not recorded). Program evidence: Post #25 (Jul 25 2026): 'Anyone applying MSTP having trouble accessing their website?' No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Connecticut School of Medicine (CT)",
+    "state": "CT",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-connecticut-school-of-medicine.1517806/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-connecticut-school-of-medicine.1517806/",
+    "source_note": "Thread is 1 page. Only mention is a general MD prompt (post #2, Jul 12 2026) referencing 'becoming a physician or physician scientist' — not MD/PhD-only. No MD/PhD mention in the MD thread; program evidence from the MD/PhD forum: 2026-2027 MD/PhD Interview Invites, post #7, Aug 17, 2026 No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Florida College of Medicine (FL)",
+    "state": "FL",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-florida-college-of-medicine.1517807/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-florida-college-of-medicine.1517807/",
+    "source_note": "Thread is 1 page. Post #13 asked whether MSTP questions differ from MD ones; no reply. Program evidence: Post #9 (Jul 14 2026): '+1 OOS MSTP Secondary' No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Iowa Carver (IA)",
+    "state": "IA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-iowa-carver-college-of-medicine.1517815/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-iowa-carver-college-of-medicine.1517815/",
+    "source_note": "Single-page thread (posts #1-46; page-2 returned same content). SDN post #15, Jul 28 2026, lists the secondary with an item 'MSTP only: CV/Resume upload' appended to the standard prompts. No MD/PhD-only essay prompts. Omitted: MSTP-only CV/Resume upload (not an essay prompt). md_secondary set to 'also' because the MSTP-only item appears appended to the regular secondary list in the same post. Program evidence: Post #15 (Jul 28 2026) secondary listing includes 'MSTP only: CV/Resume upload'.",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": []
+  },
+  {
+    "school": "University of Kentucky College of Medicine (KY)",
+    "state": "KY",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-kentucky-college-of-medicine.1517825/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-kentucky-college-of-medicine.1517825/",
+    "source_note": "Checked pages 1-2 (all). No MD/PhD-only prompts posted; secondary prompts in post #3 (Jul 6 2026) are general. Program evidence: Post #26 (Aug 17 2026): 'OOS MD-PhD, R pre-secondary...'; post #63 (Oct 23 2026, page 2): 'Anyone applying MSTP hear anything for interviews or acceptances yet?' No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Massachusetts Medical School (MA)",
+    "state": "MA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-massachusetts-medical-school.1517827/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-massachusetts-medical-school.1517827/",
+    "source_note": "SDN post #13, Jul 21 2026 (reply to #12 asking if MSTP prompts are same as MD: 'All are the same plus one additional question!'); MSTP-only Q8 retrieved in two consecutive pieces and joined. Post also mentions a tab to opt into MD-only consideration (omitted). Page 1 settled it. Program evidence: Posts #12-13 (Jul 20-21 2026) discuss the MSTP secondary.",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "Please describe why the UMass Chan Medical School MSTP program is your choice for training as a physician and a scientist.",
+        "limit": 200,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "University of Miami Miller School of Medicine (FL)",
+    "state": "FL",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-miami-miller-school-of-medicine.1517828/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-miami-miller-school-of-medicine.1517828/",
+    "source_note": "Checked pages 1-2 (all). No MD/PhD-only prompts posted; post #42 (Jul 16 2026) mentions a 'research subspeciality question' in the general secondary but wording not given. Program evidence: Post #44 (Jul 17 2026): poster is an MSTP applicant awaiting secondary; post #60 (Sep 5 2026): 'My friend got an MSTP II yesterday!!' No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Michigan Medical School (MI)",
+    "state": "MI",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-michigan-medical-school.1517829/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-michigan-medical-school.1517829/",
+    "source_note": "SDN post #11, Jun 26 2026 ('The MSTP secondary has one additional essay question alongside the four for MD:'). Prompt retrieved in consecutive pieces and joined; trailing limit sentence ('Do not exceed 1500 characters including spaces (about 250 words).') moved to limit field. Page 1 settled it. Program evidence: Post #4 (Jun 26 2026) '+1 OOS MSTP Secondary'; post #11; post #32 (Sep 4 2026) MSTP II.",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "Describe why you are applying to the University of Michigan MSTP. If you are interested in a specific department, program, or area of research or faculty mentor for your Ph.D., please provide a brief explanation. We recognize that your interests may change. If relevant, please describe your gap/growth year plans.",
+        "limit": 1500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "University of Minnesota Medical School (MN)",
+    "state": "MN",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-minnesota-medical-school.1517831/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-minnesota-medical-school.1517831/",
+    "source_note": "SDN post #8, Jul 18 2026 ('MSTP Prompts'). Single-page thread (posts #1-49; page-2 returned same content). Longer prompts retrieved in consecutive pieces and joined; the optional prompt was assembled from three pieces (question + 'This is an opportunity...in your application.' + 'You may also update us...'). Omitted: 'List University of Minnesota faculty members you would be interested in potentially working with' (faculty list, up to 12, 300 chars). No post says whether MSTP applicants also do the MD essays. Program evidence: Post #5 (Jul 12 2026) '+1 OOS MSTP Secondary'; post #8 MSTP prompts; posts #32, #37 MSTP IIs.",
+    "cycle": "2026-2027",
+    "md_secondary": "unknown",
+    "prompts": [
+      {
+        "text": "Describe the area(s) of research you are interested in pursuing during your PhD training and how your interest(s) align with the research opportunities available at the University of Minnesota.",
+        "limit": 500,
+        "unit": "characters",
+        "required": true,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      },
+      {
+        "text": "Why are you particularly interested in joining the University of Minnesota MSTP?",
+        "limit": 700,
+        "unit": "characters",
+        "required": true,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "How does your lived experience (relating to identity, past work, leadership, socioeconomic status, first generation status, disability, etc.) inform your understanding of and support for justice, equity, diversity, and inclusion?",
+        "limit": 700,
+        "unit": "characters",
+        "required": true,
+        "group": null,
+        "type": "diversity",
+        "abridged": false
+      },
+      {
+        "text": "OPTIONAL. What other pertinent information would you like to bring to the attention of the MSTP? This is an opportunity for you to discuss an aspect of your physician scientist journey that you have not already presented in your application. You may also update us with any current experiences that were not included in your AMCAS application.",
+        "limit": 700,
+        "unit": "characters",
+        "required": false,
+        "group": null,
+        "type": "anything_else",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "University of Nevada Reno (NV)",
+    "state": "NV",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-nevada-reno.1517836/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-nevada-reno.1517836/",
+    "source_note": "Single page (posts #1-21). No MD/PhD-only prompts; secondary in post #17 (Sep 18 2026) not labeled MD/PhD. Program evidence: Post #12 (Aug 25 2026): 'did anyone hear back for md-phd yet?' No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of New Mexico School of Medicine (NM)",
+    "state": "NM",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-new-mexico-school-of-medicine.1517837/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-new-mexico-school-of-medicine.1517837/",
+    "source_note": "Single page (posts #1-35). No MD/PhD-only prompts posted. Program evidence: Post #9 (Jul 28 2026): poster applied 'MD PhD regular'. No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of North Carolina Chapel Hill School of Medicine (NC)",
+    "state": "NC",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-north-carolina-chapel-hill-school-of-medicine.1517838/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-north-carolina-chapel-hill-school-of-medicine.1517838/",
+    "source_note": "Single page (posts #1-45). No mention of MD/PhD, MSTP, physician-scientist, or dual-degree applicants. No MD/PhD mention in the MD thread; program evidence from the MD/PhD forum: 2026-2027 MD/PhD Interview Invites, tracker list in post #60 (cwmwldraig), Sep 24, 2026 No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Pennsylvania Perelman School of Medicine (PA)",
+    "state": "PA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-pennsylvania-perelman-school-of-medicine.1517841/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-pennsylvania-perelman-school-of-medicine.1517841/",
+    "source_note": "Single page (posts #1-16). No MD/PhD-only prompts posted; general secondary (post #4, Jul 1 2026) mentions 'physician-scientists' but is not MD/PhD-specific. Program evidence: Post #9 (Sep 2 2026): '+1 MSTP II'. No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Pittsburgh School of Medicine (PA)",
+    "state": "PA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-pittsburgh-school-of-medicine.1517842/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-pittsburgh-school-of-medicine.1517842/",
+    "source_note": "SDN post #16, Jul 16 2026 (EngineeringGuilty, answering #13 'Do you have the MSTP secondary questions? Are they the same as the MD ones?'). Post lists four MD-set prompts (fit with curriculum, challenged belief, respect/empathy, optional anything else; 250 words each) followed by an MSTP-specific fifth prompt; md_secondary 'also' inferred from that listing (no explicit 'same plus' line). Fifth prompt retrieved as two consecutive sentences and joined; no limit stated. Single page (posts #1-41). Program evidence: Post #12 (Jul 15 2026) '+1 OOS MSTP Secondary'; #16 MSTP prompts; #39 (Oct 15 2026) 'I have a UPitt MSTP II'.",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "Describe what appeals to you about 2-3 faculty member(s) in your selection. Describe how the selected graduate program and how Pittsburgh's MSTP match to your interests.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "University of Rochester School of Medicine (NY)",
+    "state": "NY",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-rochester-school-of-medicine.1517844/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-rochester-school-of-medicine.1517844/",
+    "source_note": "Single page (posts #1-25). No mention of MD/PhD, MSTP, physician-scientist, or dual-degree applicants. No MD/PhD mention in the MD thread; program evidence from the MD/PhD forum: 2026-2027 MD/PhD Interview Invites, post #15, Aug 21, 2026 No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of South Florida Morsani College of Medicine (FL)",
+    "state": "FL",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-south-florida-morsani-college-of-medicine.1517855/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-south-florida-morsani-college-of-medicine.1517855/",
+    "source_note": "Single page (posts #1-17). No mention of MD/PhD, MSTP, physician-scientist, or dual-degree applicants. No MD/PhD mention in the MD thread; program evidence from the MD/PhD forum: 2026-2027 MD/PhD Interview Invites, post #5, Aug 17, 2026 No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Southern California Keck School of Medicine (CA)",
+    "state": "CA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-southern-california-keck-school-of-medicine.1517856/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-southern-california-keck-school-of-medicine.1517856/",
+    "source_note": "SDN post #48, Aug 14 2026 ('And additional MD-PhD prompts:', listed after the regular secondary items). Checked pages 1-2 (all). Faculty prompt retrieved in three consecutive pieces and joined. Omitted: the example list of fields that follows 'For example:' in the fields-of-study prompt. Post #53 (Aug 17 2026) confirms an MD/PhD secondary asking to list USC and Caltech faculty. Omitted at merge: 'Please indicate fields of study for which you have a special interest.' (a list of fields to choose from, e.g. Anatomy, Biostatistics, Molecular Biology…; no limit stated). Program evidence: Post #20 (Aug 5 2026) MSTP applicants asking about secondaries; #33 (Aug 7 2026) '+1 OOS MSTP secondary'; #48 MD-PhD prompts; #53 'I just sent in the MD/PhD secondary'.",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "List your publications and papers submitted including one or two sentences describing your role on each publication.",
+        "limit": 1800,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research",
+        "abridged": false
+      },
+      {
+        "text": "Please provide the names of faculty at USC and Caltech with whom you would like to meet, if invited for an interview. For each faculty member suggested, provide a sentence or two explaining why you would like to meet that person.",
+        "limit": 1800,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "University of Texas at San Antonio Long School of Medicine (TX)",
+    "state": "TX",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-texas-at-san-antonio-long-school-of-medicine.1517860/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-texas-at-san-antonio-long-school-of-medicine.1517860/",
+    "source_note": "Checked pages 1-2 (of 2). No MD/PhD/MSTP mentions. Post #1 (Apr 7 2026): 'The Long School of Medicine does not have secondary application essays.' No MD/PhD mention in the MD thread; program evidence from the MD/PhD forum: 2026-2027 MD/PhD Interview Invites, post #4, Aug 10, 2026; also 'san antonio' post #22, Aug 25, 2026 No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Texas Medical Branch Sealy School of Medicine (TX)",
+    "state": "TX",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-texas-medical-branch-sealy-school-of-medicine.1517862/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-texas-medical-branch-sealy-school-of-medicine.1517862/",
+    "source_note": "Checked pages 1-3 (of 5). Only MD/PhD mention is the program-selection question in the posted secondary (post #1, Apr 7; reposted #6, Jun 5 2026): 'Which MD Program are you applying for?' with options 'MD/PhD Only.' / 'MD/PhD and MD Program.' No MD/PhD-only prompts posted. Program evidence: Post #1 (Apr 7 2026) and #6 (Jun 5 2026): secondary program-selection question includes 'MD/PhD Only.' and 'MD/PhD and MD Program.' options. No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Texas Southwestern Medical School (TX)",
+    "state": "TX",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-texas-southwestern-medical-school.1517864/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-texas-southwestern-medical-school.1517864/",
+    "source_note": "SDN post #28, WickedMonkey, Jul 1 2026 ('+1 OOS secondary'), replying to #27 'Anyone have the MSTP specific prompts?'. Research-interest prompt joined from two consecutive quoted pieces. No limit given for prompts 1 and 3. Omitted: 'List names of up to five UT Southwestern faculty...' (faculty list) and 'Our program begins July 1, 2027. If accepted, will you be present on this date?' (yes/no). Post doesn't say whether regular MD essays are also required. Checked pages 1-3 (of 5). Program evidence: Post #26 (Jun 27 2026) '+1 IS MSTP Secondary'; #28 MSTP prompts; page 2 #58, #71, #79 MSTP IIs (Jul 29-Aug 1).",
+    "cycle": "2026-2027",
+    "md_secondary": "unknown",
+    "prompts": [
+      {
+        "text": "Describe the type of research you are currently most interested in pursuing for your PhD training. You can be general or specific (e.g., genetics, biochemistry, Alzheimer’s disease, rational drug design, etc.)",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      },
+      {
+        "text": "What were your contributions to each peer-reviewed publication listed in your AMCAS application (if applicable)? (two sentences per publication; 2,000 characters total)",
+        "limit": 2000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research",
+        "abridged": false
+      },
+      {
+        "text": "Why are you interested in MD/PhD training at UT Southwestern in particular?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "University of Utah School of Medicine (UT)",
+    "state": "UT",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-utah-school-of-medicine.1517867/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-utah-school-of-medicine.1517867/",
+    "source_note": "Checked page 1 (single page, posts #1-#25). Post #5 (EngineeringGuilty, Jul 13 2026) '+1 OOS MSTP Secondary' but no MSTP prompts posted. Program evidence: Post #5 (Jul 13 2026): '+1 OOS MSTP Secondary'. No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Washington School of Medicine (WA)",
+    "state": "WA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-washington-school-of-medicine.1517870/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-washington-school-of-medicine.1517870/",
+    "source_note": "Checked pages 1-3 (of 3). Many MSTP secondary/rejection/II reports on page 1 but no MSTP prompts posted and nothing on whether MSTP applicants also do the MD secondary. Program evidence: Post #3 (Jul 22 2026) '+1 OOS MSTP secondary'; #8-#13 pre-secondary MSTP rejections; #21 (Aug 5) '+1 OOS MSTP II'. No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Wisconsin School of Medicine and Public Health (WI)",
+    "state": "WI",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-wisconsin-school-of-medicine-and-public-health.1517872/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-wisconsin-school-of-medicine-and-public-health.1517872/",
+    "source_note": "SDN post #12, EngineeringGuilty, Jul 10 2026 ('+1 OOS MSTP Secondary'). Prompt 1 joined from four consecutive quoted pieces. Post #16 (nvalley23, Jul 16) asked whether MSTP questions are in addition to the MD ones; post #17 (EngineeringGuilty, Jul 17): 'Only those.' -> instead. Failure prompt is part of the MSTP set but closely mirrors a regular MD prompt (post #14). Required/optional not marked. Checked page 1 (single page, posts #1-#28). Program evidence: Post #12 (Jul 10 2026) MSTP secondary prompts; #14 reapplicant prompt mentions 'MD or MD/PhD program'; #24 (Sep 25) 'MSTP OOS R 9/25'.",
+    "cycle": "2026-2027",
+    "md_secondary": "instead",
+    "prompts": [
+      {
+        "text": "Please describe your interest in MSTP training at UW-Madison. Identify specific laboratories and describe how you envision contributing to their research, and how their research fits within your goal of becoming a physician-scientist. Please also describe specific aspects of the environment at UW and SMPH that will foster your growth as a physician scientist.",
+        "limit": 700,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      },
+      {
+        "text": "The “physician-scientist” can take many forms. Tell us about the type of physician-scientist you want to become and why.",
+        "limit": 250,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "mdphd_why",
+        "abridged": false
+      },
+      {
+        "text": "A successful physician-scientist has many character/personality traits. Tell us about one of your character/personality traits that will help define you as a physician-scientist.",
+        "limit": 250,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "Reflect on a time when a failure, or an apparent failure, set you up for later success. Do you have a favorite failure that you now see as a pivotal moment in your personal or professional growth?",
+        "limit": 250,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "challenge",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Vanderbilt University School of Medicine (TN)",
+    "state": "TN",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-vanderbilt-university-school-of-medicine.1517873/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-vanderbilt-university-school-of-medicine.1517873/",
+    "source_note": "SDN post #17, EngineeringGuilty, Jul 16 2026 (moderator-titled 'MSTP Secondary Essay Questions'; moderator note: 'Regular MD questions are in the first post.'), answering #16 ('Are the MSTP prompts the same as the MD ones? Are there additional questions?'). The MSTP list's Q1-3 repeat MD prompts 1-3 (Q2 says 'an individual' vs MD 'someone'); recorded only Q4-7 (MSTP-only). Leadership and balance prompts joined from consecutive quoted pieces. Unanswered whether the optional MD prompt 4 applies. Specialty limit text: '(100 words maximum. If undecided, \"undecided\" is an acceptable response.)'. Checked page 1 (single page, posts #1-#31). Program evidence: Post #13 (Jul 6 2026) '+1 OOS MSTP Secondary'; #17 MSTP prompts; #21 (Aug 7) 'Regular MD, not MSTP'.",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "Describe a sustained leadership experience that shaped you. This might include identifying a gap and addressing it, holding a formal role, leading a team effort, or driving a project forward over time. Indicate how long you were involved and the scope of your contribution. What did you learn about your own leadership capabilities, and how will these insights inform your role as a physician-scientist?",
+        "limit": 300,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "team",
+        "abridged": false
+      },
+      {
+        "text": "What clinical specialty or specialties interest you most, and why?",
+        "limit": 100,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "career",
+        "abridged": false
+      },
+      {
+        "text": "Describe the general nature of research you intend to pursue long-term: basic, translational, clinical, or a combination?",
+        "limit": 100,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      },
+      {
+        "text": "Outline your ideal balance between research, clinical responsibilities, and other professional activities in your first position after training (training includes residency and/or fellowship, if applicable to your career path). How does this allocation reflect your long-term vision and leverage both your MD and PhD training?",
+        "limit": 100,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "mdphd_why",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Virginia Commonwealth University School of Medicine (VA)",
+    "state": "VA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-virginia-commonwealth-university-school-of-medicine.1517874/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-virginia-commonwealth-university-school-of-medicine.1517874/",
+    "source_note": "Checked pages 1-2 (of 2). MD/PhD mentioned only in status posts; no MD/PhD prompts. Program evidence: Post #23 (Aug 4 2026) 'someone reported an mdphd II on admit and cycletrack'; #26 (Aug 11) asks about 'mstp R's'. No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Washington University in St Louis School of Medicine (MO)",
+    "state": "MO",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-washington-university-in-st-louis-school-of-medicine.1517878/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-washington-university-in-st-louis-school-of-medicine.1517878/",
+    "source_note": "SDN post #2, mdphd_apps_account, Jun 26 2026 ('+1 OOS MSTP secondary received'; 'MSTP applicants also have:'). Wording re-verified. Omitted: post #3 (iloveyousomatcha, Jun 30) yes/no 'Have you, a family member, or a research mentor had any personal experience or relationship with WashU Medicine?' with 'If yes: Please explain. 4000 characters' -- not labeled MSTP-only (poster refers to the 'same 3 questions above', i.e. the general prompts), so treated as a general prompt. Post #9 (Jul 24): 'I believe the first post in the thread is both md and md/phd'. Checked page 1 (single page, posts #1-#37). Program evidence: Post #2 (Jun 26 2026) MSTP secondary and prompt; #11 (Aug 16) 'post-secondary MSTP rejection, still under MD consideration'.",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "Briefly describe the area of research you would like to explore in graduate school.",
+        "limit": 1800,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Wayne State University School of Medicine (MI)",
+    "state": "MI",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-wayne-state-university-school-of-medicine.1517880/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-wayne-state-university-school-of-medicine.1517880/",
+    "source_note": "Checked pages 1-3 (of 3). Only an II report mentions MD/PhD; no MD/PhD prompts. Program evidence: Page 2 post #89 (Sep 29 2026): '+1 IS MD/PhD II'. No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Weill Cornell Medicine (NY)",
+    "state": "NY",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-weill-cornell-medicine.1517881/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-weill-cornell-medicine.1517881/",
+    "source_note": "Checked page 1 (single page, posts #1-#33). Many MSTP status posts but no MSTP prompts; nothing on whether MSTP applicants do the MD secondary. Program evidence: Posts #13-#14 (Aug 3 2026) post-secondary MSTP rejections; #28 (Aug 20) '+1 MSTP II!!!!'; #33 (Oct 4) mentions Tri-I. No MD/PhD-only prompts posted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Yale School of Medicine (CT)",
+    "state": "CT",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-yale-school-of-medicine.1517885/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-yale-school-of-medicine.1517885/",
+    "source_note": "No separate MD/PhD prompt posted. SDN post #6, vialangdon, Jul 7 2026: under 'Required Essay 2 (please select one of the following):' the lead-in says 'MD/PhD applicants: Please answer question 2 as it pertains to your proposed PhD research.' Question 2 (shared with MD applicants, so not recorded): 'Research is essential to patient care, and all students at Yale School of Medicine complete a research thesis. Tell us how your research interests, skills and experiences would contribute to scholarship at Yale School of Medicine.' (500 words) [joined from 3 quoted pieces]. md_secondary 'also' since MD/PhD applicants answer the shared secondary. Post #15 (Jul 16) asked if MSTP prompts differ/are additional; no reply. Checked page 1 (single page, posts #1-#37). Program evidence: Post #6 (Jul 7 2026) MD/PhD instruction in secondary; #12 (Jul 13) '+1 OOS Secondary (MSTP)'.",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": []
+  }
+]

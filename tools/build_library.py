@@ -29,7 +29,7 @@ import os
 mp='data/mdphd-prompts-2026-2027.json'
 if os.path.exists(mp):
     byurl={x['url'].rstrip('/'):x for x in out}
-    unmatched=[]; n=0
+    unmatched=[]; n=0; moved=[]
     for s in json.load(open(mp)):
         x=byurl.get((s.get('school_thread_url') or '').rstrip('/'))
         if not x: unmatched.append(s['school']); continue
@@ -41,10 +41,16 @@ if os.path.exists(mp):
             if p.get('group'): d['group']=p['group']
             if p.get('abridged'): d['cut']=1
             ps.append(d)
+        # drop dual-degree-only prompts that slipped into the regular list for this school
+        norm=lambda t: re.sub(r'\W+',' ',t.lower()).strip()[:120]
+        dualtexts={norm(d['p']) for d in ps}
+        before=len(x['prompts'])
+        x['prompts']=[q for q in x['prompts'] if not (norm(q['p']) in dualtexts and (re.search(r'MSTP|MD/PhD|M\.D\.-Ph\.D|physician[- ]scientist',q['p'],re.I) or q['fam'] in ('research','resint','mdphd') or re.search(r'research',q['p'],re.I)))]
+        if before!=len(x['prompts']): moved.append((x['name'], before-len(x['prompts'])))
         if ps:
             x['mdphd']={'prog':s.get('program') or ('DO/PhD' if x['deg']=='DO' else 'MD/PhD'),'md':s.get('md_secondary') or 'unknown','prompts':ps,'src':s.get('source_url') or ''}
             n+=len(ps)
-    print('mdphd prompts merged', n, 'unmatched schools', unmatched)
+    print('mdphd prompts merged', n, 'unmatched schools', unmatched, 'moved out of regular lists', moved)
 out.sort(key=lambda x:x['name'].lower())
 data={'cycle':'2026-2027','updated':'2026-11-01','source':'Student Doctor Network school threads','schools':out}
 js="// Secondary prompts for the 2026-2027 cycle, collected from each school's Student Doctor Network thread (MD Oct 31, DO Nov 1, 2026).\n// Regenerate from the catalogue; keep school names stable (added schools are matched by name).\nwindow.PROMPT_LIBRARY = "+json.dumps(data,ensure_ascii=False,separators=(',',':'))+";\n"
