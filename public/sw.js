@@ -1,5 +1,5 @@
 // Keeps an offline copy. Bump VERSION when you publish changes.
-const VERSION = "sec-v14";
+const VERSION = "sec-v15";
 const FILES = ["./", "index.html", "library.js", "config.js", "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png", "favicon.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));

@@ -369,7 +369,7 @@ function stamp(){
   const mj=JSON.stringify([S.dismissed||[], S.prefs||{}]); if(SNAP.get("meta")!==mj){ S.mu=now; SNAP.set("meta",mj); changed=true; }
   return changed;
 }
-let saveT=null, saveError=false, locked=false;
+let saveT=null, saveError=false, locked=false, namesT=null;
 function writeLocal(){
   if(locked) return;
   const changed=stamp();
@@ -702,6 +702,79 @@ function locate(segs, i, target){
 }
 function applyLoc(text, loc){ return text.slice(0,loc.at) + loc.newStr + text.slice(loc.at+loc.oldStr.length); }
 
+/* ---------- names of other schools inside an essay ---------- */
+// Common nicknames applicants actually write. Generated names below cover the rest.
+const NICK = {
+  "Washington University in St. Louis School of Medicine":["WashU","Wash U","Washington University in St. Louis"],
+  "Johns Hopkins University School of Medicine":["Johns Hopkins","Hopkins","JHU"],
+  "Harvard Medical School":["Harvard","HMS"], "Yale School of Medicine":["Yale"], "Duke University School of Medicine":["Duke"],
+  "Stanford University School of Medicine":["Stanford"], "UCSF School of Medicine":["UCSF"], "UCLA David Geffen School of Medicine":["UCLA","Geffen","DGSOM"],
+  "UC San Diego School of Medicine":["UCSD","UC San Diego"], "UC Davis School of Medicine":["UC Davis"], "UC Irvine School of Medicine":["UC Irvine","UCI"], "UC Riverside School of Medicine":["UC Riverside","UCR"],
+  "University of Pennsylvania Perelman School of Medicine":["Perelman","Penn Medicine","UPenn"], "Columbia Vagelos College of Physicians and Surgeons":["Columbia","Vagelos","P&S"],
+  "Weill Cornell Medicine":["Weill Cornell","Cornell"], "NYU Grossman School of Medicine":["NYU","Grossman"], "NYU Grossman Long Island School of Medicine":["NYU Long Island"],
+  "Icahn School of Medicine at Mount Sinai":["Icahn","Mount Sinai","Mt. Sinai"], "Northwestern University Feinberg School of Medicine":["Northwestern","Feinberg"],
+  "University of Chicago Pritzker School of Medicine":["Pritzker","UChicago"], "Vanderbilt University School of Medicine":["Vanderbilt","VUSM"],
+  "Emory University School of Medicine":["Emory"], "Mayo Clinic Alix School of Medicine, Minnesota":["Mayo"], "Mayo Clinic Alix School of Medicine, Arizona":["Mayo Arizona"],
+  "Cleveland Clinic Lerner College of Medicine":["Cleveland Clinic","Lerner","CCLCM"], "Case Western Reserve University School of Medicine":["Case Western","CWRU"],
+  "Dartmouth Geisel School of Medicine":["Dartmouth","Geisel"], "Brown University Warren Alpert Medical School":["Brown University","Warren Alpert","Brown Medicine"],
+  "Albert Einstein College of Medicine":["Einstein"], "Zucker School of Medicine at Hofstra/Northwell":["Hofstra","Zucker","Northwell"],
+  "Baylor College of Medicine":["Baylor"], "UT Southwestern Medical School":["UT Southwestern","UTSW"], "University of Pittsburgh School of Medicine":["Pitt","UPMC"],
+  "University of Michigan Medical School":["Michigan Medicine","UMich"], "University of Washington School of Medicine":["UW Medicine","UWSOM"],
+  "Sidney Kimmel Medical College at Thomas Jefferson University":["Jefferson","Sidney Kimmel"], "Temple University Lewis Katz School of Medicine":["Temple University","Lewis Katz"],
+  "Boston University Chobanian & Avedisian School of Medicine":["Boston University","Chobanian"], "UMass Chan Medical School":["UMass","UMass Chan"],
+  "Tufts University School of Medicine":["Tufts"], "Georgetown University School of Medicine":["Georgetown"], "George Washington University School of Medicine":["George Washington","GWU"],
+  "Howard University College of Medicine":["Howard University"], "USC Keck School of Medicine":["Keck","USC Keck"], "Rush Medical College":["Rush Medical","Rush University"],
+  "Wake Forest University School of Medicine":["Wake Forest"], "UNC Chapel Hill School of Medicine":["UNC","Chapel Hill"], "Dell Medical School":["Dell Med"],
+  "University of Virginia School of Medicine":["UVA"], "Virginia Commonwealth University School of Medicine":["VCU"], "Ohio State University College of Medicine":["Ohio State"],
+  "Penn State College of Medicine":["Penn State"], "University of Rochester School of Medicine":["Rochester"], "University of Vermont Larner College of Medicine":["UVM"]
+};
+const NAME_STOP = new Set("of the and at in for a an school college university medicine medical health sciences science center campus human osteopathic allopathic state city new north south east west northern southern eastern western central saint st st. md do upstate downstate hsc".split(" "));
+let NAMEIDX=null;
+function schoolAliases(name){
+  const set=new Set();
+  (NICK[name]||[]).forEach(a=>set.add(a));
+  const short=name.replace(/\s*\([^)]*\)\s*/g," ").replace(/,.*$/,"").replace(/ (School|College) of (Osteopathic |Human |Allopathic )?Medicine\b.*$/,"").replace(/ (Medical School|Medical College|Medicine)$/,"").trim();
+  if(short.split(/\s+/).length>=2 || short.length>=6) set.add(short);
+  // eponyms and distinctive words: "Pritzker", "Feinberg", "Morsani", "Heersink"
+  name.replace(/\([^)]*\)/g," ").split(/[\s,/&-]+/).forEach(w=>{ const lw=w.toLowerCase().replace(/[^a-z.]/g,""); if(w.length>=5 && /^[A-Z]/.test(w) && !NAME_STOP.has(lw) && !/^(University|Medical|College|School|Health|Sciences|Campus)$/.test(w)) set.add(w); });
+  // abbreviations in parentheses: (WVSOM), (KCU-Joplin) -> WVSOM, KCU
+  (name.match(/\(([A-Z][A-Za-z-]{2,})\)/g)||[]).forEach(m=>{ const a=m.slice(1,-1).split("-")[0]; if(a.length>=3) set.add(a); });
+  return [...set].filter(a=>a.length>=3);
+}
+function nameIndex(){
+  if(NAMEIDX) return NAMEIDX;
+  // words that are also ordinary English or US place names: only count them as part of a longer name
+  const RISKY=new Set(["Brown","Temple","Rush","Howard","Mercer","Duke","Dell","Columbia","Rochester","Washington","Michigan","Texas","Florida","Arizona","Kansas","Indiana","Ohio","Iowa","Utah","Nevada","Hawaii","Georgia","Virginia","Carolina","Alabama","Kentucky","Tennessee","California","Oregon","Colorado","Minnesota","Wisconsin","Illinois","Missouri","Nebraska","Mississippi","Louisiana","Oklahoma","Arkansas","Vermont","Connecticut","Maryland","Massachusetts","Jersey","York","Pennsylvania","Puerto","Rico","Dakota","Mexico","Hampshire","Chicago","Boston","Houston","Miami","Cincinnati","Toledo","Buffalo","Pittsburgh","Louisville","Chapel","Phoenix","Tucson","Riverside","Irvine","Davis","Galveston","Lubbock","Tyler","Augusta","Athens","Atlanta","Jackson","Nashville","Memphis","Detroit","Dayton","Omaha","Albany","Brooklyn","Newark","Camden","Hershey","Philadelphia","Baltimore","Richmond","Norfolk","Roanoke","Burlington","Providence","Hanover","Worcester","Farmington","Stony","Brook","Valley","Cape","Fear","Long","Island","Grand","Rapids","Kirksville","Joplin","Auburn","Elmira","Erie","Lake","Midwestern","Western","Pacific","Northwest","Carle","Kaiser","Permanente","Loma","Linda","Ponce","Tulane","Meharry","Creighton","Hackensack","Meridian","Rowan","Cooper","Roseman","Marshall","Liberty","Campbell","Marian","Xavier","Burrell","Noorda","Touro","Belmont","Frist","Methodist","Geisinger","Quinnipiac","Netter","Oakland","Beaumont","Wright","Boonshoft","Wayne","Morehouse","Charles","Drew","Alice","Walton","Shufeldt","Alix","Lerner","Larner","Kimmel","Sidney","Thomas","Jefferson","Katz","Lewis","Warren","Alpert","Chan","Keck","Geffen","David","John","Burns","Sealy","Long","Foster","Paul","Naresh","Vashisht","Burnett","Fertitta","Kerkorian","Elson","Floyd","Homer","Stryker","Joan","Edwards","Heritage","Carver","Pritzker","Feinberg","Perelman","Icahn","Grossman","Zucker","Vagelos","Morsani","Heersink","Whiddon","Schmidt","Wertheim","Herbert","Miller","Patel","Kiran","Chobanian","Avedisian","Renaissance","Norton","Jacobs","Brody","Quillen","Stritch","Loyola","Baylor","Emory","Tufts","Yale","Drexel","Temple","Mercer","Hofstra","Einstein","Stanford","Harvard","Cornell","Vanderbilt","Dartmouth","Geisel","Georgetown","Hopkins","Mayo","Northwestern","Rochester","Seton","Hill","Bradenton","Clearwater","Tahlequah","Cherokee","Nation","Southern","Montana","Harlem","Middletown","Clinton","Township","Dublin","Cleveland","Melbourne","Knoxville","DeBusk","Debusk","Pikeville","Incarnate","Word","Sam","Valley","Orlando","Idaho","Duquesne","Baptist","Campbell","Edward","Via","Kansas","City","Wood","Tom","Julie","Arkansas","Meritus","Rocky","Vista"]);
+  // re-allow distinctive eponyms and names that really are school names on their own
+  ["Duke","Pritzker","Feinberg","Perelman","Icahn","Grossman","Zucker","Vagelos","Morsani","Heersink","Whiddon","Chobanian","Geisel","Stritch","Quillen","Brody","Boonshoft","Fertitta","Kerkorian","Vashisht","Larner","Lerner","Keck","Geffen","Tulane","Meharry","Creighton","Hackensack","Quinnipiac","Geisinger","Loyola","Baylor","Emory","Tufts","Yale","Drexel","Hofstra","Einstein","Stanford","Harvard","Cornell","Vanderbilt","Dartmouth","Georgetown","Hopkins","Mayo","Northwestern","Duquesne","Noorda","Touro","Burrell","Meritus","Pikeville","Morehouse","Marshall","Kirksville"].forEach(w=>RISKY.delete(w));
+  const names=new Map();
+  LIB.schools.forEach(x=>names.set(x.name, schoolAliases(x.name)));
+  S.schools.forEach(sc=>{ const n=sc.libName||sc.name; if(!names.has(n)) names.set(n, schoolAliases(n)); });
+  const idx=[];
+  names.forEach((al,n)=>al.forEach(a=>{ if(!a.includes(" ") && RISKY.has(a)) return; idx.push({a, n, re:new RegExp("(^|[^A-Za-z])"+a.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"(?![A-Za-z])")}); }));
+  NAMEIDX={idx, names}; return NAMEIDX;
+}
+// Other schools on your list that this essay names. Returns [{school, alias}]
+function wrongNames(e){
+  const sc=school(e.schoolId); if(!sc || !e.text || e.text.length<20) return [];
+  const own=sc.libName||sc.name, {idx, names}=nameIndex();
+  const ownAl=new Set((names.get(own)||[]).map(a=>a.toLowerCase()));
+  const mine=new Set(S.schools.filter(x=>x.id!==sc.id).map(x=>x.libName||x.name));
+  const ok=new Set((e.okNames||[]));
+  const found=new Map();
+  idx.forEach(({a,n,re})=>{ if(n===own || !mine.has(n) || ownAl.has(a.toLowerCase()) || ok.has(n)) return; if(re.test(e.text) && !found.has(n)) found.set(n,a); });
+  return [...found].map(([n,a])=>({school:n, alias:a}));
+}
+// Text as most application portals want it: straight quotes, plain spaces, no stray blank lines.
+function portalText(t){
+  return (t||"").replace(/\r\n?/g,"\n").replace(/[\u2018\u2019\u201A\u2032]/g,"'").replace(/[\u201C\u201D\u201E\u2033]/g,'"').replace(/\u2026/g,"...")
+    .replace(/[\u00A0\u2007\u202F\u2009\u200A]/g," ").replace(/[\u200B-\u200D\uFEFF]/g,"").replace(/[ \t]+/g," ").replace(/ *\n */g,"\n").replace(/\n{3,}/g,"\n\n").trim();
+}
+function namesBanner(e){
+  const w=wrongNames(e); if(!w.length) return "";
+  return '<div class="banner warn" id="names-'+e.id+'"><div class="grow"><strong>This essay mentions '+w.map(x=>'“'+esc(x.alias)+'”').join(", ").replace(/, ([^,]*)$/," and $1")+'.</strong> '+(w.length===1?'That’s another school':'Those are other schools')+' on your list. If it came from another school’s version, change it before you submit.</div><button data-act="names-ok" data-id="'+e.id+'" data-n="'+esc(w.map(x=>x.school).join("|"))+'">It’s meant to be there</button></div>';
+}
+
 /* ---------- prompt similarity ---------- */
 const STOP = new Set("a about above after again all also am an and any are as at be because been before being below between both but by can could did do does doing down during each few for from further had has have having he her here hers him his how i if in into is it its itself just me more most my myself no nor not now of off on once only or other our ours out over own please same she should so some such than that the their theirs them then there these they this those through to too under until up very was we were what when where which while who whom why will with would you your yours yourself describe tell us share explain discuss provide briefly brief words characters maximum limit essay question response answer space applicant applicants application secondary may might one".split(" "));
 const GENERIC = new Set(["school","medicine","medical","college","university","som","md","program","students","student","physician","physicians","career","experience","experiences"]);
@@ -844,6 +917,7 @@ function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg
 function go(tab, extra){ Object.assign(ui, {schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, editPrompt:false, pick:null, pickQ:"", pickI:0}, extra||{}); ui.tab=tab; if(location.hash!=="#"+tab){ try{ history.replaceState(null,"","#"+tab);}catch(e){ location.hash=tab; } } render(); window.scrollTo(0,0); }
 
 function render(){
+  NAMEIDX=null;
   document.getElementById("today-l").textContent = "Today: " + today().toLocaleDateString(undefined,{weekday:"short", month:"short", day:"numeric"});
   document.getElementById("demo-pill").hidden = !S.demo;
   Sync.paintChip();
@@ -912,7 +986,9 @@ function vBrief(rows){
     const bits=[]; if(inProg) bits.push(inProg+' in progress'); if(fromBase) bits.push(fromBase+' can start from a base'); if(scratch) bits.push(scratch+' from scratch');
     left = req.length+(req.length===1?' essay':' essays')+(bits.length>1?': '+bits.join(', '):bits.length?' ('+bits[0]+')':'')+'.'+(opt?' Plus '+opt+' optional.':'');
   }
-  const extra=[]; if(toPaste) extra.push(toPaste+' ready to paste into portals'); if(bh) extra.push('<a href="#essays" data-tab="essays">'+bh+(bh===1?' is':' are')+' behind its base</a>');
+  const misnamed=es.filter(e=>wrongNames(e).length).length;
+  const unpaid=S.schools.filter(s=>!s.waiver && !s.fee && +s.feeAmt>0).reduce((a,s)=>a+(+s.feeAmt),0);
+  const extra=[]; if(misnamed) extra.push('<span style="color:var(--warn)">'+misnamed+(misnamed===1?' essay names':' essays name')+' another school on your list</span>'); if(toPaste) extra.push(toPaste+' ready to paste into portals'); if(unpaid) extra.push('$'+unpaid.toLocaleString()+' in fees unpaid'); if(bh) extra.push('<a href="#essays" data-tab="essays">'+bh+(bh===1?' is':' are')+' behind its base</a>');
   h+='<dt>Left to write</dt><dd>'+left+(extra.length?' <span class="muted">'+extra.join('; ')+'.</span>':'')+'</dd>';
   // line 3: the single best next move
   const top=rows[0]; const tp=top&&top.p;
@@ -955,16 +1031,48 @@ function vNext(){
   return h;
 }
 
+function downloadIcs(){
+  const open=S.schools.filter(s=>!s.submitted);
+  if(!open.length){ toast("No open schools to add."); return; }
+  const esc2=t=>String(t).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\n/g,"\\n");
+  const d8=iso_=>iso_.replace(/-/g,"");
+  const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+Z$/,"Z");
+  const lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Secondaries Tracker//EN","CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:Secondaries"];
+  let n=0;
+  open.forEach(s=>{
+    const d=due(s); if(!d.date) return; n++;
+    const next=addDays(d.date,1);
+    const left=essaysOf(s.id).filter(e=>e.status==="todo"||e.status==="drafting");
+    const desc=(d.kind==="deadline"?"School deadline":"Your target ("+(s.turnaround||DEFAULT_TURNAROUND)+" days after receiving it)")+". "+(left.length? left.length+" essay"+(left.length===1?"":"s")+" left: "+left.map(e=>FAM[e.family]||"Essay").join(", ")+"." : "Essays ready; submit and pay the fee.")+"\nOpen: "+location.origin+location.pathname;
+    lines.push("BEGIN:VEVENT","UID:secondaries-"+s.id+"@secondaries-tracker","DTSTAMP:"+stamp,"DTSTART;VALUE=DATE:"+d8(d.date),"DTEND;VALUE=DATE:"+d8(next),
+      "SUMMARY:"+esc2("Secondary due: "+s.name),"DESCRIPTION:"+esc2(desc),"TRANSP:TRANSPARENT",
+      "BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:"+esc2("Secondary due tomorrow: "+s.name),"TRIGGER:-PT15H","END:VALARM","END:VEVENT");
+  });
+  lines.push("END:VCALENDAR");
+  const blob=new Blob([lines.join("\r\n")+"\r\n"], {type:"text/calendar"});
+  const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="secondaries-due-dates.ics"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000);
+  toast("Downloaded "+n+" due date"+(n===1?"":"s")+". Open the file to add them to your calendar. If dates change, download it again.");
+}
+function feeSummary(){
+  if(!S.schools.length) return "";
+  const money=n=>"$"+n.toLocaleString();
+  let paid=0, due=0, waived=0, unknown=0;
+  S.schools.forEach(s=>{ if(s.waiver){ waived++; return; } const a=+s.feeAmt||0; if(s.feeAmt===""||s.feeAmt==null){ if(!s.fee) unknown++; return; } if(s.fee) paid+=a; else due+=a; });
+  const parts=['<b>'+money(paid)+'</b> paid', '<b>'+money(due)+'</b> still to pay'];
+  if(waived) parts.push(waived+' waived');
+  return '<div class="small muted" style="margin:-4px 0 12px">Secondary fees: '+parts.join(' · ')+(unknown?' · '+unknown+' without a fee entered':'')+'</div>';
+}
 function vSchools(){
   const list = S.schools.map(s=>({s,p:plan(s)})).sort((a,b)=> (a.s.submitted-b.s.submitted) || ((a.p.d.date||"9")<(b.p.d.date||"9")?-1:1));
-  let h = '<div class="row" style="justify-content:space-between; align-items:flex-end; margin-bottom:14px"><div><h1>Schools</h1><p class="sub" style="margin:0">Sorted by due date.</p><label class="chk small" style="margin-top:8px"><input type="checkbox" id="pref-dual"'+(prefs().dual?' checked':'')+'> I’m applying MD/PhD or DO/PhD</label></div><div class="row">'+(SHOW_LIBRARY?'<button data-act="go-library">Add from prompt library</button>':'')+'<button class="primary" data-act="toggle-add-school">Add school</button></div></div>';
+  let h = '<div class="row" style="justify-content:space-between; align-items:flex-end; margin-bottom:14px"><div><h1>Schools</h1><p class="sub" style="margin:0">Sorted by due date.</p><label class="chk small" style="margin-top:8px"><input type="checkbox" id="pref-dual"'+(prefs().dual?' checked':'')+'> I’m applying MD/PhD or DO/PhD</label></div><div class="row">'+(S.schools.some(s=>!s.submitted)?'<button data-act="ics">Add due dates to calendar</button>':'')+(SHOW_LIBRARY?'<button data-act="go-library">Add from prompt library</button>':'')+'<button class="primary" data-act="toggle-add-school">Add school</button></div></div>';
   if(ui.addSchool) h += addSchoolForm();
+  h += feeSummary();
   h += '<div class="panel"><ul class="list">';
   list.forEach(({s,p})=>{
     const es=essaysOf(s.id); const fin=es.filter(e=>e.status==="ready"||e.status==="pasted").length;
     h += '<li><div class="main"><div class="row"><h2>'+esc(s.name)+'</h2>'+stars(s.interest)+'</div><div class="chips">'+
       (s.submitted? '<span class="chip good">Submitted'+(s.fee?' · fee paid':' · fee not paid')+'</span>' : p.reasons.slice(0,1).map(c=>'<span class="chip '+c.c+'">'+esc(c.t)+'</span>').join(""))+
-      (s.track==="dual"?'<span class="chip acc">'+esc(dualLabel(libFind(s.libName||s.name)))+'</span>':'')+'<span class="chip">'+fin+' of '+es.length+' essays ready</span>'+(es.some(behind)?'<span class="chip warn">Base updated</span>':'')+'</div></div><button data-act="open-school" data-id="'+s.id+'">Open</button></li>';
+      (s.waiver?'<span class="chip">Fee waived</span>':(!s.fee && +s.feeAmt>0 && !s.submitted?'<span class="chip warn">$'+(+s.feeAmt)+' unpaid</span>':''))+(s.track==="dual"?'<span class="chip acc">'+esc(dualLabel(libFind(s.libName||s.name)))+'</span>':'')+'<span class="chip">'+fin+' of '+es.length+' essays ready</span>'+(es.some(behind)?'<span class="chip warn">Base updated</span>':'')+'</div></div><button data-act="open-school" data-id="'+s.id+'">Open</button></li>';
   });
   if(!S.schools.length) h+='<li class="empty">No schools yet.</li>';
   h += '</ul></div>';
@@ -1020,6 +1128,7 @@ function addSchoolForm(){
     '<label class="f">Secondary received<input id="ns-rec" type="date" value="'+esc((ui.nsDraft&&ui.nsDraft.rec)||iso(today()))+'"></label>'+
     '<label class="f">Turnaround (days)<input id="ns-turn" type="number" min="1" max="60" value="'+esc((ui.nsDraft&&ui.nsDraft.turn)||DEFAULT_TURNAROUND)+'"></label>'+
     '<label class="f">School deadline (optional)<input id="ns-hard" type="date" value="'+esc((ui.nsDraft&&ui.nsDraft.hard)||"")+'"></label>'+
+    '<label class="f">Secondary fee ($, optional)<input id="ns-fee" type="number" min="0" max="1000" step="1" placeholder="e.g. 100" value="'+esc((ui.nsDraft&&ui.nsDraft.fee)||"")+'"></label>'+
     '<label class="f">Interest<select id="ns-int">'+[[3,"Top choice"],[2,"Middle"],[1,"Lower"]].map(([v,l])=>'<option value="'+v+'"'+(+((ui.nsDraft&&ui.nsDraft.int)||2)===v?' selected':'')+'>'+l+'</option>').join("")+'</select></label>'+
     '</div><div class="row"><button class="primary" type="submit">Add school</button><button type="button" data-act="toggle-add-school">Cancel</button></div></div></form>';
   return h;
@@ -1041,7 +1150,8 @@ function vSchool(s){
     '<div class="f"><span class="small muted" style="font-weight:600">Your target</span><span class="computed">'+fmt(target(s))+'</span></div>'+
     '<label class="f">School deadline<input type="date" id="hard-'+s.id+'" data-bind="school:'+s.id+':hard" value="'+esc(s.hard)+'"></label>'+
     '<label class="f">Interest<select id="int-'+s.id+'" data-bind="school:'+s.id+':interest">'+[[3,"Top choice"],[2,"Middle"],[1,"Lower"]].map(([v,l])=>'<option value="'+v+'"'+(s.interest===v?' selected':'')+'>'+l+'</option>').join("")+'</select></label>'+
-    '<div class="f" style="gap:8px"><label class="chk"><input type="checkbox" id="sub-'+s.id+'" data-bind="school:'+s.id+':submitted" '+(s.submitted?'checked':'')+'> Submitted</label><label class="chk"><input type="checkbox" id="fee-'+s.id+'" data-bind="school:'+s.id+':fee" '+(s.fee?'checked':'')+'> Fee paid</label></div>'+
+    '<div class="f" style="gap:8px"><label class="chk"><input type="checkbox" id="sub-'+s.id+'" data-bind="school:'+s.id+':submitted" '+(s.submitted?'checked':'')+'> Submitted</label><label class="chk"><input type="checkbox" id="fee-'+s.id+'" data-bind="school:'+s.id+':fee" '+(s.fee?'checked':'')+'> Fee paid</label><label class="chk"><input type="checkbox" id="waiv-'+s.id+'" data-bind="school:'+s.id+':waiver" '+(s.waiver?'checked':'')+'> Fee waived</label></div>'+
+    '<label class="f">Secondary fee ($)<input type="number" min="0" max="1000" step="1" id="amt-'+s.id+'" data-bind="school:'+s.id+':feeAmt" value="'+(s.feeAmt!=null&&s.feeAmt!==""?esc(s.feeAmt):"")+'" placeholder="e.g. 100"'+(s.waiver?' disabled':'')+'></label>'+
     '</div></div>';
   const missing=libPromptsMissing(s);
   h += '<div class="panel"><div class="ph"><h2 style="flex:1">Essays</h2><button data-act="toggle-add-prompt">'+(ui.addPrompt?'Close':'Add prompt')+'</button></div>';
@@ -1052,7 +1162,7 @@ function vSchool(s){
     h += '<table class="etable"><tbody>';
     es.forEach(e=>{
       const b=base(e.baseId);
-      h += '<tr><td style="width:46%"><div class="prompt-t">'+esc(shortP(e.prompt))+'</div><div class="chips"><span class="chip">'+esc(FAM[e.family]||"Other")+'</span>'+(e.dual?'<span class="chip acc">'+esc(dualLabel(libFind(s.libName||s.name)))+'</span>':'')+(e.optional?'<span class="chip">Optional</span>':'')+(e.group?'<span class="chip">'+esc(e.group)+'</span>':'')+(b?'<span class="chip acc">Base: '+esc(b.title)+(e.basedOnV?' · from v'+e.basedOnV:'')+'</span>':'')+(behind(e)?'<span class="chip warn">Base now v'+latest(b).v+'</span>':'')+(e.localEdit&&b&&!s.submitted?'<span class="chip">Edited here</span>':'')+'</div></td>'+
+      h += '<tr><td style="width:46%"><div class="prompt-t">'+esc(shortP(e.prompt))+'</div><div class="chips"><span class="chip">'+esc(FAM[e.family]||"Other")+'</span>'+(e.dual?'<span class="chip acc">'+esc(dualLabel(libFind(s.libName||s.name)))+'</span>':'')+(wrongNames(e).length?'<span class="chip warn">Names '+esc(wrongNames(e).map(x=>x.alias).join(", "))+'</span>':'')+(e.optional?'<span class="chip">Optional</span>':'')+(e.group?'<span class="chip">'+esc(e.group)+'</span>':'')+(b?'<span class="chip acc">Base: '+esc(b.title)+(e.basedOnV?' · from v'+e.basedOnV:'')+'</span>':'')+(behind(e)?'<span class="chip warn">Base now v'+latest(b).v+'</span>':'')+(e.localEdit&&b&&!s.submitted?'<span class="chip">Edited here</span>':'')+'</div></td>'+
         '<td>'+meter(e)+'</td>'+
         '<td><select aria-label="Status" id="st-'+e.id+'" data-bind="essay:'+e.id+':status">'+Object.entries(STATUS).map(([k,l])=>'<option value="'+k+'"'+(e.status===k?' selected':'')+'>'+l+'</option>').join("")+'</select></td>'+
         '<td style="text-align:right"><div class="row" style="justify-content:flex-end; flex-wrap:nowrap">'+(ui.confirm==="del-essay:"+e.id? '<button class="danger" data-act="confirm" data-key="del-essay:'+e.id+'">'+(e.text.trim()?'Remove and delete text':'Remove')+'</button><button data-act="cancel-confirm">Keep</button>' : '<button data-act="open-essay" data-id="'+e.id+'">Open</button><button class="ghost danger" data-act="ask-confirm" data-key="del-essay:'+e.id+'" aria-label="Remove this prompt">Remove</button>')+'</div></td></tr>';
@@ -1128,6 +1238,8 @@ function vEssay(e){
   if(ui.panel==="review" && b) h += reviewPanel(e,b);
   if(ui.panel==="compare" && b) h += comparePanel(e,b);
   h += '<textarea class="page" id="essay-text" data-bind="essay:'+e.id+':text" aria-label="Essay for '+esc(s.name)+'" placeholder="Write or paste this school’s version here.">'+esc(e.text)+'</textarea>';
+  h += '<div id="names-slot">'+namesBanner(e)+'</div>';
+  h += '<div class="row" style="gap:10px"><button class="primary" data-act="copy-portal" data-id="'+e.id+'">Copy for portal</button><span class="small muted" id="copy-note-'+e.id+'">Cleans up curly quotes and extra spaces, then copies.</span></div>';
   h += '<div class="row" style="justify-content:space-between">'+meter(e)+'<label class="chk small">Status <select id="st2-'+e.id+'" data-bind="essay:'+e.id+':status">'+Object.entries(STATUS).map(([k,l])=>'<option value="'+k+'"'+(e.status===k?' selected':'')+'>'+l+'</option>').join("")+'</select></label></div>';
   h += '</div><aside class="stack">';
   { const ctx=suggestions(e.id); if(ctx.length) h += '<div class="sugg"><div class="sugg-h"><h2>Similar at your other schools</h2><span class="badge">'+ctx.length+'</span></div>'+ctx.slice(0,4).map(sgCard).join("")+'</div>'; }
@@ -1321,7 +1433,7 @@ document.addEventListener("click", ev=>{
     case "open-base": go("essays",{baseId:d.id}); break;
     case "toggle-add-school": ui.addSchool=!ui.addSchool; ui.pick=null; ui.pickQ=""; ui.pickI=0; render(); if(ui.addSchool){ const q=document.getElementById("pick-q"); if(q) q.focus(); } break;
     case "pick-change": ui.pickDual=null; ui.nsDraft=null; ui.pick=null; render(); { const q=document.getElementById("pick-q"); if(q){ q.focus(); q.select(); } } break;
-    case "pick-track": { const g=id2=>{ const x=document.getElementById(id2); return x?x.value:""; }; ui.nsDraft={rec:g("ns-rec"), turn:g("ns-turn"), hard:g("ns-hard"), int:g("ns-int")}; ui.pickDual = d.v==="1"; render(); break; }
+    case "pick-track": { const g=id2=>{ const x=document.getElementById(id2); return x?x.value:""; }; ui.nsDraft={rec:g("ns-rec"), turn:g("ns-turn"), hard:g("ns-hard"), int:g("ns-int"), fee:g("ns-fee")}; ui.pickDual = d.v==="1"; render(); break; }
     case "pick-all": document.querySelectorAll(".pick-p").forEach(c=>c.checked=d.v==="1"); break;
     case "edit-prompt": ui.editPrompt=!ui.editPrompt; render(); if(ui.editPrompt) document.getElementById("ep-p").focus(); break;
     case "lib-addback": { const sc=school(ui.schoolId); const L=libFind(sc.libName||sc.name); if(!L) break; const o=promptByKey(L,d.k); if(o&&o.p){ const [ne]=libEssays({prompts:[o.p]}, sc.id, o.dual); S.essays.push(ne); save(); render(); toast("Added"+(ne.baseId?" and linked to base “"+base(ne.baseId).title+"”":"")); } break; }
@@ -1342,6 +1454,16 @@ document.addEventListener("click", ev=>{
     case "hist": ui.histV = d.v? +d.v : null; render(); break;
     case "link-from-base": { const x=essay(d.id); const b=base(ui.baseId); x.baseId=b.id; if(x.text.trim()){ x.basedOnV=latest(b).v; x.localEdit=true; } save(); render(); break; }
     case "lib-add": go("schools",{addSchool:true, pick:{kind:"lib", name:d.school}}); break;
+    case "ics": downloadIcs(); break;
+    case "copy-portal": { const x=essay(d.id); if(!x) break; if(!x.text.trim()){ toast("Nothing to copy yet. Write the essay first."); break; } const clean=portalText(x.text); const c=clean.length, w=words(clean);
+      const over = x.limit && (x.unit==="chars" ? c>x.limit : w>x.limit);
+      const note=document.getElementById("copy-note-"+x.id);
+      const msg=(over?'Over the limit: ':'Copied: ')+w.toLocaleString()+' words · '+c.toLocaleString()+' characters with spaces'+(x.limit?' (limit '+limitL(x)+')':'')+'.';
+      const done=()=>{ if(note){ note.textContent=msg; note.style.color= over?'var(--bad)':'var(--good)'; } const nm=wrongNames(x); toast(nm.length? 'Copied, but it still mentions '+nm.map(y=>y.alias).join(", ")+'.' : (over? 'Copied, but it’s over this school’s limit.' : 'Copied. Paste it into the portal.')); };
+      const fallback=()=>{ const ta=document.createElement("textarea"); ta.value=clean; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); done(); }catch(err){ toast("Couldn’t copy. Select the text and copy it yourself."); } ta.remove(); };
+      try{ navigator.clipboard.writeText(clean).then(done, fallback); }catch(err){ fallback(); }
+      break; }
+    case "names-ok": { const x=essay(d.id); if(x){ x.okNames=[...new Set([...(x.okNames||[]), ...d.n.split("|")])]; save(); render(); } break; }
     case "sg-dismiss": { if(!S.dismissed) S.dismissed=[]; S.dismissed.push(d.key); save(); render(); toast("Dismissed"); break; }
     case "sg-undismiss": S.dismissed=[]; save(); render(); break;
     case "sg-all": ui.sgAll=!ui.sgAll; render(); break;
@@ -1476,7 +1598,7 @@ document.addEventListener("submit", ev=>{
   const f=ev.target; ev.preventDefault();
   if(f.dataset.form==="add-school"){
     const pk=ui.pick; if(!pk) return;
-    const extra={received:document.getElementById("ns-rec").value||iso(today()), turnaround:+document.getElementById("ns-turn").value||DEFAULT_TURNAROUND, hard:document.getElementById("ns-hard").value, interest:+document.getElementById("ns-int").value};
+    const extra={received:document.getElementById("ns-rec").value||iso(today()), turnaround:+document.getElementById("ns-turn").value||DEFAULT_TURNAROUND, hard:document.getElementById("ns-hard").value, interest:+document.getElementById("ns-int").value, feeAmt:(document.getElementById("ns-fee")||{}).value ? Math.round(+document.getElementById("ns-fee").value) : ""};
     if(pk.kind==="lib"){
       const keys=[...document.querySelectorAll(".pick-p")].filter(c=>c.checked).map(c=>c.value);
       addFromLibrary(pk.name, extra, keys, !!ui.pickDual);
@@ -1515,7 +1637,7 @@ document.addEventListener("input", ev=>{
   const bnd=el.dataset.bind; if(!bnd) return;
   const [kind,idv,field]=bnd.split(":");
   if(el.type==="checkbox"||el.tagName==="SELECT"||el.type==="date"||el.type==="number") return; // handled on change
-  if(kind==="essay"){ const x=essay(idv); x[field]=el.value; if(field==="text"){ if(x.baseId && x.basedOnV) x.localEdit=true; if(x.status==="todo" && x.text.trim()) x.status="drafting"; const m=document.getElementById("m-"+x.id); if(m) m.outerHTML=meter(x); } save(); }
+  if(kind==="essay"){ const x=essay(idv); x[field]=el.value; if(field==="text"){ if(x.baseId && x.basedOnV) x.localEdit=true; if(x.status==="todo" && x.text.trim()) x.status="drafting"; const m=document.getElementById("m-"+x.id); if(m) m.outerHTML=meter(x); clearTimeout(namesT); namesT=setTimeout(()=>{ const slot=document.getElementById("names-slot"); if(slot) slot.innerHTML=namesBanner(x); }, 600); } save(); }
   if(kind==="base"){ const b=base(idv); b[field]=el.value; if(field==="draft"){ document.getElementById("bmeter").textContent=words(b.draft)+" words · "+b.draft.length.toLocaleString()+" characters"; document.getElementById("bstate").innerHTML = unsaved(b)?'<span class="chip warn">Unsaved edits since v'+latest(b).v+'</span>':'<span class="chip">Matches v'+latest(b).v+'</span>'; } save(); }
 });
 document.addEventListener("change", ev=>{
@@ -1526,10 +1648,12 @@ document.addEventListener("change", ev=>{
   const [kind,idv,field]=bnd.split(":");
   let val = el.type==="checkbox"? el.checked : el.value;
   if(field==="interest"||field==="turnaround") val = +val || (field==="turnaround"?DEFAULT_TURNAROUND:2);
+  if(field==="feeAmt") val = val==="" ? "" : Math.max(0, Math.round(+val||0));
   const obj = kind==="school"? school(idv) : kind==="essay"? essay(idv) : base(idv);
   if(!obj) return;
   if(el.tagName==="TEXTAREA"||(el.tagName==="INPUT"&&el.type==="text")) return;
   obj[field]=val;
+  if(kind==="essay" && field==="status" && (val==="ready"||val==="pasted")){ const w=wrongNames(obj); if(w.length) setTimeout(()=>toast("Heads up: this essay still mentions "+w.map(x=>x.alias).join(", ")+"."),50); }
   if(kind==="school" && field==="submitted") obj.submittedAt = val ? iso(today()) : null;
   save(); render();
 });
