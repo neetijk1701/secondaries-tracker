@@ -1,0 +1,888 @@
+[
+  {
+    "school": "Baylor College of Medicine (TX)",
+    "state": "TX",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-baylor-college-of-medicine.1517674/",
+    "source_url": "https://forums.studentdoctor.net/threads/2023-2024-baylor.1477087/",
+    "source_type": "sdn",
+    "source_note": "No MD/PhD-only prompt from 2023-2024 or later found. Checked: the official BCM MD/PhD admissions page (https://www.bcm.edu/education/programs/md-phd-program/admissions). It says every applicant must complete a BCM Supplemental Application (opens July 1, no invitation needed; applicants may select up to 2 BCM graduate programs or Rice Bioengineering), but it gives no essay wording. Also checked the SDN 2025-2026 Baylor thread, page 1 (12 pages; no MSTP/MD-PhD mention) and the admit.org compilation (says 2018-2023 cycles; no MD/PhD prompt). ProspectiveDoctor lists an MD/PhD research-interests prompt (2000 characters), but only for 2018-2019, which is older than the cutoff, so it is not recorded. The MedSchoolInsiders page gave a server error. SDN/Reddit searches found nothing for 2026-2027. Deep pass: read 2025-2026 thread (https://forums.studentdoctor.net/threads/2025-2026-baylor.1507866/) pages 2-5 (to Oct 24 2025): no MD/PhD prompt wording. Post #53 (Jun 30 2025) asks whether the MD essay 1 (career path) is available to MD/PhD applicants, suggesting the MD/PhD secondary differs; #57 (Jul 2 2025) discusses MD-PhD research-letter instructions only. 2024-2025 thread (1494096) pages 1-4 (to Oct 19 2024): only interview/status MSTP mentions, no prompts. 2023-2024 thread (1477087) pages 1-3: post #1 (chilly_md, Mar 15 2023, updated) and post #40 (Elrond127, Jun 30 2023, headed 'MD/PhD additonal prompts:') list 5 MD/PhD prompts. Prompts 2 and 3 were quoted in consecutive pieces by the fetch tool and joined. Prompt 4 ('Published articles, please provide full citations:') is a citation list and is left out. Prompt 5 ('Plans for the 2023-2024 academic year description') is kept as listed among the MD/PhD additional prompts. Post #102 (Jul 29 2023) asks whether MSTP applicants also do the MD secondaries; no answer seen. Reddit/web search found no newer MD/PhD wording.",
+    "cycle": "2023-2024",
+    "md_secondary": "unknown",
+    "prompts": [
+      {
+        "text": "Please describe your primary research Interests for PhD training.",
+        "limit": 1000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      },
+      {
+        "text": "Why do you think Baylor College of Medicine MD/PhD Program would be a good place for you to train to be a physician scientist? Please provide names of potential Baylor College of Medicine and/or Rice University faculty with whom you would like to work. (Will not limit final research project or mentor selection)",
+        "limit": 1500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "Tell us about a characteristic(s) that may enable you to interact with people from a wide range of ages, experiences, viewpoints, and backgrounds.",
+        "limit": 1000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "diversity",
+        "abridged": false
+      },
+      {
+        "text": "Plans for the 2023-2024 academic year description",
+        "limit": 1000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Boston University (MA)",
+    "state": "MA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-boston-university.1517675/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-boston-university.1517675/",
+    "source_type": null,
+    "source_note": "No MD/PhD-only prompt from 2023-2024 or later found. Checked: the official BU MD/PhD Application Information page and its Applicant Requirements page. These give no essay wording; the only MD/PhD-specific item is a fourth letter from a research advisor. The pages do not say whether MD/PhD applicants also complete the MD secondary. Also checked: SDN 2025-2026 BU thread, page 1 of 19 (no MD/PhD mention); ProspectiveDoctor BU page (2022-2023 to 2025-2026; no MD/PhD prompt); MedSchoolCoach HAIQ BU page (no MD/PhD prompt). An older SDN thread ('Question about secondary prompt for BU's MD-PhD application', Jul 22 2021) quotes a 2021-2022 MD-PhD prompt beginning 'Please provide a statement detailing your interest in the MD-PhD program and how you envision it supporting your long term'. That is older than the 2023-2024 cutoff, so it is not recorded. Deep pass: read 2025-2026 thread (https://forums.studentdoctor.net/threads/2025-2026-boston-university.1507962/) pages 2-7 (to Oct 14 2025): only #192 (Sep 8 2025) '+1 II OOS MD/PhD'; no MD/PhD prompts. 2024-2025 thread (1494097, 25 pages) pages 1-8 (to Oct 16 2024): no MSTP/MD-PhD mentions. 2023-2024 thread (1476999) pages 1-5 (to Sep 2 2023; pages 6+ not read, budget): #86 (Jul 20 2023) describes the MSTP secondary as having a 'personal statement' section (applicants may write 'see AMCAS PS') and asks whether that applies to the 'Why MD/PhD essay' and 'significant research essay'; no prompt wording quoted, so nothing recorded. #244 (Sep 1 2023) is an MD/PhD II post. Web search found only the pre-cutoff 2021 thread already noted.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Carle Illinois College of Medicine (IL)",
+    "state": "IL",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-carle-illinois-college-of-medicine.1517691/",
+    "source_url": "https://medicine.illinois.edu/admissions/medical-scholars-program",
+    "source_type": null,
+    "source_note": "No MD/PhD prompt wording found. The official Carle Illinois MD/PhD Medical Scholars Program admissions page only describes the secondary: it asks about PhD program interest and includes 'additional essays regarding research background and interest'. It lists no prompts or limits and states no cycle year (AMCAS deadline for MD/PhD: July 31). Also checked: the SDN schools-database essay page for Carle Illinois (no MD/PhD prompt; a 2024-2025 Motivation and Fit prompt mentions lab work but is a general MD prompt). SDN/Reddit searches found no MD/PhD prompt posts. Deep pass: no 2025-2026 Carle-Illinois SDN thread found (two searches; '2025-2026 Illinois' 1508078 is UIC, page 1 has no MD/PhD mentions). 2024-2025 Carle-Illinois thread (https://forums.studentdoctor.net/threads/2024-2025-carle-illinois.1494101, 5 pages) pages 1-3 (to Feb 2025; page 1 already spans Apr-Nov 2024): no MSTP/MD-PhD/Medical Scholars mentions. 2023-2024 thread (1477092, 11 pages) pages 1-2 (to Dec 2023): none. Official secondary-application page (https://medicine.illinois.edu/admissions/how-to-apply/secondary-application) lists only the general MD prompt; no MD/PhD prompts. Reddit/web searches found nothing new.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Case Western Reserve University (OH)",
+    "state": "OH",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-case-western-reserve-university.1517692/",
+    "source_url": "https://case.edu/medicine/md/admission/secondary-application-questions",
+    "source_type": "school_website",
+    "source_note": "Official CWRU SOM 'Secondary Application Questions' page, under the '2026-2027 Application Cycle' heading (page updated June 3, 2026), MSTP section. The 3 MSTP-only questions were quoted in full (each fit in one quote). Labels on the page: 'PhD Advisor', 'Area of Interest', and an unlabeled third question. The page says MSTP applicants also answer the shared required MD prompts (Personal Challenge, 2,000 characters; Context of Care, 1,500 characters) plus the optional Gap Year(s) and Additional Information prompts; these are not recorded because they are not MD/PhD-only. The MSTP section has no yes/no, checkbox or faculty-list items.",
+    "cycle": "2026-2027",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "What do you look for in a PhD advisor, and who at CWRU would interest you?",
+        "limit": 800,
+        "unit": "characters",
+        "required": true,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      },
+      {
+        "text": "What is your specific interest in the MSTP at CWRU?",
+        "limit": 800,
+        "unit": "characters",
+        "required": true,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "What is the hardest academic or research challenge you’ve faced so far? How did you handle it?",
+        "limit": 1000,
+        "unit": "characters",
+        "required": true,
+        "group": null,
+        "type": "challenge",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Chicago Medical School at Rosalind Franklin (IL)",
+    "state": "IL",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-chicago-medical-school-at-rosalind-franklin.1517695/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-chicago-medical-school-at-rosalind-franklin.1517695/",
+    "source_type": null,
+    "source_note": "No MD/PhD-only prompt wording found. Checked: the official RFUMS 'Combined PhD with MD, DPM or PharmD' how-to-apply page (https://www.rosalindfranklin.edu/academics/school-of-graduate-and-postdoctoral-studies/prospective-students/how-to-apply/combined-phd-with-md-dpm-or-pharmd/). It says to select the 'Combined MD/PhD' designation on AMCAS (AMCAS deadline Nov 1; internal applicant deadline Dec 21, 2026) and lists no secondary essays. Also checked the CMS degree-programs page and the SGPS how-to-apply page (no prompts). Searches of compilations (ProspectiveDoctor, MedSchoolInsiders, admit.org listings) and SDN turned up no MD/PhD-specific prompts. Deep pass: read 2025-2026 thread (https://forums.studentdoctor.net/threads/2025-2026-chicago-med-rosalind-franklin.1508007/, 18 pages) pages 1-3 (to Oct 2 2025): no MSTP/MD-PhD mentions. 2024-2025 thread (1494105, 23 pages) pages 1-6 (to Oct 8 2024): only #292 (Oct 1 2024) MD/PhD II post; no prompts. 2023-2024 thread (1477097, 22 pages) pages 1-3 (to Sep 26 2023): none. Web search found only regular MD prompt compilations.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Columbia Vagelos University College of Physicians and Surgeons (NY)",
+    "state": "NY",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-columbia-vagelos-university-college-of-physicians-and-surgeons.1518230/",
+    "source_url": "https://forums.studentdoctor.net/threads/2025-2026-columbia-vagelos.1508009",
+    "source_type": "sdn",
+    "source_note": "No 2026-2027 wording found (the 2026-2027 thread is 1 page; #20's question about MSTP prompts went unanswered). Recorded from the SDN 2025-2026 Columbia (Vagelos) thread, post #5 (deleted1220651, Jul 9 2025, '+1 OOS MD/PhD'), edited to add 'MSTP-specific prompts (in addition to all of the MD prompts listed above)'. The prompts were quoted piece by piece. The poster gives every limit in words (1000 words looks high and may really be characters, but it is kept as posted). The poster notes prompt 4 is 'in addition to the additional info prompt provided in the MD portion of the application.' Searches for an official Vagelos MD-PhD page listing prompts and for 2026 versions found nothing.",
+    "cycle": "2025-2026",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "What academic honors have you received (e.g., prizes, scholarships, fellowships, honor societies)?",
+        "limit": 1000,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "What are your major research interests?",
+        "limit": 20,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      },
+      {
+        "text": "What are your PhD Goals at Columbia University Vagelos College of Physicians and Surgeons?",
+        "limit": 1000,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "mdphd_why",
+        "abridged": false
+      },
+      {
+        "text": "Is there any other information you would like to include to the admissions committee?",
+        "limit": 1000,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "anything_else",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Donald and Barbara Zucker School of Medicine at Hofstra/Northwell (NY)",
+    "state": "NY",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-hofstra-zucker.1518237/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-hofstra-zucker.1518237/",
+    "source_type": null,
+    "source_note": "No MD/PhD-only prompt wording found. Checked: the official Zucker MD/PhD Application Requirements page (https://medicine.hofstra.edu/admission/md-phd/mdphd-requirement.html), which mentions the 2026-2027 cycle for CASPer and lists 'A completed secondary application' ($125 fee) with no essay wording, and the Hofstra MD/PhD How to Apply page (AMCAS with MD/PhD program type; no essays listed; does not say whether the MD secondary is also required). Also checked the SDN 2025-2026 Hofstra thread, page 1 of 4: #17 (Aug 5 2025) is an 'MD-PhD II' status post; no MD/PhD prompts. Searches of SDN, Reddit and compilations found nothing in range. Deep pass: 2025-2026 thread is https://forums.studentdoctor.net/threads/2025-2026-hofstra.1508028/ (4 pages; page 1 runs to Oct 10 2025); read pages 2-3 (Oct 2025-Feb 2026): no MSTP/MD-PhD mentions. 2024-2025 thread (1494061, 10 pages) pages 1-3 (to Nov 25 2024): only the regular 'currently matriculated (Undergraduate, Masters or PhD)? Y/N' item; no MD/PhD prompts. 2023-2024 thread (1477245, 12 pages) pages 1-4 (to Nov 17 2023): only #141 (Aug 31 2023) MD/PhD II post. Web search found only regular MD compilations.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Duke University School of Medicine (NC)",
+    "state": "NC",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-duke-university-school-of-medicine.1517702/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-duke-university-school-of-medicine.1517702/",
+    "source_type": null,
+    "source_note": "No MD/PhD-only prompts found; none recorded. In 2026-2027, SDN posts #14 and #16 (Jul 9-10 2026) say MSTP applicants answer only 2 of the regular MD essays ('Share with us your story.' and the clinical-connection prompt, 400 words each) plus additional info. The SDN 2025-2026 Duke thread, page 1 of 5, post #27 (Jul 22 2025) gives a similar report for that cycle: a subset of the MD prompts ('Share with us your story.', the 'Trust and rapport' prompt, optional additional info). So MSTP applicants answer a reduced set of MD essays rather than extra MD/PhD-only prompts. The official Duke MSTP Admissions page (https://medschool.duke.edu/education/health-professions-education/medical-scientist-training-program/mstp-admissions) mentions only the 'DukeMed secondary application' (deadline Nov 15) and lists no MSTP prompts. Deep pass (2 quick checks, per brief): read 2025-2026 Duke thread (https://forums.studentdoctor.net/threads/2025-2026-duke.1508014) page 2 (Aug 3-Nov 23 2025): no MSTP/MD-PhD mentions; one web search for Duke MSTP additional prompts found nothing new. Conclusion unchanged: no MD/PhD-only prompts.",
+    "cycle": null,
+    "md_secondary": "instead",
+    "prompts": []
+  },
+  {
+    "school": "Georgetown University School of Medicine (DC)",
+    "state": "DC",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-georgetown-university-school-of-medicine.1517715/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-georgetown-university-school-of-medicine.1517715/",
+    "source_type": null,
+    "source_note": "No MD/PhD-only prompt wording found. Checked: the official Georgetown MD/PhD Admissions page (https://meded.georgetown.edu/admissions/degrees-and-admissions/mdphd/admissions/). It is dated to the 2025 cycle (AMCAS Oct 1 2025, secondary Nov 15 2025) and tells applicants to 'denote that you are an MD/PhD applicant' on the secondary, but lists no prompts. Its 'several extra essays' refers to the AMCAS stage. Also checked: the MD/PhD Program FAQs page (no essay info) and the SDN 2025-2026 Georgetown thread, page 1 of 9 (only #36-37 'MD or MSTP?'/'MD!'; no MD/PhD prompts). Compilation search results show only regular MD prompts. Deep pass: read 2025-2026 thread (https://forums.studentdoctor.net/threads/2025-2026-georgetown.1508025/, 9 pages) pages 2-3 (Aug 18-Nov 9 2025): no MSTP/MD-PhD mentions. 2024-2025 thread (1494065, 17 pages) pages 1-4 (to Oct 15 2024): none. 2023-2024 thread (1477242, 17 pages) pages 1-6 (to Sep 29 2023): none. Web search found only regular MD prompt compilations.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Harvard Medical School (MA)",
+    "state": "MA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-harvard-medical-school.1517717/",
+    "source_url": "https://crackingmedadmissions.com/harvard-medical-school-secondary-essays/",
+    "source_type": "compilation",
+    "source_note": "No MD/PhD-only essay prompt wording found. The official HMS MD-PhD admissions process page says MD-PhD applicants complete the HMS secondary, check 'I am applying for the MD-PhD Program', and pick curriculum choices (Pathways and/or HST). It describes the MD-PhD-specific secondary items only as topics: the PhD program type (Basic and Translational Sciences or Social Sciences), research interests/areas, the research supervisors writing letters, and manuscripts/publications. These are not quoted prompts, so none are recorded. No limits or cycle year are given. The AMCAS MD-PhD essays it mentions are excluded as primary essays. Also checked the SDN 2025-2026 Harvard thread, page 1 of 5 (#11 '+1 OOS MD/PhD'; only regular MD prompts and the HST essay). The 2026-2027 thread #12 says an MSTP applicant answered the HST prompt and entered publications; HST is not MSTP-only, so it is not recorded. md_secondary set to 'also' per the official page. Deep pass: read 2025-2026 thread (threads/2025-2026-harvard.1508027) page 2 of 5 (Sep 8-Nov 17 2025): MD/PhD/MSTP posts are interview/status only, no prompts. 2024-2025 thread (1494062) pages 1-3 (Apr-Nov 2024): only #37/#42 about an awards checkbox question ('Have you applied for or received any of the following awards?', a yes/checkbox item, omitted); no essay wording. 2023-2024 thread (1477244) pages 1-3 (Mar-Oct 2023): #24 quotes only manuscript-documentation instructions, #33 mentions an MSTP 'Manuscripts/Publications' tab; no essay wording. Found wording on CrackingMedAdmissions Harvard page, 'MD/PhD Essay Prompts' section under the 2025-2026 heading (no 2026-2027 section yet). The statement prompt was quoted in pieces and joined with single spaces; limit sentence 'Your statement should not exceed 1,000 words.' moved to limit field. A third MD/PhD item (list publications, marking published/submitted/in preparation, 1,000 characters) is a publication list and is omitted. Not confirmed on an SDN post or official page. Verified at merge: the source's 2025-2026 version ends with the sentence 'Your statement should not exceed 1,000 words.', moved into the limit field.",
+    "cycle": "2025-2026",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "Briefly list your research interests/areas; use keywords only. This information is not binding.",
+        "limit": 100,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      },
+      {
+        "text": "Describe your reasons and motivations for pursuing a graduate degree in your chosen program of study at Harvard. What experiences led you to your research ambitions? Concisely state your past work in your intended field of study and in related fields. Briefly indicate your career objectives. Health Policy applicants should indicate the concentration(s) and policy area(s) of interest.",
+        "limit": 1000,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "mdphd_why",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Icahn School of Medicine at Mount Sinai (NY)",
+    "state": "NY",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-icahn-school-of-medicine-at-mount-sinai.1517720/",
+    "source_url": "https://forums.studentdoctor.net/threads/2025-2026-icahn-mt-sinai.1508030",
+    "source_type": "sdn",
+    "source_note": "No 2026-2027 MD/PhD wording found. The 2026-2027 MD thread is 1 page and was already read. The official MD-PhD admissions page (icahn.mssm.edu/education/admissions/md-phd) gives no secondary questions, only the Oct 15 secondary deadline. The prompt comes from the 2025-2026 SDN Icahn thread, page 1, post #2 (deleted1220651, Jul 1 2025, an OOS MD/PhD applicant). That post lists 5 prompts. The first 4 (not-full-time activities, 100w; community/background, 150w; toughest feedback, 250w; unfair/unjust situation, 250w) look like the general secondary and are not recorded. The poster wasn't sure whether MD applicants get the same prompts, so md_secondary stays 'unknown' (it looks like 'also'). The MD/PhD prompt was quoted in one piece; no join was needed. ProspectiveDoctor's older MD/PhD prompts (2021-2022, 2018-2019) are out of range and not used.",
+    "cycle": "2025-2026",
+    "md_secondary": "unknown",
+    "prompts": [
+      {
+        "text": "Please tell us why you have chosen to apply to the MD-PhD Program at the Icahn School of Medicine at Mount Sinai.",
+        "limit": 250,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Johns Hopkins University School of Medicine (MD)",
+    "state": "MD",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-johns-hopkins-university-school-of-medicine.1517722/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-johns-hopkins-university-school-of-medicine.1517722/",
+    "source_type": null,
+    "source_note": "No MD/PhD-only essay prompts found, and the sources suggest none exist. The 2026-2027 thread is 1 page. Post #11 (Jul 10 2026) says MSTP applicants get the same prompts plus a section for choosing a graduate program or research interest and listing faculty (no wording; a selection/list section, so omitted). The 2025-2026 SDN Johns Hopkins thread (threads/2025-2026-johns-hopkins.1508033), page 1, post #20 (deleted1220651, Jul 17 2025, from a 'brief glance') agrees: 'there are no additional MD/PhD-specific essays unless you are studying History of Medicine, just the MD-only prompts.' The JHU e-catalogue MD-PhD page (2026-27 edition) gives no secondary questions. No official MSTP how-to-apply page with prompts was found. md_secondary stays 'also' as given. Deep pass (quick, 2 checks since prior notes say there are none): web search for JHU MD-PhD secondary prompts; CrackingMedAdmissions JHU page lists no MD-PhD/MSTP prompts (only an old MD/MBA prompt and a 2024-2025 yes/no dual-degree interest question). No MSTP prompt wording found.",
+    "cycle": null,
+    "md_secondary": "also",
+    "prompts": []
+  },
+  {
+    "school": "Loyola University Chicago Stritch School of Medicine (IL)",
+    "state": "IL",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-loyola-university-chicago-stritch-school-of-medicine.1517727/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-loyola-university-chicago-stritch-school-of-medicine.1517727/",
+    "source_type": null,
+    "source_note": "Nothing found. The 2026-2027 thread is 1 page, already read. Checked the official MD/PhD admissions-process page (luc.edu/stritch/mdphd/prospectivestudents/admissionsprocess/, which lists 2026-2027 interview dates) and the MD Dual-Degree Programs Application Guide. Both say only that the Stritch secondary is sent automatically after AMCAS, with no MD/PhD essay questions; the guide points applicants to the coordinator at ssom-mdphd@luc.edu. The 2025-2026 SDN Loyola thread, page 1 (of 7), has no MD/PhD mentions. Web searches of Reddit and compilation sites found no MD/PhD-specific Loyola prompts. Deep pass: read 2025-2026 thread (threads/2025-2026-loyola-stritch.1508038) pages 2-3 (Aug 4-Oct 15 2025): no MSTP/MD-PhD mentions. 2024-2025 thread (1494052) pages 1-4 (Apr-Oct 30 2024): only #157 (Oct 5 2024) reporting an MD/PhD interview invite, no prompts. 2023-2024 thread (1477256) pages 1-4 (Mar-Oct 16 2023): no MSTP/MD-PhD mentions. Web search plus admit.org Loyola page: no MD/PhD-specific prompts. Still nothing found.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Michigan State University College of Human Medicine (MI)",
+    "state": "MI",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-michigan-state-university-college-of-human-medicine.1517738/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-michigan-state-university-college-of-human-medicine.1517738/",
+    "source_type": null,
+    "source_note": "Nothing found. The 2026-2027 thread is 1 page, already read. The official CHM MD/PhD page (humanmedicine.msu.edu/admissions/MD_PhD/) names a 'Secondary/Supplemental Application' due Oct 1, plus a separate Graduate School application with a graduate program preference. It gives no essay questions, and its testing note refers to the 2025-2026 cycle. The 2025-2026 SDN Michigan State thread, page 1 (of 6), has no MD/PhD mentions. Compilation sites list only the MD prompts. Deep pass: 2025-2026 thread (threads/2025-2026-michigan-state.1508048) page 2 (Sep 18-Oct 17 2025): no MD/PhD mentions (page 1 already read). 2024-2025 thread (1494050) page 1 of 8 (Apr 12-Oct 7 2024): no MD/PhD mentions. 2023-2024 thread (1477517) pages 1-3 (Mar 21-Oct 8 2023): only #121 (Sep 19 2023) 'Any MD/PhD applicants hear back?', no prompts. Web search plus CrackingMedAdmissions MSU page: only LMU/LMR/MD-PH track prompts, none for MD/PhD. Still nothing found.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Ohio State University College of Medicine (OH)",
+    "state": "OH",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-ohio-state-university-college-of-medicine.1517752/",
+    "source_url": "https://medicine.osu.edu/education/dual-degree/mstp/admissions/application-requirements",
+    "source_type": "school_website",
+    "source_note": "The official OSU MSTP Application Requirements page lists an Oct 4, 2026 deadline, so it is taken as the 2026-2027 cycle (the year isn't stated outright). It requires 'A personal statement specific to the graduate program you select on your College of Medicine secondary application form.' The prompt text recorded below is the page's next sentence, quoted verbatim. This is a written requirement, not a question; it is one page long, and the page doesn't say whether it is submitted inside the secondary or separately. The Application Process page lists a 'Biographical statement that explains why the applicant wants to pursue a combined MD/PhD' among its selection criteria, but it's described only, with no prompt wording or format, so it isn't recorded. Other required items are not essays (AMCAS, COM secondary form, 4 letters, CV, transcripts). The 2026-2027 SDN thread (pages 1-2) never posted the MSTP prompts. The 2025-2026 SDN Ohio State thread, page 1 (of 10), has no MSTP mentions. Limit: one page (set to null at merge).",
+    "cycle": "2026-2027",
+    "md_secondary": "unknown",
+    "prompts": [
+      {
+        "text": "This one-page statement should focus on your reasons for selecting the graduate program.",
+        "limit": null,
+        "unit": null,
+        "required": true,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Rutgers New Jersey Medical School (NJ)",
+    "state": "NJ",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-rutgers-new-jersey-medical-school.1517761/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-rutgers-new-jersey-medical-school.1517761/",
+    "source_type": null,
+    "source_note": "Nothing found. The 2026-2027 thread (pages 1-3) was already read, and page 3 is the last page. The official NJMS MD-PhD pages (njms.rutgers.edu/admissions/MD_PhD/Application.php and AdmissionRequirements.php, and njms.rutgers.edu/sgs/prospective_students/info/md_phd2.php) say only that 'a specific application to the MD-PhD Program will be required' and that a 'Supplemental Application with fee or fee waiver' plus a PhD application are due Sep 1 for Early Decision. None lists questions or a cycle year. The NJMS SGS 'PHD Biomedical Sciences Application' PDF has a statement item ('motivation and aims for graduate study'), but it is an old UMDNJ-era graduate-school form (revision code 0905), not the secondary, so it is not recorded. The 2025-2026 SDN Rutgers (New Jersey) thread, page 1 (of 7), has no MD/PhD mentions. Compilation sites list only the MD prompts. Deep pass: 2025-2026 thread (threads/2025-2026-rutgers-new-jersey.1508064) pages 2-4 (Jul 17-Oct 6 2025): no MD/PhD mentions. 2024-2025 thread (1494009) pages 1-5 (Apr 12-Oct 15 2024): no MD/PhD mentions. 2023-2024 thread (1477687) pages 1-5 (Mar 23-Aug 24 2023; stopped there, thread is 16 pages and slow-moving): no MD/PhD mentions. Web search plus CrackingMedAdmissions NJMS page (2014-2026): no MD-PhD prompts. Still nothing found.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Rutgers Robert Woods Johnson Medical School (NJ)",
+    "state": "NJ",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-rutgers-robert-woods-johnson-medical-school.1517762/",
+    "source_url": "https://forums.studentdoctor.net/threads/2025-2026-rutgers-robert-wood-johnson.1508065",
+    "source_type": null,
+    "source_note": "No MD/PhD-only prompts found, and the evidence says there are none. In the 2025-2026 SDN Rutgers (Robert Wood Johnson) thread, page 1 (of 3), post #10 (mallcat, Jul 3 2025) is headed 'MSTP secondary' and lists prompts that match the MD prompts. Post #12 (ellobear2026, Jul 4 2025) says 'MD-only had the same prompts as above.' So in 2025-2026, MSTP applicants answered the same prompts as MD applicants, with no extra essays. md_secondary is set to 'also' on that basis (they answer the regular MD secondary, with no additional essays reported). The 2026-2027 thread (1 page) has no MD/PhD content. No official RWJMS MD/PhD page listing questions was found, and compilation sites list only the MD prompts. Deep pass (quick, 2 checks): CrackingMedAdmissions RWJ page labels every prompt set 2016-2017 through 2025-2026 as MD prompts, with no MD-PhD set. 2023-2024 SDN RWJ thread (threads/2023-2024-rutgers-robert-wood-johnson.1477686) page 1: #47 (Aug 19 2023) asks about MD-PhD-specific questions; #49 (SailboatJ, Sep 1 2023): 'didnt have any MD/PhD specific questions on my secondary'. This supports no MD/PhD-only prompts.",
+    "cycle": null,
+    "md_secondary": "also",
+    "prompts": []
+  },
+  {
+    "school": "Saint Louis University School of Medicine (MO)",
+    "state": "MO",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-saint-louis-university-school-of-medicine.1517763/",
+    "source_url": "https://forums.studentdoctor.net/threads/2025-2026-saint-louis-university-slu.1508108",
+    "source_type": "sdn",
+    "source_note": "From the 2025-2026 SDN Saint Louis University (SLU) thread, page 1 (of 5), post #3 (ambitg, Jun 28 2025), quoted again in full in post #11 (Jul 25 2025). The prompt is labeled 'MD/PhD ONLY:' (label left out of the text) and has a 3,000-character limit. Its full text was fetched in 6 consecutive pieces and joined with single spaces. The rest of the secondary in that post is unlabeled, which implies everyone answers it, but the post doesn't say so, so md_secondary stays 'unknown' (likely 'also'). No 2026-2027 wording was found: the 2026-2027 thread is 1 page, and its post #2 shows only the yes/no item 'Would you like to apply for the MD/PhD program?' (omitted). The official SLU MD/PhD apply page (biib.slu.edu/medicine/medical-education/md-phd/apply.php, 2024 interview dates) lists no essay questions.",
+    "cycle": "2025-2026",
+    "md_secondary": "unknown",
+    "prompts": [
+      {
+        "text": "Relate your current thinking about the type and scope of clinical career that you seek. Remember that most applicants cannot identify at this point the specific medical disciplines they might choose for residency programs. However, you may have preliminary ideas about your relative interest in direct patient care vs. consultative service, translational vs. basic research, academic medical center vs. corporate, etc.",
+        "limit": 3000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "career",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Sidney Kimmel Medical College at Thomas Jefferson (PA)",
+    "state": "PA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-sidney-kimmel-medical-college-at-thomas-jefferson.1517764/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-sidney-kimmel-medical-college-at-thomas-jefferson.1517764/",
+    "source_type": null,
+    "source_note": "Nothing found. The 2026-2027 thread (pages 1-2) was already read. The official Jefferson MD/PhD 'Applying' page (jefferson.edu/.../skmc/programs/md-phd/applying.html) says only: apply through AMCAS, choose the Combined Degree application type, and 'Complete secondary application to SKMC' by Oct 15. It lists no questions. The 2025-2026 SDN Jefferson (Sidney Kimmel) thread, page 1 (of 9): post #2 (Jun 6 2025) asks what the MSTP secondaries are and gets no answer, and the posted prompts are general. MedSchoolCoach HAIQ's SKMC page has no MD/PhD prompts. Deep pass: 2025-2026 thread (threads/2025-2026-jefferson-sidney-kimmel.1508106) pages 2-4 (Jul 17-Oct 7 2025): #71 (Jul 29 2025) MD/PhD interview report; #123 (Sep 4 2025) notes the secondary deadline is 'November 1st for the MD/PhD program' (earlier than MD); no MD/PhD prompts. 2024-2025 thread (1494006) pages 1-6 (Apr 12-Oct 15 2024): #171 (Jul 20 2024) 'Any MD-PhD prompt, or is this it?' got no answer; no prompts. 2023-2024 thread (1477684) pages 1-6 (Mar 23-Oct 19 2023): only #123 MD/PhD interview report. Web search plus CrackingMedAdmissions SKMC page: no MD/PhD prompts (only an MD/MPH item). Still nothing found.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Texas Tech University Hsc School of Medicine at Lubbock (TX)",
+    "state": "TX",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-texas-tech-university-hsc-school-of-medicine-at-lubbock.1517786/",
+    "source_url": "https://www.ttuhsc.edu/programs/dual/md-phd",
+    "source_type": null,
+    "source_note": "No MD/PhD-only prompts found. The official TTUHSC MD/PhD page (ttuhsc.edu/programs/dual/md-phd, Fall 2027 entry, i.e. the 2026-2027 cycle) says you apply through TMDSAS and note MD/PhD interest, then complete the School of Medicine secondary. It also says 'only one secondary application' is needed if you apply to both MD and MD/PhD, so md_secondary is set to 'also' (MD/PhD applicants answer the regular SOM secondary). That page also mentions a free GSBS supplemental application. However, the GSBS MD/PhD Guidelines page (ttuhsc.edu/biomedical-sciences/program/md-phd_guidelines.aspx) says 'GSBS will utilize information from the SOM application in lieu of requiring a formal GSBS application', so the two pages conflict on this. No essay questions are given on either page. The 2025-2026 SDN Texas Tech Lubbock thread, page 1 (of 8), has only the dual-degree ranking question (omitted). The 2026-2027 thread pages 1-3 were already read. Deep pass (2 quick checks): HAIQ/MedSchoolCoach Texas Tech Lubbock prompt page has no MD/PhD, MSTP, dual-degree or research prompts; web search found no MD/PhD-specific prompt. Still none.",
+    "cycle": null,
+    "md_secondary": "also",
+    "prompts": []
+  },
+  {
+    "school": "Tulane University School of Medicine (LA)",
+    "state": "LA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-tulane-university-school-of-medicine.1517788/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-tulane-university-school-of-medicine.1517788/",
+    "source_type": null,
+    "source_note": "No MD/PhD-only prompts found. Checked 2026-2027 SDN thread page 4 (posts #151-#186): no MSTP/MD-PhD mentions. Tulane MSTP admissions page (medicine.tulane.edu/undergraduate-medical-education/mstp/admissions) says only that applying with the AMCAS MD/PhD application indicates interest; no secondary/supplemental essays mentioned. 2025-2026 SDN Tulane thread post #48 (Jul 12 2025) says the MD-PhD webpage refers applicants to the secondary to 'Indicate your interest', but 'there is no question that prompts selecting MD/PhD on the secondary'. Web/Reddit/compilation searches found no MD/PhD-specific prompts. Deep pass (2 quick checks): web search plus admit.org Tulane secondary page (2018-2023 prompts) found no MD/PhD, MSTP or research prompts. Still none.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Arkansas for Medical Sciences College of Medicine (AR)",
+    "state": "AR",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-arkansas.1518239/",
+    "source_url": "https://medicine.uams.edu/admissions/md-phd/application-process",
+    "source_type": null,
+    "source_note": "No MD/PhD-only prompts found. 2026-2027 SDN thread is 1 page (already checked). UAMS 'How to Apply' MD/PhD page says: indicate MD/PhD on AMCAS, then complete and submit a linked application form (with release to share materials with the UAMS Graduate School); deadline Nov 1. The form itself could not be located or read (link address not exposed to the fetch tool; searches did not find it), so any questions on it are unknown. medicine.uams.edu/admissions/dual-degree-programs/md-phd/ and mdphd.uams.edu/about/ list no essay prompts. 2025-2026 SDN Arkansas thread page 1: only post #17 (Aug 16 2025) mentions MD/PhD (asking about secondaries); post #6 says in-state applicants get no traditional essay questions, only two signed questionnaires. Searches of compilations found no MD/PhD-specific prompts. Deep pass: 2025-2026 SDN Arkansas thread (1508089) page 2 of 4 (posts #51-#100, Oct 30-Dec 9 2025): no MSTP/MD-PhD mentions (page 1 read earlier). 2024-2025 thread (1493950) page 1 of 5 (Apr 11-Dec 18 2024): none. 2023-2024 thread (1477658) page 1 of 3 (Mar 23 2023-Feb 5 2024): none. Re-fetched the UAMS How to Apply page asking for link targets: the form link is still not exposed. Web and Reddit searches found nothing MD/PhD-specific.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Buffalo Jacobs School of Medicine (NY)",
+    "state": "NY",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-buffalo-jacobs-school-of-medicine.1517795/",
+    "source_url": "https://medicine.buffalo.edu/education/mdphd/applying/how-to-apply.html",
+    "source_type": null,
+    "source_note": "No MD/PhD-only prompts found. 2026-2027 SDN thread is 1 page (already checked). UB MD-PhD 'How to Apply' page: apply via AMCAS indicating MD-PhD (or both MD and MD-PhD); school emails instructions for a supplemental application ($100, due Oct 1); page gives no supplemental essay wording and does not say whether a separate MD secondary is also completed. 2025-2026 SDN Buffalo thread pages 1-2 (of 6): no MSTP/MD-PhD mentions; posted prompts are regular MD prompts. MedicalSchoolHQ Buffalo page (updated July 2025): three regular prompts, none MD/PhD-specific. Reddit/compilation searches found nothing MD/PhD-specific. Deep pass: 2025-2026 SDN Buffalo (Jacobs) thread (1508088) page 3 of 6 (posts #101-#150, Oct 2-Dec 15 2025): only post #124 (Nov 7 2025, MD/PhD applicant asking about interviews, 'Submitted my secondary late in sept') and post #141 (Dec 5 2025); no prompt wording. 2024-2025 thread (1493949) page 1 of 8 (Apr 11-Oct 12 2024): no MD/PhD mentions. 2023-2024 thread (1477657) pages 1-3 of 16 (Mar 23-Oct 30 2023): only post #122 (Oct 23 2023, asking about MD/PhD interview invites). HAIQ Buffalo page (content not rendered) and web/Reddit searches found no MD/PhD supplemental wording.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of California Irvine School of Medicine (CA)",
+    "state": "CA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-california-irvine-school-of-medicine.1517797/",
+    "source_url": "https://forums.studentdoctor.net/threads/2025-2026-uc-irvine.1508111",
+    "source_type": "sdn",
+    "source_note": "From 2025-2026 SDN UC Irvine thread, post #8 (AppleMan14, Jul 22 2025, '+1 IS MD/PhD' poster), section 'MSTP questions:' listed after the four MD questions; same four MSTP questions also in post #1 (Apr 19 2025, thread template). Research-challenge prompt joined from two verbatim pieces (fetch quote cap). Left out the fourth MSTP item, a list request: \"Please list all posters, manuscripts (published or planned) you would like the Admissions Committee to consider (1500 characters)\". No 2026-2027 MSTP wording found (2026-2027 thread checked earlier, all pages). md_secondary set to 'also': official mstp.uci.edu/admissions/application-process says MSTP applicants submit the UC Irvine School of Medicine Secondary Application (no MSTP prompt wording on that page).",
+    "cycle": "2025-2026",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "What research accomplishment are you most proud of and why?",
+        "limit": 1500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research",
+        "abridged": false
+      },
+      {
+        "text": "Please describe to the Admissions Committee a research challenge you have overcome and what you learned from that experience.",
+        "limit": 1500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "challenge",
+        "abridged": false
+      },
+      {
+        "text": "What does it mean, to you, to be an MD/PhD?",
+        "limit": 1500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "mdphd_why",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "University of California Los Angeles David Geffen School of Medicine (CA)",
+    "state": "CA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-california-los-angeles-david-geffen-school-of-medicine.1517801/",
+    "source_url": "https://forums.studentdoctor.net/threads/2023-2024-ucla-geffen.1477651/page-6",
+    "source_type": "sdn",
+    "source_note": "Newest wording found: 2023-2024 SDN UCLA thread page 6, post #254 (hatuey, Jul 24 2023, quoting riverstar's MSTP secondary prompts). Recorded the two essay items (trailing '):' after the Personal Comments question dropped) (Statement of Purpose; OPTIONAL Personal Comments, both '4000 characters'). Left out: Application Type choice, Location of Study (UCLA / UCLA/Caltech / Caltech), faculty-name list, Research Experience entries (PI, supervisor, dates, hours, 'role in lab (i.e. paid/volunteer research position)'), references list, publications list, ~20 'Areas of Interest' checkboxes. No 2026-2027 or 2025-2026 wording found: 2026-2027 prompts were only in an unreadable attachment 'UCLA MSTP.docx' (post #50, Jul 27 2026, which describes a ~4,000-character 'Personal Comments' essay); 2025-2026 thread page 1 has no MSTP prompts and page 3 posts #125-#126 (Jul 29 2025) mention the MSTP 'personal comments' box with a limit 'of 800 characters I believe' (conflicts with 4000 in 2023-2024 and ~4,000 in 2026; unconfirmed). 2024-2025 thread page 4 checked: none. Official mstp.healthsciences.ucla.edu/application-procedure: 'The MSTP supplemental application and the medical school secondary are combined'; Caltech-focused applicants explain why Caltech is a desirable location (described, not quoted as a prompt); no prompt wording on the page.",
+    "cycle": "2023-2024",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "Why do you want to attend UCLA/Caltech for your training?",
+        "limit": 4000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "Is there anything that you would like for us to consider when reviewing your MSTP application",
+        "limit": 4000,
+        "unit": "characters",
+        "required": false,
+        "group": null,
+        "type": "anything_else",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "University of California San Diego School of Medicine (CA)",
+    "state": "CA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-california-san-diego-school-of-medicine.1517799/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-california-san-diego-school-of-medicine.1517799/",
+    "source_type": null,
+    "source_note": "No separate MD/PhD-only prompt found. Prior pass: 2026-2027 SDN post #8 (Jul 7 2026) shows only an MD/PhD instruction inside the all-applicant autobiographical essay (6000 characters): \"If you are applying to the MD/PhD program, use this essay to incorporate comments explaining why you are specifically interested in seeking MD/PhD training at UCSD.\" (not recorded as a separate prompt). Confirmed by 2024-2025 SDN UCSD thread page 2: post #53 (Jul 10 2024) 'Where's the MSTP specific prompt?'; post #54 (Jul 11 2024) says they 'don't have a separate MSTP prompt' and quotes a similar instruction. Official MSTP Admissions FAQs (medschool.ucsd.edu/education/md-combined/md-phd/apply/mstp-admissions-faqs.html) refers to an 'MD-PhD statement on the UC San Diego secondary application' without wording. md_secondary kept 'also' (MD/PhD applicants write the regular secondary with MD/PhD focus). Deep pass: 2025-2026 SDN UC San Diego thread (1508113) pages 1-4 of 10 (Apr 19-Oct 8 2025): only posts #20 and #25 (Jul 7 2025, '+1 IS secondary MD PhD' / '+1 OOS MD/PhD', receipt tags, no wording); no separate MSTP prompt posted. Consistent with earlier finding that the MD/PhD instruction sits inside the all-applicant essay. Still no separate prompt.",
+    "cycle": null,
+    "md_secondary": "also",
+    "prompts": []
+  },
+  {
+    "school": "University of Chicago Pritzker School of Medicine (IL)",
+    "state": "IL",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-chicago-pritzker-school-of-medicine.1517802/",
+    "source_url": "https://forums.studentdoctor.net/threads/2025-2026-u-chicago-pritzker.1508085",
+    "source_type": "sdn",
+    "source_note": "From 2025-2026 SDN U Chicago (Pritzker) thread page 1, post #10 (Jun 28 2025, '+1 OOS MD/PhD'), prompt 3 of 3; joined from consecutive verbatim pieces; leading '3.' dropped; limit text 'We suggest that you limit your text to about 300 words.' Prompts 1-2 in that post are the regular all-applicant prompts (not recorded); the post omits the MD-only research prompt. Post #19 (Jun 28 2025) reports an admissions email saying this MSTP-worded prompt was shown in error to MD-only applicants, whose version reads 'Please feel free to use this space to convey any additional information that you might wish the Committee to know.' CONFLICT: in the 2026-2027 thread, post #4 (Jul 11 2026, '+1 MSTP') gives the same prompt 3 in the generic MD wording ('...wish the Committee to know. For example, if you are not currently completing a degree, please share your planned or current activities for this application cycle.') with no MSTP wording, so the MSTP-specific version may not have been used in 2026-2027 (or the poster pasted the generic text); no other 2026-2027 post quotes MSTP prompts. Official MSTP FAQ (pritzker.uchicago.edu/page/mstp-faqs) gives no prompt wording; says every AMCAS applicant gets the Pritzker Supplemental Application and applications are reviewed jointly by the medical school and the MSTP.",
+    "cycle": "2025-2026",
+    "md_secondary": "unknown",
+    "prompts": [
+      {
+        "text": "Please feel free to use this space to convey any additional information that you might wish the Committee to know, including specific research faculty you have communicated with or are interested in, why UChicago is the right MSTP for your research and clinical interests, or what additional training/activities you will accomplish for this current application cycle.",
+        "limit": 300,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "University of Colorado Anschutz School of Medicine (CO)",
+    "state": "CO",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-colorado-anschutz-school-of-medicine.1517805/",
+    "source_url": "https://medschool.cuanschutz.edu/mstp/admissions/process",
+    "source_type": null,
+    "source_note": "No MD/PhD-only secondary prompts found. Official MSTP admissions process page (2026-2027 cycle) lists the 'School of Medicine Secondary Application and fee' (due Nov 30 2026) as part of the MSTP application and says selecting MD/PhD in AMCAS permits essays on interest in MD/PhD (AMCAS primary essays, excluded); no MSTP secondary wording. md_secondary not changed (page implies the same SOM secondary but does not state it). 2025-2026 SDN Colorado thread page 1 (of 6): no MSTP/MD-PhD mentions; prompts are regular/branch essays. CU Anschutz catalog MSTP page did not render program text. Compilation/Reddit searches found no MSTP-specific prompts. Deep pass: 2025-2026 SDN Colorado thread (1508082) pages 2-3 of 6 (Jul 30-Oct 23 2025): only post #88 (Sep 3 2025, '+1 OOS II MSTP'), no wording. 2024-2025 thread (1493935) pages 1-3 of 16 (Apr 11-Sep 19 2024): post #85 (Aug 16 2024) says 'i don't remember my colorado mstp secondary having any prompts about research' (e.g. naming investigators) and post #86 replies 'Mine didn't either' - anecdotal evidence that MSTP applicants get no extra MSTP prompts. CU Anschutz catalog MSTP PDF (2026 entering class) describes the secondary only as fee plus CASPer/Altus, no essay wording. Web search found nothing else. md_secondary left unchanged (no source states it outright).",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Connecticut School of Medicine (CT)",
+    "state": "CT",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-connecticut-school-of-medicine.1517806/",
+    "source_url": "https://medicine.uconn.edu/admissions/applying-to-the-mdph-d-program",
+    "source_type": null,
+    "source_note": "No MD/PhD-only secondary prompts found. Official 'Applying to the M.D./Ph.D. Program' page: AMCAS M.D./Ph.D. essay required (primary essay, excluded); the School of Medicine then emails a request for letters and 'completion of a Supplemental Statement' via the applicant portal; no wording given and no statement on whether this differs from the regular MD secondary; no cycle year stated (mentions admission decisions in early 2026). 2025-2026 SDN Connecticut thread page 1 (of 4): only general prompt mentioning 'physician or physician scientist' (posts #3-#4), no MSTP/MD-PhD posts. A medicine.uconn.edu supplemental.pdf dated 2016 surfaced in search but is older than 2023-2024, so not used. Compilation searches found nothing MD/PhD-specific. Deep pass: 2025-2026 SDN Connecticut thread (1508081) page 2 of 4 (Oct 30 2025-Jan 22 2026): only post #51 ('just MD or Md/phd?'), no wording (page 1 read earlier). 2024-2025 thread (1493934) page 1 of 4 (Apr 11-Oct 4 2024): posts #29 and #38 mention MD/PhD (interview chatter), no prompts. 2023-2024 thread (1477644) page 1 of 6 (Mar 23-Oct 20 2023): only the regular MD prompt mentioning 'physician or physician scientist' (posts #1, #7; excluded). Web and Reddit searches for the UConn MD/PhD 'Supplemental Statement' wording found only the 2016 supplemental.pdf (too old, not used).",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Florida College of Medicine (FL)",
+    "state": "FL",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-florida-college-of-medicine.1517807/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-florida-college-of-medicine.1517807/",
+    "source_type": null,
+    "source_note": "No MD/PhD-only secondary prompts found. 2025-2026 SDN Florida thread pages 1-2 (of 3): page 1 has only the general UF prompts, page 2 has only post #56 (Nov 18 2025) '+1 OOS MD/PhD II'. UF admissions requirements page says Regular Admissions covers MD/PhD and MD/masters tracks but lists no MD-PhD secondary questions. mdphd.med.ufl.edu 'current student application requirements' page is for already-enrolled College of Medicine students (MD-PhD Motivation Statement and Significant Research Experience Statement, no wording) and not the AMCAS-applicant secondary, so not recorded. Compilation searches found no MSTP-specific UF prompts. Deep pass: 2025-2026 SDN Florida thread (1508080) page 3 checked (Mar-May 2026, nothing); pages 1-2 already covered all posts to Nov 2025. 'UF 2025-2026 (c/o 2030 hopefuls)' thread is the vet-school (VMCAS) thread, irrelevant. 2024-2025 SDN Florida thread (1493933) pages 1-2 (Apr 11-Oct 3 2024): only post #83 (Sep 4 2024) 'OOS MD-PhD II', no prompt text. 2023-2024 SDN Florida thread (1477642) pages 1-2 (Mar 23-Oct 23 2023): no MSTP/MD-PhD mentions. Web and Reddit searches for UF MD-PhD secondary questions found only general MD compilations. Still not found.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Iowa Carver (IA)",
+    "state": "IA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-iowa-carver-college-of-medicine.1517815/",
+    "source_url": "https://mstp.medicine.uiowa.edu/admissions",
+    "source_type": null,
+    "source_note": "Not found. Iowa MSTP admissions page (2026 cycle) says a 'supplemental Iowa MSTP Application' is part of the Carver secondary but does not list its questions (portal link only). 2026-2027 SDN MD thread is single-page (checked earlier; post #15 lists only 'MSTP only: CV/Resume upload'). Old SDN thread 'MD PhD secondary University of Iowa' (Dec 2015) quotes only the regular MD prompts + CV requirement; out of range. ProspectiveDoctor Iowa page (2022-2023 to 2025-2026) has no MD/PhD/MSTP prompts. MedSchoolCoach HAIQ page gated/no prompts. md_secondary kept 'also' (official page: MSTP supplement is part of the CCOM secondary). Also checked 2025-2026 SDN Iowa thread page 1: only post #38 (Aug 20 2025) '+1 OOS II MSTP', no MSTP prompt text. Deep pass: 2025-2026 SDN Iowa thread (1508077, 8 pages) page 2 (Aug 27-Oct 28 2025): only posts #52 and #79 '+1 OOS MSTP II', no prompt text. 2024-2025 SDN Iowa thread (1493928, 12 pages) pages 1-3 (Apr 11-Oct 2 2024): only post #17 (Jul 10 2024) 'Iowa provided an example MSTP CV in their secondary and it has references at the end'; the five posted prompts are general MD. 2023-2024 SDN Iowa (Carver) thread (1477560) pages 1-4 (Mar 22-Oct 16 2023): only posts #123/#124 (Aug 29-30 2023) about an 'MSTP application complete' email, no prompt text. Web and Reddit searches found nothing new. All evidence suggests the MSTP supplement is a CV upload with no essay prompts, but no source says so outright. Still not found.",
+    "cycle": null,
+    "md_secondary": "also",
+    "prompts": []
+  },
+  {
+    "school": "University of Kentucky College of Medicine (KY)",
+    "state": "KY",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-kentucky-college-of-medicine.1517825/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-kentucky-college-of-medicine.1517825/",
+    "source_type": null,
+    "source_note": "Not found. 2026-2027 SDN thread has only 2 pages (both checked earlier). UK MD-PhD admissions and application-process pages (2026-2027 timeline, secondary deadline Nov 30 2026) say screened applicants complete 'a Secondary Application' (a supplement to AMCAS) but give no prompts and don't say whether it is the MD secondary or separate. ProspectiveDoctor Kentucky page (2022-2023 to 2025-2026) has no MD/PhD prompts. Reddit/compilation searches returned nothing MD/PhD-specific. Also checked 2025-2026 SDN Kentucky thread page 1: only post #38 (Sep 4 2025) '+II OOS MD/PhD'; post #1 prompts are general MD. Deep pass: 2025-2026 SDN Kentucky thread (1508001, 4 pages) page 2 (Sep 12-Nov 21 2025): no MSTP/MD-PhD mentions; page 1 already covered by pass 2. 2024-2025 SDN Kentucky thread (1493926, 7 pages) pages 1-2 (Apr 11-Nov 11 2024): no MSTP/MD-PhD mentions. 2023-2024 SDN Kentucky thread (1477562, 7 pages) pages 1-3 (Mar 22-Sep 30 2023): no mentions. MedicalSchoolHQ Kentucky page (2023-24 and earlier) has no MD/PhD prompts. Web search found nothing else. Still not found.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Miami Miller School of Medicine (FL)",
+    "state": "FL",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-miami-miller-school-of-medicine.1517828/",
+    "source_url": "https://med.miami.edu/graduate-studies/doctoral-programs/medical-scientist-training-program/application-process",
+    "source_type": null,
+    "source_note": "Not found. Official MSTP application-process page says the secondary includes both a 'Medical School Secondary application' and an 'M.D./Ph.D. Secondary Application' (hence md_secondary 'also') plus photo and letters, but lists no MD/PhD secondary prompt wording (only names the AMCAS essays, excluded). 2026-2027 SDN thread is 2 pages (checked earlier). 2025-2026 SDN thread page 1 (9 pages): only post #45/#46 (Jul 29 2025) ask 'regular MD or MSTP?'. ProspectiveDoctor (2016-2017 to 2025-2026) and SDN schools database (to 2026-2027) list no MD/PhD/MSTP prompts (only old MD/MPH ones and a general optional 2025-2026 research/subspecialty interest question, not MD/PhD-only). Shemmassian HAIQ page gated. Deep pass: 2025-2026 SDN U Miami (Miller) thread (1507996, 9 pages) pages 2-3 (Jul 31-Oct 21 2025): only #108 (Sep 16 2025, interview dates 'came from the MSTP site') and #143 (Oct 16 2025, 'any MSTP A?'); no prompt text. 2024-2025 SDN Miami (Miller) thread (1493922, 21 pages) pages 1-8 (Apr 11-Oct 24 2024): MSTP mentions only about secondaries/IIs received (#99, #116, #118 'Maybe the mstp does its own screening process', #122, #307, #329-#332); no MD/PhD prompt text. 2023-2024 SDN Miami (Miller) thread (1477496, 22 pages) pages 1-8 (Mar 21-Oct 2 2023): no MSTP/MD-PhD mentions. Targeted web search found nothing new. Still not found.",
+    "cycle": null,
+    "md_secondary": "also",
+    "prompts": []
+  },
+  {
+    "school": "University of Nevada Reno (NV)",
+    "state": "NV",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-nevada-reno.1517836/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-nevada-reno.1517836/",
+    "source_type": null,
+    "source_note": "Not found. 2026-2027 SDN thread single page (checked earlier). Official UNR Med secondary-application page lists 6 general prompts (cycle unstated) with no MD/PhD or dual-degree essays. Searches for a UNR MD/PhD program application page and compilations found no MD/PhD-only prompts. Deep pass: 2025-2026 SDN University of Nevada - Reno thread (1507987, 4 pages) page 1 (Apr 18-Nov 12 2025), 2024-2025 SDN Nevada - Reno thread (1493910) page 1 (Apr 11-Nov 20 2024), 2023-2024 SDN Nevada - Reno thread (1477488) page 1 (Mar 21-Nov 7 2023): no MSTP/MD-PhD/dual-degree mentions. Official UNR Med Dual Degrees page (med.unr.edu/office-medical-education/curriculum/dual-degrees): students apply to the MD/PhD 'following the successful completion of his/her first semester of medical school' through the UNR Graduate School's standard application, due 'prior to December 31st of the year prior to program entry'. So there is no AMCAS-stage MD/PhD secondary at UNR; this likely explains why no prompts exist. No prompts recorded.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of New Mexico School of Medicine (NM)",
+    "state": "NM",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-new-mexico-school-of-medicine.1517837/",
+    "source_url": "https://hsc.unm.edu/medicine/education/reo/graduate/md-phd/mdphd-adm.html",
+    "source_type": null,
+    "source_note": "Not found (wording). Official UNM MD/PhD admissions page only describes supplemental questions that 'address past research and clinical experience, potential for a future scientific career and unique qualifications of the applicant for the MD/PhD program' plus an online Application and Statement of Purpose; no wording, limits or cycle given; does not say whether the MD secondary is also completed. 2026-2027 SDN thread single page (checked earlier). ProspectiveDoctor UNM page (to 2025-2026) has no MD/PhD prompts. Deep pass: 2025-2026 SDN University of New Mexico thread (1507986, 4 pages) page 1 (Apr 18-Oct 23 2025): only post #28 (Sep 22 2025) 'OOS MD-PhD II'; the six posted prompts are general MD. 2024-2025 SDN New Mexico thread (1493909) single view #1-#42 (Apr 2024-Feb 2025): only post #36 (Dec 13 2024) MD/PhD acceptance. 2023-2024 SDN New Mexico thread (1477487) page 1 (Mar 2023-Feb 2024): no MD/PhD mentions. Re-read official MD/PhD admissions page (same description; pre-screened applicants get a link to the online Application and Statement of Purpose; MD/PhD applicants 'can request that their applications be also considered for the MD program'). MD/PhD Handbook PDF (2016-2017, read in full in two parts) and MD/PhD Resources (Forms) page have no admissions prompts. Web search found nothing else. Still not found.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of North Carolina Chapel Hill School of Medicine (NC)",
+    "state": "NC",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-north-carolina-chapel-hill-school-of-medicine.1517838/",
+    "source_url": "https://www.med.unc.edu/mdphd/admissions/process-and-criteria/",
+    "source_type": null,
+    "source_note": "Not found (wording). Official UNC MD-PhD Process and Criteria page (2026 cycle) names a required 'Research Description' essay in the Supplemental Application (describe research experiences and time spent on each) but gives no prompt text or limit. 2025-2026 SDN thread post #10 (Jul 21 2025): 'In addition to the MD questions, they also ask you to list faculty you are interested in for interviewing (no explanations needed) and explain they key factor you look for in MD/PhD training' - a poster's description, not wording, so not recorded; md_secondary set 'also' from this post. 2025-2026 SDN page 2 had nothing more. 2026-2027 SDN thread single page (checked earlier). ProspectiveDoctor UNC page (to 2025-2026) has no MD/PhD-labeled prompts. Deep pass: 2025-2026 SDN U North Carolina - Chapel Hill thread (1507985, 8 pages) page 3 checked (Nov 29-Dec 17 2025, nothing); pages 1-2 from pass 2 already reach past Sep 2025. 2024-2025 SDN North Carolina - Chapel Hill thread (1493908, 20 pages) pages 1-3 (Apr 11-Oct 31 2024): only post #27 (Jul 26 2024) 'Applying md-phd'; the four posted prompts are standard MD. 2023-2024 SDN thread (1477486, 31 pages) pages 1-3 (Mar 21-Oct 13 2023): only post #107 (Sep 16 2023) 'md or mstp?'. Re-checked official Process and Criteria page (JSON version, modified Jun 9 2026): Research Description essay named as 'a required component of our Supplemental Application' but no prompt text or limit; Supplemental Application deadline October 4th. Web/Reddit searches found nothing else. Still not found (wording).",
+    "cycle": null,
+    "md_secondary": "also",
+    "prompts": []
+  },
+  {
+    "school": "University of Pennsylvania Perelman School of Medicine (PA)",
+    "state": "PA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-pennsylvania-perelman-school-of-medicine.1517841/",
+    "source_url": "https://www.prospectivedoctor.com/perelman-school-of-medicine-at-the-university-of-pennsylvania-secondary/amp/",
+    "source_type": "compilation",
+    "source_note": "ProspectiveDoctor Penn page, section 'Additional MSTP prompts' placed after the 2024-2025 list (item 13) and before the 2023-2024 heading, so cycle 2024-2025. Prompt 2 joined from 11 consecutive quoted pieces ('List you' typo is in the source). Left out: MSTP prompt 3 (primary institution for coming year - name field), prompt 4 (months of FT research effort - numeric field with NIH calculation instructions), prompt 5 (publication citations list). SDN schools database confirms 2024-2025 'Additional MSTP prompts' exist alongside the MD prompt (md_secondary 'also') but gives no wording. No 2025-2026 or 2026-2027 MSTP wording found: 2026-2027 SDN thread single page (checked earlier); Google search for the prompt phrase found only the 2024-2025 SDN thread.",
+    "cycle": "2024-2025",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "Please use keywords or phrases, separated by commas, to identify your research interests more specifically. Do not use tabs or add lines by hitting the enter key. There is a limit of 500 characters.",
+        "limit": 500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      },
+      {
+        "text": "List you research experience chronologically, starting with the most recent, and including your anticipated experience for the remainder of this academic year. For each experience, please provide clear information about the time commitment. (For instance, if you worked continuously in one lab for a year, putting in full time hours during the summer, and part time hours during the school year, you might state: “full time (about 50 hours a week) from mid May until the end of August, continuing part time (about 10 hours a week) from September to April”. Note that if you worked two summers in the same lab, but did not work in that lab at all during the school year, these should be listed as two separate research experiences.) For each experience, indicate whether your mentor will provide a letter of recommendation. If you do not select a letter from an individual with whom you had an extensive research experience, please provide an explanation in the comments section.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "research",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "University of Rochester School of Medicine (NY)",
+    "state": "NY",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-rochester-school-of-medicine.1517844/",
+    "source_url": "https://forums.studentdoctor.net/threads/2024-2025-rochester.1493901",
+    "source_type": "sdn",
+    "source_note": "SDN 2024-2025 Rochester thread post #10 (Jul 3 2024, trilobites10294814): MSTP-only prompt, '(no word limit)'; same post lists the 200-word MD essay as shared with MSTP applicants (md_secondary 'also'). Joined from 3 quoted pieces. ProspectiveDoctor 2024-2025 has identical wording (unlabeled). SDN schools database 2024-2025 has a shorter variant: 'MSTP Only: Briefly describe your research interests and how the opportunities at URMC fit with your graduate training goals.' (kept the thread's fuller first-hand wording). Newer: 2025-2026 SDN thread page 1 (post #4) lists only MD prompts; page 2 posts #57-58 (Sep 7 2025) mention MSTP applicants must submit 'ten (10) requested faculty members' (a name list, not recorded) - no MSTP essay wording; 2026-2027 thread single page (checked earlier). URMC MD-PhD FAQ lists no prompts.",
+    "cycle": "2024-2025",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "Please briefly describe your research interests, and describe how the opportunities at the University of Rochester fit with your goals for graduate training. Please include names of up to five investigators whose research programs interest you.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "University of South Florida Morsani College of Medicine (FL)",
+    "state": "FL",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-south-florida-morsani-college-of-medicine.1517855/",
+    "source_url": "https://health.usf.edu/medicine/graduatestudies/md-phd/apply/",
+    "source_type": null,
+    "source_note": "Not found. Official USF MD-PhD apply page (policy effective 2024-2025 cycle) mentions evaluation of 'a modified essay' but gives no prompt text and refers to MD Admissions for the secondary. 2026-2027 SDN thread single page (checked earlier). ProspectiveDoctor USF page (2022-2023 to 2025-2026) has no MD/PhD prompts. Deep pass: read 2025-2026 SDN thread (1507935, 4 pages) pages 1-2 (page 1 Apr 18-Nov 3 2025; page 2 Nov 3-25 2025): only MSTP-adjacent mention is post #7 (Jul 14 2025) 'physician-scientist' in a career-path discussion; first post lists only regular MD prompts. 2024-2025 thread (1493895, 16 pages) pages 1-2 (Apr 11-Oct 16 2024): no MSTP/MD-PhD mentions. 2023-2024 thread (1477471, 19 pages) pages 1-3 (Mar 21-Oct 12 2023): no mentions. Web search for USF MD-PhD secondary prompts found only regular MD compilations; official apply page re-checked: only 'submission of a modified essay', no prompt text or forms.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Texas at San Antonio Long School of Medicine (TX)",
+    "state": "TX",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-texas-at-san-antonio-long-school-of-medicine.1517860/",
+    "source_url": "https://uthscsa.edu/biomedical-sciences/programs/md-phd/admissions/application-process",
+    "source_type": "school_website",
+    "source_note": "None exist per official MD/PhD application-process page: 'There is currently no secondary application.' MD/PhD applicants apply via AMCAS only (AMCAS MD/PhD essay excluded); MD consideration needs a separate TMDSAS application. Cycle year not stated on page. Consistent with 2026-2027 SDN post #1 (no secondary essays). Deep pass (2 quick checks, per brief): web search for UTSA MD/PhD secondary found nothing new (gsbs.uth.edu MD-PhD secondary PDFs are UTHealth Houston/McGovern, not UTSA); 2025-2026 SDN Long thread (1507877, 5 pages) page 1 (Apr 17-Aug 14 2025): no MSTP/MD-PhD mentions.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Texas Medical Branch Sealy School of Medicine (TX)",
+    "state": "TX",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-texas-medical-branch-sealy-school-of-medicine.1517862/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-texas-medical-branch-sealy-school-of-medicine.1517862/",
+    "source_type": null,
+    "source_note": "No MD/PhD-only secondary prompts found. Checked 2026-2027 SDN thread pages 4-5 (posts #151-#228): no MD/PhD/MSTP mentions. UTMB MD/PhD site (utmb.edu/mdphd/admissions and /admissions/faqs): says applicants submit the TMDSAS application 'with supplemental within TMDSAS'; no essay prompts listed. 2025-2026 SDN UTMB thread pages 1-2: post #14 (Jun 15 2025) and #90 (Aug 4 2025, asking if the Spark Hire portion differs for MD/PhD) asked for MD/PhD questions, no replies. ProspectiveDoctor (2014-2026 cycles) and SDN schools-database essay page: no MD/PhD prompts; SDN database lists only the 2026-2027 program-selection question ('Which MD Program are you applying for?' incl. 'MD/PhD Only.' / 'MD/PhD and MD Program.'), excluded as a selection question. Program-selection question suggests MD/PhD applicants complete the shared UTMB secondary, but no source says so explicitly, so md_secondary left unknown. Deep pass: 2025-2026 SDN thread (1507878, 15 pages) pages 3-4 (Aug 8-Oct 10 2025; pages 1-2 done in pass 2): no MSTP/MD-PhD mentions. 2024-2025 thread (1493871, 20 pages) pages 1-5 (Apr 10-Oct 12 2024): post #7 (Jun 11 2024) says the SparkHire video link 'says it is required for MD/PHD'; post #17 (Jun 19 2024) describes SparkHire format (two questions) and says 'There's another question, but it's required for MD-PhD applicants only.' - an MD-PhD-only VIDEO question exists but its wording was not posted (members asked not to share questions); not recorded as a prompt. 2023-2024 thread (1477210, 23 pages) pages 1-8 (Mar 17-Oct 5 2023): posts #378-#382 (Oct 3 2023) say MSTP applicants received a separate MSTP secondary ('They sent me two separate secondaries. I just procrastinated on the MSTP one.'; MD/PhD via AMCAS, MD via TMDSAS), but no prompt wording posted. Targeted web search for UTMB MSTP secondary wording: nothing new.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "University of Utah School of Medicine (UT)",
+    "state": "UT",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-utah-school-of-medicine.1517867/",
+    "source_url": "https://medicine.utah.edu/programs/combined/md-phd/admissions",
+    "source_type": null,
+    "source_note": "No MD/PhD-only secondary prompts found. 2026-2027 SDN thread is single-page (checked earlier). Utah MD-PhD admissions page (medicine.utah.edu/programs/combined/md-phd/admissions, no cycle year stated) lists, under secondary materials, the regular 'SFESOM Secondary Application Short Essays' (Why SFESOM essay; reapplication essay) and says 'Please see the MD Admissions website for additional information on activity requirements and secondary application essays.' - i.e., MD-PhD applicants complete the shared SFESOM secondary (basis for md_secondary 'also'); no MSTP-specific essays listed (the AMCAS MSTP and Significant Research essays are primary, excluded). 2025-2026 SDN Utah thread page 1: only MSTP mention is post #46 (Oct 1 2025) '+1 OOS II for MSTP'; posted prompts (post #2) are general SFESOM. No Reddit or compilation source with MSTP prompts found. Deep pass: 2025-2026 SDN thread (1507919, 13 pages) page 1 already spans Apr 17-Oct 14 2025 (pass 2), so no further pages needed. 2024-2025 thread (1493867, 8 pages) page 1 (Apr 10-Oct 9 2024): no MSTP/MD-PhD mentions. 2023-2024 thread (1477466, 11 pages) page 1 (Mar 21-Jul 24 2023): post #41 (Jul 22 2023) asked for MSTP secondary questions; post #42 (Jul 22 2023) replied 'There aren't any MD/PhD specific secondary questions' - supports no separate MD/PhD prompt (2023-2024 cycle). Targeted web search: nothing new.",
+    "cycle": null,
+    "md_secondary": "also",
+    "prompts": []
+  },
+  {
+    "school": "University of Washington School of Medicine (WA)",
+    "state": "WA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-washington-school-of-medicine.1517870/",
+    "source_url": "https://forums.studentdoctor.net/threads/2025-2026-university-of-washington.1507915",
+    "source_type": "sdn",
+    "source_note": "Prompts from SDN 2025-2026 University of Washington thread, page 1, post #16 (purrkinje, Jul 21 2025), posted in reply to #15 asking for MSTP prompts (repeated in #17). Poster: 'none have word count unless stated'. Prompt 2 joined from the sentence plus its parenthetical '(MSTP will consider information provided here as well as your AMCAS Personal Comments):'; prompt 5 joined from 2 quoted pieces; prompt 6 joined from 2 pieces (post labels it as 'in the coursework section under social studies/humanities'); prompt 4 marked '(optional)'. No 2026-2027 MSTP wording found: 2026-2027 thread pages 1-3 checked earlier; UW MSTP how-to-apply (2026-2027 timeline) and FAQ pages describe the 'UW MSTP Secondary Application' ($35, Dec 15 deadline) but list no prompts. FAQ says UW MSTP and UW Medical School have separate admissions processes; non-WWAMI applicants must choose Regular MD or MD/PhD in AMCAS, and a complete MSTP application = AMCAS + UW MSTP secondary + fee + letters (basis for md_secondary 'instead'; WWAMI residents can be considered for both). SDN schools-database lists 3 similar MSTP prompts for 2020-2021 only (older wording: 'How did you learn about...', 'Please use this opportunity...'), not used.",
+    "cycle": "2025-2026",
+    "md_secondary": "instead",
+    "prompts": [
+      {
+        "text": "Indicate the area(s) of research in which you are interested.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      },
+      {
+        "text": "Please use this space to supplement your AMCAS Personal Comments. (MSTP will consider information provided here as well as your AMCAS Personal Comments):",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "How did you find out about the University of Washington's Medical Scientist Training Program?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "Use this opportunity to provide any autobiographical information which you feel would be helpful for the MSTP office.",
+        "limit": null,
+        "unit": null,
+        "required": false,
+        "group": null,
+        "type": "anything_else",
+        "abridged": false
+      },
+      {
+        "text": "If you are not currently enrolled in coursework (nor planning to be enrolled throughout the application process), please describe your activities in this period.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "Describe your competency by explaining how you have explored and come to understand issues in the social sciences and humanities as they relate to the practice of medicine.",
+        "limit": 250,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Virginia Commonwealth University School of Medicine (VA)",
+    "state": "VA",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-virginia-commonwealth-university-school-of-medicine.1517874/",
+    "source_url": "https://forums.studentdoctor.net/threads/2023-2024-virginia-commonwealth.1477460/",
+    "source_type": "sdn",
+    "source_note": "No MD/PhD-only secondary prompts found. 2026-2027 SDN thread has only 2 pages (checked earlier). 2025-2026 SDN VCU thread page 1: only post #35 (Jul 8 2025) asks whether MD/PhD applicants got a secondary; no prompts. VCU bulletin MD-PhD opportunities page: external applicants apply via AMCAS and qualified applicants 'are sent supplemental admission materials' (contents not described); no essay prompts. (A 'why MD-PhD' essay is described only for current VCU medical students applying internally - not recorded.) sbs.vcu.edu MD-PhD page refers to the School of Medicine website, no prompts. MedSchoolCoach HAIQ VCU page: no MD/PhD prompts. No Reddit source found. Deep pass: 2025-2026 SDN thread (1507912, 15 pages) pages 2-3 (Jul 13-Oct 1 2025; page 1 done in pass 2): no MSTP/MD-PhD mentions. 2024-2025 thread (1493855, 25 pages) pages 1-6 (Apr 10-Oct 10 2024): only post #76 (Jul 21 2024, MSTP LOR question) and #158 (Aug 20 2024, MSTP interview); no prompts. FOUND in 2023-2024 thread (1477460, 21 pages) page 1: post #44 (Sunrizon, Jul 6 2023): 'secondary received for MSTP' / 'Prompt, in addition to MD secondary,' then under 'MD/PhD' the single prompt (1000 characters) - basis for md_secondary 'also'. Page 1 also posts #5, #33, #34 (MSTP secondary questions, no prompts); page 2 (Jul 9-31 2023): no mentions. Exact-phrase web search found no other copy; wording is from 2023-2024 and may have changed.",
+    "cycle": "2023-2024",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "Describe scientific topics and/or labs at VCU that appeal to your future research aspirations.",
+        "limit": 1000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "research_interest",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Wayne State University School of Medicine (MI)",
+    "state": "MI",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-wayne-state-university-school-of-medicine.1517880/",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-wayne-state-university-school-of-medicine.1517880/",
+    "source_type": null,
+    "source_note": "No MD/PhD-only secondary prompts found. 2026-2027 SDN thread has 3 pages (all checked earlier). 2025-2026 SDN Wayne State thread page 1 (of 29): no MD/PhD/MSTP mentions; remaining pages not checked. Wayne State MD-PhD pages (med.wayne.edu/admissions/degrees/md-phd; gradprograms.med.wayne.edu/mdphd-program): apply via AMCAS, no secondary or essay questions described; applicants not invited may be considered for the MD program 'by changing your application type'. Compilations checked: ProspectiveDoctor (2017-2026 cycles) and admit.org (2018-2023): no MD/PhD prompts. No Reddit source found. Deep pass: 2025-2026 SDN thread (1507907, 29 pages) pages 2-7 (Jul 29-Oct 1 2025): only post #93 (Aug 14 2025) 'OOS II on 8/12 MD/PhD! submitted secondary 7/3' (implies MD/PhD applicants submit a secondary, but not whether it differs; no prompts). 2024-2025 thread (1493847, 27 pages) pages 1-8 (Apr 10-Oct 7 2024): only post #154 (Aug 15 2024, MSTP II) and #386 (Oct 4 2024, MD/PhD interview format); no prompts. 2023-2024 thread (1477455, 30 pages) pages 1-2 (Mar 21-Sep 3 2023): posts #55-#62, #93 about MSTP interviews only; no prompts (stopped at ~20-fetch budget; pages 3+ unread). Targeted web search (Wayne State MD-PhD secondary/supplemental): only regular MD compilations.",
+    "cycle": null,
+    "md_secondary": "unknown",
+    "prompts": []
+  },
+  {
+    "school": "Weill Cornell Medicine (NY)",
+    "state": "NY",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-weill-cornell-medicine.1517881/",
+    "source_url": "https://forums.studentdoctor.net/threads/2025-2026-weill-cornell.1507906",
+    "source_type": "sdn",
+    "source_note": "From SDN 2025-2026 Weill Cornell thread page 1, post #10 (deleted1220651, Jun 30 2025): the MD-PhD secondary matches the MD one except 'Question 1 is instead please write a brief statement giving your reasons for applying to the Tri-Institutional MD-PhD Program.' plus one added question; 'Both are 1525 characters'. Prompt text recorded exactly as the poster typed it (lowercase 'please'; the poster's lead-in 'Question 1 is instead' omitted). Left out: the added faculty-name list question ('Please list the names of any Tri-Institutional faculty members with whom you would like to do research...' - poster says no reasons needed, names suffice; a bare name list). Since MD-PhD applicants answer the rest of the MD secondary, md_secondary set 'also' (Q1 is replaced). No 2026-2027 wording found: 2026-2027 thread is single-page (checked earlier); Tri-I MD-PhD admissions FAQ (mdphd.weill.cornell.edu) says only that applicants complete 'Tri-I's Secondary Application' after AMCAS verification, no prompts. ProspectiveDoctor lists the faculty-names question (200 words) only for 2017-2018/2018-2019.",
+    "cycle": "2025-2026",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "please write a brief statement giving your reasons for applying to the Tri-Institutional MD-PhD Program.",
+        "limit": 1525,
+        "unit": "characters",
+        "required": true,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Yale School of Medicine (CT)",
+    "state": "CT",
+    "program": "MD/PhD",
+    "school_thread_url": "https://forums.studentdoctor.net/threads/2026-2027-yale-school-of-medicine.1517885/",
+    "source_url": "https://forums.studentdoctor.net/threads/2025-2026-yale.1507902",
+    "source_type": "sdn",
+    "source_note": "From SDN 2025-2026 Yale thread page 1, post #21 (imsogonnagetrejected, Jul 17 2025), headed 'MD PhD Essay'; joined from the lead-in plus 3 bullet lines, quoted in consecutive pieces (post ends 'career goals..' - duplicate period dropped). Post #9 (deleted1220651, Jul 1 2025) corroborates: the MD/PhD secondary has the same questions as the MD version plus one additional statement, opening 'Write a statement concerning your reasons for wishing to undertake the combined MD/PhD program' (wording differs slightly from #21 - 'MD/PhD' vs 'MD PhD', no word count; #9 not fully quotable). Posts #1 (Apr 17 2025) and #4 (Jun 30 2025) also carry the instruction 'MD/PhD applicants: Please answer question 2 as it pertains to your proposed PhD research.' (shared Essay 2, not recorded; same as 2026-2027 per prior note). No 2026-2027 MD/PhD-only wording found: 2026-2027 thread single page (checked earlier, post #15 question unanswered). Yale MD-PhD application process page (medicine.yale.edu/mdphd/prospective/applicationprocess, updated Mar 10 2026) says MD-PhD applicants complete the Yale Secondary Application (confirms md_secondary 'also'); it lists no essay prompts, and describes only (not recorded) a 500-1,000 word 'personal statement of academic purpose' for non-traditional PhD programs (Anthropology, History of Science & Medicine, Philosophy, Religious Studies, Sociology), due Oct 15. Note: the 2026-2027 SDN thread (post #6) says MD/PhD applicants answer regular question 2 with their PhD research in mind, so this 2025-2026 prompt may have been retired.",
+    "cycle": "2025-2026",
+    "md_secondary": "also",
+    "prompts": [
+      {
+        "text": "Write a statement (approximately 500 words) concerning: Your reasons for wishing to undertake the combined MD PhD program, rather than the MD program alone. The specific PhD program that you propose to follow at Yale. The strengths of that Yale graduate program and its faculty as they relate to your career goals.",
+        "limit": 500,
+        "unit": "words",
+        "required": true,
+        "group": null,
+        "type": "mdphd_why",
+        "abridged": false
+      }
+    ]
+  }
+]

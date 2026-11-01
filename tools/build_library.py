@@ -36,7 +36,8 @@ if os.path.exists(mp):
         ps=[]
         for p in s.get('prompts') or []:
             u=(p.get('unit') or '')
-            d={'p':p['text'].strip(),'limit':p.get('limit') or 0,'unit':'chars' if u.startswith('char') else 'words','fam':MDPHD_MAP.get(p.get('type'),'other')}
+            t=p['text'].strip(); t=t[:1].upper()+t[1:]
+            d={'p':t,'limit':p.get('limit') or 0,'unit':'chars' if u.startswith('char') else 'words','fam':MDPHD_MAP.get(p.get('type'),'other')}
             if p.get('required') is False: d['opt']=1
             if p.get('group'): d['group']=p['group']
             if p.get('abridged'): d['cut']=1
@@ -47,8 +48,15 @@ if os.path.exists(mp):
         before=len(x['prompts'])
         x['prompts']=[q for q in x['prompts'] if not (norm(q['p']) in dualtexts and (re.search(r'MSTP|MD/PhD|M\.D\.-Ph\.D|physician[- ]scientist',q['p'],re.I) or q['fam'] in ('research','resint','mdphd') or re.search(r'research',q['p'],re.I)))]
         if before!=len(x['prompts']): moved.append((x['name'], before-len(x['prompts'])))
+        # a dual prompt that is a reworded version of a regular one (same opening) replaces it for dual applicants
+        if s.get('md_secondary')!='instead':
+            for d in ps:
+                for i,q in enumerate(x['prompts']):
+                    if norm(q['p'])[:60]==norm(d['p'])[:60] and norm(q['p'])!=norm(d['p']): d['rep']=i
         if ps:
             x['mdphd']={'prog':s.get('program') or ('DO/PhD' if x['deg']=='DO' else 'MD/PhD'),'md':s.get('md_secondary') or 'unknown','prompts':ps,'src':s.get('source_url') or ''}
+            if s.get('cycle') and s['cycle']!='2026-2027': x['mdphd']['cycle']=s['cycle']
+            if s.get('source_type') in ('school_website','compilation'): x['mdphd']['srcType']=s['source_type']
             n+=len(ps)
     print('mdphd prompts merged', n, 'unmatched schools', unmatched, 'moved out of regular lists', moved)
 out.sort(key=lambda x:x['name'].lower())
