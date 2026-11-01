@@ -1083,7 +1083,10 @@ function pickMatches(q){
   q=(q||"").trim().toLowerCase();
   const words=q.split(/\s+/).filter(Boolean);
   const hit=x=>{ const n=(x.name+" "+x.state+" "+(x.deg||"MD")).toLowerCase(); return words.every(w=> w==="md"||w==="do" ? (x.deg||"MD").toLowerCase()===w : n.includes(w)); };
-  return (words.length? LIB.schools.filter(hit) : LIB.schools).slice(0, 60);
+  if(!words.length) return LIB.schools.slice(0, 60);
+  // whole phrase at the start of the name first, then the phrase anywhere, then the rest
+  const rank=x=>{ const n=x.name.toLowerCase(); return n.startsWith(q)?0 : n.includes(q)?1 : 2; };
+  return LIB.schools.filter(hit).map((x,i)=>({x,i,r:rank(x)})).sort((a,b)=>a.r-b.r||a.i-b.i).map(o=>o.x).slice(0, 60);
 }
 function pickOptions(){
   const q=ui.pickQ.trim();
@@ -1119,9 +1122,10 @@ function addSchoolForm(){
     h += '<div class="row" role="group" aria-label="Applying as"><span class="small muted" style="font-weight:600">Applying as</span><span class="seg"><button type="button" data-act="pick-track" data-v="0" aria-pressed="'+(!dual)+'">'+(L.deg==="DO"?"DO":"MD")+'</button><button type="button" data-act="pick-track" data-v="1" aria-pressed="'+dual+'">'+dl+'</button></span>'+
       (dual && !hasDual(L) ? '<span class="small muted">No '+dl+' prompts were posted for this school. Add them yourself after adding it.</span>' : (dual && L.mdphd.md==="instead" ? '<span class="small muted">'+dl+' applicants answer these instead of the regular secondary.</span>' : (dual?'<span class="small muted">Regular secondary plus '+L.mdphd.prompts.length+' '+dl+' prompt'+(L.mdphd.prompts.length===1?'':'s')+'.</span>':'')))+'</div>';
     const list=trackPrompts(L, dual);
+    if(dual && dualNote(L)) h += '<p class="small" style="margin:0; padding:8px 10px; border-radius:8px; background:var(--warn-soft)">'+dualNote(L)+'</p>';
     if(!list.length) h += '<p class="small muted" style="margin:0">'+esc(L.none||"No prompts posted")+' on its SDN thread. You can add prompts yourself after adding the school.</p>';
     else h += '<div class="stack" style="gap:8px"><div class="row" style="justify-content:space-between"><h3>Prompts to add</h3><span class="row"><button type="button" class="ghost small" data-act="pick-all" data-v="1">Select all</button><button type="button" class="ghost small" data-act="pick-all" data-v="0">Select none</button></span></div>'+
-      '<ul class="plist">'+list.map(o=>'<li><label><input type="checkbox" class="pick-p" value="'+o.k+'" checked><span><span>'+(o.dual?'<span class="chip acc" style="margin-right:6px">'+esc(dl)+'</span>':'')+esc(o.p.p)+'</span><div class="pm">'+limTxt(o.p)+' · '+esc(FAM[o.p.fam]||"Other")+(o.p.opt?' · optional':'')+(o.p.group?' · '+esc(o.p.group):'')+'</div></span></label></li>').join("")+'</ul>'+
+      '<ul class="plist">'+list.map(o=>'<li><label><input type="checkbox" class="pick-p" value="'+o.k+'" checked><span><span>'+(o.dual?'<span class="chip acc" style="margin-right:6px">'+esc(dl)+(L.mdphd.cycle?' · '+esc(L.mdphd.cycle.slice(0,4)+"–"+L.mdphd.cycle.slice(7)):'')+'</span>':'')+esc(o.p.p)+'</span><div class="pm">'+limTxt(o.p)+' · '+esc(FAM[o.p.fam]||"Other")+(o.p.opt?' · optional':'')+(o.p.group?' · '+esc(o.p.group):'')+'</div></span></label></li>').join("")+'</ul>'+
       '<p class="small muted" style="margin:0">Uncheck any you won’t write. You can add or remove prompts later on the school’s page. Prompts come from the school’s <a href="'+esc(L.url)+'" target="_blank" rel="noopener">SDN thread</a>; check them against the portal.</p></div>';
   }
   h += '<div class="grid-f">'+
@@ -1363,10 +1367,21 @@ function trackPrompts(L, dual){
   const reg=(L.prompts||[]).map((p,i)=>({p, k:"p"+i, dual:false}));
   if(!dual || !hasDual(L)) return reg;
   const extra=L.mdphd.prompts.map((p,i)=>({p, k:"m"+i, dual:true}));
-  return L.mdphd.md==="instead" ? extra : reg.concat(extra);
+  if(L.mdphd.md==="instead") return extra;
+  const rep=new Set(L.mdphd.prompts.filter(p=>p.rep!=null).map(p=>"p"+p.rep));
+  return reg.filter(o=>!rep.has(o.k)).concat(extra);
 }
 function promptByKey(L,k){ return k[0]==="m" ? {p:L.mdphd.prompts[+k.slice(1)], dual:true} : {p:L.prompts[+k.slice(1)], dual:false}; }
 function libFind(name){ const n=(name||"").trim().toLowerCase(); return LIB.schools.find(x=>x.name.toLowerCase()===n); }
+// note for dual-degree prompts taken from an earlier cycle or from outside SDN
+function dualNote(L){
+  if(!hasDual(L)) return "";
+  const m=L.mdphd, bits=[];
+  if(m.cycle) bits.push("These "+dualLabel(L)+" prompts are from the "+m.cycle.replace("-","–")+" cycle (nothing newer was posted), so the wording may have changed.");
+  if(m.srcType) bits.push("Source: "+(m.src?'<a href="'+esc(m.src)+'" target="_blank" rel="noopener">'+(m.srcType==="school_website"?"the school’s website":"a prompt compilation site")+'</a>':(m.srcType==="school_website"?"the school’s website":"a prompt compilation site"))+".");
+  else if(m.cycle && m.src) bits.push('<a href="'+esc(m.src)+'" target="_blank" rel="noopener">Older SDN thread</a>.');
+  return bits.length ? bits.join(" ")+" Check them against the portal." : "";
+}
 function limTxt(p){ return p.limit ? p.limit.toLocaleString()+" "+(p.unit==="chars"?"chars":"words") : "No limit given"; }
 function vLibrary(){
   const q=ui.libQ.trim().toLowerCase();
@@ -1387,7 +1402,7 @@ function vLibrary(){
       const fams=[...new Set(x.prompts.map(p=>p.fam))];
       h += '<div class="chips">'+'<span class="chip">'+x.prompts.length+(x.prompts.length===1?' prompt':' prompts')+'</span>'+fams.map(f=>'<span class="chip">'+esc(FAM[f]||"Other")+'</span>').join("")+'</div>';
       h += '<button class="ghost small" data-act="lib-toggle" data-school="'+esc(x.name)+'" aria-expanded="'+(open?'true':'false')+'" style="margin-top:6px; padding-left:0">'+(open?'Hide prompts':'Show prompts')+'</button>';
-      if(open) h += '<ol style="margin:6px 0 0; padding-left:20px">'+x.prompts.map(p=>'<li style="margin-bottom:8px">'+esc(p.p)+'<div class="small muted">'+limTxt(p)+' · '+esc(FAM[p.fam]||"Other")+(p.opt?' · optional':'')+(p.group?' · '+esc(p.group):'')+(p.cut?' · shortened here; full wording in the portal':'')+'</div></li>').join("")+'</ol>'+(hasDual(x)?'<div class="small" style="margin:6px 0 2px; font-weight:700">'+esc(dualLabel(x))+' applicants '+(x.mdphd.md==="instead"?'answer instead':'also answer')+':</div><ol style="margin:0; padding-left:20px">'+x.mdphd.prompts.map(p=>'<li style="margin-bottom:8px">'+esc(p.p)+'<div class="small muted">'+limTxt(p)+' · '+esc(FAM[p.fam]||"Other")+(p.opt?' · optional':'')+'</div></li>').join("")+'</ol>':'')+'<div class="small" style="margin-top:2px"><a href="'+esc(x.url)+'" target="_blank" rel="noopener">SDN thread</a></div>';
+      if(open) h += '<ol style="margin:6px 0 0; padding-left:20px">'+x.prompts.map(p=>'<li style="margin-bottom:8px">'+esc(p.p)+'<div class="small muted">'+limTxt(p)+' · '+esc(FAM[p.fam]||"Other")+(p.opt?' · optional':'')+(p.group?' · '+esc(p.group):'')+(p.cut?' · shortened here; full wording in the portal':'')+'</div></li>').join("")+'</ol>'+(hasDual(x)?'<div class="small" style="margin:6px 0 2px; font-weight:700">'+esc(dualLabel(x))+' applicants '+(x.mdphd.md==="instead"?'answer instead':'also answer')+':</div><ol style="margin:0; padding-left:20px">'+x.mdphd.prompts.map(p=>'<li style="margin-bottom:8px">'+esc(p.p)+'<div class="small muted">'+limTxt(p)+' · '+esc(FAM[p.fam]||"Other")+(p.opt?' · optional':'')+(p.rep!=null?' · replaces regular prompt '+(p.rep+1):'')+'</div></li>').join("")+'</ol>'+(dualNote(x)?'<div class="small muted" style="margin:0 0 4px">'+dualNote(x)+'</div>':''):'')+'<div class="small" style="margin-top:2px"><a href="'+esc(x.url)+'" target="_blank" rel="noopener">SDN thread</a></div>';
     }
     h += '</div>'+(have?'<span class="chip good">Added</span>':'<button class="primary" data-act="lib-add" data-school="'+esc(x.name)+'">Add</button>')+'</li>';
   });
