@@ -390,10 +390,11 @@ const Sync = (function(){
   let token="", tokenExp=0, tokenClient=null, gisLoading=null;
   try{ const t=JSON.parse(sessionStorage.getItem(SYNC_KEY+"-t")||"{}"); if(t.exp>Date.now()+60e3){ token=t.token; tokenExp=t.exp; } }catch(e){}
   let status = st.connected ? (token? "ok" : "paused") : "local";   // local | busy | ok | paused | offline | error
-  let lastOk = st.syncedAt||0, timer=null, running=false, again=false, errMsg="";
+  let lastOk = st.syncedAt||0, timer=null, running=false, again=false, errMsg="", userRetry=false;
   const available = ()=> !!GOOGLE_CLIENT_ID || !!window.__DRIVE_MOCK;
   function persist(){ try{ localStorage.setItem(SYNC_KEY, JSON.stringify(st)); }catch(e){} }
-  function setStatus(x, msg){ status=x; errMsg=msg||""; paintChip(); }
+  function setStatus(x, msg){ const was=status+"|"+errMsg; status=x; errMsg=msg||""; paintChip(); if(was!==status+"|"+errMsg && (x==="error"||x==="paused"||x==="ok") && typeof render==="function" && !editingNow()) render(); }
+  function editingNow(){ const a=document.activeElement; return a && (a.tagName==="TEXTAREA" || (a.tagName==="INPUT" && a.type!=="checkbox")); }
 
   // --- auth (Google Identity Services token model) ---
   function loadGis(){
@@ -407,7 +408,9 @@ const Sync = (function(){
     if(token && tokenExp>Date.now()+60e3) return Promise.resolve(token);
     return loadGis().then(()=>new Promise((res,rej)=>{
       if(!tokenClient) tokenClient = google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID, scope:"https://www.googleapis.com/auth/drive.appdata openid email", callback:()=>{}});
-      tokenClient.callback = (r)=>{ if(r && r.access_token){ token=r.access_token; tokenExp=Date.now()+(+r.expires_in||3600)*1000; try{ sessionStorage.setItem(SYNC_KEY+"-t", JSON.stringify({token, exp:tokenExp})); }catch(e){} res(token); } else rej(new Error((r&&r.error)||"Sign-in was cancelled")); };
+      tokenClient.callback = (r)=>{
+        if(r && r.access_token && google.accounts.oauth2.hasGrantedAllScopes && !google.accounts.oauth2.hasGrantedAllScopes(r, "https://www.googleapis.com/auth/drive.appdata")){ rej(Object.assign(new Error("To save to Drive, tick the box that lets Secondaries Tracker see, create and delete its own configuration data in your Google Drive, then try again."), {scope:true})); return; }
+        if(r && r.access_token){ token=r.access_token; tokenExp=Date.now()+(+r.expires_in||3600)*1000; try{ sessionStorage.setItem(SYNC_KEY+"-t", JSON.stringify({token, exp:tokenExp})); }catch(e){} res(token); } else rej(new Error((r&&r.error)||"Sign-in was cancelled")); };
       tokenClient.error_callback = (e)=>rej(new Error(e && e.type==="popup_closed" ? "Sign-in window was closed" : "Sign-in was blocked"));
       tokenClient.requestAccessToken(interactive ? {prompt: st.connected? "" : "consent", login_hint: st.email||undefined} : {prompt:"", login_hint: st.email||undefined});
     }));
@@ -418,7 +421,13 @@ const Sync = (function(){
     const t = await getToken(false);
     const r = await fetch(path, Object.assign({}, opt, {headers:Object.assign({Authorization:"Bearer "+t}, (opt&&opt.headers)||{})}));
     if(r.status===401){ token=""; tokenExp=0; throw Object.assign(new Error("auth"), {auth:true}); }
-    if(!r.ok) throw new Error("Drive error "+r.status);
+    if(!r.ok){
+      let msg="", reason="";
+      try{ const j=await r.json(); msg=(j.error&&j.error.message)||""; reason=((j.error&&j.error.errors&&j.error.errors[0])||{}).reason || ((j.error&&j.error.details&&j.error.details[0])||{}).reason || ""; }catch(e){}
+      if(r.status===403 && /insufficient|scope/i.test(reason+" "+msg)){ token=""; tokenExp=0; throw Object.assign(new Error("Google Drive access wasn’t granted. Click Reconnect and tick the Google Drive box when Google asks."), {scope:true}); }
+      if(r.status===403 && /has not been used|disabled|accessNotConfigured|SERVICE_DISABLED/i.test(reason+" "+msg)) throw new Error("Google Drive isn’t switched on for this app yet. If it was just enabled, wait a few minutes and retry.");
+      throw new Error("Google Drive said: "+(msg||("error "+r.status)));
+    }
     const ct=r.headers.get("content-type")||""; return ct.includes("json") ? r.json() : r.text();
   }
   const D = "https://www.googleapis.com/drive/v3/files", U = "https://www.googleapis.com/upload/drive/v3/files";
@@ -502,9 +511,11 @@ const Sync = (function(){
       st.syncedAt=Date.now(); st.remoteMaxU=maxU(S); lastOk=st.syncedAt; persist(); setStatus("ok");
       if(conflicts) toast("Some essays were edited on two computers. The other versions were kept on those essays.");
     } catch(e){
-      if(e.auth || /Sign-in|blocked|cancel/i.test(e.message)) setStatus("paused");
+      if(e.scope){ setStatus("paused", e.message); toast(e.message); }
+      else if(e.auth || /Sign-in|blocked|cancel/i.test(e.message)) setStatus("paused");
       else if(!navigator.onLine) setStatus("offline");
-      else setStatus("error", e.message);
+      else { setStatus("error", e.message); if(userRetry) toast(e.message); }
+      userRetry=false;
     } finally { running=false; if(again){ again=false; setTimeout(run, 300); } }
   }
   let changeT=null;
@@ -516,11 +527,12 @@ const Sync = (function(){
       if(!st.email) st.email = await whoAmI();
       if(S.demo){ S=blank(); snapshot(); try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
       st.connected=true; st.dirty=true; persist();
-      await run();
+      userRetry=true; await run();
       if(status==="ok"){ render(); toast("Connected. Your work now saves to your Google Drive"+(st.email?" ("+st.email+")":"")+"."); }
-    } catch(e){ setStatus(st.connected?"paused":"local"); toast(e.message||"Couldn’t connect to Google Drive"); }
+    } catch(e){ setStatus(st.connected?"paused":"local", e.message); toast(e.message||"Couldn’t connect to Google Drive"); }
   }
-  async function resume(){ try{ await getToken(true); await run(); }catch(e){ setStatus("paused"); toast(e.message||"Couldn’t reconnect"); } }
+  async function resume(){ try{ await getToken(true); userRetry=true; await run(); }catch(e){ setStatus("paused", e.message); toast(e.message||"Couldn’t reconnect"); } }
+  function retry(){ userRetry=true; run(); }
   function disconnect(){
     try{ if(token && window.google && google.accounts) google.accounts.oauth2.revoke(token, ()=>{}); }catch(e){}
     token=""; tokenExp=0; try{ sessionStorage.removeItem(SYNC_KEY+"-t"); }catch(e){}
@@ -543,13 +555,13 @@ const Sync = (function(){
       case "local": return '<button class="schip local" data-act="sync-connect" title="Your work is saved only in this browser"><i></i>This browser only · Save to Google Drive</button>';
       case "busy": return '<span class="schip busy"><i></i>Saving to Drive…</span>';
       case "ok": return '<button class="schip ok" data-act="sync-info" title="Saved to Google Drive'+(st.email?" ("+esc(st.email)+")":"")+(ago?", "+ago:"")+'"><i></i>Saved to Drive</button>';
-      case "paused": return '<button class="schip warn" data-act="sync-resume" title="Google sign-in expired. Your changes are kept in this browser until you reconnect."><i></i>Drive paused · Reconnect</button>';
+      case "paused": return '<button class="schip warn" data-act="sync-resume" title="'+esc(errMsg||"Google sign-in expired. Your changes are kept in this browser until you reconnect.")+'"><i></i>Drive paused · Reconnect</button>';
       case "offline": return '<span class="schip warn" title="Your changes are saved in this browser and will go to Drive when you’re back online"><i></i>Offline · will sync</span>';
       default: return '<button class="schip warn" data-act="sync-run" title="'+esc(errMsg)+'"><i></i>Drive error · Retry</button>';
     }
   }
   function paintChip(){ const c=document.getElementById("sync-chip"); if(c) c.innerHTML=chipHTML(); }
-  return {connect, resume, disconnect, run, changed, paintChip, available, state:()=>({...st, status, lastOk}), _merge:mergeInto};
+  return {connect, resume, retry, disconnect, run, changed, paintChip, available, state:()=>({...st, status, lastOk, msg:errMsg}), _merge:mergeInto};
 })();
 
 
@@ -918,7 +930,7 @@ function vNext(){
   const flagged = S.essays.filter(behind);
   let h = '<h1>Do next</h1><p class="sub">Schools ranked by how soon they are due, how much you want them, and how much writing is left. Schools you can finish quickly move up.</p>';
   h += vBrief(rows) + '<!--SIDE-M-->';
-  if(!S.schools.length) h += '<div class="panel hero-empty"><h2>Add a school when its secondary arrives</h2><p>Pick it from the prompt library and its prompts come with it, or paste them yourself. Prompts that ask the same thing at different schools can share one base essay, and this list will rank your schools by what to work on first.</p><div class="row"><button class="primary" data-act="first-school">Add your first school</button>'+(SHOW_LIBRARY?'<button data-act="go-library">Browse the prompt library</button>':'')+'<button data-act="try-examples">Try with examples</button></div><p class="small">Everything you enter stays on this device. Nothing is sent anywhere.</p></div>';
+  if(!S.schools.length) h += '<div class="panel hero-empty"><h2>Add a school when its secondary arrives</h2><p>Pick it from the prompt library and its prompts come with it, or paste them yourself. Prompts that ask the same thing at different schools can share one base essay, and this list will rank your schools by what to work on first.</p><div class="row"><button class="primary" data-act="first-school">Add your first school</button>'+(SHOW_LIBRARY?'<button data-act="go-library">Browse the prompt library</button>':'')+'<button data-act="try-examples">Try with examples</button></div><p class="small">'+(Sync.state().connected?'Your work saves in this browser and to your own Google Drive.':(Sync.available()?'Your work saves in this browser. Connect Google Drive at the top to keep it safe on any computer.':'Everything you enter stays on this device. Nothing is sent anywhere.'))+'</p></div>';
   else if(!rows.length) h += '<div class="panel empty">Nothing open. Add a school when a secondary arrives.</div>';
   else {
     h += '<div class="panel"><ol class="list">';
@@ -1249,6 +1261,7 @@ function vLibrary(){
 function topBanners(){
   let h='';
   const ss=Sync.state();
+  if(ss.connected && (ss.status==="error"||(ss.status==="paused"&&ss.msg))) h+='<div class="banner warn" style="margin-bottom:16px"><div class="grow"><strong>'+(ss.status==="error"?'Couldn’t save to Google Drive.':'Google Drive is paused.')+'</strong> '+esc(ss.msg||"")+' Your work is still saved in this browser.</div><button data-act="'+(ss.status==="error"?'sync-run':'sync-resume')+'">'+(ss.status==="error"?'Try again':'Reconnect')+'</button></div>';
   if(saveError) h+='<div class="banner warn" style="margin-bottom:16px"><div class="grow"><strong>Your latest changes couldn’t be saved in this browser.</strong> Its storage is full or blocked. '+(ss.connected?'They’re still going to your Google Drive, but download a backup to be safe.':'Download a backup now so nothing is lost.')+'</div><button data-act="backup">Download backup</button></div>';
   const hasWork = S.schools.length && !S.demo;
   let snooze=0; try{ snooze=+localStorage.getItem("secondaries-drive-nudge")||0; }catch(e){}
@@ -1325,7 +1338,7 @@ document.addEventListener("click", ev=>{
     case "backup": downloadBackup(); break;
     case "sync-connect": Sync.connect(); break;
     case "sync-resume": Sync.resume(); break;
-    case "sync-run": Sync.run(); break;
+    case "sync-run": Sync.retry(); break;
     case "sync-info": { const ss=Sync.state(); toast("Saved to Google Drive"+(ss.email?" ("+ss.email+")":"")+". Open this site on any computer and sign in to pick up where you left off."); break; }
     case "sync-disconnect": Sync.disconnect(); break;
     case "sync-snooze": try{ localStorage.setItem("secondaries-drive-nudge", String(Date.now()+7*864e5)); }catch(e){} render(); break;
