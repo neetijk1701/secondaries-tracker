@@ -175,16 +175,19 @@ footer.foot{border-top:1px solid var(--line); padding-block:18px 30px; color:var
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <div class="tour" id="tour" role="dialog" aria-modal="true" aria-labelledby="tour-title" hidden></div>
 <input type="file" id="restore-file" accept="application/json,.json" hidden>
+<script src="library.js"></script>
 
 <script>
 (function(){
 "use strict";
 const KEY = "secondaries-v1";
 const TOURKEY = "secondaries-tour-v1";
-const SHOW_LIBRARY = false; // turn on once the shared prompt sheet has real prompts
+const LIB = (window.PROMPT_LIBRARY && window.PROMPT_LIBRARY.schools) ? window.PROMPT_LIBRARY : {cycle:"", updated:"", schools:[]};
+const SHOW_LIBRARY = LIB.schools.length > 0;
 const FAM = {
   diversity:"Diversity & perspective", challenge:"Challenge or failure", why:"Why this school",
-  gap:"Gap year / current activities", team:"Teamwork & conflict", anything:"Anything else", other:"Other"
+  gap:"Gap year / current activities", team:"Teamwork & conflict", career:"Career goals & interests",
+  service:"Service & community", ethics:"Ethical dilemma", anything:"Anything else", other:"Other"
 };
 const STATUS = {todo:"Not started", drafting:"Drafting", ready:"Ready", pasted:"In portal"};
 const DEFAULT_TURNAROUND = 14;
@@ -209,7 +212,7 @@ const C1 = "I failed my first organic chemistry exam with a 41. I had studied th
 const LAKE_C = "I failed my first organic chemistry exam with a 41. I had studied the way I always had, by rereading notes, and it had always worked. In office hours I learned that I could recognize every mechanism but could not draw one from a blank page.";
 const PRAIRIE_W = "Prairie View’s longitudinal rural track is the reason I applied. I grew up two hours from the nearest hospital, and I want to train where continuity with one community is built into the curriculum rather than added on. The interpreter work I describe elsewhere taught me that trust takes years; a three-year rural placement gives me time to earn it.";
 
-const LIBRARY = [
+const EXAMPLE_LIBRARY = [
   {school:"Lakeshore School of Medicine", prompts:[
     {p:"Describe how your background or experiences would add to the diversity of our class.", limit:150, unit:"words", fam:"diversity"},
     {p:"Tell us about a challenge or failure and what you learned from it.", limit:200, unit:"words", fam:"challenge"},
@@ -253,7 +256,7 @@ function seed(){
   const gran = S({name:"Granite Ridge University School of Medicine", received:off(-3), hard:off(20), interest:3});
   const harb = S({name:"Harbor City Medical College", received:off(-16), interest:1});
   const nort = S({name:"Northern Pines School of Medicine", received:off(-25), interest:2, submitted:true, fee:true});
-  const E = (s, libIdx, pi, o)=>{ const L=LIBRARY[libIdx].prompts[pi]; return Object.assign({id:id("e"), schoolId:s.id, prompt:L.p, limit:L.limit, unit:L.unit, family:L.fam, baseId:null, basedOnV:null, text:"", status:"todo", localEdit:false}, o||{}); };
+  const E = (s, libIdx, pi, o)=>{ const L=EXAMPLE_LIBRARY[libIdx].prompts[pi]; return Object.assign({id:id("e"), schoolId:s.id, prompt:L.p, limit:L.limit, unit:L.unit, family:L.fam, baseId:null, basedOnV:null, text:"", status:"todo", localEdit:false}, o||{}); };
   const essays = [
     E(lake,0,0,{baseId:"b_div", basedOnV:1, text:LAKE_D, status:"drafting", localEdit:true}),
     E(lake,0,1,{baseId:"b_chal", basedOnV:1, text:LAKE_C, status:"drafting"}),
@@ -412,7 +415,7 @@ function locate(segs, i, target){
 function applyLoc(text, loc){ return text.slice(0,loc.at) + loc.newStr + text.slice(loc.at+loc.oldStr.length); }
 
 /* ---------- UI state ---------- */
-const ui = {tab:"next", schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, libQ:"", restore:false};
+const ui = {tab:"next", schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, libQ:"", libState:"", libOpen:null, restore:false};
 const TABS = [["next","Do next"],["schools","Schools"],["essays","Base essays"]].concat(SHOW_LIBRARY? [["library","Prompt library"]] : []);
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function stars(n){ let h=""; for(let i=1;i<=3;i++) h+= i<=n? "●" : '<span class="off">●</span>'; return '<span class="stars" aria-label="Interest '+n+' of 3">'+h+'</span>'; }
@@ -447,7 +450,7 @@ function vNext(){
   if(flagged.length){
     h += '<div class="banner warn" style="margin-bottom:16px"><div class="grow"><strong>'+flagged.length+(flagged.length===1?' school version is':' school versions are')+' behind its base essay.</strong> You changed a base after adapting it for these schools.</div><button data-act="go-essays">Review in Base essays</button></div>';
   }
-  if(!S.schools.length) h += '<div class="panel hero-empty"><h2>Add a school when its secondary arrives</h2><p>Paste each prompt and its limit. Prompts that ask the same thing at different schools can share one base essay, and this list will rank your schools by what to work on first.</p><div class="row"><button class="primary" data-act="first-school">Add your first school</button><button data-act="try-examples">Try with examples</button></div><p class="small">Everything you enter stays on this device. Nothing is sent anywhere.</p></div>';
+  if(!S.schools.length) h += '<div class="panel hero-empty"><h2>Add a school when its secondary arrives</h2><p>Pick it from the prompt library and its prompts come with it, or paste them yourself. Prompts that ask the same thing at different schools can share one base essay, and this list will rank your schools by what to work on first.</p><div class="row"><button class="primary" data-act="first-school">Add your first school</button>'+(SHOW_LIBRARY?'<button data-act="go-library">Browse the prompt library</button>':'')+'<button data-act="try-examples">Try with examples</button></div><p class="small">Everything you enter stays on this device. Nothing is sent anywhere.</p></div>';
   else if(!rows.length) h += '<div class="panel empty">Nothing open. Add a school when a secondary arrives.</div>';
   else {
     h += '<div class="panel"><ol class="list">';
@@ -482,7 +485,7 @@ function vSchools(){
 }
 function addSchoolForm(){
   return '<form class="panel" data-form="add-school" style="margin-bottom:16px"><div class="pb stack"><div class="grid-f">'+
-    '<label class="f">School name<input id="ns-name" required placeholder="e.g. Cedar Valley School of Medicine"></label>'+
+    '<label class="f">School name<input id="ns-name" required list="lib-names" autocomplete="off" placeholder="Start typing a school"></label><datalist id="lib-names">'+LIB.schools.map(x=>'<option value="'+esc(x.name)+'"></option>').join("")+'</datalist>'+
     '<label class="f">Secondary received<input id="ns-rec" type="date" value="'+iso(today())+'"></label>'+
     '<label class="f">Turnaround (days)<input id="ns-turn" type="number" min="1" max="60" value="'+DEFAULT_TURNAROUND+'"></label>'+
     '<label class="f">School deadline (optional)<input id="ns-hard" type="date"></label>'+
@@ -510,7 +513,7 @@ function vSchool(s){
     h += '<table class="etable"><tbody>';
     es.forEach(e=>{
       const b=base(e.baseId);
-      h += '<tr><td style="width:46%"><div class="prompt-t">'+esc(shortP(e.prompt))+'</div><div class="chips"><span class="chip">'+esc(FAM[e.family])+'</span>'+(b?'<span class="chip acc">Base: '+esc(b.title)+(e.basedOnV?' · from v'+e.basedOnV:'')+'</span>':'')+(behind(e)?'<span class="chip warn">Base now v'+latest(b).v+'</span>':'')+(e.localEdit&&b&&!s.submitted?'<span class="chip">Edited here</span>':'')+'</div></td>'+
+      h += '<tr><td style="width:46%"><div class="prompt-t">'+esc(shortP(e.prompt))+'</div><div class="chips"><span class="chip">'+esc(FAM[e.family]||"Other")+'</span>'+(e.optional?'<span class="chip">Optional</span>':'')+(e.group?'<span class="chip">'+esc(e.group)+'</span>':'')+(b?'<span class="chip acc">Base: '+esc(b.title)+(e.basedOnV?' · from v'+e.basedOnV:'')+'</span>':'')+(behind(e)?'<span class="chip warn">Base now v'+latest(b).v+'</span>':'')+(e.localEdit&&b&&!s.submitted?'<span class="chip">Edited here</span>':'')+'</div></td>'+
         '<td>'+meter(e)+'</td>'+
         '<td><select aria-label="Status" id="st-'+e.id+'" data-bind="essay:'+e.id+':status">'+Object.entries(STATUS).map(([k,l])=>'<option value="'+k+'"'+(e.status===k?' selected':'')+'>'+l+'</option>').join("")+'</select></td>'+
         '<td style="text-align:right"><button data-act="open-essay" data-id="'+e.id+'">Open</button></td></tr>';
@@ -541,6 +544,9 @@ function guessFam(p){
   if(/gap|this year|not currently|time since|since graduat|current activit/.test(t)) return "gap";
   if(/team|conflict|leader|collaborat/.test(t)) return "team";
   if(/anything else|additional information/.test(t)) return "anything";
+  if(/ethic|dilemma/.test(t)) return "ethics";
+  if(/servic|underserved|communit|volunteer/.test(t)) return "service";
+  if(/career|specialt|goals|research interest|future practice/.test(t)) return "career";
   return "other";
 }
 function meter(e){
@@ -554,7 +560,8 @@ function vEssay(e){
   const s=school(e.schoolId), b=base(e.baseId), L=latest(b);
   const fams = S.bases.filter(x=>x.family===e.family);
   let h = '<button class="ghost back" data-act="open-school" data-id="'+s.id+'">← '+esc(s.name)+'</button>';
-  h += '<h3>'+esc(FAM[e.family])+' · '+limitL(e)+'</h3><p class="promptbox">'+esc(e.prompt)+'</p>';
+  h += '<h3>'+esc(FAM[e.family]||"Other")+' · '+limitL(e)+(e.optional?' · Optional':'')+(e.group?' · '+esc(e.group):'')+'</h3><p class="promptbox">'+esc(e.prompt)+'</p>';
+  if(e.cut) h += '<p class="small muted" style="margin:6px 0 0">This prompt was shortened in the library. Copy the full wording from the school’s portal.</p>';
   h += '<div class="two" style="margin-top:16px"><div class="stack" style="min-width:0">';
   if(behind(e)){
     h += '<div class="banner warn"><div class="grow"><strong>Base updated.</strong> You adapted this from “'+esc(b.title)+'” v'+e.basedOnV+'. The base is now v'+L.v+' ('+esc(ver(b,L.v).note||"no note")+').</div><button class="primary" data-act="panel" data-p="review">Review changes</button></div>';
@@ -588,6 +595,7 @@ function vEssay(e){
     else h += '<ul class="list">'+sib.map(x=>sibRow(x,b)).join("")+'</ul>';
     h += '</div>';
   }
+  h += '<div class="row">'+confirmBtn("del-essay:"+e.id,"Remove this prompt","Remove this prompt and its text")+'</div>';
   h += '</aside></div>';
   return h;
 }
@@ -676,18 +684,32 @@ function vBase(b){
   return h;
 }
 
+function libFind(name){ const n=(name||"").trim().toLowerCase(); return LIB.schools.find(x=>x.name.toLowerCase()===n); }
+function limTxt(p){ return p.limit ? p.limit.toLocaleString()+" "+(p.unit==="chars"?"chars":"words") : "No limit given"; }
 function vLibrary(){
   const q=ui.libQ.trim().toLowerCase();
-  const list = LIBRARY.filter(x=>!q || x.school.toLowerCase().includes(q) || x.prompts.some(p=>p.p.toLowerCase().includes(q)));
-  let h='<h1>Prompt library</h1><p class="sub">Each school’s prompts, limits and prompt type, so adding a school takes one tap. In the full app this comes from a shared sheet applicants can correct. Schools change prompts every cycle, so check against the portal.</p>';
-  h += '<div class="banner info" style="margin-bottom:14px"><div class="grow small">These schools and prompts are made-up examples for this prototype.</div></div>';
-  h += '<div class="lib-s"><input id="libq" type="search" placeholder="Search schools or prompts" value="'+esc(ui.libQ)+'" data-libq="1"></div>';
+  const states=[...new Set(LIB.schools.map(x=>x.state))].sort();
+  const list = LIB.schools.filter(x=>(!ui.libState || x.state===ui.libState) && (!q || x.name.toLowerCase().includes(q) || x.prompts.some(p=>p.p.toLowerCase().includes(q))));
+  const withP = LIB.schools.filter(x=>x.prompts.length).length;
+  let h='<h1>Prompt library</h1><p class="sub">'+LIB.schools.length+' MD schools, with prompts for '+withP+'. Add a school and its prompts, limits and prompt types come with it, already linked to your matching base essays.</p>';
+  h += '<div class="banner info small" style="margin-bottom:14px"><div class="grow">Prompts are from the '+esc(LIB.cycle)+' cycle, as applicants posted them on each school’s Student Doctor Network thread (collected '+fmt(LIB.updated)+'). Schools can change wording and limits, so check each one in the school’s portal.</div></div>';
+  h += '<div class="lib-s"><input id="libq" type="search" placeholder="Search schools or prompt wording" value="'+esc(ui.libQ)+'" data-libq="1"><select id="lib-state" aria-label="State" data-libstate="1"><option value="">All states</option>'+states.map(st=>'<option'+(ui.libState===st?' selected':'')+'>'+st+'</option>').join("")+'</select></div>';
+  h += '<p class="small muted" style="margin:-4px 0 10px">'+list.length+(list.length===1?' school':' schools')+'</p>';
   h += '<div class="panel"><ul class="list">';
   list.forEach(x=>{
-    const have = S.schools.some(s=>s.name===x.school);
-    h += '<li><div class="main"><h2>'+esc(x.school)+'</h2><ul style="margin:6px 0 0; padding-left:18px">'+x.prompts.map(p=>'<li style="margin-bottom:4px">'+esc(p.p)+' <span class="small muted">· '+p.limit.toLocaleString()+' '+(p.unit==="chars"?"chars":"words")+' · '+esc(FAM[p.fam])+'</span></li>').join("")+'</ul></div>'+(have?'<span class="chip good">Added</span>':'<button class="primary" data-act="lib-add" data-school="'+esc(x.school)+'">Add</button>')+'</li>';
+    const have = S.schools.some(s=>s.name.toLowerCase()===x.name.toLowerCase());
+    const open = ui.libOpen===x.name || (q && x.prompts.some(p=>p.p.toLowerCase().includes(q)));
+    h += '<li><div class="main"><div class="row"><h2>'+esc(x.name)+'</h2><span class="chip">'+esc(x.state)+'</span></div>';
+    if(!x.prompts.length) h += '<div class="small muted" style="margin-top:4px">'+esc(x.none||"No prompts posted")+'. <a href="'+esc(x.url)+'" target="_blank" rel="noopener">SDN thread</a></div>';
+    else {
+      const fams=[...new Set(x.prompts.map(p=>p.fam))];
+      h += '<div class="chips">'+'<span class="chip">'+x.prompts.length+(x.prompts.length===1?' prompt':' prompts')+'</span>'+fams.map(f=>'<span class="chip">'+esc(FAM[f]||"Other")+'</span>').join("")+'</div>';
+      h += '<button class="ghost small" data-act="lib-toggle" data-school="'+esc(x.name)+'" aria-expanded="'+(open?'true':'false')+'" style="margin-top:6px; padding-left:0">'+(open?'Hide prompts':'Show prompts')+'</button>';
+      if(open) h += '<ol style="margin:6px 0 0; padding-left:20px">'+x.prompts.map(p=>'<li style="margin-bottom:8px">'+esc(p.p)+'<div class="small muted">'+limTxt(p)+' · '+esc(FAM[p.fam]||"Other")+(p.opt?' · optional':'')+(p.group?' · '+esc(p.group):'')+(p.cut?' · shortened here; full wording in the portal':'')+'</div></li>').join("")+'</ol><div class="small" style="margin-top:2px"><a href="'+esc(x.url)+'" target="_blank" rel="noopener">SDN thread</a></div>';
+    }
+    h += '</div>'+(have?'<span class="chip good">Added</span>':'<button class="primary" data-act="lib-add" data-school="'+esc(x.name)+'">Add</button>')+'</li>';
   });
-  if(!list.length) h += '<li class="empty">No match. Add the school by hand on the Schools tab.</li>';
+  if(!list.length) h += '<li class="empty">No match. You can still add the school by hand on the Schools tab.</li>';
   h += '</ul></div>';
   return h;
 }
@@ -734,6 +756,7 @@ document.addEventListener("click", ev=>{
     case "hist": ui.histV = d.v? +d.v : null; render(); break;
     case "link-from-base": { const x=essay(d.id); const b=base(ui.baseId); x.baseId=b.id; if(x.text.trim()){ x.basedOnV=latest(b).v; x.localEdit=true; } save(); render(); break; }
     case "lib-add": addFromLibrary(d.school); break;
+    case "lib-toggle": ui.libOpen = ui.libOpen===d.school ? null : d.school; render(); break;
     case "ask-confirm": ui.confirm=d.key; render(); break;
     case "cancel-confirm": ui.confirm=null; render(); break;
     case "confirm": doConfirm(d.key); break;
@@ -750,6 +773,7 @@ function doConfirm(key){
   const [k,idv]=key.split(":"); ui.confirm=null;
   if(k==="del-school"){ S.schools=S.schools.filter(s=>s.id!==idv); S.essays=S.essays.filter(e=>e.schoolId!==idv); save(); go("schools"); toast("School deleted"); }
   else if(k==="del-base"){ S.bases=S.bases.filter(b=>b.id!==idv); S.essays.forEach(e=>{ if(e.baseId===idv){ e.baseId=null; e.basedOnV=null; e.localEdit=false; }}); save(); go("essays"); toast("Base deleted"); }
+  else if(k==="del-essay"){ const x=essay(idv); if(x){ S.essays=S.essays.filter(e=>e.id!==idv); save(); go("schools",{schoolId:x.schoolId}); toast("Prompt removed"); } }
   else if(k==="clear"){ S=blank(); save(); go("next"); toast("Erased. This device now has no schools or essays."); }
 }
 function downloadBackup(){
@@ -770,7 +794,7 @@ document.getElementById("restore-file").addEventListener("change", ev=>{
 
 /* ---------- first-time tour ---------- */
 const TOUR = [
-  {t:"Track every secondary in one place", p:"Add a school when its secondary arrives, with the date you got it. Your target is two weeks later by default; add the school’s own deadline if it has one."},
+  {t:"Track every secondary in one place", p:"Add a school when its secondary arrives, with the date you got it. Pick it from the prompt library and its prompts come with it. Your target is two weeks later by default; add the school’s own deadline if it has one."},
   {t:"Write each kind of essay once", p:"Prompts that ask the same thing (diversity, a challenge, gap year) share one base essay. Each school gets its own copy, trimmed to that school’s word or character limit."},
   {t:"Keep the copies in sync", p:"When you improve a base and save a new version, every school still on an older version is flagged. Review the changes and apply them in one tap. Fixed something in one school’s copy? Send it back to the base."},
   {t:"Know what to work on next", p:"Do next ranks schools by due date, how much you want them, and how much writing is left. Everything stays on this device, so download a backup now and then."}
@@ -791,18 +815,27 @@ document.getElementById("tour").addEventListener("click", ev=>{
   if(t.id==="tour-next"){ if(tourStep<TOUR.length-1){ tourStep++; renderTour(); } else closeTour(); }
 });
 document.addEventListener("keydown", ev=>{ if(ev.key==="Escape" && !document.getElementById("tour").hidden) closeTour(); });
-function addFromLibrary(name){
-  const L=LIBRARY.find(x=>x.school===name); if(!L) return;
-  const s={id:id("s"), name:L.school, received:iso(today()), turnaround:DEFAULT_TURNAROUND, hard:"", interest:2, submitted:false, fee:false, pinned:false};
+function libEssays(L, sid){
+  return L.prompts.map(p=>{ const b=S.bases.find(x=>x.family===p.fam); return {id:id("e"), schoolId:sid, prompt:p.p, limit:p.limit||0, unit:p.unit, family:p.fam, baseId:(b && p.fam!=="why")? b.id : null, basedOnV:null, text:"", status:"todo", localEdit:false, optional:!!p.opt, group:p.group||"", cut:!!p.cut}; });
+}
+function addFromLibrary(name, extra){
+  const L=libFind(name); if(!L) return;
+  if(S.schools.some(s=>s.name.toLowerCase()===L.name.toLowerCase())){ toast(L.name+" is already on your list"); return; }
+  const s=Object.assign({id:id("s"), name:L.name, received:iso(today()), turnaround:DEFAULT_TURNAROUND, hard:"", interest:2, submitted:false, fee:false, pinned:false}, extra||{});
   S.schools.push(s);
-  L.prompts.forEach(p=>{ const b=S.bases.find(x=>x.family===p.fam); S.essays.push({id:id("e"), schoolId:s.id, prompt:p.p, limit:p.limit, unit:p.unit, family:p.fam, baseId: (b && p.fam!=="why")? b.id : null, basedOnV:null, text:"", status:"todo", localEdit:false}); });
-  save(); go("schools",{schoolId:s.id}); toast("Added with "+L.prompts.length+" prompts. Set the date you received it.");
+  const es=libEssays(L, s.id); S.essays.push(...es);
+  const linked=es.filter(e=>e.baseId).length;
+  save(); go("schools",{schoolId:s.id});
+  toast(es.length? "Added with "+es.length+" prompts"+(linked?", "+linked+" linked to your base essays":"")+". Set the date you received it." : "Added. No prompts were posted for this school, so add them from the portal.");
 }
 document.addEventListener("submit", ev=>{
   const f=ev.target; ev.preventDefault();
   if(f.dataset.form==="add-school"){
     const name=document.getElementById("ns-name").value.trim(); if(!name) return;
     const s={id:id("s"), name, received:document.getElementById("ns-rec").value||iso(today()), turnaround:+document.getElementById("ns-turn").value||DEFAULT_TURNAROUND, hard:document.getElementById("ns-hard").value, interest:+document.getElementById("ns-int").value, submitted:false, fee:false, pinned:false};
+    const L=libFind(name);
+    if(L && L.prompts.length){ delete s.id; delete s.name; addFromLibrary(L.name, s); return; }
+    if(L) s.name=L.name;
     S.schools.push(s); save(); go("schools",{schoolId:s.id, addPrompt:true}); toast("School added. Paste its first prompt.");
   }
   if(f.dataset.form==="add-prompt"){
@@ -816,6 +849,7 @@ document.addEventListener("input", ev=>{
   const el=ev.target;
   if(el.id==="np-p"){ const g=guessFam(el.value); const sel=document.getElementById("np-f"); if(sel && !sel.dataset.touched) sel.value=g; const b=S.bases.find(x=>x.family===g); document.getElementById("np-hint").textContent = b&&g!=="why" ? "Looks like a "+FAM[g].toLowerCase()+" prompt. It will link to your base “"+b.title+"” (v"+latest(b).v+")." : "Looks like: "+FAM[g]+". Prompts of the same type can share one base essay."; return; }
   if(el.id==="np-f"){ el.dataset.touched="1"; return; }
+  if(el.dataset.libstate){ ui.libState=el.value; render(); return; }
   if(el.dataset.libq){ ui.libQ=el.value; const pos=el.selectionStart; render(); const n=document.getElementById("libq"); n.focus(); try{ n.setSelectionRange(pos,pos);}catch(e){} return; }
   const bnd=el.dataset.bind; if(!bnd) return;
   const [kind,idv,field]=bnd.split(":");
