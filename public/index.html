@@ -52,6 +52,22 @@ body{margin:0; -webkit-text-size-adjust:100%}
 .tour .dots i{width:7px; height:7px; border-radius:50%; background:var(--line)}
 .tour .dots i.on{background:var(--accent)}
 .tour .acts{display:flex; justify-content:space-between; align-items:center; gap:10px}
+.tour .card2{max-width:540px; position:relative}
+.tour .x{position:absolute; top:10px; right:10px; border:0; background:transparent; font-size:22px; line-height:1; color:var(--muted); padding:6px 10px; cursor:pointer; border-radius:8px}
+.tour .x:hover{background:var(--line-soft)}
+.tour .demo{background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px; font-size:13px}
+.tour .demo .r{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+.tour .fake{display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:8px; border:1px solid var(--line); background:var(--surface); font-weight:600; font-size:12.5px}
+.tour .fake.acc{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+.tour .fake.warn{background:var(--warn-soft); border-color:transparent; color:var(--warn)}
+.tour .fake.good{background:var(--good-soft); border-color:transparent; color:var(--good)}
+.tour .ln{height:7px; border-radius:4px; background:var(--line)}
+.tour .dots button{width:9px; height:9px; border-radius:50%; background:var(--line); border:0; padding:0; cursor:pointer}
+.tour .dots button.on{background:var(--accent)}
+.tour .foot2{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; border-top:1px solid var(--line-soft); padding-top:10px}
+.tour .foot2 label{display:inline-flex; gap:8px; align-items:center; font-size:13px; color:var(--muted); cursor:pointer}
+.tour .keys{} @media (max-width:600px){ .tour .keys{display:none} }
+.tour kbd{font-family:var(--f-ui); font-size:11px; border:1px solid var(--line); border-bottom-width:2px; border-radius:4px; padding:0 5px; color:var(--muted)}
 .install{background:var(--warn-soft); border-radius:var(--r); padding:12px 14px; margin-top:14px}
 .hero-empty{padding:28px 20px; display:flex; flex-direction:column; gap:12px; align-items:flex-start}
 .hero-empty p{margin:0; color:var(--muted); max-width:60ch}
@@ -240,7 +256,7 @@ footer.foot{border-top:1px solid var(--line); padding-block:18px 30px; color:var
 (function(){
 "use strict";
 const KEY = "secondaries-v1";
-const TOURKEY = "secondaries-tour-v1";
+const TOURKEY = "secondaries-intro-hide-v2"; // "1" = don't show the intro on opening
 const LIB = (window.PROMPT_LIBRARY && window.PROMPT_LIBRARY.schools) ? window.PROMPT_LIBRARY : {cycle:"", updated:"", schools:[]};
 const SHOW_LIBRARY = LIB.schools.length > 0;
 const FAM = {
@@ -1344,28 +1360,58 @@ document.getElementById("restore-file").addEventListener("change", ev=>{
 });
 
 /* ---------- first-time tour ---------- */
-const TOUR = [
-  {t:"Track every secondary in one place", p:"Add a school when its secondary arrives, with the date you got it. Pick it from the prompt library and its prompts come with it. Your target is two weeks later by default; add the school’s own deadline if it has one."},
-  {t:"Write each kind of essay once", p:"Prompts that ask the same thing (diversity, a challenge, gap year) share one base essay. Each school gets its own copy, trimmed to that school’s word or character limit."},
-  {t:"Keep the copies in sync", p:"When you improve a base and save a new version, every school still on an older version is flagged. Review the changes and apply them in one tap. Fixed something in one school’s copy? Send it back to the base."},
-  {t:"Know what to work on next", p:"Do next ranks schools by due date, how much you want them, and how much writing is left. Everything stays on this device, so download a backup now and then."}
-];
-let tourStep=0, tourReturn=null;
+function tourCards(){
+  const drive = Sync.available();
+  return [
+    {t:"Your secondaries, in one place", p:"Track every school’s prompts and due dates, write each kind of essay once and reuse it, and see what to work on next. Here’s how it works in about a minute.",
+     d:'<div class="r"><span class="fake">Do next</span><span class="fake">Schools</span><span class="fake">Base essays</span><span class="fake">Prompt library</span></div><div class="muted">Four tabs. Do next is home base.</div>'},
+    {t:"Add a school when its secondary arrives", p:"Click <b>Add school</b> and search the list of 165 MD schools. Pick one to see its prompts and limits, uncheck any you won’t write, and add it. School not listed? Type its name and add it yourself, then paste in the prompts.",
+     d:'<div class="r"><span class="fake" style="flex:1; font-weight:400; color:var(--muted)">Search 165 MD schools…</span></div><div class="r"><span class="fake good">✓ Why us · 300 words</span><span class="fake good">✓ Challenge · 2,000 chars</span></div>'},
+    {t:"Write each kind of essay once", p:"Many schools ask the same things: diversity, a challenge, your gap year. Write one <b>base essay</b> for each kind, then each school gets its own copy that you trim to its limit. “Why us” essays are written fresh for each school.",
+     d:'<div class="r"><span class="fake acc">Base: Challenge v2</span><span>→</span><span class="fake">WashU · 3,000 chars</span><span class="fake">Duke · 400 words</span></div>'},
+    {t:"Keep the copies in sync", p:"Improve a base and save a new version, and every school still on the older one is flagged. Click <b>Review changes</b> to apply edits in one click. Fixed something in one school’s copy? <b>Compare with base</b> sends it back to the base.",
+     d:'<div class="r"><span class="fake warn">Base updated · v1 → v3</span><span class="fake acc">Review changes</span></div><div class="r"><del style="background:var(--del)">three years</del><ins style="background:var(--ins); text-decoration:none">four years</ins><span class="fake">Apply here</span></div>'},
+    {t:"Know what to do next", p:"<b>Do next</b> opens with a short summary: what’s due this week, how much is left to write, and the one thing to do first. Below it, schools are ranked by due date and how much you want them. The <b>Suggestions</b> panel points out prompts at different schools that ask the same thing.",
+     d:'<div class="r"><b style="font-size:11px; letter-spacing:.07em; color:var(--muted)">DO FIRST</b><span>Lakeshore: finish Challenge</span><span class="fake acc">Start</span></div><div class="r"><span class="fake">Reuse what you wrote · 3 schools</span></div>'},
+    {t:"Your work is saved as you type", p: drive ? "It saves in this browser right away. Click <b>Save to Google Drive</b> at the top to keep it in your own Drive too, so it opens on any computer and survives clearing your browser." : "It saves in this browser right away, and nothing is sent anywhere. Use <b>Download backup</b> at the bottom of the page now and then, since clearing your browser data would erase it.",
+     d: drive ? '<div class="r"><span class="fake"><span style="width:8px;height:8px;border-radius:50%;background:var(--good)"></span>Saved to Drive</span></div>' : '<div class="r"><span class="fake">Download backup</span><span class="fake">Restore backup</span></div>'}
+  ];
+}
+let tourStep=0, tourReturn=null, TOUR=[];
+function tourHidden(){ try{ return localStorage.getItem(TOURKEY)==="1"; }catch(e){ return false; } }
 function renderTour(){
   const s=TOUR[tourStep], last=tourStep===TOUR.length-1;
-  document.getElementById("tour").innerHTML='<div class="card2"><div class="step-n">'+(tourStep+1)+' of '+TOUR.length+'</div><h2 id="tour-title">'+s.t+'</h2><p>'+s.p+'</p><div class="dots" aria-hidden="true">'+TOUR.map((_,i)=>'<i class="'+(i===tourStep?'on':'')+'"></i>').join("")+'</div><div class="acts">'+(last?'<span></span>':'<button class="ghost" id="tour-skip" style="color:var(--muted)">Skip</button>')+'<div class="row">'+(tourStep?'<button id="tour-back">Back</button>':'')+'<button class="primary" id="tour-next">'+(last?'Get started':'Next')+'</button></div></div></div>';
+  document.getElementById("tour").innerHTML='<div class="card2"><button class="x" id="tour-x" aria-label="Close">×</button>'+
+    '<div class="step-n">'+(tourStep===0?'Welcome':'How it works · '+tourStep+' of '+(TOUR.length-1))+'</div><h2 id="tour-title">'+s.t+'</h2><p>'+s.p+'</p>'+
+    (s.d?'<div class="demo" aria-hidden="true">'+s.d+'</div>':'')+
+    '<div class="dots">'+TOUR.map((_,i)=>'<button class="'+(i===tourStep?'on':'')+'" data-step="'+i+'" aria-label="Go to card '+(i+1)+'"></button>').join("")+'</div>'+
+    '<div class="acts">'+(tourStep? '<button id="tour-back">Back</button>' : '<button class="ghost" id="tour-skip">I know how it works, skip</button>')+
+      '<button class="primary" id="tour-next">'+(last?'Get started':(tourStep===0?'Show me':'Next'))+'</button></div>'+
+    '<div class="foot2"><label><input type="checkbox" id="tour-hide"'+(tourHidden()?' checked':'')+'> Don’t show this when I open the app</label><span class="small muted keys"><kbd>Esc</kbd> to close · <kbd>←</kbd> <kbd>→</kbd> to move</span></div></div>';
   document.getElementById("tour-next").focus();
 }
-function openTour(){ tourReturn=document.activeElement; tourStep=0; document.getElementById("tour").hidden=false; renderTour(); }
-function closeTour(){ document.getElementById("tour").hidden=true; try{ localStorage.setItem(TOURKEY,"1"); }catch(e){} if(tourReturn&&tourReturn.focus) tourReturn.focus(); }
+function openTour(){ TOUR=tourCards(); tourReturn=document.activeElement; tourStep=0; document.getElementById("tour").hidden=false; renderTour(); }
+function closeTour(){
+  const hide=document.getElementById("tour-hide");
+  try{ if(hide) localStorage.setItem(TOURKEY, hide.checked?"1":"0"); sessionStorage.setItem("secondaries-intro-seen","1"); }catch(e){}
+  document.getElementById("tour").hidden=true; if(tourReturn&&tourReturn.focus) tourReturn.focus();
+}
 document.getElementById("tour").addEventListener("click", ev=>{
   ev.stopPropagation();
-  const t=ev.target.closest("button")||ev.target;
-  if(t.id==="tour"||t.id==="tour-skip"){ closeTour(); return; }
+  if(ev.target.id==="tour"){ closeTour(); return; }
+  const t=ev.target.closest("button"); if(!t) return;
+  if(t.id==="tour-x"||t.id==="tour-skip"){ closeTour(); return; }
+  if(t.dataset.step){ tourStep=+t.dataset.step; renderTour(); return; }
   if(t.id==="tour-back"){ tourStep=Math.max(0,tourStep-1); renderTour(); return; }
   if(t.id==="tour-next"){ if(tourStep<TOUR.length-1){ tourStep++; renderTour(); } else closeTour(); }
 });
-document.addEventListener("keydown", ev=>{ if(ev.key==="Escape" && !document.getElementById("tour").hidden) closeTour(); });
+document.getElementById("tour").addEventListener("change", ev=>{ if(ev.target.id==="tour-hide"){ try{ localStorage.setItem(TOURKEY, ev.target.checked?"1":"0"); }catch(e){} } });
+document.addEventListener("keydown", ev=>{
+  if(document.getElementById("tour").hidden) return;
+  if(ev.key==="Escape") closeTour();
+  else if(ev.key==="ArrowRight" && tourStep<TOUR.length-1){ tourStep++; renderTour(); }
+  else if(ev.key==="ArrowLeft" && tourStep>0){ tourStep--; renderTour(); }
+});
 function libEssays(L, sid){
   return L.prompts.map(p=>{ const b=S.bases.find(x=>x.family===p.fam); return {id:id("e"), schoolId:sid, prompt:p.p, limit:p.limit||0, unit:p.unit, family:p.fam, baseId:(b && p.fam!=="why")? b.id : null, basedOnV:null, text:"", status:"todo", localEdit:false, optional:!!p.opt, group:p.group||"", cut:!!p.cut}; });
 }
@@ -1476,8 +1522,8 @@ render();
 const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
 const standalone = window.navigator.standalone===true || window.matchMedia("(display-mode: standalone)").matches;
 if(ios && !standalone) document.getElementById("install-wrap").hidden=false;
-let seen=false; try{ seen = localStorage.getItem(TOURKEY)==="1"; }catch(e){}
-if(!seen && !(ios && !standalone)) openTour();
+let seenThisVisit=false; try{ seenThisVisit = sessionStorage.getItem("secondaries-intro-seen")==="1"; }catch(e){}
+if(!tourHidden() && !seenThisVisit && !(ios && !standalone)) openTour();
 try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
 if(Sync.state().connected) setTimeout(()=>Sync.run(), 400);
 if(window.__DRIVE_MOCK) window.__syncNow=()=>Sync.run();
