@@ -1,0 +1,1696 @@
+[
+  {
+    "school": "A.T. Still University - Kirksville College of Osteopathic Medicine (ATSU-KCOM) (MO)",
+    "state": "MO",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-a-t-still-university-kirksville-college-of-osteopathic-medicine-atsu-kcom.1518385/",
+    "source_note": "SDN post #2, May 28 2026 (applicant transcription; post #1 placeholder). Secondary receipt reported #5 (Jun 16), #9 (Jul 1). Prompt 2 is a why-osteopathic essay (experiences with osteopathic medicine), not tied to KCOM. Prompt 3 is the reapplicant follow-up. Omitted: 'Have you applied to KCOM previously?' yes/no, osteopathic/allopathic relatives lists, 'list any changes or updates to your AACOMAS application' (may be left blank).",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "Describe one or more significant life experiences that have meaningfully shaped your development as a potential future physician. What did you come to understand about yourself, and how has that insight altered your perspective or behavior?",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "diversity",
+        "abridged": false
+      },
+      {
+        "text": "Describe your experiences with osteopathic medicine and how they have influenced your decision to pursue a career as an osteopathic physician.",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "If yes, detail below what has changed since your last application.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "A.T. Still University - School of Osteopathic Medicine in Arizona (ATSU-SOMA) (AZ)",
+    "state": "AZ",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-a-t-still-university-school-of-osteopathic-medicine-in-arizona-atsu-soma.1518386/",
+    "source_note": "SDN post #7 (heisenberg-ih), Jul 9 2026, replying to request in #6; post #1 placeholder. Single page (#1-#47). No limits or required/optional status stated. Secondary receipt reported #2 (Jul 1). Location Mesa, AZ.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "What particular qualities do you feel that you can bring to ATSU SOMA?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "diversity",
+        "abridged": false
+      },
+      {
+        "text": "Discuss a situation in which you had to persevere despite facing obstacles or setbacks. How did you maintain your motivation and keep moving forward towards your goals?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "challenge",
+        "abridged": false
+      },
+      {
+        "text": "Tell us about a mistake you made that had consequences for yourself or others. How did you respond in the moment, what responsibility did you take, and what did you learn about accountability and integrity from the experience?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "challenge",
+        "abridged": false
+      },
+      {
+        "text": "Is there anything else you would like to share with the SOMA Admissions Committee about your application?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "anything_else",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Alabama College of Osteopathic Medicine (ACOM) (AL)",
+    "state": "AL",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-alabama-college-of-osteopathic-medicine-acom.1518387/",
+    "source_note": "Checked page 1 (posts #1-#50, thread has 4 pages): post #1 placeholder 'will be updated when available'; no prompts posted. Location Dothan, AL.",
+    "no_written_secondary_note": "Applicants report no secondary this cycle: post #4 (Jun 23 2026) says 'no secondary is needed for this school'; post #6 (Jun 23 2026) says ACOM emailed that the application was received and 'no supplemental application is required.'",
+    "prompts": []
+  },
+  {
+    "school": "Arizona College of Osteopathic Medicine of Midwestern University (MWU-AZCOM) (AZ)",
+    "state": "AZ",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-arizona-college-of-osteopathic-medicine-of-midwestern-university-mwu-azcom.1518388/",
+    "source_note": "Checked pages 1-2 (posts #1-#80): post #1 placeholder 'will be updated when available'; no prompts posted. Conflicting: post #41 (Aug 26) says 'Submitted secondaries at the end of June.' Location Glendale, AZ.",
+    "no_written_secondary_note": "Applicants say there is no separate secondary; the school's questions are in the AACOMAS primary: post #6 (Jul 1 2026, hedged), #44 (Sep 2 2026) 'its just the primary questions', #63 (Sep 21 2026) 'There's no secondary it's just the questions with the primary submission.'",
+    "prompts": []
+  },
+  {
+    "school": "Arkansas College of Osteopathic Medicine (ARCOM) (AR)",
+    "state": "AR",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-arkansas-college-of-osteopathic-medicine-arcom.1518390/",
+    "source_note": "SDN post #1 (Apr 23 2026) headed '2026-2027 ARCOM Secondary Essay Prompts: (same as last year)'; same eight prompts reposted verbatim in #23 (StethoQueen, Jul 9 2026), which adds 'No word or character limit.' Items recorded separately as listed (2/3, 4/5 and 7/8 appear to be paired follow-ups). Secondary receipt reported #8 (6/26), #16 (6/30) and others.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "How do you plan to fulfill the ARCOM Mission in your practice as a physician?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "What challenges do you expect to personally face most in the next 10 years as a healthcare professional?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "challenge",
+        "abridged": false
+      },
+      {
+        "text": "How do you expect to overcome these challenges?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "challenge",
+        "abridged": false
+      },
+      {
+        "text": "Describe an experience where you interacted with a person or people from a different background than you (ability, religion, gender, race, age, socioeconomic status, citizenship/ nationality, sexual orientation).",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "diversity",
+        "abridged": false
+      },
+      {
+        "text": "How did that interaction impact your mindset of the role of a physician?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "diversity",
+        "abridged": false
+      },
+      {
+        "text": "If you are in a difficult basic science class and feel you are not fully grasping the information given in lecture, how would you alter your study habits or techniques to better understand the material and complete the course successfully?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "What is a recent book or movie you've read or watched that impacted the way you think about today's world?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "Please explain how this book impacted the way you think about today's world.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Baptist Health Sciences University College of Osteopathic Medicine (BUCOM) (TN)",
+    "state": "TN",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-baptist-health-sciences-university-college-of-osteopathic-medicine-bucom.1518391/",
+    "source_note": "Checked pages 1-3 (posts #1-#110): post #1 placeholder 'will be updated when available'; many '+1 OOS secondary' reports from Jul 21 2026 onward but no prompts posted (#94 asks for prompts, unanswered). #103 describes written questions at the interview day, not reproduced. Location Memphis, TN.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Burrell College of Health Sciences School of Osteopathic Medicine (BCSOM) (NM)",
+    "state": "NM",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-burrell-college-of-health-sciences-school-of-osteopathic-medicine-bcsom.1518392/",
+    "source_note": "SDN post #8 (midnightmoonie), Jul 2 2026, replying to request in #6; post #1 placeholder. Each prompt marked '(300 words)'; required/optional not stated. Secondary receipt reported #3 (6/09), #4 (6/16), #5 (6/3). Location Las Cruces, NM.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "In what area of medicine do you see yourself practicing, and in what type of setting?",
+        "limit": 300,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "career",
+        "abridged": false
+      },
+      {
+        "text": "Reflect on a previous experience where you interacted with individuals from a different background than your own. What challenges did this present, if any? How did you demonstrate openness to their perspective? How will the experience influence your approach to patient care in the future?",
+        "limit": 300,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "diversity",
+        "abridged": false
+      },
+      {
+        "text": "If you could strengthen one area of your application, what would it be? What have you done, or what do you plan to do, to address it and improve going forward?",
+        "limit": 300,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Burrell College of Health Sciences School of Osteopathic Medicine - Melbourne (BCSOM-Melbourne) (FL)",
+    "state": "FL",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-burrell-college-of-health-sciences-school-of-osteopathic-medicine-melbourne-burrell-com-melbourne.1518393/",
+    "source_note": "Checked page 1 (single page, posts #1-#31): post #1 placeholder 'will be updated when available'; no prompts posted. Applicants report completing/submitting the secondary (#6, #7, #14, Jul 2026) but no wording. Prompts may match the Las Cruces BCSOM thread (#8 there) but this thread does not say so. Location Melbourne, FL.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "California Health Sciences University College of Osteopathic Medicine (CHSU-COM) (CA)",
+    "state": "CA",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-california-health-sciences-university-college-of-osteopathic-medicine-chsu-com.1518394/",
+    "source_note": "SDN post #2 (gkuang1), Jul 10 2026; post #1 placeholder. Each prompt '(1500 characters)'; required/optional not stated. Prompt 2 is a why-osteopathic essay not tied to CHSU. Secondary receipt reported #3 (Aug 3). Location Clovis, CA.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "CHSU values a student body that embraces our University’s mission. Please explain how you would personally contribute to advancing CHSU’s mission.",
+        "limit": 1500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "Please share why are you interested in Osteopathic Medicine and why you want to be trained as an osteopathic physician.",
+        "limit": 1500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Campbell University Jerry M. Wallace School of Osteopathic Medicine (CUSOM) (NC)",
+    "state": "NC",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-campbell-university-jerry-m-wallace-school-of-osteopathic-medicine-cusom.1518395/",
+    "source_note": "SDN post #1 (Apr 23 2026) '2026-2027 CUSOM Secondary Essay Prompts'; reposted identically by applicant in #6 (Jun 25 2026) and quoted in #7. Prompt 1 '(No word limit)'; prompts 2-3 '(Max 4000 characters)'. Required/optional not stated. Location Lillington, NC.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "Which person in your life has contributed most to your choice of a career in medicine and describe how that individual influenced your decision to be a physician?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "The MISSION of Campbell University School of Osteopathic Medicine (CUSOM) is to educate and prepare community–based osteopathic physicians in a Christian environment to care for the rural and under-served populations in North Carolina, the Southeastern United States, and the nation. Briefly describe how your career goals align with the CUSOM Mission",
+        "limit": 4000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "Identify three of your core values, and discuss how these values align with the CUSOM Mission",
+        "limit": 4000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Chicago College of Osteopathic Medicine of Midwestern University (MWU-CCOM) (IL)",
+    "state": "IL",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-chicago-college-of-osteopathic-medicine-of-midwestern-university-mwu-ccom.1518413/",
+    "source_note": "Checked pages 1-2 (posts #1-#59): post #1 placeholder 'will be updated when available'; no prompts posted. #58 (Oct 12 2026) mentions an extra portal tab with 'an extra essay' (no wording, unconfirmed). Location Downers Grove, IL.",
+    "no_written_secondary_note": "Post #4 (Jul 15 2026): 'There's no secondary.' (poster cites Choose DO Explorer listing 'no supplemental application').",
+    "prompts": []
+  },
+  {
+    "school": "D'Youville University College of Osteopathic Medicine (DYUCOM) (NY)",
+    "state": "NY",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-dyouville-university-college-of-osteopathic-medicine.1520534/",
+    "source_note": "Checked pages 1-2 (posts #1-#57): post #1 (Jul 19 2026) placeholder 'will be updated when available'; no prompts posted. #37 (Oct 7) relays secondhand that 'they do not send secondaries to all.' Location Buffalo, NY.",
+    "no_written_secondary_note": "Post #5 (Jul 25 2026): 'got a secondary which was just pay a fee' (fee-only secondary, single report).",
+    "prompts": []
+  },
+  {
+    "school": "Des Moines University College of Osteopathic Medicine (DMU-COM) (IA)",
+    "state": "IA",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-des-moines-university-college-of-osteopathic-medicine-dmu-com.1518415/",
+    "source_note": "Checked pages 1-2 (posts #1-#58): post #1 placeholder 'will be updated when available'; no prompts posted and no secondary receipts reported. Location Des Moines, IA.",
+    "no_written_secondary_note": "Unconfirmed: post #7 (Jul 20 2026) asks 'they dont have secondaries right' and #8 replies 'pretty sure they don't'.",
+    "prompts": []
+  },
+  {
+    "school": "Duquesne University College of Osteopathic Medicine (DUQCOM) (PA)",
+    "state": "PA",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-duquesne-university-college-of-osteopathic-medicine-duqcom.1518416/",
+    "source_note": "SDN post #17 (goodnotes), Jul 14 2026; post #1 placeholder. Each prompt marked '(250-500 words)' (recorded as limit 500). Post says 'Choose between 3 and 4:'. Secondary receipt reported #6 (6/18), #41. Location Pittsburgh, PA.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "Why do you want to become a physician, and how are you a good fit for DUQCOM's mission?",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "Can you describe an experience where you faced and overcame adversity?",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "challenge",
+        "abridged": false
+      },
+      {
+        "text": "How have your experiences and understanding of social determinants of health influenced your perspective on patient care and your approach to practicing medicine?",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": "Choose 1 of 2",
+        "type": "service",
+        "abridged": false
+      },
+      {
+        "text": "Can you share an example of an altruistic experience you've had and explain how it influenced your desire to pursue a career in medicine?",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": "Choose 1 of 2",
+        "type": "service",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Edward Via College of Osteopathic Medicine - Auburn Campus (VCOM-Auburn) (AL)",
+    "state": "AL",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-edward-via-college-of-osteopathic-medicine-auburn-campus-vcom-auburn.1518417/",
+    "source_note": "Checked page 1 (single page, posts #1-#11): post #1 placeholder 'will be updated when available'; no prompts posted. #10 mentions 'Secondary 9/20' only. Location Auburn, AL.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Edward Via College of Osteopathic Medicine - Carolinas Campus (VCOM-Carolinas) (SC)",
+    "state": "SC",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-edward-via-college-of-osteopathic-medicine-carolinas-campus-vcom-carolinas.1518418/",
+    "source_note": "Checked page 1 (single page, posts #1-#11): post #1 placeholder 'will be updated when available'; secondary receipt reported (#2 6/18, #9 6/5) but no prompts posted. Location Spartanburg, SC.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Edward Via College of Osteopathic Medicine - Louisiana Campus (VCOM-Louisiana) (LA)",
+    "state": "LA",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-edward-via-college-of-osteopathic-medicine-louisiana-campus-vcom-louisiana.1518419/",
+    "source_note": "Checked page 1 (single page, posts #1-#19): post #1 placeholder 'will be updated when available'; #2 reports secondary invite Jun 26 / submitted Jul 13 but no prompts posted. Location Monroe, LA.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Edward Via College of Osteopathic Medicine - Virginia Campus (VCOM-Virginia) (VA)",
+    "state": "VA",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-edward-via-college-of-osteopathic-medicine-virginia-campus-vcom-virginia.1518420/",
+    "source_note": "SDN post #6 (musicdidactic), Jun 10 2026, replying to request in #5; post #1 placeholder. Each '(500 words)'; required/optional not stated. Prompt 2 combines why-osteopathic and why-VCOM (typed why_school). Many secondary receipts reported (#2 05/14, #3 05/18, #8 6/8). Location Blacksburg, VA.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "Describe a significant challenge you have experienced in your life. Please share the strategies you employed to overcome the challenge, and what you learned from the experience.",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "challenge",
+        "abridged": false
+      },
+      {
+        "text": "How do your professional ambitions align with osteopathic medicine? What influenced your decision to apply to VCOM?",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Idaho College of Osteopathic Medicine (ICOM) (ID)",
+    "state": "ID",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-idaho-college-of-osteopathic-medicine-icom.1518421/",
+    "source_note": "Checked pages 1-2 (posts #1-#51): post #1 placeholder 'will be updated when available'; no prompts posted and no secondary receipts; #33 (Aug 30) 'I had no communication prior to interview invite.' Location Meridian, ID.",
+    "no_written_secondary_note": "Post #7 (Jul 9 2026): 'icom doesnt do secondaries' (single unverified report).",
+    "prompts": []
+  },
+  {
+    "school": "Illinois College of Osteopathic Medicine (ILCOM) (IL)",
+    "state": "IL",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-illinois-college-of-osteopathic-medicine-ilcom.1518428/",
+    "source_note": "Checked pages 1-2 (posts #1-#70): post #1 placeholder 'will be updated when available'; many secondary receipts from Jun 30 2026 but no prompts posted; #6 (Jun 30) says 'It's the same as last years' without quoting them. Location Chicago, IL.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Indiana University of Pennsylvania College of Osteopathic Medicine (IUPCOM) (PA)",
+    "state": "PA",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-indiana-university-of-pennsylvania-college-of-osteopathic-medicine-iup-com.1520612/",
+    "source_note": "SDN post #6 (sdemello12), Aug 1 2026: five questions in the embedded secondary. Q1 limit posted as '< 250 words or <1500 characters' (recorded as 250 words); no limits stated for Q2-Q5; required/optional not stated. Post #1 (Jul 23) is a school-info post with no prompt section. Location Indiana, PA.",
+    "no_written_secondary_note": "Prompts are embedded in the AACOMAS primary; no separate supplemental: post #5 (Jul 31 2026) quotes AACOMAS page 'NO SUPPLEMENTAL APPLICATION IS REQUIRED'; post #6 (Aug 1 2026) says the school has only an embedded secondary submitted with the primary.",
+    "prompts": [
+      {
+        "text": "What motivates your interest in pursuing medicine in rural or underserved communities, particularly in Pennsylvania?",
+        "limit": 250,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "service",
+        "abridged": false
+      },
+      {
+        "text": "Describe a challenge you have faced and explain how it has shaped qualities or skills that will help you succeed as a future physician.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "challenge",
+        "abridged": false
+      },
+      {
+        "text": "What do you see as one significant healthcare challenge facing rural communities today, and how do you think physicians can help address it?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "service",
+        "abridged": false
+      },
+      {
+        "text": "How would you approach building trust and effective partnerships within a close-knit community that may be hesitant to seek medical care?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "service",
+        "abridged": false
+      },
+      {
+        "text": "How would training in a medical program focused on rural and underserved communities support your long-term personal and professional goals?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "career",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Kansas City University College of Osteopathic Medicine (KCU-Kansas-City) (MO)",
+    "state": "MO",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-kansas-city-university-college-of-osteopathic-medicine-kcu-kansas-city.1518429/",
+    "source_note": "SDN post #5 (dragongirl029), Jun 10 2026: 'Does anyone know if these were the secondaries? I am trying to do some prewriting' - source and cycle of the prompts not stated or confirmed; quoted in #6. No limits stated. Post #1 placeholder. Conflicting: #32 (Jul 2) says 'Submitted Secondary on 6/12'. Location Kansas City, MO.",
+    "no_written_secondary_note": "Several applicants report no secondary this cycle: #6 (Jun 10 2026, no secondary/fee/email; mentions 'the primary questions'), #17 (Jun 25) 'no secondary from them either', #18 (Jun 25), #26 (Jul 1).",
+    "prompts": [
+      {
+        "text": "Reflecting on your past experiences, how have you successfully navigated challenging academic or personal situations, and how will those strategies help you maintain confidence and success in medical school?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "challenge",
+        "abridged": false
+      },
+      {
+        "text": "Reflect on a time when you identified someone in need and took action to support them. What did you observe that made you realize they needed help, and how did you provide that support? What was the outcome, and what did you learn from the experience?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "service",
+        "abridged": false
+      },
+      {
+        "text": "Can you describe a clinical experience that deeply impacted you? What were the key takeaways, both personally and clinically? Please be specific in your response.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Kansas City University College of Osteopathic Medicine - Joplin (KCU-Joplin) (MO)",
+    "state": "MO",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-kansas-city-university-college-of-osteopathic-medicine-joplin-kcu-joplin.1518430/",
+    "source_note": "Checked page 1 (single page, posts #1-#4): post #1 placeholder 'will be updated when available'; no prompts posted, no secondary receipts. Location Joplin, MO.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Kansas Health Science University - Kansas College of Osteopathic Medicine (KansasCOM) (KS)",
+    "state": "KS",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-kansas-health-science-university-kansas-college-of-osteopathic-medicine-kansascom.1518431/",
+    "source_note": "Checked pages 1-2 (posts #1-#68, all pages): post #1 placeholder 'will be updated when available'; secondary receipts reported (#5 Jul 12, #19 7/24, #23 8/6) but no prompts posted. Location Wichita, KS.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Lake Erie College of Osteopathic Medicine (LECOM) (PA)",
+    "state": "PA",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-lake-erie-college-of-osteopathic-medicine-lecom.1518432/",
+    "source_note": "Checked pages 1-3 (posts #1-#150 of 7 pages): post #1 placeholder 'will be updated when available'; secondary receipts reported (#3, #7, #38 6/14, #69 7/3) but no prompts posted. #5/#13 mention a two-science-professor letter requirement. Location Erie, PA (Erie/Seton Hill/Elmira share one application per #107).",
+    "no_written_secondary_note": "Post #7 (Jun 10 2026): '...as there are no secondary Q' (single report that the secondary has no essay questions).",
+    "prompts": []
+  },
+  {
+    "school": "Lake Erie College of Osteopathic Medicine - Elmira (LECOM-Elmira) (NY)",
+    "state": "NY",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-lake-erie-college-of-osteopathic-medicine-elmira-lecom-elmira.1518433/",
+    "source_note": "Checked page 1 (posts #1–#33, only page): post #1 placeholder 'will be updated when available'; no prompts posted. Post #2 (Jun 5) describes the secondary as 'nothing but some plain questions'; posts #3/#5/#6 mention a preferred-campus question.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Lake Erie College of Osteopathic Medicine - Seton Hill (LECOM-Seton-Hill) (PA)",
+    "state": "PA",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-lake-erie-college-of-osteopathic-medicine-seton-hill-lecom-seton-hill.1518441/",
+    "source_note": "Checked page 1 (posts #1–#10, only page): post #1 placeholder 'will be updated when available'; no prompts posted (secondary invite/submission dates only, #6, #7).",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Lake Erie College of Osteopathic Medicine Bradenton Campus (LECOM-Bradenton) (FL)",
+    "state": "FL",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-lake-erie-college-of-osteopathic-medicine-bradenton-campus-lecom-bradenton.1518442/",
+    "source_note": "Checked pages 1–2 (posts #1–#74, all pages): post #1 placeholder 'will be updated when available'; no prompts posted. Post #9 (Jun 23) quotes only answer options of a campus-preference item ('I would strongly consider...', 'I would consider, but not my top choice'), not an essay prompt.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Liberty University College of Osteopathic Medicine (LUCOM) (VA)",
+    "state": "VA",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-liberty-university-college-of-osteopathic-medicine-lucom.1518443/",
+    "source_note": "Checked page 1 (posts #1–#44): post #1 placeholder; no prompts posted. Post #27 (Aug 17 2026) says LUCOM has no secondary. Posts #8, #20 mention a $50 fee before interview scheduling; posts #4, #13, #28 mention a pre-interview survey.",
+    "no_written_secondary_note": "SDN post #27 (Aug 17 2026): poster says 'LUCOM has no secondary'; supplemental questions are part of the AACOMAS primary.",
+    "prompts": []
+  },
+  {
+    "school": "Lincoln Memorial University - DeBusk College of Osteopathic Medicine (LMU-DCOM) (TN)",
+    "state": "TN",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-lincoln-memorial-university-debusk-college-of-osteopathic-medicine-lmu-dcom.1518444/",
+    "source_note": "Checked pages 1–3 of 4 (posts #1–#143): post #1 placeholder 'will be updated when available'; secondaries received from 6/16 (#3–#8) but no prompts posted; #9 asked about essay length, unanswered; #91 (Sep 7) mentions the application wanting two essays.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Lincoln Memorial University - Debusk College of Osteopathic Medicine - Knoxville (LMU-DCOM-Knoxville) (TN)",
+    "state": "TN",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-lincoln-memorial-university-debusk-college-of-osteopathic-medicine-knoxville-lmu-dcom-knoxville.1518445/",
+    "source_note": "Checked page 1 (posts #1–#11, only page): post #1 placeholder 'will be updated when available'; no prompts posted. #3 (Jul 8) says secondary is open to all verified applicants.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Marian University Tom and Julie Wood College of Osteopathic Medicine (MU-WCOM) (IN)",
+    "state": "IN",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-marian-university-tom-and-julie-wood-college-of-osteopathic-medicine-mu-wcom.1518446/",
+    "source_note": "SDN post #4 (st1les, Jun 23 2026). Prompt 2 is a why-osteopathic essay. Omitted: yes/no items (Biomedical Sciences program, connected with MU-WCOM, research experience, Indiana connections, pre-med advisor, fee waiver) and 'how you first learned about MU-WCOM' checklist. Secondary fee $100 (#23, #24).",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "In Indiana, 53 of our 92 counties are designated as Health Professional Shortage Areas. What experiences have you had working with these types of communities, and how has it shaped your perspective on healthcare?",
+        "limit": 300,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "service",
+        "abridged": false
+      },
+      {
+        "text": "What personal experiences or values have motivated you into considering an osteopathic medical education?",
+        "limit": 300,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "Explain your interest in attending MU-WCOM",
+        "limit": 300,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "Please indicate any new information, changes or additions that were not included in your AACOMAS application (including but not limited to, education, employment, extracurricular activities, research, military service, academic warnings, conduct violations, and/or convictions).",
+        "limit": 300,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "anything_else",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Meritus School of Osteopathic Medicine (MSOM) (MD)",
+    "state": "MD",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-meritus-school-of-osteopathic-medicine-msom.1518447/",
+    "source_note": "SDN post #1 (Apr 25 2026, updated) and post #8 (Frven, Jul 6 2026), same wording. Omitted: 'Grit Scale' questionnaire (non-essay).",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "How do your values align with MSOM’s mission of preparing physicians to be socially responsible and community-oriented?",
+        "limit": 750,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "Have you previously applied to MSOM? If yes, please describe how your application has changed or improved since your last submission.",
+        "limit": 750,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "If you experienced a period of notable academic distress or a gap in your education (such as multiple course failures or complete withdrawal), please explain.",
+        "limit": 750,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Michigan State University College of Osteopathic Medicine (MSUCOM) (MI)",
+    "state": "MI",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-michigan-state-university-college-of-osteopathic-medicine-msucom.1518448/",
+    "source_note": "SDN post #30 (docgirl12, Jul 17 2026). Limits not stated in the post; posts #50/#51 (Aug 24) and #53 (Aug 27) indicate one essay is 300 words and the other 500 words, but not which is which, so limit left null. Checked pages 1–2.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "The MSUCOM curriculum stresses the importance of intrapersonal competencies, including personal responsibility and adaptability. Please tell us a time when you were faced with a challenge in these areas and how that challenge impacted your professional growth.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "challenge",
+        "abridged": false
+      },
+      {
+        "text": "Tell us about a time you stumbled in a professional setting and how you moved forward from the experience.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "challenge",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Michigan State University College of Osteopathic Medicine - Clinton Township (MSUCOM-Clinton-Township) (MI)",
+    "state": "MI",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-michigan-state-university-college-of-osteopathic-medicine-clinton-township-msucom-clinton-township.1518449/",
+    "source_note": "Checked page 1: thread contains only post #1 (placeholder 'will be updated when available'); no replies, no prompts posted.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Michigan State University College of Osteopathic Medicine - Detroit (MSUCOM-Detroit) (MI)",
+    "state": "MI",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-michigan-state-university-college-of-osteopathic-medicine-detroit-msucom-detroit.1518450/",
+    "source_note": "Checked page 1: thread contains only post #1 (placeholder 'will be updated when available'); no replies, no prompts posted.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "New York Institute of Technology College of Osteopathic Medicine - NY (NYITCOM-Long-Island) (NY)",
+    "state": "NY",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-new-york-institute-of-technology-college-of-osteopathic-medicine-ny-nyitcom-long-island.1518477/",
+    "source_note": "Checked pages 1–2 (posts #1–#58, all pages): post #1 placeholder 'will be updated when available'; no prompts posted. #28 (Aug 6) and #35 (Aug 27) asked for prompts, unanswered; secondaries received from 5/7–6/10 (#3, #4, #24); secondary fee mentioned (#9, #11, #14).",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "New York Institute of Technology College of Osteopathic Medicine at Arkansas State University (NYITCOM-at-Arkansas) (AR)",
+    "state": "AR",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-new-york-institute-of-technology-college-of-osteopathic-medicine-at-arkansas-state-university-nyitcom-at-arkansas.1518478/",
+    "source_note": "Checked page 1 (posts #1–#44, only page shown): post #1 placeholder; no prompts posted. Other posters report receiving/submitting a secondary via a portal (#4, #6, #8, #9, #20), so the 'part of the primary' claim in #3 is unconfirmed.",
+    "no_written_secondary_note": "SDN post #3 (2027hopeful, Jun 9 2026): 'NYITCOM secondary was part of the primary application' (unverified poster claim).",
+    "prompts": []
+  },
+  {
+    "school": "Noorda College of Osteopathic Medicine (Noorda-COM) (UT)",
+    "state": "UT",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-noorda-college-of-osteopathic-medicine-noorda-com.1518479/",
+    "source_note": "SDN post #7 (SharonMaris, Jul 2 2026); video discussed in #8, #12, #14. Video questions not recorded as written prompts: 'Who are you beyond your application?', 'What does service mean to you?', 'How do you learn, grow, and contribute as part of a team?', 'Why Noorda and osteopathic medicine?' (the last mentions osteopathic medicine). Checked page 1 of 3.",
+    "no_written_secondary_note": "Secondary is a video: post #7 (Jul 2 2026) quotes 'Please submit a short video (maximum 8 minutes) to introduce yourself to the Noorda-COM admissions team.' answering four questions; no written essays reported.",
+    "prompts": []
+  },
+  {
+    "school": "Nova Southeastern University Dr. Kiran C. Patel College of Osteopathic Medicine (NSU-KPCOM) (FL)",
+    "state": "FL",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-nova-southeastern-university-dr-kiran-c-patel-college-of-osteopathic-medicine-nsu-kpcom.1518480/",
+    "source_note": "SDN post #17 (musicdidactic, Jun 26 2026): 'All 1000 characters max.' Conflicting version: post #14 (Jun 17) says the first question is 1000 characters and the other two 2000 characters. Prompt 1 is a how-learned-about-osteopathic-medicine question (osteopathic, not school-specific). Prompt 3 is an employment listing.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "How did you learn about osteopathic medicine?",
+        "limit": 1000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "List and briefly describe your significant health care-related volunteer activities since graduation from high school.",
+        "limit": 1000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "service",
+        "abridged": false
+      },
+      {
+        "text": "If you were employed during the regular school year (excluding summers) while in undergraduate or graduate school, please list dates of employment beginning with your current position along with title or job description, level of responsibility, and number of hours per week.",
+        "limit": 1000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Nova Southeastern University Dr. Kiran C. Patel College of Osteopathic Medicine in Clearwater (NSU-KPCOM-Clearwater) (FL)",
+    "state": "FL",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-nova-southeastern-university-dr-kiran-c-patel-college-of-osteopathic-medicine-in-clearwater-nsu-kpcom-clearwater.1518482/",
+    "source_note": "Checked page 1 (posts #1–#4, only page): post #1 placeholder 'will be updated when available'; no prompts posted.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Ohio University Heritage College of Osteopathic Medicine (OU-HCOM) (OH)",
+    "state": "OH",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-ohio-university-heritage-college-of-osteopathic-medicine-ou-hcom.1518483/",
+    "source_note": "Checked page 1 (posts #1–#33; page-2 URL returned the same posts): post #1 placeholder 'will be updated when available'; no prompts posted. #24 (Aug 23) says the prompts have no word limit; #25 suggests about a page.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Ohio University Heritage College of Osteopathic Medicine - Cleveland (OU-HCOM-Cleveland) (OH)",
+    "state": "OH",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/1518484/",
+    "source_note": "Thread not publicly readable: marked 'not available to public readers' in the index; fetch of /threads/1518484/ returned a client error (checked once). No prompts collected.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Ohio University Heritage College of Osteopathic Medicine - Dublin (OU-HCOM-Dublin) (OH)",
+    "state": "OH",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/1518485/",
+    "source_note": "Thread not publicly readable: marked 'not available to public readers' in the index; fetch of /threads/1518485/ returned a client error (checked once). No prompts collected.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Oklahoma State University College of Osteopathic Medicine (OSU-COM) (OK)",
+    "state": "OK",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-oklahoma-state-university-college-of-osteopathic-medicine-osu-com.1518486/",
+    "source_note": "SDN post #8 (galathyniusgirl, Jul 16 2026). Prompt 2 is a why-osteopathic essay. Prompt 1 limit listed as '(unlimited)'.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "Which of the following Elective Programs are you interested in? Global Health/ Rural Medicine/Tribal Medicine/Urban Underserved. Please explain what interests you about this elective program?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "career",
+        "abridged": false
+      },
+      {
+        "text": "What experiences have motivated you toward a career in osteopathic medicine? Please share a meaningful experience you have had while in the health professional field.",
+        "limit": 300,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "Optional: Is there any additional information you would like the college to know about you?",
+        "limit": 500,
+        "unit": "words",
+        "required": false,
+        "group": null,
+        "type": "anything_else",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Oklahoma State University College of Osteopathic Medicine at Cherokee Nation (OSUCOM-Tahlequah) (OK)",
+    "state": "OK",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-oklahoma-state-university-college-of-osteopathic-medicine-at-cherokee-nation-osucom-tahlequah.1518487/",
+    "source_note": "Checked page 1: thread contains only post #1 (placeholder 'will be updated when available'); no replies, no prompts posted.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Orlando College of Osteopathic Medicine (OCOM) (FL)",
+    "state": "FL",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-orlando-college-of-osteopathic-medicine-ocom.1518488/",
+    "source_note": "Checked pages 1–2 (posts #1–#66, all pages): post #1 placeholder; no prompt wording posted. Post #24 (Jul 28 2026) describes, without quoting, 'essentially one prompt that asks if you have any academic blunders that you would like to explain', plus vaccine/technical-standards agreements and a fee; #17 says no character limit.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Pacific Northwest University of Health Sciences College of Osteopathic Medicine (PNWU-COM) (WA)",
+    "state": "WA",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-pacific-northwest-university-of-health-sciences-college-of-osteopathic-medicine-pnwu-com.1518489/",
+    "source_note": "Checked pages 1–3 (posts #1–#121; page 1 header said 5 pages, page 3 said 3 of 3): post #1 placeholder 'will be updated when available'; many secondaries received from 6/8 but no prompts posted; #117 asked for prompts, unanswered.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Philadelphia College of Osteopathic Medicine (PCOM) (PA)",
+    "state": "PA",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-philadelphia-college-of-osteopathic-medicine-pcom.1518490/",
+    "source_note": "Checked pages 1–2 (posts #1–#94, all pages): no prompts posted. Page 1 poster says secondaries are embedded in the primary; #62 (Aug 29 2026): 'They dont have secondary questionarres like like year. You will just receive additional payment request.' #51, #79 mention secondary portal fee/payment.",
+    "no_written_secondary_note": "Page 1 poster: 'PCOM has no secondaries. They are embedded in the primary', quoting the primary that PCOM does not require a supplemental application; post #62 (Aug 29 2026) says only an additional payment request is sent.",
+    "prompts": []
+  },
+  {
+    "school": "Philadelphia College of Osteopathic Medicine Georgia Campus (PCOM-Georgia) (GA)",
+    "state": "GA",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-philadelphia-college-of-osteopathic-medicine-georgia-campus-pcom-georgia.1518491/",
+    "source_note": "Checked page 1 (posts #1–#24, only page shown): post #1 placeholder; no prompts posted. #2 (Jul 12) asked for the 'Program Materials section' prompts, unanswered. #3, #5–#7, #9 (Aug 6–7) report a secondary payment email; #21 (Oct 9) submitted '2ndary app + paid fee'.",
+    "no_written_secondary_note": "SDN post #4 (moondrift, Aug 6 2026): 'PCOM does not have secondaries!'; other posts describe only a secondary payment/fee step.",
+    "prompts": []
+  },
+  {
+    "school": "Philadelphia College of Osteopathic Medicine South Georgia (PCOM-South-Georgia) (GA)",
+    "state": "GA",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-philadelphia-college-of-osteopathic-medicine-south-georgia-pcom-south-georgia.1518492/",
+    "source_note": "Checked page 1 (posts #1–#30; single page): post #1 placeholder 'will be updated when available'; post #3 (Jul 12 2026) asks for the prompts, nobody posted them. Secondaries received (#24, 9/28) but no prompt text. School card: Moultrie, GA.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Rocky Vista University - Montana College of Osteopathic Medicine (RVU-MCOM) (MT)",
+    "state": "MT",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-rocky-vista-university-montana-college-of-osteopathic-medicine-rvu-mcom.1518493/",
+    "source_note": "Checked page 1 (posts #1–#18; single page): post #1 placeholder 'will be updated when available'; secondaries received Jul 2026 (#6, #7) but no prompts posted. School card: Billings, MT.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Rocky Vista University College of Osteopathic Medicine (RVUCOM) (CO)",
+    "state": "CO",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-rocky-vista-university-college-of-osteopathic-medicine-rvucom.1518494/",
+    "source_note": "SDN post #19 (Frven), Jul 10 2026; poster says 'it was only one essay'. No limit stated. Prompt text retrieved in two pieces because of fetch-tool quote cap; joined at 'new heights in'. Checked page 2: no further prompts. School card: Parker, CO.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "What noteworthy characteristics, abilities, or skills do you possess that will help ensure RVU achieves new heights in medical education?",
+        "limit": null,
+        "unit": null,
+        "required": true,
+        "group": null,
+        "type": "diversity",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Rocky Vista University College of Osteopathic Medicine - Southern Utah Campus (RVUCOM-Southern) (UT)",
+    "state": "UT",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-rocky-vista-university-college-of-osteopathic-medicine-southern-utah-campus-rvucom-southern.1518495/",
+    "source_note": "Checked page 1 (posts #1–#14; single page): post #1 placeholder 'will be updated when available'; no prompts posted. School card: Ivins, UT.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Rowan-Virtua School of Osteopathic Medicine (Rowan-Virtua-SOM) (NJ)",
+    "state": "NJ",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-rowan-virtua-school-of-osteopathic-medicine-rowan-virtua-som.1518496/",
+    "source_note": "SDN page 2, post #81 (drmoomin), Sep 4 2026; poster: 'They didn't include word counts.' (1)-(3) not labeled, (4) labeled Optional. Prompt 1 is a why-osteopathic essay (not school-specific). Page 1 checked: post #1 placeholder, no prompts; secondaries released Sep 4 2026 after delays. Posters mention extra questions for 3+3 Family Medicine Track applicants (not posted). Location Stratford, NJ.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "How did you learn about osteopathic medicine and why is it a good fit for you?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "Explain why you are interested in attending Rowan-Virtua School of Osteopathic Medicine:",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "We seek to train physicians who can connect with diverse patient populations with whom they may not share a similar background. Tell us about an experience that has broadened your own worldview or enhanced your ability to understand those unlike yourself and what you learned from it.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "diversity",
+        "abridged": false
+      },
+      {
+        "text": "Optional - Please describe any significant barriers or challenges you may have overcome in the pursuit of your personal/professional goals:",
+        "limit": null,
+        "unit": null,
+        "required": false,
+        "group": null,
+        "type": "challenge",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Rowan-Virtua School of Osteopathic Medicine Sewell Campus (Rowan-Virtua-SOM-Sewell) (NJ)",
+    "state": "NJ",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-rowan-virtua-school-of-osteopathic-medicine-sewell-campus-rowan-virtua-som-sewell.1518497/",
+    "source_note": "Checked page 1 (posts #1–#2; single page): post #1 placeholder 'will be updated when available'; post #2 (Aug 12 2026) asks if anyone received a secondary; no prompts posted. School card: Sewell, NJ.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Sam Houston State University College of Osteopathic Medicine (SHSU-COM) (TX)",
+    "state": "TX",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-sam-houston-state-university-college-of-osteopathic-medicine-shsu-com.1518498/",
+    "source_note": "SDN post #1 (edited after Jun 24 2026; says 'same as last year's questions with the addition of #6'); same prompts posted in #8 (justanotherfuturedr, Jun 24 2026), confirmed by #9 (Jun 25). Required/optional not stated. Omitted: #6 'Are you a Texas resident? (Yes/No)'. Post #1 says application via TMDSAS. Location Conroe, TX.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "How has your community and/or hometown shaped your values and your pursuit of medicine?",
+        "limit": 800,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "diversity",
+        "abridged": false
+      },
+      {
+        "text": "Describe a moment when you failed to accomplish a task or let yourself down. How did you grow from this experience?",
+        "limit": 800,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "challenge",
+        "abridged": false
+      },
+      {
+        "text": "What do you consider the role of physicians in medically underserved Texas communities?",
+        "limit": 800,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "service",
+        "abridged": false
+      },
+      {
+        "text": "Sam Houston State University's Motto is \"The Measure of a Life is its Service.\" What is the most significant service contribution that you have made?",
+        "limit": 800,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "service",
+        "abridged": false
+      },
+      {
+        "text": "Why do you want to pursue osteopathic medicine at SHSU-COM? What about osteopathic medical education interests you?",
+        "limit": 800,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "Please share anything you would like to mention to the SHSU-COM Admissions Committee about yourself to strengthen your application.",
+        "limit": 500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "anything_else",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "The Valley College of Osteopathic Medicine (TVCOM) (AZ)",
+    "state": "AZ",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-the-valley-college-of-osteopathic-medicine.1520533/",
+    "source_note": "Checked page 1 (posts #1–#33; single page): template post (#4, Jul 19 2026) placeholder 'will be updated when available' (links to database mislabeled 'KYCOM'); no prompts posted. State changed from TSV guess TX to AZ: thread school listing says Phoenix, AZ.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Touro College of Osteopathic Medicine - Harlem (TouroCOM-Harlem) (NY)",
+    "state": "NY",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-touro-college-of-osteopathic-medicine-harlem-tourocom-harlem.1518499/",
+    "source_note": "SDN post #10 (futurebonedoc45), Jun 23 2026; single prompt, limit is 'no more than three paragraphs' fitting on one page (no word/char count). Retrieved in pieces due to fetch-tool quote cap. Checked page 1 (posts #1–#30). Posters mention $200 secondary fee and Casper. Location New York, NY.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "This Personal Statement is different than the essay that had been submitted with your AACOMAS application. In no more than three paragraphs that will fit on this single page (if the essay creates a second page, it is too long), please discuss how your background, experience or academic program has prepared you for meeting Touro College of Osteopathic Medicine’s Mission, Goals, or Objectives.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Touro College of Osteopathic Medicine - Middletown (TouroCOM-Middletown) (NY)",
+    "state": "NY",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-touro-college-of-osteopathic-medicine-middletown-tourocom-middletown.1518500/",
+    "source_note": "Checked page 1 (posts #1–#4; single page): post #1 placeholder 'will be updated when available'; other posts are interview invites only; no prompts posted. School card: Middletown, NY.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Touro College of Osteopathic Medicine - Montana (TouroCOM-Montana) (MT)",
+    "state": "MT",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-touro-college-of-osteopathic-medicine-montana-tourocom-montana.1518501/",
+    "source_note": "Checked page 1 (posts #1–#15; single page): post #1 placeholder 'will be updated when available'; post #4 (Sep 2 2026) asks for prompts, none posted; secondary received 8/25 (#3). Location Great Falls, MT.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "Touro University College of Osteopathic Medicine - California (TUCOM-CA) (CA)",
+    "state": "CA",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-touro-university-college-of-osteopathic-medicine-california-tucom-ca.1518502/",
+    "source_note": "SDN post #10 (goodnotes), Jun 26 2026; poster says 'No strict character limit' (used a soft 3000-char limit). Required/optional not stated. Prompt 1 is an osteopathic-tenets essay (not school-specific). Omitted: 'Have you attended any TUCOM information sessions on campus, at another location, or virtually? If yes, please list the event(s) in which you participated.' (yes/no + list). Checked page 1 (posts #1–#49; single page). Location Vallejo, CA.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "Please select one of the tenets of Osteopathic Medicine and explain how it might relate to one or more of your lived experiences",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "Please describe your hobbies (or non-academic pursuits) and how they will influence your success as an Osteopathic medical student and/or Osteopathic physician in the future.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "Please discuss how your life experiences and personal characteristics will contribute to your future success as an outstanding osteopathic physician.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "diversity",
+        "abridged": false
+      },
+      {
+        "text": "When considering medical schools, what criteria are important to you and how does TUCOM align with those criteria?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Touro University Nevada College of Osteopathic Medicine (TUNCOM) (NV)",
+    "state": "NV",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-touro-university-nevada-college-of-osteopathic-medicine-tuncom.1518503/",
+    "source_note": "SDN post #1 (headed '2026-2027 Touro Nevada Secondary Essay Prompts'), Apr 26 2026; same six prompts reposted in #14 (NoOneFamous), Aug 16 2026, after the official secondary release on Aug 14 (#38); #11 and #40 quote prompts 1 and 5. Each '(500 WORDS)'. Required/optional not stated. #38 says the official version 'has extra questions' vs an earlier Touro-portal version, but no other questions are posted. Also requires signed 'Osteopathic Medicine Technical Standards' form (omitted, not an essay). Checked pages 1–2. Location Henderson, NV.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "Why are you interested in pursuing this degree at Touro Nevada?",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "Is there anything not on the AACOMAS application that you would like the admissions committee to know about you?",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "anything_else",
+        "abridged": false
+      },
+      {
+        "text": "Please explain any award and accolades you have listed on your AACOMAS application.",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "What award(s) or recognition(s) have you received within the last five years?",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "What volunteer experience have you had during the last three years?",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "service",
+        "abridged": false
+      },
+      {
+        "text": "What research experience have you had during the last three years?",
+        "limit": 500,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "University of New England College of Osteopathic Medicine (UNECOM) (ME)",
+    "state": "ME",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-new-england-college-of-osteopathic-medicine-unecom.1518504/",
+    "source_note": "Checked page 1 of 4 (posts #1–#50): post #1 placeholder 'will be updated when available'; no prompts posted anywhere on page 1. #6/#7 (Jun 24 2026) and #26/#27 (Aug 4–5 2026) say the 'secondary' is a portal email to pay a supplemental fee, with school-specific questions on the AACOMAS portal. Location Biddeford, ME.",
+    "no_written_secondary_note": "Posters say the secondary is a fee-payment portal step only; school-specific questions are in AACOMAS (SDN #6–#7, Jun 24 2026; #26–#27, Aug 4–5 2026).",
+    "prompts": []
+  },
+  {
+    "school": "University of North Texas Health Science Center - Texas College of Osteopathic Medicine (UNTHSC-TCOM) (TX)",
+    "state": "TX",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-unt-health-fort-worth-texas-college-of-osteopathic-medicine-unthsc-tcom.1518505/",
+    "source_note": "SDN post #1 (Apr 26 2026) and reposted #17 (DrProteinSNAFU, May 31 2026). Prompt 1 is a why-osteopathic essay (not school-specific). Prompts 2–5 are conditional ('If...'/'If yes'), marked required null. Application via TMDSAS; $75 secondary fee, no fee waivers (#15); #33 (Jul 23) saw only fee/receipt, no prompts. Prompt texts 3 and 6 assembled from piecewise quotes due to fetch-tool quote cap. Location Fort Worth, TX.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "What experiences and/or relationships have motivated you toward a career in osteopathic medicine?",
+        "limit": 2000,
+        "unit": "characters",
+        "required": true,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "If you attended more than two colleges/universities, explain why. Community colleges are not needed.",
+        "limit": 1000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "If applicable, please update the information contained on your TMDSAS application. Indicate any additional grades earned, alterations in your proposed coursework or graduation date, additions to your extracurricular activities, name change, or anything else you feel the Admissions Committee should know.",
+        "limit": 1000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "Do you consider yourself financially disadvantaged? If yes, please explain.",
+        "limit": 1000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "diversity",
+        "abridged": false
+      },
+      {
+        "text": "Do you consider yourself educationally disadvantaged? If yes, please explain.",
+        "limit": 1000,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "diversity",
+        "abridged": false
+      },
+      {
+        "text": "One of the values of the University of North Texas System is Courageous Integrity which means one should model exceptional standards and act in the best interest of our community. These behaviors include:\n– Build trust through consistent actions that are honest, transparent, and authentic\n– Provide, accept, and support open and constructive feedback\n– Hold yourself and others accountable for decisions, behaviors, actions, and results\nPlease select a specific instance where you have demonstrated Courageous Integrity and describe how this is indicative of your character",
+        "limit": 2000,
+        "unit": "characters",
+        "required": true,
+        "group": null,
+        "type": "ethics",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "University of Northern Colorado College of Osteopathic Medicine (UNC-COM) (CO)",
+    "state": "CO",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-northern-colorado-college-of-osteopathic-medicine-unc-com.1518414/",
+    "source_note": "Checked page 1 (posts #1–#33; single page): post #1 placeholder 'will be updated when available'; #16 (Sep 8 2026) asks for prompts, none posted; secondaries received from 6/11 (#2). Location Greeley, CO.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "University of Pikeville - Kentucky College of Osteopathic Medicine (KYCOM) (KY)",
+    "state": "KY",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-pikeville-kentucky-college-of-osteopathic-medicine-kycom.1518506/",
+    "source_note": "SDN post #13 (EastoftheSea), Jul 19 2026. No limit or required/optional stated. Prompt is a why-osteopathic / DO-experience essay (not school-specific). Omitted: 'Have you previously applied to KYCOM?' (yes/no). Location Pikeville, KY.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "Please describe your experience with osteopathic medicine, such as your care and treatment from a DO and your shadowing experience with a DO (including number of hours). Please describe how your experience has influenced your decision to apply to an osteopathic medical school.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "University of the Incarnate Word School of Osteopathic Medicine (UIWSOM) (TX)",
+    "state": "TX",
+    "degree": "DO",
+    "cycle": null,
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-the-incarnate-word-school-of-osteopathic-medicine-uiwsom.1518507/",
+    "source_note": "Checked pages 1–2 (all pages): post #1 placeholder 'will be updated when available'; no prompts posted; page 2 posts cover interviews/acceptances only, no secondary discussion. Location San Antonio, TX.",
+    "no_written_secondary_note": null,
+    "prompts": []
+  },
+  {
+    "school": "West Virginia School of Osteopathic Medicine (WVSOM) (WV)",
+    "state": "WV",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-west-virginia-school-of-osteopathic-medicine-wvsom.1518508/",
+    "source_note": "SDN post #16 (DOApplicant20262027), Jul 7 2026; requoted in #35 (Aug 27 2026). 8 prompts confirmed by #13/#14 (Jul 2). Limit from #14 ('500 character max per prompt'); #16 only says 'There is some character or word limit'. Required/optional not stated. Prompt 1 is a why-osteopathic essay. Location Lewisburg, WV.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "Why do you want to be an osteopathic physician?",
+        "limit": 500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "What advantage do you see in attending WVSOM over other medical schools?",
+        "limit": 500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "Describe an ethically challenging situation you have been in, and how you responded.",
+        "limit": 500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "ethics",
+        "abridged": false
+      },
+      {
+        "text": "What do you feel it will take for you to succeed in medical school?",
+        "limit": 500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "Provide a brief comment about your study habits.",
+        "limit": 500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "Describe a situation in work, volunteer activities, or organizations where you demonstrated your ability to work well with others.",
+        "limit": 500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "team",
+        "abridged": false
+      },
+      {
+        "text": "What experiences (living, working, or visiting) have you had in rural areas?",
+        "limit": 500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "service",
+        "abridged": false
+      },
+      {
+        "text": "Briefly comment on how your volunteer experience benefited you.",
+        "limit": 500,
+        "unit": "characters",
+        "required": null,
+        "group": null,
+        "type": "service",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Western University of Health Sciences College of Osteopathic Medicine of the Pacific (WesternU-COMP) (CA)",
+    "state": "CA",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-western-university-of-health-sciences-college-of-osteopathic-medicine-of-the-pacific-westernu-comp.1518509/",
+    "source_note": "SDN post #21 (sdemello12), Jul 25 2026, Pomona (California campus) list. No limits stated in the thread (#22 claims 'the other prompts are 500-1000 words', unconfirmed). #42/#48 (Jul 28–30): school says only the three secondary questions need answering; old essays on proof page are a glitch. Prompts changed from last year (#18, #34). Location Pomona, CA.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "What is your purpose of pursuing medical education, and why COMP Pomona?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "Briefly discuss any extenuating circumstances which you feel are pertinent to your application (poor grades, course withdrawals, lapse in your education, etc.).",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "If you have not taken any coursework for over 3 years, please explain why and what you have been doing during that period of time.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "gap",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Western University of Health Sciences College of Osteopathic Medicine of the Pacific - Northwest (WesternU-COMP-Northwest) (OR)",
+    "state": "OR",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-western-university-of-health-sciences-college-of-osteopathic-medicine-of-the-pacific-westernu-comp.1518509/",
+    "source_note": "Own thread (https://forums.studentdoctor.net/threads/2026-2027-western-university-of-health-sciences-heatherington-college-of-osteopathic-medicine-westernu-comp-northwest.1518510/, posts #1–#29, single page) has only the placeholder and no prompts. Prompts taken from the WesternU-COMP (Pomona) thread, post #21 (sdemello12), Jul 25 2026, 'Western COMP-NW (Oregon Campus)' list; #50 (Aug 2) confirms campuses have different sets. Sentence grouping inferred (post has blank lines between sentences); prompt 2 is an alternative for applicants who have not observed a DO. Prompts 1–2 are why-osteopathic essays. No limits or required marks stated. Omitted: 'Have you participated in research?' (yes/no), 'Please provide us with the link to the publication or abstract if possible.', 'Did you contribute to the published work as an author/coauthor?'. Location Lebanon, OR.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "What experience observing a DO solidified your desire/ambition to become an osteopathic physician? (This could be a formal shadowing experience (one-on-one with a physician), scribing, observing your own physician, friend, or family member who is a DO).",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "If you have not had the opportunity to shadow/observe a DO why is it important to you to become an osteopathic physician?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "Describe how you would approach a clinical situation in which a patient's values, preferences, or healthcare decisions differ from your own perspective. What professional principles would guide your actions, and how would you ensure the patient receives respectful and patient-centered care?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "ethics",
+        "abridged": false
+      },
+      {
+        "text": "How does the COMP Northwest Mission statement align with your values?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "Why do you want to attend COMP Northwest in Lebanon, Oregon?",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "If yes, briefly describe your role and what skills you gained from participation in the research.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "Briefly discuss any extenuating circumstances which you feel are pertinent to your application (poor grades, course withdrawals, lapse in your education, etc.).",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "If you have not taken any coursework for over 3 years, please explain why and what you have been doing during that period of time.",
+        "limit": null,
+        "unit": null,
+        "required": null,
+        "group": null,
+        "type": "gap",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "William Carey University College of Osteopathic Medicine (WCUCOM) (MS)",
+    "state": "MS",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-william-carey-university-college-of-osteopathic-medicine-wcucom.1518511/",
+    "source_note": "SDN post #23 (smiskidoc), Aug 7 2026; prompt follows the school mission statement (not recorded) and ends with an asterisk (required marker, dropped from text). Posters disagree on Duet/Casper requirement. Location Hattiesburg, MS.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "In the space below (not to exceed 500 words), please explain how your ambitions and career plans will help WCUCOM fulfill this mission.",
+        "limit": 500,
+        "unit": "words",
+        "required": true,
+        "group": null,
+        "type": "career",
+        "abridged": false
+      }
+    ]
+  },
+  {
+    "school": "Xavier University College of Osteopathic Medicine (XUCOM) (OH)",
+    "state": "OH",
+    "degree": "DO",
+    "cycle": "2026-2027",
+    "source_url": "https://forums.studentdoctor.net/threads/2026-2027-xavier-college-of-osteopathic-medicine.1520535/",
+    "source_note": "SDN post #1 ('2026-2027 Xavier Secondary Essay Prompts'), Jul 19 2026; same in #6 (barbie28, Jul 20 2026) and quoted in #46. Each '(250 words)'; required/optional not stated. Prompt 2 is an osteopathic-philosophy essay (not school-specific). State changed from TSV guess TX to OH: thread header lists Cincinnati, OH.",
+    "no_written_secondary_note": null,
+    "prompts": [
+      {
+        "text": "The Jesuit tradition at Xavier University emphasizes the Magis, the call to do more for others in the pursuit of justice, compassion, and excellence. Describe how one of your lived experiences aligns with this value and how this has informed your desire to pursue medicine at the Xavier University College of Osteopathic Medicine.",
+        "limit": 250,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "why_school",
+        "abridged": false
+      },
+      {
+        "text": "The Osteopathic philosophy and the Jesuit principle of cura personalis both emphasize treating the whole person-- mind, body, and spirit. Describe a concrete example of how your experience aligns with this value, and how has this informed your desire to pursue Osteopathic Medicine.",
+        "limit": 250,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "other",
+        "abridged": false
+      },
+      {
+        "text": "The path to medicine often demands careful discernment in the face of adversity. Share a significant challenge you have faced, how you reflected on that experience, and how it strengthened your resilience and commitment to becoming a physician.",
+        "limit": 250,
+        "unit": "words",
+        "required": null,
+        "group": null,
+        "type": "challenge",
+        "abridged": false
+      }
+    ]
+  }
+]
