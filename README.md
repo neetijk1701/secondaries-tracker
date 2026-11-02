@@ -21,3 +21,12 @@ A web app for medical school applicants to track secondary essays. Work is saved
 - Hosted on Cloudflare Workers (static assets), connected to this repo. `main` is live; other branches (like `dev`) get preview links.
 
 Student-built. Not affiliated with AMCAS, the AAMC, or any medical school.
+
+## New cycles and prompt updates
+- `data/cycle.json` names the cycle being built (and `prev`). `tools/new_cycle.py YYYY-YYYY` starts a new cycle with empty data files and the same school names; until a school's new prompts are harvested, the library shows last cycle's prompts for it (`pc` on the school, `mdphd.cycle` for MD/PhD) and the app labels them.
+- `tools/diff_library.py OLD NEW` summarizes changes between two builds.
+- `HARVEST.md` is the weekly procedure (June to September) that a scheduled task follows: find threads, read them with parallel agents, check applicant reports from the Tally form (rD5rjo), build, commit to `dev`, and report. `data/harvest-state.json` tracks progress.
+- In the app: essays remember the library wording they came from (`lib`, `libLimit`); when the library's wording or limit changes, the essay and school are flagged with a diff and "Use the new wording / Keep mine". Last-cycle prompts carry `pc` and are flagged if the school's new prompts don't include them.
+- Rollover: data is stamped with `prefs.cycle`. When the library moves to a newer cycle, a banner offers "Start a fresh list" (current schools/essays go to an `archives` record, synced like other records; base essays stay) or "Keep this list". Past cycles appear at the bottom of Base essays, and an empty essay offers "Start from it" when the same school had a similar prompt in a past cycle.
+- "Report a prompt change" links (school page, essay page, library, add-school form) open the Tally form with school, cycle and track filled in.
+

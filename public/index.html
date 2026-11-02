@@ -263,6 +263,12 @@ const KEY = "secondaries-v1";
 const TOURKEY = "secondaries-intro-hide-v2"; // "1" = don't show the intro on opening
 const LIB = (window.PROMPT_LIBRARY && window.PROMPT_LIBRARY.schools) ? window.PROMPT_LIBRARY : {cycle:"", updated:"", schools:[]};
 const SHOW_LIBRARY = LIB.schools.length > 0;
+const CYCLE = LIB.cycle || "2026-2027";        // cycle the prompt library is for
+const FIRST_CYCLE = "2026-2027";               // data saved before cycles were tracked belongs to this one
+const REPORT_URL = "https://tally.so/r/rD5rjo"; // "report a prompt change" form (Tally); reviewed before anything changes
+function cyc(c){ return c ? c.slice(0,4)+"–"+c.slice(7) : ""; }   // "2026-2027" -> "2026–27"
+function reportUrl(name, dual){ return REPORT_URL+"?school="+encodeURIComponent(name||"")+"&cycle="+encodeURIComponent(CYCLE)+"&track="+encodeURIComponent(dual?"MD/PhD or DO/PhD":"MD or DO"); }
+function reportLink(name, dual, label){ return '<a class="small" href="'+esc(reportUrl(name,dual))+'" target="_blank" rel="noopener">'+(label||"Report a prompt change")+'</a>'; }
 const FAM = {
   diversity:"Diversity & perspective", challenge:"Challenge or failure", why:"Why this school",
   gap:"Gap year / current activities", team:"Teamwork & conflict", career:"Career goals & interests",
@@ -355,9 +361,9 @@ function seed(){
 
 /* ---------- storage ---------- */
 let S;
-function blank(){ return {v:1, demo:false, schools:[], bases:[], essays:[], del:{}}; }
-function load(){ try{ const raw=localStorage.getItem(KEY); if(raw){ const o=JSON.parse(raw); if(o && o.schools){ o.del=o.del||{}; return o; } } }catch(e){} return blank(); }
-const COLLS=["schools","bases","essays"];
+function blank(){ return {v:1, demo:false, schools:[], bases:[], essays:[], archives:[], del:{}}; }
+function load(){ try{ const raw=localStorage.getItem(KEY); if(raw){ const o=JSON.parse(raw); if(o && o.schools){ o.del=o.del||{}; o.archives=o.archives||[]; return o; } } }catch(e){} return blank(); }
+const COLLS=["schools","bases","essays","archives"];   // archives: one record per past cycle
 let SNAP=new Map();
 function recJson(r){ const {u, ...rest}=r; return JSON.stringify(rest); }
 function snapshot(){ SNAP=new Map(); COLLS.forEach(c=>(S[c]||[]).forEach(r=>SNAP.set(c+":"+r.id, recJson(r)))); SNAP.set("meta", JSON.stringify([S.dismissed||[], S.prefs||{}])); }
@@ -372,6 +378,7 @@ function stamp(){
 let saveT=null, saveError=false, locked=false, namesT=null;
 function writeLocal(){
   if(locked) return;
+  if(!S.demo && S.schools.length && !(S.prefs && S.prefs.cycle)){ S.prefs=Object.assign({}, S.prefs||{dual:false}, {cycle:CYCLE}); }
   const changed=stamp();
   try{ localStorage.setItem(KEY, JSON.stringify(S)); if(saveError){ saveError=false; render(); } }
   catch(e){ if(!saveError){ saveError=true; render(); } }
@@ -382,6 +389,8 @@ function flush(){ if(saveT){ clearTimeout(saveT); saveT=null; writeLocal(); } }
 window.addEventListener("pagehide", flush);
 document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="hidden") flush(); });
 S = load(); snapshot();
+// stamp data from before cycles were tracked, and tidy last-cycle prompts the new library has confirmed
+if(!S.demo && S.schools.length && !(S.prefs && S.prefs.cycle)){ S.prefs=Object.assign({}, S.prefs||{dual:false}, {cycle:FIRST_CYCLE}); save(); }
 
 /* ---------- Google Drive sync ---------- */
 // Essays are saved in a hidden app folder in the applicant's own Google Drive (drive.appdata scope).
@@ -988,7 +997,7 @@ function vBrief(rows){
   }
   const misnamed=es.filter(e=>wrongNames(e).length).length;
   const unpaid=S.schools.filter(s=>!s.waiver && !s.fee && +s.feeAmt>0).reduce((a,s)=>a+(+s.feeAmt),0);
-  const extra=[]; if(misnamed) extra.push('<span style="color:var(--warn)">'+misnamed+(misnamed===1?' essay names':' essays name')+' another school on your list</span>'); if(toPaste) extra.push(toPaste+' ready to paste into portals'); if(unpaid) extra.push('$'+unpaid.toLocaleString()+' in fees unpaid'); if(bh) extra.push('<a href="#essays" data-tab="essays">'+bh+(bh===1?' is':' are')+' behind its base</a>');
+  const updated=es.filter(e=>libUpdate(e)).length; const extra=[]; if(updated) extra.push('<span style="color:var(--warn)">'+updated+(updated===1?' prompt changed':' prompts changed')+' in the prompt library</span>'); if(misnamed) extra.push('<span style="color:var(--warn)">'+misnamed+(misnamed===1?' essay names':' essays name')+' another school on your list</span>'); if(toPaste) extra.push(toPaste+' ready to paste into portals'); if(unpaid) extra.push('$'+unpaid.toLocaleString()+' in fees unpaid'); if(bh) extra.push('<a href="#essays" data-tab="essays">'+bh+(bh===1?' is':' are')+' behind its base</a>');
   h+='<dt>Left to write</dt><dd>'+left+(extra.length?' <span class="muted">'+extra.join('; ')+'.</span>':'')+'</dd>';
   // line 3: the single best next move
   const top=rows[0]; const tp=top&&top.p;
@@ -1101,7 +1110,7 @@ function pickListHTML(){
     const sel = i===ui.pickI ? ' aria-selected="true"' : ' aria-selected="false"';
     if(o.kind==="custom") return '<li role="option" id="pick-o'+i+'" class="custom" data-pick="custom" data-i="'+i+'"'+sel+'>'+(o.name? '+ Add “'+esc(o.name)+'” as a school not in the list' : '+ My school isn’t in the list')+'</li>';
     const taken=schoolTaken(o.name);
-    const meta = taken? 'Already added' : (o.x.prompts.length? o.x.prompts.length+(o.x.prompts.length===1?' prompt':' prompts') : 'No prompts posted');
+    const meta = taken? 'Already added' : (o.x.prompts.length? o.x.prompts.length+(o.x.prompts.length===1?' prompt':' prompts')+(o.x.pc?' ('+cyc(o.x.pc)+')':'') : 'No prompts posted');
     return '<li role="option" id="pick-o'+i+'" data-pick="lib" data-name="'+esc(o.name)+'" data-i="'+i+'"'+sel+(taken?' aria-disabled="true"':'')+'><span class="nm">'+esc(o.name)+' <span class="muted" style="font-weight:400">· '+esc(o.x.state)+(o.x.deg==="DO"?' · DO':'')+'</span></span><span class="meta">'+meta+'</span></li>';
   }).join("");
 }
@@ -1122,11 +1131,12 @@ function addSchoolForm(){
     h += '<div class="row" role="group" aria-label="Applying as"><span class="small muted" style="font-weight:600">Applying as</span><span class="seg"><button type="button" data-act="pick-track" data-v="0" aria-pressed="'+(!dual)+'">'+(L.deg==="DO"?"DO":"MD")+'</button><button type="button" data-act="pick-track" data-v="1" aria-pressed="'+dual+'">'+dl+'</button></span>'+
       (dual && !hasDual(L) ? '<span class="small muted">No '+dl+' prompts were posted for this school. Add them yourself after adding it.</span>' : (dual && L.mdphd.md==="instead" ? '<span class="small muted">'+dl+' applicants answer these instead of the regular secondary.</span>' : (dual?'<span class="small muted">Regular secondary plus '+L.mdphd.prompts.length+' '+dl+' prompt'+(L.mdphd.prompts.length===1?'':'s')+'.</span>':'')))+'</div>';
     const list=trackPrompts(L, dual);
+    if(promptCycle(L,false) && !(dual && L.mdphd && L.mdphd.md==="instead")) h += '<p class="small" style="margin:0; padding:8px 10px; border-radius:8px; background:var(--warn-soft)">Nothing posted for '+cyc(CYCLE)+' yet, so these are last cycle’s ('+cyc(L.pc)+') prompts. Schools often reuse them. If the wording changes once this year’s prompts are posted, the tracker will flag it.</p>';
     if(dual && dualNote(L)) h += '<p class="small" style="margin:0; padding:8px 10px; border-radius:8px; background:var(--warn-soft)">'+dualNote(L)+'</p>';
     if(!list.length) h += '<p class="small muted" style="margin:0">'+esc(L.none||"No prompts posted")+' on its SDN thread. You can add prompts yourself after adding the school.</p>';
     else h += '<div class="stack" style="gap:8px"><div class="row" style="justify-content:space-between"><h3>Prompts to add</h3><span class="row"><button type="button" class="ghost small" data-act="pick-all" data-v="1">Select all</button><button type="button" class="ghost small" data-act="pick-all" data-v="0">Select none</button></span></div>'+
-      '<ul class="plist">'+list.map(o=>'<li><label><input type="checkbox" class="pick-p" value="'+o.k+'" checked><span><span>'+(o.dual?'<span class="chip acc" style="margin-right:6px">'+esc(dl)+(L.mdphd.cycle?' · '+esc(L.mdphd.cycle.slice(0,4)+"–"+L.mdphd.cycle.slice(7)):'')+'</span>':'')+esc(o.p.p)+'</span><div class="pm">'+limTxt(o.p)+' · '+esc(FAM[o.p.fam]||"Other")+(o.p.opt?' · optional':'')+(o.p.group?' · '+esc(o.p.group):'')+'</div></span></label></li>').join("")+'</ul>'+
-      '<p class="small muted" style="margin:0">Uncheck any you won’t write. You can add or remove prompts later on the school’s page. Prompts come from the school’s <a href="'+esc(L.url)+'" target="_blank" rel="noopener">SDN thread</a>; check them against the portal.</p></div>';
+      '<ul class="plist">'+list.map(o=>'<li><label><input type="checkbox" class="pick-p" value="'+o.k+'" checked><span><span>'+(o.dual?'<span class="chip acc" style="margin-right:6px">'+esc(dl)+(L.mdphd.cycle?' · '+esc(L.mdphd.cycle.slice(0,4)+"–"+L.mdphd.cycle.slice(7)):'')+'</span>':'')+esc(o.p.p)+'</span><div class="pm">'+limTxt(o.p)+' · '+esc(FAM[o.p.fam]||"Other")+(o.p.opt?' · optional':'')+(o.p.group?' · '+esc(o.p.group):'')+(!o.dual&&promptCycle(L,false)?' · '+cyc(L.pc)+' prompt':'')+'</div></span></label></li>').join("")+'</ul>'+
+      '<p class="small muted" style="margin:0">Uncheck any you won’t write. You can add or remove prompts later on the school’s page. Prompts come from the school’s <a href="'+esc(L.url)+'" target="_blank" rel="noopener">SDN thread</a>; check them against the portal. Different in the portal? '+reportLink(L.name, dual, "Tell us")+'.</p></div>';
   }
   h += '<div class="grid-f">'+
     '<label class="f">Secondary received<input id="ns-rec" type="date" value="'+esc((ui.nsDraft&&ui.nsDraft.rec)||iso(today()))+'"></label>'+
@@ -1139,7 +1149,7 @@ function addSchoolForm(){
 }
 function libPromptsMissing(s){
   const L=libFind(s.libName||s.name); if(!L) return [];
-  const have=new Set(essaysOf(s.id).map(e=>e.prompt.trim()));
+  const have=new Set(essaysOf(s.id).flatMap(e=>{ const u=libUpdate(e); return [e.prompt.trim(), (e.lib||"").trim(), u&&u.p?u.p.p.trim():""]; }));
   return trackPrompts(L, s.track==="dual").filter(o=>!have.has(o.p.p.trim())).map(o=>({p:o.p, k:o.k, dual:o.dual}));
 }
 
@@ -1158,7 +1168,7 @@ function vSchool(s){
     '<label class="f">Secondary fee ($)<input type="number" min="0" max="1000" step="1" id="amt-'+s.id+'" data-bind="school:'+s.id+':feeAmt" value="'+(s.feeAmt!=null&&s.feeAmt!==""?esc(s.feeAmt):"")+'" placeholder="e.g. 100"'+(s.waiver?' disabled':'')+'></label>'+
     '</div></div>';
   const missing=libPromptsMissing(s);
-  h += '<div class="panel"><div class="ph"><h2 style="flex:1">Essays</h2><button data-act="toggle-add-prompt">'+(ui.addPrompt?'Close':'Add prompt')+'</button></div>';
+  h += '<div class="panel"><div class="ph"><h2 style="flex:1">Essays</h2>'+(s.libName?reportLink(s.libName, s.track==="dual"):'')+'<button data-act="toggle-add-prompt">'+(ui.addPrompt?'Close':'Add prompt')+'</button></div>';
   if(ui.addPrompt) h += addPromptForm(s, missing);
   else if(missing.length && es.length) h += '<div class="pb small muted" style="border-bottom:1px solid var(--line-soft)">'+(missing.length===1?'1 more prompt from the library isn’t':missing.length+' more prompts from the library aren’t')+' on your list. <button class="ghost small" data-act="toggle-add-prompt" style="padding:0">Show them</button></div>';
   if(!es.length) h += '<div class="empty">No prompts yet. Add each prompt from the school’s secondary.</div>';
@@ -1166,7 +1176,7 @@ function vSchool(s){
     h += '<table class="etable"><tbody>';
     es.forEach(e=>{
       const b=base(e.baseId);
-      h += '<tr><td style="width:46%"><div class="prompt-t">'+esc(shortP(e.prompt))+'</div><div class="chips"><span class="chip">'+esc(FAM[e.family]||"Other")+'</span>'+(e.dual?'<span class="chip acc">'+esc(dualLabel(libFind(s.libName||s.name)))+'</span>':'')+(wrongNames(e).length?'<span class="chip warn">Names '+esc(wrongNames(e).map(x=>x.alias).join(", "))+'</span>':'')+(e.optional?'<span class="chip">Optional</span>':'')+(e.group?'<span class="chip">'+esc(e.group)+'</span>':'')+(b?'<span class="chip acc">Base: '+esc(b.title)+(e.basedOnV?' · from v'+e.basedOnV:'')+'</span>':'')+(behind(e)?'<span class="chip warn">Base now v'+latest(b).v+'</span>':'')+(e.localEdit&&b&&!s.submitted?'<span class="chip">Edited here</span>':'')+'</div></td>'+
+      h += '<tr><td style="width:46%"><div class="prompt-t">'+esc(shortP(e.prompt))+'</div><div class="chips"><span class="chip">'+esc(FAM[e.family]||"Other")+'</span>'+(e.dual?'<span class="chip acc">'+esc(dualLabel(libFind(s.libName||s.name)))+'</span>':'')+(e.pc?'<span class="chip">'+cyc(e.pc)+' prompt</span>':'')+(libUpdate(e)?'<span class="chip warn">'+(libUpdate(e).kind==="gone"?'Not in '+cyc(CYCLE)+' prompts':'Prompt updated')+'</span>':'')+(wrongNames(e).length?'<span class="chip warn">Names '+esc(wrongNames(e).map(x=>x.alias).join(", "))+'</span>':'')+(e.optional?'<span class="chip">Optional</span>':'')+(e.group?'<span class="chip">'+esc(e.group)+'</span>':'')+(b?'<span class="chip acc">Base: '+esc(b.title)+(e.basedOnV?' · from v'+e.basedOnV:'')+'</span>':'')+(behind(e)?'<span class="chip warn">Base now v'+latest(b).v+'</span>':'')+(e.localEdit&&b&&!s.submitted?'<span class="chip">Edited here</span>':'')+'</div></td>'+
         '<td>'+meter(e)+'</td>'+
         '<td><select aria-label="Status" id="st-'+e.id+'" data-bind="essay:'+e.id+':status">'+Object.entries(STATUS).map(([k,l])=>'<option value="'+k+'"'+(e.status===k?' selected':'')+'>'+l+'</option>').join("")+'</select></td>'+
         '<td style="text-align:right"><div class="row" style="justify-content:flex-end; flex-wrap:nowrap">'+(ui.confirm==="del-essay:"+e.id? '<button class="danger" data-act="confirm" data-key="del-essay:'+e.id+'">'+(e.text.trim()?'Remove and delete text':'Remove')+'</button><button data-act="cancel-confirm">Keep</button>' : '<button data-act="open-essay" data-id="'+e.id+'">Open</button><button class="ghost danger" data-act="ask-confirm" data-key="del-essay:'+e.id+'" aria-label="Remove this prompt">Remove</button>')+'</div></td></tr>';
@@ -1223,6 +1233,15 @@ function vEssay(e){
   let h = '<button class="ghost back" data-act="open-school" data-id="'+s.id+'">← '+esc(s.name)+'</button>';
   h += '<h3>'+esc(FAM[e.family]||"Other")+' · '+limitL(e)+(e.optional?' · Optional':'')+(e.group?' · '+esc(e.group):'')+'</h3><p class="promptbox">'+esc(e.prompt)+'</p>';
   if(e.cut) h += '<p class="small muted" style="margin:6px 0 0">This prompt was shortened in the library. Copy the full wording from the school’s portal.</p>';
+  if(e.pc && !libUpdate(e)) h += '<p class="small muted" style="margin:6px 0 0">This prompt is from the '+cyc(e.pc)+' cycle; nothing newer had been posted when you added it. Check the wording in the portal.</p>';
+  { const u=libUpdate(e);
+    if(u && u.kind==="gone") h += '<div class="banner warn" style="margin-top:10px"><div class="grow small"><strong>'+esc(s.name)+' has posted its '+cyc(CYCLE)+' prompts, and this one ('+cyc(e.pc)+') isn’t among them.</strong> Check the portal. New prompts are listed on the school’s page.</div><button data-act="lib-gone-keep">Keep it</button><button class="danger" data-act="ask-confirm" data-key="del-essay:'+e.id+'">Remove</button></div>';
+    else if(u){
+      const segs = u.kind==="wording" ? diff(e.lib||e.prompt, u.p.p) : null;
+      h += '<div class="banner warn" style="margin-top:10px"><div class="grow small"><strong>'+(u.kind==="wording"?'The prompt library has new wording for this prompt.':'The limit changed in the prompt library.')+'</strong>'+
+        (segs?'<div class="diff" style="margin:6px 0; font-size:14px">'+segs.map(x=>x.type==="eq"?esc(x.a.join("")):'<del>'+esc(x.a.join(""))+'</del><ins>'+esc(x.b.join(""))+'</ins>').join("")+'</div>':' ')+
+        'Now: '+limTxt(u.p)+'. Check it against the portal.</div><button class="primary" data-act="lib-accept">Use the new '+(u.kind==="wording"?'wording':'limit')+'</button><button data-act="lib-keep">Keep mine</button></div>';
+    } }
   if(ui.editPrompt) h += '<form class="panel" data-form="edit-prompt" data-id="'+e.id+'" style="margin-top:12px"><div class="pb stack">'+
     '<label class="f">Prompt<textarea id="ep-p" rows="3" required>'+esc(e.prompt)+'</textarea></label>'+
     '<div class="grid-f"><label class="f">Limit<input id="ep-l" type="number" min="0" value="'+(e.limit||"")+'" placeholder="No limit"></label>'+
@@ -1230,11 +1249,13 @@ function vEssay(e){
     '<label class="f">Prompt type<select id="ep-f">'+Object.entries(FAM).map(([k,l])=>'<option value="'+k+'"'+(e.family===k?' selected':'')+'>'+l+'</option>').join("")+'</select></label>'+
     '<div class="f" style="justify-content:flex-end"><label class="chk"><input type="checkbox" id="ep-o"'+(e.optional?' checked':'')+'> Optional</label></div></div>'+
     '<div class="row"><button class="primary" type="submit">Save prompt</button><button type="button" data-act="edit-prompt">Cancel</button></div></div></form>';
-  else h += '<button class="ghost small" data-act="edit-prompt" style="padding-left:0; margin-top:4px">Edit prompt, limit or type</button>';
+  else h += '<div class="row" style="gap:14px; margin-top:4px"><button class="ghost small" data-act="edit-prompt" style="padding-left:0">Edit prompt, limit or type</button>'+(s.libName?reportLink(s.libName, !!e.dual):'')+'</div>';
   h += '<div class="two" style="margin-top:16px"><div class="stack" style="min-width:0">';
   if(behind(e)){
     h += '<div class="banner warn"><div class="grow"><strong>Base updated.</strong> You adapted this from “'+esc(b.title)+'” v'+e.basedOnV+'. The base is now v'+L.v+' ('+esc(ver(b,L.v).note||"no note")+').</div><button class="primary" data-act="panel" data-p="review">Review changes</button></div>';
   }
+  { const pm = !e.text.trim() && pastMatch(e);
+    if(pm) h += '<div class="banner info"><div class="grow">You wrote '+(pm.same?'this prompt':'a '+esc((FAM[pm.x.family]||"similar").toLowerCase())+' essay')+' for '+esc(s.name)+' in '+cyc(pm.a.cycle)+' ('+words(pm.x.text)+' words). Start from it and update it for this year.<details style="margin-top:6px"><summary style="cursor:pointer" class="small">See it</summary><div class="small muted" style="margin:4px 0">'+esc(pm.x.prompt)+'</div><div style="white-space:pre-wrap; font-family:var(--f-essay); margin:6px 0">'+esc(pm.x.text)+'</div></details></div><button class="primary" data-act="arch-use" data-a="'+esc(pm.a.id)+'" data-e="'+esc(pm.x.id)+'">Start from it</button></div>'; }
   if(b && !e.text.trim() && L.text.trim()){
     h += '<div class="banner info"><div class="grow">This prompt uses the base “'+esc(b.title)+'”. Start from v'+L.v+' and trim it to '+limitL(e)+'.</div><button class="primary" data-act="start-from-base">Start from base v'+L.v+'</button></div>';
   }
@@ -1330,7 +1351,23 @@ function vEssays(){
     h += '</div>';
   });
   h += '</div>';
+  h += pastCycles();
   return h;
+}
+function pastCycles(){
+  const A=(S.archives||[]).slice().sort((a,b)=>a.cycle<b.cycle?1:-1); if(!A.length) return '';
+  let h='<h2 style="margin-top:24px">Past cycles</h2><p class="sub">Read-only copies of earlier application cycles. Copy anything you want to reuse.</p><div class="stack">';
+  A.forEach(a=>{
+    const written=(a.essays||[]).filter(x=>(x.text||"").trim());
+    h += '<details class="panel"><summary class="ph" style="cursor:pointer"><h3 style="flex:1">'+cyc(a.cycle)+'</h3><span class="small muted">'+(a.schools||[]).length+' schools · '+written.length+' essays written</span></summary><div class="pb stack">';
+    (a.schools||[]).forEach(sc=>{
+      const es=(a.essays||[]).filter(x=>x.schoolId===sc.id && (x.text||"").trim()); if(!es.length) return;
+      h += '<div><b>'+esc(sc.name)+'</b>'+(sc.submitted?' <span class="chip good">Submitted</span>':'')+'<ul class="list">'+es.map(x=>'<li><div class="main"><div class="small">'+esc(shortP(x.prompt))+'</div><details><summary class="small muted" style="cursor:pointer">'+words(x.text)+' words</summary><div style="white-space:pre-wrap; font-family:var(--f-essay); margin:6px 0">'+esc(x.text)+'</div></details></div><button class="ghost" data-act="arch-copy" data-a="'+esc(a.id)+'" data-e="'+esc(x.id)+'">Copy</button></li>').join("")+'</ul></div>';
+    });
+    if((a.bases||[]).length) h += '<div class="small muted">Base essays then: '+a.bases.map(b=>esc(b.title)+' (v'+latest(b).v+')').join(", ")+'</div>';
+    h += '<div class="row">'+confirmBtn("del-archive:"+a.id, "Delete this cycle", "Delete "+cyc(a.cycle)+" for good")+'</div></div></details>';
+  });
+  return h+'</div>';
 }
 
 function vBase(b){
@@ -1372,6 +1409,39 @@ function trackPrompts(L, dual){
   return reg.filter(o=>!rep.has(o.k)).concat(extra);
 }
 function promptByKey(L,k){ return k[0]==="m" ? {p:L.mdphd.prompts[+k.slice(1)], dual:true} : {p:L.prompts[+k.slice(1)], dual:false}; }
+function promptCycle(L, dual){ const c = dual ? ((L.mdphd && L.mdphd.cycle) || L.pc) : L.pc; return c && c < CYCLE ? c : null; }
+function simTok(t){ return new Set((t||"").toLowerCase().replace(/[^a-z0-9 ]/g," ").split(/\s+/).filter(w=>w.length>2)); }
+function jac(a,b){ const A=simTok(a), B=simTok(b); let i=0; A.forEach(w=>{ if(B.has(w)) i++; }); return i/Math.max(1, A.size+B.size-i); }
+// what the prompt library now says about an essay's prompt: null, {kind:"wording"|"limit", p}, or {kind:"gone"}
+function libUpdate(e){
+  const s=school(e.schoolId); if(!s || s.submitted || S.demo) return null;
+  const L=libFind(s.libName||""); if(!L) return null;
+  const dual = s.track==="dual" && !!e.dual;
+  const list=trackPrompts(L, s.track==="dual").filter(o=>!!o.dual===!!e.dual || L.mdphd&&L.mdphd.md==="instead").map(o=>o.p);
+  const base=(e.lib||e.prompt||"").trim();
+  const nt=t=>(t||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();   // ignore case, punctuation and spacing
+  const same=list.find(p=>nt(p.p)===nt(base));
+  if(same){ const was = e.libLimit!=null ? e.libLimit : e.limit; return (same.limit && same.limit!==was) ? {kind:"limit", p:same} : null; }
+  const used=new Set(essaysOf(s.id).filter(x=>x.id!==e.id).map(x=>nt(x.lib||x.prompt)));
+  let best=null, bs=0;
+  list.forEach(p=>{ if(used.has(nt(p.p))) return; const j=jac(base,p.p)+(p.fam===e.family?0.1:0); if(j>bs){ bs=j; best=p; } });
+  if(best && bs>=0.45) return {kind:"wording", p:best};
+  if(e.pc && !promptCycle(L, dual) && list.length) return {kind:"gone"};
+  return null;
+}
+// an essay from a past cycle that could seed this one
+function pastMatch(e){
+  const s=school(e.schoolId); if(!s || !(S.archives||[]).length) return null;
+  let best=null, bs=0;
+  (S.archives||[]).forEach(a=>{
+    const sc=(a.schools||[]).find(x=>x.name.toLowerCase()===s.name.toLowerCase()); if(!sc) return;
+    (a.essays||[]).filter(x=>x.schoolId===sc.id && (x.text||"").trim()).forEach(x=>{
+      const j=jac(x.prompt, e.prompt) + (x.family===e.family?0.15:0);
+      if(j>bs){ bs=j; best={a, x, same: jac(x.prompt,e.prompt)>=0.6}; }
+    });
+  });
+  return best && bs>=0.3 ? best : null;
+}
 function libFind(name){ const n=(name||"").trim().toLowerCase(); return LIB.schools.find(x=>x.name.toLowerCase()===n); }
 // note for dual-degree prompts taken from an earlier cycle or from outside SDN
 function dualNote(L){
@@ -1387,22 +1457,22 @@ function vLibrary(){
   const q=ui.libQ.trim().toLowerCase();
   const states=[...new Set(LIB.schools.map(x=>x.state))].sort();
   const list = LIB.schools.filter(x=>(!ui.libState || x.state===ui.libState) && (!ui.libDeg || (ui.libDeg==="DUAL" ? hasDual(x) : (x.deg||"MD")===ui.libDeg)) && (!q || x.name.toLowerCase().includes(q) || x.prompts.some(p=>p.p.toLowerCase().includes(q))));
-  const withP = LIB.schools.filter(x=>x.prompts.length).length;
+  const withP = LIB.schools.filter(x=>x.prompts.length).length, fresh = LIB.schools.filter(x=>x.prompts.length && !x.pc).length;
   let h='<h1>Prompt library</h1><p class="sub">'+libCountText()+', with prompts for '+withP+'. Add a school and its prompts, limits and prompt types come with it, already linked to your matching base essays.</p>';
-  h += '<div class="banner info small" style="margin-bottom:14px"><div class="grow">Prompts are from the '+esc(LIB.cycle)+' cycle, as applicants posted them on each school’s Student Doctor Network thread (collected '+fmt(LIB.updated)+'). Schools can change wording and limits, so check each one in the school’s portal.</div></div>';
+  h += '<div class="banner info small" style="margin-bottom:14px"><div class="grow">'+(LIB.prev ? '<strong>The '+cyc(CYCLE)+' prompts are coming in: '+fresh+' of '+LIB.schools.length+' schools so far.</strong> Schools without this year’s prompts yet show last cycle’s ('+cyc(LIB.prev)+'), marked as such. ' : 'Prompts are from the '+esc(CYCLE)+' cycle. ')+'They’re collected from each school’s Student Doctor Network thread (updated '+fmt(LIB.updated)+'). Schools can change wording and limits, so check each one in the school’s portal. Spotted a difference? '+reportLink("", false, "Report a prompt change")+'.</div></div>';
   h += '<div class="lib-s"><input id="libq" type="search" placeholder="Search schools or prompt wording" value="'+esc(ui.libQ)+'" data-libq="1"><select id="lib-deg" aria-label="MD or DO" data-libdeg="1"><option value="">MD and DO</option><option value="MD"'+(ui.libDeg==="MD"?' selected':'')+'>MD only</option><option value="DO"'+(ui.libDeg==="DO"?' selected':'')+'>DO only</option><option value="DUAL"'+(ui.libDeg==="DUAL"?' selected':'')+'>Has MD/PhD or DO/PhD prompts</option></select><select id="lib-state" aria-label="State" data-libstate="1"><option value="">All states</option>'+states.map(st=>'<option'+(ui.libState===st?' selected':'')+'>'+st+'</option>').join("")+'</select></div>';
   h += '<p class="small muted" style="margin:-4px 0 10px">'+list.length+(list.length===1?' school':' schools')+'</p>';
   h += '<div class="panel"><ul class="list">';
   list.forEach(x=>{
     const have = S.schools.some(s=>s.name.toLowerCase()===x.name.toLowerCase());
     const open = ui.libOpen===x.name || (q && x.prompts.some(p=>p.p.toLowerCase().includes(q)));
-    h += '<li><div class="main"><div class="row"><h2>'+esc(x.name)+'</h2><span class="chip">'+esc(x.state)+'</span>'+(x.deg==="DO"?'<span class="chip acc">DO</span>':'')+(hasDual(x)?'<span class="chip acc">'+esc(dualLabel(x))+' prompts</span>':'')+'</div>';
+    h += '<li><div class="main"><div class="row"><h2>'+esc(x.name)+'</h2><span class="chip">'+esc(x.state)+'</span>'+(x.deg==="DO"?'<span class="chip acc">DO</span>':'')+(hasDual(x)?'<span class="chip acc">'+esc(dualLabel(x))+' prompts</span>':'')+(x.pc&&x.prompts.length?'<span class="chip warn">'+cyc(x.pc)+' prompts</span>':'')+'</div>';
     if(!x.prompts.length) h += '<div class="small muted" style="margin-top:4px">'+esc(x.none||"No prompts posted")+'. <a href="'+esc(x.url)+'" target="_blank" rel="noopener">SDN thread</a></div>';
     else {
       const fams=[...new Set(x.prompts.map(p=>p.fam))];
       h += '<div class="chips">'+'<span class="chip">'+x.prompts.length+(x.prompts.length===1?' prompt':' prompts')+'</span>'+fams.map(f=>'<span class="chip">'+esc(FAM[f]||"Other")+'</span>').join("")+'</div>';
       h += '<button class="ghost small" data-act="lib-toggle" data-school="'+esc(x.name)+'" aria-expanded="'+(open?'true':'false')+'" style="margin-top:6px; padding-left:0">'+(open?'Hide prompts':'Show prompts')+'</button>';
-      if(open) h += '<ol style="margin:6px 0 0; padding-left:20px">'+x.prompts.map(p=>'<li style="margin-bottom:8px">'+esc(p.p)+'<div class="small muted">'+limTxt(p)+' · '+esc(FAM[p.fam]||"Other")+(p.opt?' · optional':'')+(p.group?' · '+esc(p.group):'')+(p.cut?' · shortened here; full wording in the portal':'')+'</div></li>').join("")+'</ol>'+(hasDual(x)?'<div class="small" style="margin:6px 0 2px; font-weight:700">'+esc(dualLabel(x))+' applicants '+(x.mdphd.md==="instead"?'answer instead':'also answer')+':</div><ol style="margin:0; padding-left:20px">'+x.mdphd.prompts.map(p=>'<li style="margin-bottom:8px">'+esc(p.p)+'<div class="small muted">'+limTxt(p)+' · '+esc(FAM[p.fam]||"Other")+(p.opt?' · optional':'')+(p.rep!=null?' · replaces regular prompt '+(p.rep+1):'')+'</div></li>').join("")+'</ol>'+(dualNote(x)?'<div class="small muted" style="margin:0 0 4px">'+dualNote(x)+'</div>':''):'')+'<div class="small" style="margin-top:2px"><a href="'+esc(x.url)+'" target="_blank" rel="noopener">SDN thread</a></div>';
+      if(open) h += '<ol style="margin:6px 0 0; padding-left:20px">'+x.prompts.map(p=>'<li style="margin-bottom:8px">'+esc(p.p)+'<div class="small muted">'+limTxt(p)+' · '+esc(FAM[p.fam]||"Other")+(p.opt?' · optional':'')+(p.group?' · '+esc(p.group):'')+(p.cut?' · shortened here; full wording in the portal':'')+'</div></li>').join("")+'</ol>'+(hasDual(x)?'<div class="small" style="margin:6px 0 2px; font-weight:700">'+esc(dualLabel(x))+' applicants '+(x.mdphd.md==="instead"?'answer instead':'also answer')+':</div><ol style="margin:0; padding-left:20px">'+x.mdphd.prompts.map(p=>'<li style="margin-bottom:8px">'+esc(p.p)+'<div class="small muted">'+limTxt(p)+' · '+esc(FAM[p.fam]||"Other")+(p.opt?' · optional':'')+(p.rep!=null?' · replaces regular prompt '+(p.rep+1):'')+'</div></li>').join("")+'</ol>'+(dualNote(x)?'<div class="small muted" style="margin:0 0 4px">'+dualNote(x)+'</div>':''):'')+'<div class="small row" style="margin-top:2px; gap:14px"><a href="'+esc(x.url)+'" target="_blank" rel="noopener">SDN thread</a>'+reportLink(x.name, false)+'</div>';
     }
     h += '</div>'+(have?'<span class="chip good">Added</span>':'<button class="primary" data-act="lib-add" data-school="'+esc(x.name)+'">Add</button>')+'</li>';
   });
@@ -1413,6 +1483,12 @@ function vLibrary(){
 
 function topBanners(){
   let h='';
+  const dc=prefs().cycle;
+  if(!S.demo && S.schools.length && dc && dc < CYCLE && !ui.essayId){
+    const fresh=LIB.schools.filter(x=>x.prompts.length && !x.pc).length;
+    h+='<div class="banner info" style="margin-bottom:16px"><div class="grow"><strong>The '+cyc(CYCLE)+' application cycle has started.</strong> This year’s prompts are coming in ('+fresh+' schools so far). Applying again? Start a fresh list: your '+cyc(dc)+' schools and essays are kept under Past cycles on the Essays page, your base essays stay, and when a new prompt matches one you answered before, you can start from your old essay.</div>'+
+      (ui.confirm==="rollover" ? '<button class="primary" data-act="rollover-fresh">Yes, start '+cyc(CYCLE)+'</button><button data-act="cancel-confirm">Cancel</button>' : '<button class="primary" data-act="ask-confirm" data-key="rollover">Start a fresh list</button><button data-act="rollover-keep">Keep this list</button>')+'</div>';
+  }
   const ss=Sync.state();
   if(ss.connected && (ss.status==="error"||(ss.status==="paused"&&ss.msg))) h+='<div class="banner warn" style="margin-bottom:16px"><div class="grow"><strong>'+(ss.status==="error"?'Couldn’t save to Google Drive.':'Google Drive is paused.')+'</strong> '+esc(ss.msg||"")+' Your work is still saved in this browser.</div><button data-act="'+(ss.status==="error"?'sync-run':'sync-resume')+'">'+(ss.status==="error"?'Try again':'Reconnect')+'</button></div>';
   if(saveError) h+='<div class="banner warn" style="margin-bottom:16px"><div class="grow"><strong>Your latest changes couldn’t be saved in this browser.</strong> Its storage is full or blocked. '+(ss.connected?'They’re still going to your Google Drive, but download a backup to be safe.':'Download a backup now so nothing is lost.')+'</div><button data-act="backup">Download backup</button></div>';
@@ -1451,7 +1527,7 @@ document.addEventListener("click", ev=>{
     case "pick-track": { const g=id2=>{ const x=document.getElementById(id2); return x?x.value:""; }; ui.nsDraft={rec:g("ns-rec"), turn:g("ns-turn"), hard:g("ns-hard"), int:g("ns-int"), fee:g("ns-fee")}; ui.pickDual = d.v==="1"; render(); break; }
     case "pick-all": document.querySelectorAll(".pick-p").forEach(c=>c.checked=d.v==="1"); break;
     case "edit-prompt": ui.editPrompt=!ui.editPrompt; render(); if(ui.editPrompt) document.getElementById("ep-p").focus(); break;
-    case "lib-addback": { const sc=school(ui.schoolId); const L=libFind(sc.libName||sc.name); if(!L) break; const o=promptByKey(L,d.k); if(o&&o.p){ const [ne]=libEssays({prompts:[o.p]}, sc.id, o.dual); S.essays.push(ne); save(); render(); toast("Added"+(ne.baseId?" and linked to base “"+base(ne.baseId).title+"”":"")); } break; }
+    case "lib-addback": { const sc=school(ui.schoolId); const L=libFind(sc.libName||sc.name); if(!L) break; const o=promptByKey(L,d.k); if(o&&o.p){ const [ne]=libEssays({prompts:[o.p]}, sc.id, o.dual, promptCycle(L, o.dual)); S.essays.push(ne); save(); render(); toast("Added"+(ne.baseId?" and linked to base “"+base(ne.baseId).title+"”":"")); } break; }
     case "toggle-add-prompt": ui.addPrompt=!ui.addPrompt; render(); if(ui.addPrompt) document.getElementById("np-p").focus(); break;
     case "panel": ui.panel = d.p||null; render(); break;
     case "start-from-base": { const b=base(e.baseId); const L=latest(b); e.text=L.text; e.basedOnV=L.v; e.localEdit=false; if(e.status==="todo") e.status="drafting"; save(); render(); toast("Copied base v"+L.v+". Trim it to "+limitL(e)+"."); break; }
@@ -1499,6 +1575,15 @@ document.addEventListener("click", ev=>{
     case "ask-confirm": ui.confirm=d.key; render(); break;
     case "cancel-confirm": ui.confirm=null; render(); break;
     case "confirm": doConfirm(d.key); break;
+    case "rollover-fresh": startFresh(); break;
+    case "rollover-keep": prefs().cycle=CYCLE; save(); render(); toast("Keeping your list. Prompts that change in the library will be flagged."); break;
+    case "lib-accept": { const x=essay(ui.essayId); const u=x&&libUpdate(x); if(u&&u.p){ x.prompt=u.p.p; x.lib=u.p.p; x.limit=u.p.limit||0; x.libLimit=u.p.limit||0; x.unit=u.p.unit; delete x.pc; save(); render(); toast("Prompt updated"); } break; }
+    case "lib-keep": { const x=essay(ui.essayId); const u=x&&libUpdate(x); if(u&&u.p){ x.lib=u.p.p; x.libLimit=u.p.limit||0; save(); render(); toast("Kept your wording"); } break; }
+    case "lib-gone-keep": { const x=essay(ui.essayId); if(x){ delete x.pc; save(); render(); } break; }
+    case "arch-use": case "arch-copy": { const ar=(S.archives||[]).find(z=>z.id===d.a); const old=ar&&(ar.essays||[]).find(z=>z.id===d.e); if(!old) break;
+      if(a==="arch-use"){ const x=essay(ui.essayId); if(x && !x.text.trim()){ x.text=old.text; x.localEdit=true; save(); render(); toast("Copied in your "+cyc(ar.cycle)+" essay. Update it for this year."); } }
+      else copyText(old.text);
+      break; }
     case "backup": downloadBackup(); break;
     case "sync-connect": Sync.connect(); break;
     case "sync-resume": Sync.resume(); break;
@@ -1521,7 +1606,21 @@ function doConfirm(key){
   if(k==="del-school"){ S.schools=S.schools.filter(s=>s.id!==idv); S.essays=S.essays.filter(e=>e.schoolId!==idv); save(); go("schools"); toast("School deleted"); }
   else if(k==="del-base"){ S.bases=S.bases.filter(b=>b.id!==idv); S.essays.forEach(e=>{ if(e.baseId===idv){ e.baseId=null; e.basedOnV=null; e.localEdit=false; }}); save(); go("essays"); toast("Base deleted"); }
   else if(k==="del-essay"){ const x=essay(idv); if(x){ S.essays=S.essays.filter(e=>e.id!==idv); save(); go("schools",{schoolId:x.schoolId}); toast("Prompt removed"); } }
+  else if(k==="del-archive"){ S.archives=(S.archives||[]).filter(a=>a.id!==idv); save(); render(); toast("Deleted"); }
+  else if(k==="rollover"){ startFresh(); }
   else if(k==="clear"){ S=blank(); save(); go("next"); toast("Erased. This device now has no schools or essays."); }
+}
+function copyText(t){
+  const fallback=()=>{ const ta=document.createElement("textarea"); ta.value=t; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); toast("Copied"); }catch(err){ toast("Couldn’t copy. Select the text and copy it yourself."); } ta.remove(); };
+  try{ navigator.clipboard.writeText(t).then(()=>toast("Copied"), fallback); }catch(err){ fallback(); }
+}
+function startFresh(){
+  const c=prefs().cycle||FIRST_CYCLE, clone=o=>JSON.parse(JSON.stringify(o));
+  S.archives=S.archives||[];
+  S.archives.push({id:"a"+c.slice(0,4)+Date.now().toString(36), cycle:c, at:iso(today()), schools:clone(S.schools), essays:clone(S.essays).map(e=>{ delete e.prev; return e; }), bases:clone(S.bases)});
+  S.schools=[]; S.essays=[]; S.bases.forEach(b=>{ /* bases stay; they no longer have school versions */ });
+  prefs().cycle=CYCLE; ui.confirm=null;
+  save(); go("schools"); toast("Fresh list for "+cyc(CYCLE)+". Your "+cyc(c)+" work is under Past cycles on the Essays page.");
 }
 function downloadBackup(){
   if(!S.demo){ S.lastBackup = iso(today()); save(); }
@@ -1592,8 +1691,8 @@ document.addEventListener("keydown", ev=>{
   else if(ev.key==="ArrowRight" && tourStep<TOUR.length-1){ tourStep++; renderTour(); }
   else if(ev.key==="ArrowLeft" && tourStep>0){ tourStep--; renderTour(); }
 });
-function libEssays(L, sid, dual){
-  return L.prompts.map(p=>{ const b=S.bases.find(x=>x.family===p.fam); const e={id:id("e"), schoolId:sid, prompt:p.p, limit:p.limit||0, unit:p.unit, family:p.fam, baseId:(b && p.fam!=="why")? b.id : null, basedOnV:null, text:"", status:"todo", localEdit:false, optional:!!p.opt, group:p.group||"", cut:!!p.cut}; if(dual) e.dual=true; return e; });
+function libEssays(L, sid, dual, pc){
+  return L.prompts.map(p=>{ const b=S.bases.find(x=>x.family===p.fam); const e={id:id("e"), schoolId:sid, prompt:p.p, lib:p.p, libLimit:p.limit||0, limit:p.limit||0, unit:p.unit, family:p.fam, baseId:(b && p.fam!=="why")? b.id : null, basedOnV:null, text:"", status:"todo", localEdit:false, optional:!!p.opt, group:p.group||"", cut:!!p.cut}; if(dual) e.dual=true; if(pc) e.pc=pc; return e; });
 }
 function addFromLibrary(name, extra, keys, dual){
   const L=libFind(name); if(!L) return;
@@ -1601,7 +1700,7 @@ function addFromLibrary(name, extra, keys, dual){
   const s=Object.assign({id:id("s"), name:L.name, libName:L.name, received:iso(today()), turnaround:DEFAULT_TURNAROUND, hard:"", interest:2, submitted:false, fee:false, pinned:false, track: dual?"dual":"single"}, extra||{});
   S.schools.push(s);
   const picks = keys ? keys.map(k=>promptByKey(L,k)).filter(o=>o.p) : trackPrompts(L, dual).map(o=>({p:o.p, dual:o.dual}));
-  const es=[]; picks.forEach(o=>es.push(...libEssays({prompts:[o.p]}, s.id, o.dual)));
+  const es=[]; picks.forEach(o=>es.push(...libEssays({prompts:[o.p]}, s.id, o.dual, promptCycle(L, o.dual))));
   S.essays.push(...es);
   const linked=es.filter(e=>e.baseId).length;
   ui.pickDual=null; ui.nsDraft=null;
