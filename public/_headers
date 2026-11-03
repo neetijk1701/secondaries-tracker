@@ -12,3 +12,5 @@
   Cache-Control: no-cache
 /library.js
   Cache-Control: no-cache
+/invites.js
+  Cache-Control: no-cache

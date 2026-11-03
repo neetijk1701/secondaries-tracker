@@ -72,3 +72,24 @@ Send a short summary: how many schools have this cycle's prompts now, which were
 Going live (only when Neetij says so): `git checkout main && git merge --no-ff origin/dev && git push`, then `git push origin main:dev`. A fast-forward won't deploy, because Cloudflare builds each commit once. Wait for the build whose link goes to `/production/builds/` and confirm that the live `sw.js` VERSION matches.
 
 If the project notes doc `claude/secondary-tracker-status.md` is reachable, add a one-line entry under "Weekly prompt check".
+
+# Invite timing (July to May)
+
+The Cycle tab shows, per school, when applicants on SDN have reported interview invites and acceptances. The data is in `data/invites-<cycle>.json` and is built into `public/invites.js` by `python3 -I tools/build_invites.py`. These counts show timing, not anyone's chances.
+
+What the Nov 2026 pilot of 5 schools taught us; follow it:
+- **Fetch explicit page URLs** (`<thread>page-N`). The bare thread URL sometimes serves a stale copy with no pagination; `page-2` redirects to the live page. Record `pages_total` and `last_post`. If the last post you saw is older than a few days while the thread is active, re-fetch with an explicit page.
+- **Ask WebFetch for a table of every post**: post number, date, and whether the poster reports *receiving* an interview invite (II), a pre-interview rejection, an acceptance (A), a waitlist (WL), a post-interview rejection, or a hold. A short summary drops posts.
+- **Count only first-person reports of something received.** Leave out questions, "I have my interview" with no invite, timelines where "II 9/29" might be the interview date, and quotes of other posts. Put left-out and ambiguous posts in `notes`. Never store usernames or post text.
+- **Dates:** use the receipt date when a post states one ("got it yesterday", "II 7/20"), otherwise the post date. Posts from the last week show only "Monday" or "Yesterday"; work those out from the run date.
+- Drop obvious outliers, such as one vague early post weeks before the first wave, by listing them in `exclude_posts` with a reason.
+- School-specific steps (pre-interview "under consideration" emails, special tracks like WARM or MSTP) are `hold` or noted.
+
+Weekly (incremental): for each school, read only pages newer than `last_post`, and append new events. Use parallel subagents in batches of about 25 schools, and give each the rules above. After building, spot-check 3 schools against their threads, then commit `data/invites-*.json` and `public/invites.js` to **dev** with the prompt changes, and include "N new invite reports at M schools" in the summary to Neetij.
+
+Record schema:
+```json
+{"school": "<exact library name>", "thread_url": "...", "pages_total": 3, "last_post": 122, "checked": "YYYY-MM-DD",
+ "events": [{"type": "II|preR|A|WL|R|hold", "date": "YYYY-MM-DD", "post": 27, "res": "IS|OOS|null"}],
+ "exclude_posts": [20], "notes": "..."}
+```
