@@ -1,0 +1,407 @@
+[
+ {
+  "school": "Baylor College of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-baylor-college-of-medicine.1517674/",
+  "pages_total": 3,
+  "last_post": 122,
+  "checked": "2026-11-03",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-07-07",
+    "post": 20,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-07-20",
+    "post": 27,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-20",
+    "post": 28,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-20",
+    "post": 29,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-20",
+    "post": 30,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-21",
+    "post": 35,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-28",
+    "post": 43,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-28",
+    "post": 44,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-04",
+    "post": 49,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-04",
+    "post": 50,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-04",
+    "post": 52,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-04",
+    "post": 53,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-04",
+    "post": 54,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-07-20",
+    "post": 59,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-11",
+    "post": 60,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-11",
+    "post": 61,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-11",
+    "post": 62,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-11",
+    "post": 63,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-18",
+    "post": 64,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-18",
+    "post": 67,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-18",
+    "post": 68,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-25",
+    "post": 71,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-01",
+    "post": 74,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-01",
+    "post": 79,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-22",
+    "post": 95,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-22",
+    "post": 98,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-22",
+    "post": 99,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-23",
+    "post": 100,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-07",
+    "post": 115,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-27",
+    "post": 118,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-26",
+    "post": 122,
+    "res": null
+   }
+  ],
+  "exclude_posts": [
+   20
+  ],
+  "notes": "Post #20 (Jul 7, plural 'invites', no detail) excluded as a likely outlier; the first wave is Jul 20. Recent relative dates mapped from Nov 3."
+ },
+ {
+  "school": "University of Wisconsin School of Medicine and Public Health",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-wisconsin-school-of-medicine-and-public-health.1517872/",
+  "pages_total": 1,
+  "last_post": 29,
+  "checked": "2026-11-03",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-09-24",
+    "post": 21,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-09-24",
+    "post": 23,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-25",
+    "post": 24,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-01",
+    "post": 26,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-06",
+    "post": 27,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-29",
+    "post": 29,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Bare thread URL served a stale copy; /page-2 showed the live page. #24 MSTP OOS 'R' read as pre-II rejection. #27 is a WARM II."
+ },
+ {
+  "school": "Oregon Health & Science University School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-oregon-health-and-science-university-school-of-medicine.1517753/",
+  "pages_total": 2,
+  "last_post": 72,
+  "checked": "2026-11-03",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-09-22",
+    "post": 48,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-24",
+    "post": 52,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-24",
+    "post": 53,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-25",
+    "post": 55,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-01",
+    "post": 60,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-20",
+    "post": 69,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-29",
+    "post": 72,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Implied invites (#54, #57, #66, #71) left out."
+ },
+ {
+  "school": "Saint Louis University School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-saint-louis-university-school-of-medicine.1517763/",
+  "pages_total": 1,
+  "last_post": 21,
+  "checked": "2026-11-03",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-09-18",
+    "post": 9,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-15",
+    "post": 13,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-17",
+    "post": 14,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-30",
+    "post": 15,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-30",
+    "post": 17,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-30",
+    "post": 20,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Invites badly under-reported (1 II vs 5 acceptances). Bare URL stale; /page-2 live."
+ },
+ {
+  "school": "Alice L Walton School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-alice-l-walton-school-of-medicine.1517670/",
+  "pages_total": 2,
+  "last_post": 64,
+  "checked": "2026-11-03",
+  "events": [
+   {
+    "type": "hold",
+    "date": "2026-07-30",
+    "post": 11,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-08-14",
+    "post": 37,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-08-31",
+    "post": 40,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-08",
+    "post": 41,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-29",
+    "post": 51,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-15",
+    "post": 56,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-16",
+    "post": 59,
+    "res": null
+   },
+   {
+    "type": "WL",
+    "date": "2026-10-29",
+    "post": 64,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "'Hold' events are pre-interview 'under consideration' emails. Tuition-free school, so IS/OOS means little."
+ }
+]
