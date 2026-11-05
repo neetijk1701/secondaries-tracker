@@ -61,3 +61,11 @@ Student-built. Not affiliated with AMCAS, the AAMC, or any medical school.
 - Activities (`acts`): {svc, expId, title, type, org, dates, hours, desc, mm, mmText}. They can start from an Experiences entry (type guessed from its kind), have live character meters, and show that experience's lessons as material for the most meaningful text.
 - Start a fresh list archives `apps` and `acts` with the cycle; bases stay.
 
+## Writing tools
+Everything runs in the browser; nothing is sent anywhere and no AI rewrites text.
+- **Focus view** (`ui.focus`, `vFocus`): a full-screen editor with the prompt, a side rail (Stories, Base, Notes in `e.scratch`, Checks, History), a meter, status and "Copy for portal". Esc or Done exits.
+- **Version history** (`e.hist`, synced with the essay):
+  - Saved automatically every 15 minutes while writing (keeps the last 8) and before a cut of more than 15% of an essay over 200 characters.
+  - Named versions keep the last 10.
+  - Compare shows a diff against the current text; Restore saves the current text first ("Before restoring"). Starting from a base also saves first.
+- **Writing checks** (`essayChecks`): common phrases, wording repeated from another essay for the same school or service (shared 8-word runs ≥ 15%), overused words, many sentences starting with "I", sentences over 35 words, passive voice, paragraph balance. "Show" selects the passage in the editor.
