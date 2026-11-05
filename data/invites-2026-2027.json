@@ -403,5 +403,2885 @@
   ],
   "exclude_posts": [],
   "notes": "'Hold' events are pre-interview 'under consideration' emails. Tuition-free school, so IS/OOS means little."
+ },
+ {
+  "school": "Albany Medical College",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-albany-medical-college.1517671/",
+  "pages_total": 1,
+  "last_post": 42,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-31",
+    "post": 25,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-31",
+    "post": 26,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-06",
+    "post": 31,
+    "res": "OOS"
+   },
+   {
+    "type": "WL",
+    "date": "2026-10-15",
+    "post": 35,
+    "res": "OOS"
+   },
+   {
+    "type": "WL",
+    "date": "2026-10-15",
+    "post": 37,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-20",
+    "post": 39,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [
+   29,
+   38
+  ],
+  "notes": "Single page (page-2 redirects to page-1). WL = alternate list. #29 (9/19) '+1 OOS' unclear whether II or secondary; #38 mentions an interview with no invite report. #37 IS/OOS read inconsistently, left null."
+ },
+ {
+  "school": "Albert Einstein College of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-albert-einstein-in-college-of-medicine.1517672/",
+  "pages_total": 2,
+  "last_post": 92,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-17",
+    "post": 60,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-18",
+    "post": 63,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-18",
+    "post": 66,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-08-18",
+    "post": 67,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-08-20",
+    "post": 69,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-20",
+    "post": 70,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-20",
+    "post": 71,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-01",
+    "post": 73,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-01",
+    "post": 76,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-16",
+    "post": 83,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-05",
+    "post": 88,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-13",
+    "post": 89,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [
+   78,
+   81
+  ],
+  "notes": "#83 is an MSTP II. #78/#81 are interview-completed restatements by earlier II posters (#63/#60). No decisions reported yet."
+ },
+ {
+  "school": "ASU John Shufeldt School of Medicine and Medical Engineering",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-asu-school-of-medicine-and-engineering.1517673/",
+  "pages_total": 1,
+  "last_post": 33,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-07-27",
+    "post": 12,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-27",
+    "post": 13,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-27",
+    "post": 14,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-08",
+    "post": 27,
+    "res": "OOS"
+   },
+   {
+    "type": "hold",
+    "date": "2026-10-18",
+    "post": 28,
+    "res": null
+   },
+   {
+    "type": "hold",
+    "date": "2026-10-28",
+    "post": 30,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-11-02",
+    "post": 33,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [
+   5,
+   29
+  ],
+  "notes": "Single page. #5 (7/18, IS) an undefined 'A' well before first II wave, vague, excluded. #29 mentions a scheduled interview with no invite report. Holds are post-interview."
+ },
+ {
+  "school": "Boston University Chobanian & Avedisian School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-boston-university.1517675/",
+  "pages_total": 2,
+  "last_post": 67,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-18",
+    "post": 31,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-19",
+    "post": 32,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-20",
+    "post": 34,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-03",
+    "post": 35,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-04",
+    "post": 37,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-08",
+    "post": 41,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-16",
+    "post": 43,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-17",
+    "post": 44,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-17",
+    "post": 45,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-17",
+    "post": 46,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-18",
+    "post": 49,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-18",
+    "post": 52,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-18",
+    "post": 53,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-18",
+    "post": 54,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-18",
+    "post": 55,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-21",
+    "post": 56,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-21",
+    "post": 57,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-09-22",
+    "post": 58,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-09-23",
+    "post": 59,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-01",
+    "post": 60,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-10-01",
+    "post": 61,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-05",
+    "post": 62,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-10-05",
+    "post": 63,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-10-09",
+    "post": 64,
+    "res": "IS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-10-19",
+    "post": 65,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [
+   11,
+   67
+  ],
+  "notes": "#52 'R' posted amid the 9/18 pre-II rejection wave, recorded as preR. #61 says 'end of September', post date used. #11 is 'no contact', not a hold. #67 mentions an interview with no invite report."
+ },
+ {
+  "school": "Brown University Warren Alpert Medical School",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-brown-university-warren-alpert-medical-school.1517676/",
+  "pages_total": 1,
+  "last_post": 30,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-14",
+    "post": 24,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Single page. Only one report: #24 '+1 OOS MD II' (replies ask for secondary date/LM, consistent with an II but not confirmed). Rest are secondaries."
+ },
+ {
+  "school": "California University of Science and Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-california-university-of-science-and-medicine.1517689/",
+  "pages_total": 2,
+  "last_post": 75,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-10-01",
+    "post": 32,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-02",
+    "post": 73,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-05",
+    "post": 34,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-06",
+    "post": 35,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-06",
+    "post": 36,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-24",
+    "post": 49,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-27",
+    "post": 50,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [
+   39,
+   42,
+   58
+  ],
+  "notes": "Secondhand reports of IIs from 9/22 (admit.org) not counted. #39 'II 9/29' could be interview date, excluded. #42 restates #35. #58 implies an II with no date. #73 (posted Mon 11/2) says II received 10/2. Secondhand talk of acceptances starting ~10/30; no first-person decisions."
+ },
+ {
+  "school": "California Northstate University College of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-california-northstate-university.1517690/",
+  "pages_total": 1,
+  "last_post": 23,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-31",
+    "post": 17,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-26",
+    "post": 23,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Single page. #17 '+1 IS II on 8/31' posted 9/8; read 8/31 as receipt date (post #16 on 8/29 said no IIs yet), but it could be the interview date. #23 gives an interview date of 10/30; post date used."
+ },
+ {
+  "school": "Carle Illinois College of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-carle-illinois-college-of-medicine.1517691/",
+  "pages_total": 1,
+  "last_post": 38,
+  "checked": "2026-11-05",
+  "events": [],
+  "exclude_posts": [],
+  "notes": "Single page. No IIs or decisions reported. Only showcase/event invites (~11/3), not counted. Thread says decisions release Jan 20, 2027."
+ },
+ {
+  "school": "Case Western Reserve University School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-case-western-reserve-university.1517692/",
+  "pages_total": 2,
+  "last_post": 74,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-21",
+    "post": 24,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-21",
+    "post": 25,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-22",
+    "post": 26,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-08-24",
+    "post": 27,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-08-24",
+    "post": 28,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-08-27",
+    "post": 31,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-09-03",
+    "post": 33,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-23",
+    "post": 38,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-01",
+    "post": 42,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-01",
+    "post": 43,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-15",
+    "post": 68,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-15",
+    "post": 70,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-15",
+    "post": 71,
+    "res": null
+   },
+   {
+    "type": "hold",
+    "date": "2026-10-15",
+    "post": 72,
+    "res": null
+   },
+   {
+    "type": "hold",
+    "date": "2026-10-15",
+    "post": 73,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-30",
+    "post": 74,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [
+   30,
+   32,
+   35,
+   37
+  ],
+  "notes": "University Program MD; #42/#43 are MSTP IIs. #27/#28 'R' on 8/24 before any interviews, read as preR (#30 clarifies University Program R, CCLCM pending). #30/#32/#35 restatements; #37 interview with no invite. Holds are deferrals. Zoom-link posts not counted."
+ },
+ {
+  "school": "Central Michigan University College of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-central-michigan-university.1517693/",
+  "pages_total": 1,
+  "last_post": 22,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-10",
+    "post": 10,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-13",
+    "post": 13,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-14",
+    "post": 16,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-28",
+    "post": 18,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-28",
+    "post": 19,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-30",
+    "post": 21,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-08",
+    "post": 22,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [
+   15
+  ],
+  "notes": "Single page. #15 only says interview next week, no invite report; excluded. #22 received 'yesterday' rel. to Oct 9 post. No decisions yet."
+ },
+ {
+  "school": "Charles R. Drew University College of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-charles-r-drew-university.1517694/",
+  "pages_total": 2,
+  "last_post": 52,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "preR",
+    "date": "2026-09-21",
+    "post": 34,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-21",
+    "post": 35,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-21",
+    "post": 36,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-21",
+    "post": 37,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-21",
+    "post": 38,
+    "res": "IS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-21",
+    "post": 39,
+    "res": "IS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-21",
+    "post": 40,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-21",
+    "post": 41,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-22",
+    "post": 44,
+    "res": "IS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-22",
+    "post": 47,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-22",
+    "post": 49,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [
+   51,
+   52
+  ],
+  "notes": "Big rejection batch Sep 21-22, many pre-secondary; counted as preR (no IIs reported before). #51 (Oct 30) says they got an II and sent availability ~4 weeks ago, invite date unknown; #52 only implies same. Both excluded as undated. IIs exist but none dated."
+ },
+ {
+  "school": "Chicago Medical School at Rosalind Franklin",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-chicago-medical-school-at-rosalind-franklin.1517695/",
+  "pages_total": 1,
+  "last_post": 43,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-20",
+    "post": 26,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-11",
+    "post": 32,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-15",
+    "post": 34,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-26",
+    "post": 40,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [
+   38,
+   39
+  ],
+  "notes": "Single page. #38 (Oct 16) and #39 (Oct 20) report OOS rejections without saying pre/post interview; excluded."
+ },
+ {
+  "school": "Cleveland Clinic Lerner College of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-cleveland-clinic-lerner-college-of-medicine.1517696/",
+  "pages_total": 1,
+  "last_post": 6,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-10-15",
+    "post": 4,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Single page, very quiet thread; one IS II."
+ },
+ {
+  "school": "Columbia Vagelos College of Physicians and Surgeons",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-columbia-vagelos-university-college-of-physicians-and-surgeons.1518230/",
+  "pages_total": 1,
+  "last_post": 29,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-10-02",
+    "post": 28,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Single page; mostly secondary chatter. One OOS MD II Oct 2."
+ },
+ {
+  "school": "Cooper Medical School of Rowan University",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-cooper-medical-school-of-rowan-university.1517697/",
+  "pages_total": 1,
+  "last_post": 20,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "preR",
+    "date": "2026-10-23",
+    "post": 19,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-10-23",
+    "post": 20,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [
+   7
+  ],
+  "notes": "Single page. #7 (Jul 23) labeled 'II' but quoted as a secondary; ambiguous, excluded. #19/#20 are rejections before secondary. No IIs reported."
+ },
+ {
+  "school": "Creighton University School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-creighton-university-school-of-medicine.1517698/",
+  "pages_total": 1,
+  "last_post": 44,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-17",
+    "post": 18,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-17",
+    "post": 19,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-24",
+    "post": 20,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-24",
+    "post": 21,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-24",
+    "post": 28,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-14",
+    "post": 29,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-15",
+    "post": 36,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-15",
+    "post": 37,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-16",
+    "post": 38,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-16",
+    "post": 39,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Single page. #28 posted Sep 10 states II 08/24. 'Complete 7/x' dates in #19/#20 read as application-complete, not II date. Committee releases Fridays per thread."
+ },
+ {
+  "school": "Dartmouth Geisel School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-dartmouth-geisel-school-of-medicine.1517699/",
+  "pages_total": 1,
+  "last_post": 35,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-17",
+    "post": 13,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-24",
+    "post": 19,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-17",
+    "post": 20,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-18",
+    "post": 21,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-09-18",
+    "post": 22,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-20",
+    "post": 29,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [
+   32,
+   35
+  ],
+  "notes": "Single page. #19 posted Sep 10 states II 08/24. #32 (Oct 26) and #35 (Nov 3) OOS rejections, stage not stated; excluded."
+ },
+ {
+  "school": "Dell Medical School",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-dell-medical-school.1517700/",
+  "pages_total": 5,
+  "last_post": 228,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-07-02",
+    "post": 64,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-07-02",
+    "post": 65,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-02",
+    "post": 66,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-02",
+    "post": 71,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-02",
+    "post": 73,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-08",
+    "post": 87,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-09",
+    "post": 91,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-20",
+    "post": 119,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-21",
+    "post": 174,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-08",
+    "post": 206,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-15",
+    "post": 222,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-15",
+    "post": 223,
+    "res": null
+   }
+  ],
+  "exclude_posts": [
+   75,
+   153,
+   201,
+   220
+  ],
+  "notes": "TMDSAS school, IIs start early July. #75 restates #65's invite. #153 (Aug 8) recap mentioning 7/1, likely duplicate/ambiguous. #201 and #220 say they have an II with no date. All excluded."
+ },
+ {
+  "school": "Drexel University College of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-drexel-university-college-of-medicine.1517701/",
+  "pages_total": 2,
+  "last_post": 66,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "hold",
+    "date": "2026-07-21",
+    "post": 17,
+    "res": null
+   },
+   {
+    "type": "hold",
+    "date": "2026-07-27",
+    "post": 23,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-10",
+    "post": 35,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-11",
+    "post": 38,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-11",
+    "post": 39,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-17",
+    "post": 43,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-18",
+    "post": 44,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-18",
+    "post": 45,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-13",
+    "post": 50,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-21",
+    "post": 56,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-23",
+    "post": 58,
+    "res": "IS"
+   },
+   {
+    "type": "hold",
+    "date": "2026-10-27",
+    "post": 60,
+    "res": "OOS"
+   },
+   {
+    "type": "hold",
+    "date": "2026-10-27",
+    "post": 63,
+    "res": "IS"
+   },
+   {
+    "type": "hold",
+    "date": "2026-10-29",
+    "post": 62,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-11-03",
+    "post": 65,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [
+   25,
+   46,
+   47
+  ],
+  "notes": "Holds #17/#23 are pre-interview committee holds; #60/#62/#63 are post-interview deferrals (#63 states deferral 10/27). #25 restates #23. #46/#47 mention scheduled interviews without invite report."
+ },
+ {
+  "school": "Duke University School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-duke-university-school-of-medicine.1517702/",
+  "pages_total": 1,
+  "last_post": 33,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-09-26",
+    "post": 26,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-29",
+    "post": 27,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-06",
+    "post": 28,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-06",
+    "post": 29,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-09",
+    "post": 31,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [
+   32
+  ],
+  "notes": "Single page (no pagination; page-2 returned a client error). #26 said II came 'last week' (around Sep 14-20); post date used. #32 excluded: PCLT-track invite received after the poster's MD interview, not a new MD II."
+ },
+ {
+  "school": "East Carolina University Brody School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-east-carolina-university-brody-school-of-medicine.1517704/",
+  "pages_total": 1,
+  "last_post": 13,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-10-09",
+    "post": 7,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-14",
+    "post": 10,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Single page, no pagination. #7 said II came 'last week' (around Sep 28-Oct 2); post date used."
+ },
+ {
+  "school": "East Tennessee State University Quillen College of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-east-tennessee-state-university-quillen-college-of-medicine.1517705/",
+  "pages_total": 2,
+  "last_post": 54,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-11",
+    "post": 13,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-12",
+    "post": 16,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-14",
+    "post": 17,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-17",
+    "post": 29,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-22",
+    "post": 31,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-30",
+    "post": 33,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-09",
+    "post": 34,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-15",
+    "post": 39,
+    "res": "IS"
+   },
+   {
+    "type": "hold",
+    "date": "2026-10-16",
+    "post": 42,
+    "res": "IS"
+   },
+   {
+    "type": "hold",
+    "date": "2026-10-16",
+    "post": 43,
+    "res": "IS"
+   },
+   {
+    "type": "hold",
+    "date": "2026-10-16",
+    "post": 45,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-30",
+    "post": 54,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [
+   25,
+   52
+  ],
+  "notes": "Receipt dates mostly not stated; post dates used. #39 was a phone call (ETSU calls with IIs), counted as II. #25 only mentions a completed interview; excluded. #52 describes a hold and an April acceptance from an apparent past cycle in reply to a question; excluded. #54 acceptance 10/30 in tracker shorthand (OOS with ties)."
+ },
+ {
+  "school": "Eastern Virginia Medical School at Old Dominion",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-eastern-virginia-medical-school-at-old-dominion.1517706/",
+  "pages_total": 2,
+  "last_post": 67,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-09-08",
+    "post": 49,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-08",
+    "post": 50,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-17",
+    "post": 53,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-29",
+    "post": 59,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-06",
+    "post": 60,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-06",
+    "post": 62,
+    "res": null
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Receipt dates not stated except #62 ('Tuesday' in an Oct 11 post = Oct 6). Post dates used otherwise."
+ },
+ {
+  "school": "Emory University School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-emory-university-school-of-medicine.1517707/",
+  "pages_total": 2,
+  "last_post": 59,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-09-22",
+    "post": 46,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-22",
+    "post": 47,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-22",
+    "post": 48,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-22",
+    "post": 50,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-24",
+    "post": 51,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-09",
+    "post": 58,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-14",
+    "post": 59,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [
+   58,
+   59
+  ],
+  "notes": "Receipt dates not stated; post dates used. #58 is an MSTP (MD/PhD) II and #59 a robotics MD/MS dual-degree II; drop them if only MD-track invites should count. #58 (MSTP) and #59 (MD/MS) excluded from MD counts."
+ },
+ {
+  "school": "Florida Atlantic University Schmidt College of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-florida-atlantic-university-schmidt-college-of-medicine.1517708/",
+  "pages_total": 1,
+  "last_post": 26,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-15",
+    "post": 12,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-08-17",
+    "post": 15,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-19",
+    "post": 16,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-22",
+    "post": 17,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-27",
+    "post": 18,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-04",
+    "post": 20,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-24",
+    "post": 23,
+    "res": "IS"
+   },
+   {
+    "type": "WL",
+    "date": "2026-10-15",
+    "post": 24,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Single page, no pagination. Receipt dates not stated ('just got' for #12); post dates used."
+ },
+ {
+  "school": "Florida International University Herbert Wertheim College of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-florida-international-university-herbert-wertheim-college-of-medicine.1517711/",
+  "pages_total": 1,
+  "last_post": 23,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-21",
+    "post": 11,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-08-25",
+    "post": 16,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-30",
+    "post": 19,
+    "res": null
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Single page, no pagination. #19 posted 'Friday' (Oct 30) and said II came today. No residency stated."
+ },
+ {
+  "school": "Florida State University College of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-florida-state-university-college-of-medicine.1517712/",
+  "pages_total": 2,
+  "last_post": 53,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-09-08",
+    "post": 30,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-09-25",
+    "post": 41,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-09-29",
+    "post": 44,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "#30 was an Early Decision II (received 'today'); #41 a regular-decision II; #44 an ED acceptance received 'yesterday evening' (Sep 29). Page 2 has no reports."
+ },
+ {
+  "school": "Frist College of Medicine at Belmont University",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-frist-college-of-medicine-at-belmont-university.1517713/",
+  "pages_total": 2,
+  "last_post": 55,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-25",
+    "post": 27,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-03",
+    "post": 28,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-17",
+    "post": 32,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-17",
+    "post": 33,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-22",
+    "post": 34,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-02",
+    "post": 39,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-04",
+    "post": 42,
+    "res": null
+   },
+   {
+    "type": "WL",
+    "date": "2026-10-15",
+    "post": 44,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-28",
+    "post": 50,
+    "res": null
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Receipt dates mostly not stated; post dates used. #39 is an international applicant (res null). #40 only describes a completed interview; not counted. Page 2 has no reports."
+ },
+ {
+  "school": "Geisinger Commonwealth School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-geisinger-commonwealth-school-of-medicine.1520397/",
+  "pages_total": 1,
+  "last_post": 25,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-24",
+    "post": 10,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-26",
+    "post": 12,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-31",
+    "post": 13,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-15",
+    "post": 15,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-05",
+    "post": 24,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-11-04",
+    "post": 25,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Single page, no pagination. #12 said the II came 'a week and a half ago' (around Aug 15, which would be the earliest II); post date used. #24 stated receipt Oct 5 (posted Oct 21). #25 acceptance posted Yesterday (Nov 4)."
+ },
+ {
+  "school": "George Washington University School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-george-washington-university-school-of-medicine.1517714/",
+  "pages_total": 2,
+  "last_post": 76,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "hold",
+    "date": "2026-07-22",
+    "post": 27,
+    "res": null
+   },
+   {
+    "type": "hold",
+    "date": "2026-07-22",
+    "post": 28,
+    "res": null
+   },
+   {
+    "type": "hold",
+    "date": "2026-07-23",
+    "post": 29,
+    "res": null
+   },
+   {
+    "type": "hold",
+    "date": "2026-07-24",
+    "post": 30,
+    "res": null
+   },
+   {
+    "type": "hold",
+    "date": "2026-08-03",
+    "post": 36,
+    "res": null
+   },
+   {
+    "type": "hold",
+    "date": "2026-08-04",
+    "post": 37,
+    "res": null
+   },
+   {
+    "type": "hold",
+    "date": "2026-08-10",
+    "post": 42,
+    "res": null
+   },
+   {
+    "type": "hold",
+    "date": "2026-08-14",
+    "post": 43,
+    "res": null
+   },
+   {
+    "type": "hold",
+    "date": "2026-08-15",
+    "post": 44,
+    "res": null
+   },
+   {
+    "type": "hold",
+    "date": "2026-08-25",
+    "post": 45,
+    "res": null
+   },
+   {
+    "type": "hold",
+    "date": "2026-08-25",
+    "post": 46,
+    "res": null
+   },
+   {
+    "type": "hold",
+    "date": "2026-08-26",
+    "post": 47,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-09-01",
+    "post": 54,
+    "res": "OOS"
+   },
+   {
+    "type": "hold",
+    "date": "2026-09-07",
+    "post": 52,
+    "res": null
+   },
+   {
+    "type": "hold",
+    "date": "2026-09-09",
+    "post": 55,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-16",
+    "post": 56,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-18",
+    "post": 57,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-09-22",
+    "post": 58,
+    "res": "OOS"
+   },
+   {
+    "type": "hold",
+    "date": "2026-09-22",
+    "post": 59,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-15",
+    "post": 64,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-15",
+    "post": 65,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-16",
+    "post": 67,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-20",
+    "post": 68,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-10-23",
+    "post": 71,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-10-23",
+    "post": 73,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-10-23",
+    "post": 74,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [
+   24
+  ],
+  "notes": "Holds are portal 'hold' reports; #24 implied only, left out. #67 II receipt date not stated (post date). #68 A said 'last week', post date used. #71/#73 rejections stage not stated, treated as preR (no interview mentioned; #74 was on hold). Page-2 needed a cache-bust fetch; plain fetch failed twice."
+ },
+ {
+  "school": "Georgetown University School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-georgetown-university-school-of-medicine.1517715/",
+  "pages_total": 2,
+  "last_post": 61,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-07-22",
+    "post": 20,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-07-22",
+    "post": 23,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-22",
+    "post": 24,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-24",
+    "post": 26,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-07-24",
+    "post": 27,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-28",
+    "post": 29,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-12",
+    "post": 36,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-31",
+    "post": 39,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-18",
+    "post": 47,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-18",
+    "post": 48,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-19",
+    "post": 56,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-10-20",
+    "post": 61,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Receipt dates mostly post dates. No new posts since Oct 20."
+ },
+ {
+  "school": "Hackensack Meridian School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-hackensack-meridian-school-of-medicine.1517716/",
+  "pages_total": 1,
+  "last_post": 32,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-09-18",
+    "post": 25,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-09-26",
+    "post": 30,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-02",
+    "post": 31,
+    "res": null
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "#25 residency reported inconsistently across fetches, left null. #31 II receipt date not stated (post date). #29/#32 PREview-missing emails not counted as holds."
+ },
+ {
+  "school": "Harvard Medical School",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-harvard-medical-school.1517717/",
+  "pages_total": 1,
+  "last_post": 23,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-31",
+    "post": 20,
+    "res": null
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Only one first-person II; #19 relays someone else's II (not counted)."
+ },
+ {
+  "school": "Zucker School of Medicine at Hofstra/Northwell",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-hofstra-zucker.1518237/",
+  "pages_total": 1,
+  "last_post": 27,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-04",
+    "post": 12,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-13",
+    "post": 15,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-13",
+    "post": 17,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-08-21",
+    "post": 19,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-25",
+    "post": 20,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-02",
+    "post": 21,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-11",
+    "post": 22,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-09-16",
+    "post": 23,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-09-25",
+    "post": 25,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "#22 'Friday' relative to Tue Sep 15 post = Sep 11. #23 receipt date unknown (post date). #25 'about 9/25'. #26 only implies II (wave mention), left out."
+ },
+ {
+  "school": "Howard University College of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-howard-university-college-of-medicine.1517718/",
+  "pages_total": 2,
+  "last_post": 100,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-31",
+    "post": 42,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-15",
+    "post": 83,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-11-03",
+    "post": 96,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Posts #71/#77/#81/#99/#100 mention interviewing only, no invite report, left out. 'Application reviewed' emails (#87-#97) not counted as holds. #96 'Tuesday' = Nov 3."
+ },
+ {
+  "school": "Icahn School of Medicine at Mount Sinai",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-icahn-school-of-medicine-at-mount-sinai.1517720/",
+  "pages_total": 1,
+  "last_post": 28,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-18",
+    "post": 23,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-14",
+    "post": 28,
+    "res": null
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "#28 '7/13' is secondary completion date; post date used."
+ },
+ {
+  "school": "Indiana University School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-indiana-university-school-of-medicine.1517721/",
+  "pages_total": 6,
+  "last_post": 253,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-07-15",
+    "post": 12,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-07-16",
+    "post": 17,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-07-17",
+    "post": 18,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-20",
+    "post": 24,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-07-20",
+    "post": 25,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-07-20",
+    "post": 35,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-20",
+    "post": 58,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-07-21",
+    "post": 41,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-21",
+    "post": 66,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-07-23",
+    "post": 61,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-28",
+    "post": 72,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-07-29",
+    "post": 57,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-07-30",
+    "post": 48,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-07-30",
+    "post": 60,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-07-31",
+    "post": 55,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-07-31",
+    "post": 56,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-03",
+    "post": 62,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-04",
+    "post": 68,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-08-07",
+    "post": 70,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-12",
+    "post": 78,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-17",
+    "post": 83,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-08-21",
+    "post": 86,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-08-21",
+    "post": 87,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-08-28",
+    "post": 102,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-08-28",
+    "post": 103,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-16",
+    "post": 124,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-09-28",
+    "post": 154,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-09-30",
+    "post": 141,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-01",
+    "post": 143,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-01",
+    "post": 144,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-01",
+    "post": 145,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-01",
+    "post": 147,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-05",
+    "post": 170,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-22",
+    "post": 186,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-22",
+    "post": 188,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-22",
+    "post": 190,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-22",
+    "post": 195,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-23",
+    "post": 196,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-23",
+    "post": 198,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-23",
+    "post": 199,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-23",
+    "post": 200,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-23",
+    "post": 204,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-23",
+    "post": 217,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-23",
+    "post": 221,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-23",
+    "post": 223,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-24",
+    "post": 219,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-25",
+    "post": 229,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-25",
+    "post": 231,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-11-05",
+    "post": 253,
+    "res": null
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Many posts report only interviews held (#109,#114-116,#129,#173 etc.) or vague 'early September'/'a month ago' invites (#132,#176), left out. #58 'the 20th' = Jul 20; #66 '2 weeks ago' from Aug 4 = ~Jul 21. #56 '+1' and #68 implied IIs included; #28 Urban Health invite left out. #70/#86/#87 rejections stage unstated, treated preR (Aug). A includes ED and MSTP (#253) and UMP (#223); #238/#246/#247/#249 campus/implied, left out. Pages 4-6 needed cache-bust fetches (plain copies stale)."
+ },
+ {
+  "school": "Johns Hopkins University School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-johns-hopkins-university-school-of-medicine.1517722/",
+  "pages_total": 1,
+  "last_post": 26,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-10-13",
+    "post": 25,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Only one reported II; thread is quiet."
+ },
+ {
+  "school": "Kaiser Permanente Tyson School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-kaiser-permanente-tyson-school-of-medicine.1517723/",
+  "pages_total": 1,
+  "last_post": 36,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-28",
+    "post": 25,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-09-02",
+    "post": 28,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-21",
+    "post": 30,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [
+   23,
+   35
+  ],
+  "notes": "#23 pastes a template invite without saying it's theirs; #35 mentions only an interview in late Sept. 'Pending review' emails (#32-34, Oct 1) likely mass email, not counted as holds."
+ },
+ {
+  "school": "Loma Linda University School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-loma-linda-university-school-of-medicine.1517724/",
+  "pages_total": 1,
+  "last_post": 37,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-10",
+    "post": 11,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-17",
+    "post": 19,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-26",
+    "post": 14,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-01",
+    "post": 17,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-02",
+    "post": 29,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-09-10",
+    "post": 21,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-10-06",
+    "post": 25,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Single page. #19 receipt 8/17 (posted 9/7); #29 receipt 9/2 (posted 10/22, 9/4 is interview date); #21 date 9/10 most likely invite date. No acceptances yet."
+ },
+ {
+  "school": "LSU Health New Orleans School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-lsu-new-orleans.1517725/",
+  "pages_total": 2,
+  "last_post": 59,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-06-30",
+    "post": 3,
+    "res": "IS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-07-02",
+    "post": 6,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-08-31",
+    "post": 26,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-07",
+    "post": 35,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-07",
+    "post": 36,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-29",
+    "post": 51,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-29",
+    "post": 56,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-29",
+    "post": 57,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [
+   13,
+   33
+  ],
+  "notes": "#13 repeats same poster's preR from #6. #33 (OOS) reports II received ~a month before 10/2 post with no exact date (interview 10/14), left out. #56 acceptance post is terse. #3 early II 6/30 IS kept (explicit receipt date)."
+ },
+ {
+  "school": "LSU Health Shreveport School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-lsu-shreveport.1517726/",
+  "pages_total": 1,
+  "last_post": 32,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-27",
+    "post": 20,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-08-27",
+    "post": 22,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-07",
+    "post": 26,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-12",
+    "post": 27,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-17",
+    "post": 30,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Single page, last post Oct 27. #25 reports II from a different school (not counted). Acceptance #30 interviewed 9/29."
+ },
+ {
+  "school": "Loyola University Chicago Stritch School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-loyola-university-chicago-stritch-school-of-medicine.1517727/",
+  "pages_total": 1,
+  "last_post": 30,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-10-19",
+    "post": 30,
+    "res": null
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Single page, mostly secondary reports. Only one II reported (10/19, read as invite date; posted 10/24)."
+ },
+ {
+  "school": "Marshall University Joan C. Edwards School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-marshall-university.1517728/",
+  "pages_total": 1,
+  "last_post": 18,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-09-04",
+    "post": 10,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-04",
+    "post": 15,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-08",
+    "post": 11,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-15",
+    "post": 17,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [
+   2,
+   3
+  ],
+  "notes": "#2 (7/14) and #3 (7/17) are '+1 OOS' with unlabeled dates; likely secondaries (#3 asks about course requirements), left out as ambiguous. #15 receipt 9/4 (posted 9/10); #17 is same poster's acceptance."
+ },
+ {
+  "school": "Mayo Clinic Alix School of Medicine, Minnesota",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-mayo-clinic-alix-minnesota.1517729/",
+  "pages_total": 1,
+  "last_post": 34,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-21",
+    "post": 18,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-21",
+    "post": 19,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-24",
+    "post": 20,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-24",
+    "post": 21,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-24",
+    "post": 24,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-11",
+    "post": 25,
+    "res": null
+   },
+   {
+    "type": "hold",
+    "date": "2026-09-23",
+    "post": 27,
+    "res": null
+   },
+   {
+    "type": "preR",
+    "date": "2026-10-07",
+    "post": 29,
+    "res": "OOS"
+   },
+   {
+    "type": "preR",
+    "date": "2026-10-07",
+    "post": 31,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-18",
+    "post": 34,
+    "res": "OOS"
+   }
+  ],
+  "exclude_posts": [
+   25,
+   26
+  ],
+  "notes": "#25 is an MSTP II. #26 gives only an interview date (9/24), no invite report. #24 is MN-Florida track. #31 Canadian applicant. #25 (MSTP) excluded from MD counts."
+ },
+ {
+  "school": "Mayo Clinic Alix School of Medicine, Arizona",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-mayo-clinic-arizona.1517730/",
+  "pages_total": 1,
+  "last_post": 2,
+  "checked": "2026-11-05",
+  "events": [],
+  "exclude_posts": [
+   2
+  ],
+  "notes": "Thread has only 2 posts. #2 (10/6) mentions an upcoming interview but no invite report or date; left out."
+ },
+ {
+  "school": "Medical College of Georgia at Augusta University",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-medical-college-of-georgia-at-augusta-university.1517732/",
+  "pages_total": 1,
+  "last_post": 29,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-04",
+    "post": 11,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-08-13",
+    "post": 14,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-08-18",
+    "post": 15,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-21",
+    "post": 16,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-09-04",
+    "post": 17,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-09-10",
+    "post": 19,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-09-10",
+    "post": 20,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-15",
+    "post": 21,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-15",
+    "post": 22,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-15",
+    "post": 24,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-15",
+    "post": 27,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-16",
+    "post": 25,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-29",
+    "post": 29,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "#11 II and #17 acceptance are EDP. #21/#22/#24 are '+1' acceptance posts read as self-reports. #29 regional pathways II (posted Mon Nov 2). page-2 fetch returned a client error; page-1 shows no pagination."
+ },
+ {
+  "school": "Medical College of Wisconsin",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-medical-college-of-wisconsin.1517733/",
+  "pages_total": 2,
+  "last_post": 82,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-09-14",
+    "post": 38,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-14",
+    "post": 39,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-15",
+    "post": 40,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-16",
+    "post": 42,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-17",
+    "post": 44,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-17",
+    "post": 46,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-09",
+    "post": 52,
+    "res": "IS"
+   },
+   {
+    "type": "R",
+    "date": "2026-10-15",
+    "post": 54,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-19",
+    "post": 69,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-19",
+    "post": 71,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-19",
+    "post": 72,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-19",
+    "post": 73,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [
+   36
+  ],
+  "notes": "#36 reports others' invites only. Acceptances came night of 10/19 (posted 10/20, 'last night'); #69 gives only '10:41 pm', dated 10/19 to match."
+ },
+ {
+  "school": "Medical University of South Carolina",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-medical-university-of-south-carolina.1517734/",
+  "pages_total": 1,
+  "last_post": 27,
+  "checked": "2026-11-05",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-09-16",
+    "post": 18,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-16",
+    "post": 19,
+    "res": "IS"
+   },
+   {
+    "type": "hold",
+    "date": "2026-11-02",
+    "post": 26,
+    "res": "IS"
+   },
+   {
+    "type": "hold",
+    "date": "2026-11-03",
+    "post": 27,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "#26 hold 'yesterday' from Tuesday (Nov 3) post = Nov 2; #27 posted Tuesday Nov 3."
  }
 ]
