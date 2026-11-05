@@ -49,3 +49,15 @@ Student-built. Not affiliated with AMCAS, the AAMC, or any medical school.
 - **Essays:** a "Stories that fit" panel ranks stories by shared rare words plus the kind of story that usually answers that prompt type.
 - **Interviews:** each school's "After you submit" panel has "Stories to have ready" (`s.stories`, keys "expId|itemId").
 
+## Primary application tab
+- Services: AMCAS, TMDSAS and AACOMAS (`prefs.services`; AMCAS is on by default). MD/PhD essays appear when `prefs.dual` is on.
+- Limits (2026-2027, chars with spaces), in `SVC`:
+  - AMCAS: personal comments 5,300; MD-PhD 3,000; significant research 10,000; W&A 15 × 700, with 3 most meaningful × 1,325.
+  - TMDSAS: personal statement 5,000; personal characteristics 5,000; optional 2,500; MD/PhD A and B 5,000 each; activities 500, with 3 meaningful × 500. Sources disagree on the activity length.
+  - AACOMAS: personal statement 5,300; experiences and achievements 600.
+- Each service is an `apps` record (`app-<svc>`) that `school()` also resolves, so primary essays use the normal essay editor, bases and versions.
+  - Primary essays carry `pkey` and family `ps`, `mdphd`, `research`, `diversity` or `anything`, so personal statements share one base and MD/PhD secondaries can start from the primary MD/PhD base.
+  - They're excluded from secondary progress and suggestions (`isPrimaryE`).
+- Activities (`acts`): {svc, expId, title, type, org, dates, hours, desc, mm, mmText}. They can start from an Experiences entry (type guessed from its kind), have live character meters, and show that experience's lessons as material for the most meaningful text.
+- Start a fresh list archives `apps` and `acts` with the cycle; bases stay.
+

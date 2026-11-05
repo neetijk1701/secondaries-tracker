@@ -289,7 +289,7 @@ const FAM = {
   gap:"Gap year / current activities", team:"Teamwork & conflict", career:"Career goals & interests",
   service:"Service & community", ethics:"Ethical dilemma", osteo:"Why osteopathic medicine",
   mdphd:"Why MD/PhD", research:"Research experience", resint:"Research interests", anything:"Anything else", other:"Other",
-  update:"Update letter", loi:"Letter of intent", thanks:"Thank-you note"};
+  update:"Update letter", loi:"Letter of intent", thanks:"Thank-you note", ps:"Personal statement"};
 const STATUS = {todo:"Not started", drafting:"Drafting", ready:"Ready", pasted:"In portal"};
 const LETTER_FAMS = ["update","loi","thanks"];
 function isLetter(e){ return !!e && LETTER_FAMS.includes(e.family); }
@@ -381,9 +381,9 @@ function seed(){
 
 /* ---------- storage ---------- */
 let S;
-function blank(){ return {v:1, demo:false, schools:[], bases:[], essays:[], archives:[], experiences:[], recommenders:[], del:{}}; }
-function load(){ try{ const raw=localStorage.getItem(KEY); if(raw){ const o=JSON.parse(raw); if(o && o.schools){ o.del=o.del||{}; o.archives=o.archives||[]; o.experiences=o.experiences||[]; o.recommenders=o.recommenders||[]; return o; } } }catch(e){} return blank(); }
-const COLLS=["schools","bases","essays","archives","experiences","recommenders"];   // experiences and letter writers stay across cycles   // archives: one record per past cycle
+function blank(){ return {v:1, demo:false, schools:[], bases:[], essays:[], archives:[], experiences:[], recommenders:[], apps:[], acts:[], del:{}}; }
+function load(){ try{ const raw=localStorage.getItem(KEY); if(raw){ const o=JSON.parse(raw); if(o && o.schools){ o.del=o.del||{}; o.archives=o.archives||[]; o.experiences=o.experiences||[]; o.recommenders=o.recommenders||[]; o.apps=o.apps||[]; o.acts=o.acts||[]; return o; } } }catch(e){} return blank(); }
+const COLLS=["schools","bases","essays","archives","experiences","recommenders","apps","acts"];   // experiences and letter writers stay across cycles   // archives: one record per past cycle
 let SNAP=new Map();
 function recJson(r){ const {u, ...rest}=r; return JSON.stringify(rest); }
 function snapshot(){ SNAP=new Map(); COLLS.forEach(c=>(S[c]||[]).forEach(r=>SNAP.set(c+":"+r.id, recJson(r)))); SNAP.set("meta", JSON.stringify([S.dismissed||[], S.prefs||{}])); }
@@ -602,7 +602,8 @@ const Sync = (function(){
 
 
 /* ---------- model helpers ---------- */
-const school = id=>S.schools.find(s=>s.id===id);
+const school = id=>S.schools.find(s=>s.id===id) || (S.apps||[]).find(a=>a.id===id);
+const isPrimaryE = e=>!!e && typeof e.schoolId==="string" && e.schoolId.startsWith("app-");
 const essay = id=>S.essays.find(e=>e.id===id);
 const base = id=>S.bases.find(b=>b.id===id);
 const essaysOf = sid=>S.essays.filter(e=>e.schoolId===sid);
@@ -855,7 +856,7 @@ function clusterKey(e){
   for(const c of ["reapp","clinical","research","academic"]) if(CONCEPTS[c].test(tl)) return c;
   return null;
 }
-function openEssays(){ return S.essays.filter(e=>{ const sc=school(e.schoolId); return sc && !sc.submitted && !isLetter(e); }); }
+function openEssays(){ return S.essays.filter(e=>{ const sc=school(e.schoolId); return sc && !sc.submitted && !isLetter(e) && !isPrimaryE(e); }); }
 function crossPairs(es){
   buildIdf();
   const V=new Map(es.map(e=>[e.id, vec(e.prompt, school(e.schoolId).name)]));
@@ -941,7 +942,7 @@ function suggPanel(list, title, mobile){
 
 /* ---------- UI state ---------- */
 const ui = {tab:"next", schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, libQ:"", libState:"", libDeg:"", libOpen:null, restore:false, pick:null, pickQ:"", pickI:0, editPrompt:false, sgAll:false, sgOpen:false};
-const TABS = [["next","Do next"],["schools","Schools"],["cycle","Cycle"],["essays","Base essays"],["experiences","Experiences"]].concat(SHOW_LIBRARY? [["library","Prompt library"]] : []);
+const TABS = [["next","Do next"],["primary","Primary"],["schools","Schools"],["cycle","Cycle"],["essays","Base essays"],["experiences","Experiences"]].concat(SHOW_LIBRARY? [["library","Prompt library"]] : []);
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function stars(n){ let h=""; for(let i=1;i<=3;i++) h+= i<=n? "●" : '<span class="off">●</span>'; return '<span class="stars" aria-label="Interest '+n+' of 3">'+h+'</span>'; }
 let toastT;
@@ -964,12 +965,13 @@ function render(){
   else if(ui.tab==="essays") h = vEssays();
   else if(ui.tab==="library") h = vLibrary();
   else if(ui.tab==="cycle") h = vCycle();
+  else if(ui.tab==="primary") h = vPrimary();
   else if(ui.expId && exp(ui.expId)) h = vExp(exp(ui.expId));
   else if(ui.recId && rec(ui.recId)) h = vWriter(rec(ui.recId));
   else if(ui.tab==="experiences") h = vExperiences();
   else h = vNext();
   const essayView = !!(ui.essayId && essay(ui.essayId));
-  const showSide = S.essays.length>1 && !essayView && !((ui.tab==="cycle"||ui.tab==="experiences") && !ui.schoolId && !ui.baseId);
+  const showSide = S.essays.length>1 && !essayView && !((ui.tab==="cycle"||ui.tab==="experiences"||ui.tab==="primary") && !ui.schoolId && !ui.baseId);
   let side="";
   if(showSide){
     const list=suggestions();
@@ -1006,7 +1008,7 @@ function storyMatches(promptText, fam, n){
   const tk=t=>((t||"").toLowerCase().match(/[a-z]{4,}/g)||[]).filter(w=>!STOP.has(w)).map(stem);
   const df=new Map(); const docs=st.map(s=>{ const set=new Set(tk(s.head+" "+s.text+" "+s.x.title)); set.forEach(w=>df.set(w,(df.get(w)||0)+1)); return set; });
   const q=new Set(tk(promptText)), N=st.length;
-  const pref={research:["research"], resint:["research"], mdphd:["research","reflection"], career:["reflection","clinical","research"], service:["clinical","activity"], challenge:["weakness","research","activity"], diversity:["activity","reflection"], team:["reflection","research","activity"], why:["reflection"], gap:["research","clinical","activity"], osteo:["clinical"], update:["research","clinical","activity"], loi:["reflection"], ethics:["clinical"]}[fam]||[];
+  const pref={ps:["clinical","reflection","research"], research:["research"], resint:["research"], mdphd:["research","reflection"], career:["reflection","clinical","research"], service:["clinical","activity"], challenge:["weakness","research","activity"], diversity:["activity","reflection"], team:["reflection","research","activity"], why:["reflection"], gap:["research","clinical","activity"], osteo:["clinical"], update:["research","clinical","activity"], loi:["reflection"], ethics:["clinical"]}[fam]||[];
   return st.map((s,i)=>{ let sc=0; q.forEach(w=>{ if(docs[i].has(w)) sc+=Math.log(1+N/(df.get(w)||1)); });
     const bi=pref.indexOf(s.x.kind); if(bi>=0) sc+=(3-bi)*0.8;
     if(fam==="challenge" && /setback|fail|struggl|difficult|mistake|problem|adversit/i.test(s.head+" "+s.text)) sc+=2.5;
@@ -1256,6 +1258,83 @@ function storiesPanel(e){
   return '<div class="panel"><div class="ph"><h3 style="flex:1">Stories that fit</h3><span class="small muted">From Experiences</span></div><ul class="list">'+m.map(o=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(o.head)+'</div><div class="small muted">'+esc(o.sub)+'</div><details><summary class="small" style="cursor:pointer">Read</summary><div class="small" style="margin-top:4px; white-space:pre-wrap">'+esc(o.text)+'</div></details></div><button class="ghost" data-act="story-copy" data-k="'+esc(o.key)+'">Copy</button></li>').join("")+'</ul></div>';
 }
 
+
+/* ---------- primary applications (AMCAS, TMDSAS, AACOMAS) ---------- */
+// Limits as of the 2026-2027 cycle. AMCAS: AAMC applicant guide and physicianscientists.org; TMDSAS essays: tmdsas.com;
+// TMDSAS activities and AACOMAS: prep-company guides (sources disagree on TMDSAS activity length). Applicants can edit any limit.
+const AMCAS_TYPES=["Artistic endeavors","Community service/volunteer: medical/clinical","Community service/volunteer: not medical/clinical","Conferences attended","Extracurricular activities","Hobbies","Honors/awards/recognitions","Intercollegiate athletics","Leadership: not listed elsewhere","Military service","Other","Paid employment: medical/clinical","Paid employment: not medical/clinical","Physician shadowing/clinical observation","Presentations/posters","Publications","Research/lab","Social justice/advocacy","Teaching/tutoring/teaching assistant"];
+const SVC = {
+  amcas:{name:"AMCAS", who:"most MD schools", essays:[
+      {k:"ps", t:"Personal comments", limit:5300, fam:"ps", p:"AMCAS personal comments: why you want to go to medical school. Check the exact wording in the application."},
+      {k:"mdphd", t:"MD-PhD essay", limit:3000, fam:"mdphd", dual:true, p:"AMCAS MD-PhD essay: your reasons for pursuing the combined MD/PhD degree."},
+      {k:"sre", t:"Significant research experience", limit:10000, fam:"research", dual:true, p:"AMCAS significant research experience: each research experience, with supervisor name and affiliation, duration, the problem studied, and your contributions."}],
+    act:{label:"Work and activities", max:15, desc:700, mm:3, mmLimit:1325, mmLabel:"Most meaningful", types:AMCAS_TYPES}},
+  tmdsas:{name:"TMDSAS", who:"Texas public schools", essays:[
+      {k:"ps", t:"Personal statement", limit:5000, fam:"ps", p:"TMDSAS personal statement: your motivation for a medical career and the value of experiences that prepare you to be a physician."},
+      {k:"pchar", t:"Personal characteristics", limit:5000, fam:"diversity", p:"TMDSAS personal characteristics: personal qualities, characteristics or lived experiences that would enrich the educational experience of others."},
+      {k:"opt", t:"Optional essay", limit:2500, fam:"anything", opt:true, p:"TMDSAS optional essay: unique circumstances or life experiences relevant to your application that you haven’t presented elsewhere."},
+      {k:"dualA", t:"MD/PhD essay A", limit:5000, fam:"mdphd", dual:true, p:"TMDSAS MD/PhD essay A: your motivation for a dual degree, your research interests and career goals."},
+      {k:"dualB", t:"MD/PhD essay B", limit:5000, fam:"research", dual:true, p:"TMDSAS MD/PhD essay B: your significant research experience, with your mentor’s name and title, your contributions, and any publications."}],
+    act:{label:"Activities", max:0, desc:500, mm:3, mmLimit:500, mmLabel:"Most meaningful", types:["Academic recognition","Non-academic recognition","Leadership","Employment","Research activities","Healthcare activities","Community engagement","Extracurricular activities"]}},
+  aacomas:{name:"AACOMAS", who:"DO schools", essays:[
+      {k:"ps", t:"Personal statement", limit:5300, fam:"ps", p:"AACOMAS personal statement: why you want to become an osteopathic physician."}],
+    act:{label:"Experiences and achievements", max:0, desc:600, mm:0, types:["Experience: extracurricular activities","Experience: healthcare experience","Experience: non-healthcare employment","Experience: research","Experience: teaching","Experience: non-healthcare volunteer or community enrichment","Achievement: award","Achievement: honor","Achievement: presentation","Achievement: publication","Achievement: scholarship"]}}
+};
+const SVC_ORDER=["amcas","tmdsas","aacomas"];
+function svcOn(k){ const v=prefs().services||{}; return k in v ? !!v[k] : k==="amcas"; }
+function appRec(k){ S.apps=S.apps||[]; let a=S.apps.find(x=>x.id==="app-"+k); if(!a){ a={id:"app-"+k, svc:k, name:SVC[k].name, submitted:false}; S.apps.push(a); } return a; }
+function primaryEssay(k, key){ return S.essays.find(e=>e.schoolId==="app-"+k && e.pkey===key); }
+function startPrimary(k, d){
+  const a=appRec(k), b=S.bases.find(x=>x.family===d.fam);
+  const e={id:id("e"), schoolId:a.id, pkey:d.k, prompt:d.p, limit:d.limit, unit:"chars", family:d.fam, baseId:b?b.id:null, basedOnV:null, text:"", status:"todo", localEdit:false, optional:!!d.opt, group:"", cut:false};
+  S.essays.push(e); return e;
+}
+function actType(k, kind){ const t=SVC[k].act.types;
+  const want={amcas:{research:"Research/lab", clinical:"Community service/volunteer: medical/clinical", activity:"Extracurricular activities"}, tmdsas:{research:"Research activities", clinical:"Healthcare activities", activity:"Extracurricular activities"}, aacomas:{research:"Experience: research", clinical:"Experience: healthcare experience", activity:"Experience: extracurricular activities"}}[k][kind];
+  return t.includes(want)? want : t[0]; }
+function actMeter(n, lim){ const over=lim && n>lim; return '<span class="small" style="color:'+(over?'var(--bad)':'var(--muted)')+'">'+n.toLocaleString()+(lim?' / '+lim.toLocaleString():'')+' chars'+(over?' · '+(n-lim).toLocaleString()+' over':'')+'</span>'; }
+function vPrimary(){
+  const dual=!!prefs().dual;
+  let h='<h1>Primary application</h1><p class="sub">Your personal statement, '+(dual?'MD/PhD essays, ':'')+'and activities for each application service. Personal statements share one base essay, so you can write once and trim to each service’s limit, and your secondaries can start from the same bases.</p>';
+  h+='<div class="row" style="margin-bottom:14px; gap:16px">'+SVC_ORDER.map(k=>'<label class="chk"><input type="checkbox" class="svc-on" value="'+k+'"'+(svcOn(k)?' checked':'')+'> '+SVC[k].name+' <span class="small muted">('+SVC[k].who+')</span></label>').join("")+'<label class="chk"><input type="checkbox" id="pref-dual-p"'+(dual?' checked':'')+'> Applying MD/PhD or DO/PhD</label></div>';
+  const on=SVC_ORDER.filter(svcOn);
+  if(!on.length) return h+'<div class="panel empty">Turn on the application services you’re using.</div>';
+  on.forEach(k=>{
+    const c=SVC[k], docs=c.essays.filter(d=>!d.dual||dual), a=(S.apps||[]).find(x=>x.id==="app-"+k);
+    h+='<div class="panel" style="margin-bottom:16px"><div class="ph"><h2 style="flex:1">'+c.name+'</h2><label class="chk small"><input type="checkbox" class="svc-sub" value="'+k+'"'+(a&&a.submitted?' checked':'')+'> Submitted</label></div>';
+    h+='<ul class="list">'+docs.map(d=>{ const e=primaryEssay(k,d.k); const b=e&&base(e.baseId);
+      return '<li><div class="main"><div class="row"><b>'+esc(d.t)+'</b>'+(d.opt?'<span class="chip">Optional</span>':'')+(d.dual?'<span class="chip acc">MD/PhD</span>':'')+'</div><div class="chips">'+(e?'<span class="chip">'+STATUS[e.status]+'</span>'+(b?'<span class="chip acc">Base: '+esc(b.title)+'</span>':'')+(behind(e)?'<span class="chip warn">Base now v'+latest(b).v+'</span>':''):'<span class="chip">'+d.limit.toLocaleString()+' characters</span>')+'</div>'+(e?meter(e):'')+'</div>'+
+        (e?'<button data-act="open-essay" data-id="'+e.id+'">Open</button>':'<button class="primary" data-act="prim-start" data-k="'+k+'" data-d="'+d.k+'">Start</button>')+'</li>'; }).join("")+'</ul>';
+    if(k==="aacomas" && dual) h+='<div class="pb small muted" style="border-top:1px solid var(--line-soft)">DO/PhD programs don’t use a shared essay in AACOMAS; each program asks for its own materials.</div>';
+    h+=actsPanel(k);
+    h+='</div>';
+  });
+  h+='<p class="small muted">Limits are for the '+cyc(CYCLE)+' cycle and include spaces. Services change them, so check each one in the application. You can change any limit with “Edit prompt, limit or type” in the editor.</p>';
+  return h;
+}
+function actsPanel(k){
+  const c=SVC[k].act, A=(S.acts||[]).filter(x=>x.svc===k), mm=A.filter(x=>x.mm).length, open=ui.actOpen;
+  const X=(S.experiences||[]).filter(x=>STORY_KINDS.includes(x.kind));
+  let h='<div class="pb" style="border-top:1px solid var(--line-soft)"><div class="row" style="justify-content:space-between"><h3 style="margin:0">'+c.label+'</h3><span class="small muted">'+A.length+(c.max?' of '+c.max:'')+' entries'+(c.mm?' · '+mm+' of '+c.mm+' '+c.mmLabel.toLowerCase():'')+' · '+c.desc+' characters each</span></div>';
+  h+='<div class="row" style="margin:8px 0"><select id="act-from-'+k+'" aria-label="Start from an experience"><option value="">Start from an experience…</option>'+X.filter(x=>!A.some(a=>a.expId===x.id)).map(x=>'<option value="'+x.id+'">'+esc(x.title.slice(0,70))+'</option>').join("")+'</select><button data-act="act-add" data-k="'+k+'">Add</button>'+(c.max&&A.length>=c.max?'<span class="small" style="color:var(--warn)">You’ve reached '+c.max+' entries.</span>':'')+'</div>';
+  if(A.length) h+='<ul class="list">'+A.map(x=>{ const isOpen=open===x.id, n=(x.desc||"").length;
+    let li='<li style="display:block"><div class="row" style="justify-content:space-between; flex-wrap:nowrap"><div class="main"><div class="row"><b>'+esc(x.title||"Untitled")+'</b>'+(x.mm?'<span class="chip acc">'+c.mmLabel+'</span>':'')+'</div><div class="chips"><span class="chip">'+esc(x.type||"")+'</span>'+(x.hours?'<span class="chip">'+esc(x.hours)+' hrs</span>':'')+'</div>'+actMeter(n,c.desc)+'</div><button class="ghost" data-act="act-open" data-id="'+x.id+'">'+(isOpen?'Close':'Edit')+'</button></div>';
+    if(isOpen){ const e=exp(x.expId);
+      li+='<div class="stack" style="gap:8px; margin-top:10px"><div class="grid-f"><label class="f">Title<input id="at-'+x.id+'" data-bind="act:'+x.id+':title" value="'+esc(x.title||"")+'"></label>'+
+        '<label class="f">Type<select id="ay-'+x.id+'" data-bind="act:'+x.id+':type">'+c.types.map(t=>'<option'+(t===x.type?' selected':'')+'>'+esc(t)+'</option>').join("")+'</select></label>'+
+        '<label class="f">Organization<input id="ao-'+x.id+'" data-bind="act:'+x.id+':org" value="'+esc(x.org||"")+'"></label>'+
+        '<label class="f">Dates<input id="ad-'+x.id+'" data-bind="act:'+x.id+':dates" value="'+esc(x.dates||"")+'"></label>'+
+        '<label class="f">Hours<input id="ah-'+x.id+'" data-bind="act:'+x.id+':hours" value="'+esc(x.hours||"")+'" placeholder="Total hours"></label></div>'+
+        '<label class="f">Description <span id="am-'+x.id+'">'+actMeter(n,c.desc)+'</span><textarea id="ax-'+x.id+'" rows="5" data-bind="act:'+x.id+':desc">'+esc(x.desc||"")+'</textarea></label>'+
+        (c.mm?'<label class="chk"><input type="checkbox" id="amm-'+x.id+'" data-bind="act:'+x.id+':mm"'+(x.mm?' checked':'')+((!x.mm&&mm>=c.mm)?' disabled':'')+'> '+c.mmLabel+(!x.mm&&mm>=c.mm?' (you’ve picked '+c.mm+')':'')+'</label>':'')+
+        (c.mm&&x.mm?'<label class="f">Why it was most meaningful <span id="amt-'+x.id+'">'+actMeter((x.mmText||"").length,c.mmLimit)+'</span><textarea id="amx-'+x.id+'" rows="5" data-bind="act:'+x.id+':mmText">'+esc(x.mmText||"")+'</textarea></label>':'')+
+        (e&&(e.items||[]).length?'<details><summary class="small" style="cursor:pointer">Lessons from “'+esc(e.title.slice(0,50))+'” to draw on</summary><ul class="small" style="margin:6px 0; padding-left:18px">'+e.items.map(it=>'<li><b>'+esc(it.head||"")+'</b> '+esc((it.text||"").slice(0,160))+((it.text||"").length>160?'…':'')+'</li>').join("")+'</ul></details>':'')+
+        '<div class="row"><button class="ghost" data-act="act-copy" data-id="'+x.id+'">Copy description</button>'+confirmBtn("del-act:"+x.id,"Remove","Remove this entry")+'</div></div>'; }
+    return li+'</li>'; }).join("")+'</ul>';
+  else h+='<p class="small muted" style="margin:0">'+(X.length?'Pick an experience to start an entry with its title, place, dates and description, then trim to '+c.desc+' characters.':'Add your experiences on the Experiences tab to start entries from them, or add one blank.')+'</p>';
+  return h+'</div>';
+}
+
 /* ---------- whole-cycle tracking ---------- */
 // where a school stands after its secondary; col = board column
 function stage(s){
@@ -1395,7 +1474,7 @@ function vBrief(rows){
   if(!parts.length){ const nx=dated.find(r=>r.p.left>W); parts.push('Nothing due in the next 2 weeks'+(nx?'. Next up: '+esc(schoolShort(nx.s.id))+' on '+fmt(nx.p.d.date):'')); }
   h+='<dt>'+(has7||!soon.length?'This week':'Next 2 weeks')+'</dt><dd>'+parts.join(', ')+'.'+(recent?' <span class="muted">Submitted '+recent+' this week.</span>':'')+'</dd>';
   // line 2: what's left to write
-  const es=S.essays.filter(e=>{ const sc=school(e.schoolId); return sc && !sc.submitted && !isLetter(e); });
+  const es=S.essays.filter(e=>{ const sc=school(e.schoolId); return sc && !sc.submitted && !isLetter(e) && !isPrimaryE(e); });
   const todo=es.filter(e=>e.status==="todo"||e.status==="drafting");
   const req=todo.filter(e=>!e.optional), opt=todo.length-req.length;
   const inProg=req.filter(e=>e.status==="drafting").length;
@@ -1938,7 +2017,7 @@ document.addEventListener("click", ev=>{
     case "go-essays": go("essays"); break;
     case "go-library": go("library"); break;
     case "back-schools": go("schools"); break;
-    case "open-school": go("schools",{schoolId:d.id}); break;
+    case "open-school": if(String(d.id).startsWith("app-")) go("primary"); else go("schools",{schoolId:d.id}); break;
     case "open-essay": { const x=essay(d.id); ui.tab="schools"; go("schools",{schoolId:x.schoolId, essayId:d.id}); break; }
     case "open-base": go("essays",{baseId:d.id}); break;
     case "toggle-add-school": ui.addSchool=!ui.addSchool; ui.pick=null; ui.pickQ=""; ui.pickI=0; render(); if(ui.addSchool){ const q=document.getElementById("pick-q"); if(q) q.focus(); } break;
@@ -1994,6 +2073,12 @@ document.addEventListener("click", ev=>{
     case "ask-confirm": ui.confirm=d.key; render(); break;
     case "cancel-confirm": ui.confirm=null; render(); break;
     case "confirm": doConfirm(d.key); break;
+    case "prim-start": { const c=SVC[d.k], dd=c&&c.essays.find(z=>z.k===d.d); if(!dd) break; const e=primaryEssay(d.k,d.d)||startPrimary(d.k,dd); save(); go("primary",{essayId:e.id}); toast(e.baseId?"Linked to your base “"+base(e.baseId).title+"”. Start from it and trim to "+dd.limit.toLocaleString()+" characters.":"Write it here. When it’s good, use “Make this the base” so your other applications and secondaries can start from it."); break; }
+    case "act-add": { const sel=document.getElementById("act-from-"+d.k), xid=sel?sel.value:"", x=xid?exp(xid):null; const c=SVC[d.k].act;
+      const a={id:id("a"), svc:d.k, expId:x?x.id:"", title:x?x.title:"", type:x?actType(d.k,x.kind):c.types[0], org:x?x.org||"":"", dates:x?x.dates||"":"", hours:"", desc:x?(x.summary||""):"", mm:false, mmText:""};
+      S.acts=S.acts||[]; S.acts.push(a); ui.actOpen=a.id; appRec(d.k); save(); render(); if(x && a.desc.length>c.desc) toast("Started from “"+x.title.slice(0,40)+"”. Trim the description to "+c.desc+" characters."); break; }
+    case "act-open": ui.actOpen = ui.actOpen===d.id? null : d.id; render(); break;
+    case "act-copy": { const a=(S.acts||[]).find(z=>z.id===d.id); if(a) copyText(portalText(a.desc||"")); break; }
     case "exp-view": ui.expView=d.v; render(); break;
     case "open-exp": { const x=exp(d.id); if(x) ui.expView=SELF_KINDS.includes(x.kind)?"self":"stories"; go("experiences",{expId:d.id}); break; }
     case "back-exp": ui.expView="stories"; go("experiences"); break;
@@ -2056,6 +2141,7 @@ function doConfirm(key){
   else if(k==="rollover"){ startFresh(); }
   else if(k==="del-exp"){ S.experiences=(S.experiences||[]).filter(x=>x.id!==idv); (S.recommenders||[]).forEach(r=>{ r.expIds=(r.expIds||[]).filter(i=>i!==idv); if(r.shared===idv) r.shared=""; }); S.schools.forEach(sc=>{ if(sc.stories) sc.stories=sc.stories.filter(k2=>!k2.startsWith(idv+"|")); }); save(); go("experiences"); toast("Deleted"); }
   else if(k==="del-rec"){ S.recommenders=(S.recommenders||[]).filter(r=>r.id!==idv); ui.expView="writers"; save(); go("experiences"); toast("Deleted"); }
+  else if(k==="del-act"){ S.acts=(S.acts||[]).filter(a=>a.id!==idv); ui.actOpen=null; save(); render(); }
   else if(k==="clear"){ S=blank(); save(); go("next"); toast("Erased. This device now has no schools or essays."); }
 }
 function copyText(t){
@@ -2065,8 +2151,8 @@ function copyText(t){
 function startFresh(){
   const c=prefs().cycle||FIRST_CYCLE, clone=o=>JSON.parse(JSON.stringify(o));
   S.archives=S.archives||[];
-  S.archives.push({id:"a"+c.slice(0,4)+Date.now().toString(36), cycle:c, at:iso(today()), schools:clone(S.schools), essays:clone(S.essays).map(e=>{ delete e.prev; return e; }), bases:clone(S.bases)});
-  S.schools=[]; S.essays=[]; S.bases.forEach(b=>{ /* bases stay; they no longer have school versions */ });
+  S.archives.push({id:"a"+c.slice(0,4)+Date.now().toString(36), cycle:c, at:iso(today()), schools:clone(S.schools), essays:clone(S.essays).map(e=>{ delete e.prev; return e; }), bases:clone(S.bases), apps:clone(S.apps||[]), acts:clone(S.acts||[])});
+  S.schools=[]; S.essays=[]; S.apps=[]; S.acts=[]; S.bases.forEach(b=>{ /* bases stay; they no longer have school versions */ });
   prefs().cycle=CYCLE; ui.confirm=null;
   save(); go("schools"); toast("Fresh list for "+cyc(CYCLE)+". Your "+cyc(c)+" work is under Past cycles on the Essays page.");
 }
@@ -2206,12 +2292,13 @@ document.addEventListener("input", ev=>{
   if(el.dataset.libdeg){ ui.libDeg=el.value; render(); return; }
   if(el.dataset.libq){ ui.libQ=el.value; const pos=el.selectionStart; render(); const n=document.getElementById("libq"); n.focus(); try{ n.setSelectionRange(pos,pos);}catch(e){} return; }
   if(el.id==="pref-name"){ prefs().name=el.value; save(); return; }
+  if(el.dataset.bind && /^act:/.test(el.dataset.bind) && !(el.type==="checkbox"||el.tagName==="SELECT")){ const [,aid,f]=el.dataset.bind.split(":"); const a=(S.acts||[]).find(z=>z.id===aid); if(a){ a[f]=el.value; save(); const lim=SVC[a.svc].act; if(f==="desc"){ const m=document.getElementById("am-"+a.id); if(m) m.innerHTML=actMeter(el.value.length,lim.desc); } if(f==="mmText"){ const m=document.getElementById("amt-"+a.id); if(m) m.innerHTML=actMeter(el.value.length,lim.mmLimit); } } return; }
   if(el.dataset.bind && /^(exp|expi|rec|recn):/.test(el.dataset.bind) && !(el.type==="checkbox"||el.tagName==="SELECT"||el.type==="date")){ bindExtra(el); return; }
   const bnd=el.dataset.bind; if(!bnd) return;
   const [kind,idv,field]=bnd.split(":");
   if(el.type==="checkbox"||el.tagName==="SELECT"||el.type==="date"||el.type==="number"||el.type==="time") return; // handled on change
   if(kind==="school"){ const sc=school(idv); if(sc){ sc[field]=el.value; save(); } return; }
-  if(kind==="essay"){ const x=essay(idv); x[field]=el.value; if(field==="text"){ if(x.baseId && x.basedOnV) x.localEdit=true; if(x.status==="todo" && x.text.trim()) x.status="drafting"; const m=document.getElementById("m-"+x.id); if(m) m.outerHTML=meter(x); clearTimeout(namesT); namesT=setTimeout(()=>{ const slot=document.getElementById("names-slot"); if(slot) slot.innerHTML=namesBanner(x); }, 600); } save(); }
+  if(kind==="essay"){ const x=essay(idv); x[field]=el.value; if(field==="text"){ const mb=document.querySelector('[data-act="make-base"]'); if(mb) mb.disabled=!x.text.trim(); if(x.baseId && x.basedOnV) x.localEdit=true; if(x.status==="todo" && x.text.trim()) x.status="drafting"; const m=document.getElementById("m-"+x.id); if(m) m.outerHTML=meter(x); clearTimeout(namesT); namesT=setTimeout(()=>{ const slot=document.getElementById("names-slot"); if(slot) slot.innerHTML=namesBanner(x); }, 600); } save(); }
   if(kind==="base"){ const b=base(idv); b[field]=el.value; if(field==="draft"){ document.getElementById("bmeter").textContent=words(b.draft)+" words · "+b.draft.length.toLocaleString()+" characters"; document.getElementById("bstate").innerHTML = unsaved(b)?'<span class="chip warn">Unsaved edits since v'+latest(b).v+'</span>':'<span class="chip">Matches v'+latest(b).v+'</span>'; } save(); }
 });
 document.addEventListener("change", ev=>{
@@ -2219,6 +2306,10 @@ document.addEventListener("change", ev=>{
   if(el.id==="pref-dual"){ prefs().dual=el.checked; save(); render(); toast(el.checked?"New schools will start with MD/PhD prompts. You can switch per school.":"New schools will start with regular prompts."); return; }
   if(el.id && el.id.startsWith("track-")){ const sc=school(el.id.slice(6)); if(sc){ sc.track=el.checked?"dual":"single"; save(); render(); } return; }
   if(el.classList && el.classList.contains("rec-it")){ const r=rec(el.dataset.r); if(r){ r.itemOff=r.itemOff||{}; const a=(r.itemOff[el.dataset.x]||[]).filter(i=>i!==el.value); if(!el.checked) a.push(el.value); r.itemOff[el.dataset.x]=a; ui.recOpen=el.dataset.x; save(); render(); } return; }
+  if(el.classList && el.classList.contains("svc-on")){ prefs().services=Object.assign({}, prefs().services||{amcas:true}, {[el.value]:el.checked}); save(); render(); return; }
+  if(el.classList && el.classList.contains("svc-sub")){ const a=appRec(el.value); a.submitted=el.checked; save(); render(); return; }
+  if(el.id==="pref-dual-p"){ prefs().dual=el.checked; save(); render(); return; }
+  if(el.dataset.bind && /^act:/.test(el.dataset.bind) && (el.type==="checkbox"||el.tagName==="SELECT")){ const [,aid,f]=el.dataset.bind.split(":"); const a=(S.acts||[]).find(z=>z.id===aid); if(a){ a[f]=el.type==="checkbox"? el.checked : el.value; save(); render(); } return; }
   if(el.classList && el.classList.contains("rec-x")){ const r=rec(el.dataset.r); if(r){ r.expIds=(r.expIds||[]).filter(i=>i!==el.value); if(el.checked) r.expIds.push(el.value); save(); render(); } return; }
   if(el.id && el.id.startsWith("story-add-")){ const sc=school(el.id.slice(10)); if(sc && el.value){ sc.stories=(sc.stories||[]).concat([el.value]); save(); render(); } return; }
   if(el.dataset.bind && /^(exp|expi|rec):/.test(el.dataset.bind)){ if(el.type==="checkbox"||el.tagName==="SELECT"||el.type==="date"){ bindExtra(el); render(); } return; }
