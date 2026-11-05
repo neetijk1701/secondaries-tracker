@@ -944,7 +944,7 @@ function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;
 function stars(n){ let h=""; for(let i=1;i<=3;i++) h+= i<=n? "●" : '<span class="off">●</span>'; return '<span class="stars" aria-label="Interest '+n+' of 3">'+h+'</span>'; }
 let toastT;
 function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, 2400); }
-function go(tab, extra){ Object.assign(ui, {schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, editPrompt:false, pick:null, pickQ:"", pickI:0, expId:null, recId:null, expImport:false, expParsed:null}, extra||{}); ui.tab=tab; if(location.hash!=="#"+tab){ try{ history.replaceState(null,"","#"+tab);}catch(e){ location.hash=tab; } } render(); window.scrollTo(0,0); }
+function go(tab, extra){ Object.assign(ui, {schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, editPrompt:false, pick:null, pickQ:"", pickI:0, expId:null, recId:null, recPreview:false, recOpen:null, expImport:false, expParsed:null}, extra||{}); ui.tab=tab; if(location.hash!=="#"+tab){ try{ history.replaceState(null,"","#"+tab);}catch(e){ location.hash=tab; } } render(); window.scrollTo(0,0); }
 
 function render(){
   NAMEIDX=null;
@@ -1010,6 +1010,22 @@ function storyMatches(promptText, fam, n){
     if(fam==="team" && /group|team|collaborat/i.test(s.x.title+" "+s.head)) sc+=3;
     if(s.x.kind==="strength") sc-=0.5;
     return {s, sc}; }).filter(o=>o.sc>1.2).sort((a,b)=>b.sc-a.sc).slice(0,n||4).map(o=>o.s);
+}
+// pick what a writer should see: experiences of the kind they supervised (most relevant first), the strengths those lessons show, and career goals
+function suggestForWriter(r){
+  const X=S.experiences||[];
+  const kinds={research:["research"], clinical:["clinical"], science:["activity","research"], nonscience:["activity"], committee:["research","clinical","activity"], other:["research","clinical","activity"]}[r.kind]||["research","clinical","activity"];
+  const ctx=[r.role, r.together, r.highlight, (exp(r.shared)||{}).title].filter(Boolean).join(" ");
+  const tk=t=>new Set(((t||"").toLowerCase().match(/[a-z]{4,}/g)||[]).filter(w=>!STOP.has(w)).map(stem));
+  const q=tk(ctx);
+  const score=x=>{ const w=tk(x.title+" "+x.org+" "+x.summary+" "+(x.items||[]).map(i=>i.head+" "+i.text).join(" ")); let n=0; q.forEach(z=>{ if(w.has(z)) n++; }); return n+(kinds.indexOf(x.kind)>=0? (3-kinds.indexOf(x.kind))*2 : -5); };
+  const exps=X.filter(x=>x.id!==r.shared && ["research","clinical","activity"].includes(x.kind)).map(x=>({x, sc:score(x)})).filter(o=>o.sc>0).sort((a,b)=>b.sc-a.sc).slice(0, r.kind==="committee"?6:3).map(o=>o.x);
+  const chosen=[exp(r.shared), ...exps].filter(Boolean);
+  const tagged=new Set(chosen.flatMap(x=>(x.items||[]).flatMap(i=>i.tags||[])));
+  const words=new Set(chosen.flatMap(x=>[...tk(x.title+" "+x.org)]));
+  const strengths=X.filter(x=>x.kind==="strength").map(x=>{ let n=tagged.has(x.title)?10:0; const w=tk((x.items||[]).map(i=>i.text).join(" ")); words.forEach(z=>{ if(w.has(z)) n++; }); return {x,n}; }).filter(o=>o.n>0).sort((a,b)=>b.n-a.n).slice(0,3).map(o=>o.x);
+  const refl=X.filter(x=>x.kind==="reflection" && /career|goal/i.test(x.title));
+  return [...exps, ...strengths, ...refl].map(x=>x.id);
 }
 function recStatus(r){ if(r.received) return {t:"Submitted "+fmt(r.received), c:"good"}; if(r.agreed) return {t:"Agreed"+(r.due?" · due "+fmt(r.due):""), c:"acc"}; if(r.asked) return {t:"Asked "+fmt(r.asked), c:"warn"}; return {t:"Not asked yet", c:""}; }
 // Turn a pasted "profile" document into experience records.
@@ -1152,8 +1168,14 @@ function vWriter(r){
   h+='<label class="f">What I’d love you to highlight<textarea id="rh-'+r.id+'" rows="3" data-bind="rec:'+r.id+':highlight" placeholder="Two or three qualities or moments you hope the letter speaks to, ideally ones only this person saw.">'+esc(r.highlight||"")+'</textarea></label>';
   h+='<label class="f">The experience you shared, if any<select id="rx-'+r.id+'" data-bind="rec:'+r.id+':shared"><option value="">None</option>'+X.filter(x=>x.kind!=="strength"&&x.kind!=="reflection").map(x=>'<option value="'+x.id+'"'+(r.shared===x.id?' selected':'')+'>'+esc(x.title)+'</option>').join("")+'</select></label>';
   if(!X.length) h+='<p class="small muted" style="margin:0">Add experiences on the Stories view to include them.</p>';
-  else h+='<div><h3 style="margin-bottom:6px">Also include</h3><p class="small muted" style="margin:0 0 6px">Pick what’s useful to this writer. Your shared experience goes first either way.</p>'+EXP_ORDER.map(k=>{ const xs=X.filter(x=>x.kind===k && x.id!==r.shared); if(!xs.length) return ''; return '<div class="small" style="font-weight:600; margin-top:8px">'+EXP_KINDS[k]+'</div>'+xs.map(x=>'<label class="chk" style="display:flex; margin:4px 0"><input type="checkbox" class="rec-x" data-r="'+r.id+'" value="'+x.id+'"'+(sel.has(x.id)?' checked':'')+'> '+esc(x.title||"Untitled")+'</label>').join(""); }).join("")+'</div>';
-  h+='<div class="row" style="margin-top:6px"><button class="primary" data-act="rec-doc">Download as a document</button><button data-act="rec-print">Print or save as PDF</button><button data-act="rec-copy">Copy text</button></div>';
+  else h+='<div><div class="row" style="justify-content:space-between"><h3 style="margin-bottom:6px">Also include</h3><button class="ghost small" data-act="rec-suggest">Suggest for '+esc(REC_KINDS[r.kind]||"this writer").toLowerCase()+'</button></div><p class="small muted" style="margin:0 0 6px">Pick what’s useful to this writer. Your shared experience goes first either way.</p>'+EXP_ORDER.map(k=>{ const xs=X.filter(x=>x.kind===k && x.id!==r.shared); if(!xs.length) return ''; return '<div class="small" style="font-weight:600; margin-top:8px">'+EXP_KINDS[k]+'</div>'+xs.map(x=>'<label class="chk" style="display:flex; margin:4px 0"><input type="checkbox" class="rec-x" data-r="'+r.id+'" value="'+x.id+'"'+(sel.has(x.id)?' checked':'')+'> '+esc(x.title||"Untitled")+'</label>').join(""); }).join("")+'</div>';
+  { const ids=[r.shared, ...(r.expIds||[]).filter(i=>i!==r.shared)].filter(Boolean).map(exp).filter(x=>x && x.kind!=="strength" && x.kind!=="reflection");
+    if(ids.length) h+='<div><h3 style="margin-bottom:6px">Tailor each experience for '+esc(r.name||"them")+'</h3><p class="small muted" style="margin:0 0 6px">Keep the lessons this writer can speak to, and add a line about what they saw firsthand.</p>'+ids.map(x=>{ const offs=(r.itemOff||{})[x.id]||[]; const kept=(x.items||[]).filter(it=>!offs.includes(it.id)).length;
+      return '<details class="panel" style="margin:6px 0"'+(ui.recOpen===x.id?' open':'')+' data-x="'+x.id+'"><summary class="ph" style="cursor:pointer"><span style="flex:1"><b>'+esc(x.title||"Untitled")+'</b>'+(x.id===r.shared?' <span class="chip acc">Shared</span>':'')+'</span><span class="small muted">'+kept+' of '+(x.items||[]).length+' lessons'+(((r.xnotes||{})[x.id]||"").trim()?' · note added':'')+'</span></summary><div class="pb stack" style="gap:6px">'+
+        (x.items||[]).map(it=>'<label class="chk" style="display:flex; align-items:flex-start; gap:8px"><input type="checkbox" class="rec-it" data-r="'+r.id+'" data-x="'+x.id+'" value="'+it.id+'"'+(offs.includes(it.id)?'':' checked')+'> <span><b>'+esc(it.head||"Untitled lesson")+'</b> <span class="small muted">'+esc((it.text||"").slice(0,110))+((it.text||"").length>110?'…':'')+'</span></span></label>').join("")+
+        '<label class="f">What '+esc(r.name||"they")+' saw firsthand here (optional)<textarea id="rnx-'+r.id+'-'+x.id+'" rows="2" data-bind="recn:'+r.id+':'+x.id+'" placeholder="e.g. You watched me rebuild the vesicle-isolation protocol after it failed three times.">'+esc((r.xnotes||{})[x.id]||"")+'</textarea></label></div></details>'; }).join("")+'</div>'; }
+  h+='<div class="row" style="margin-top:6px"><button class="primary" data-act="rec-doc">Download as a document</button><button data-act="rec-print">Print or save as PDF</button><button data-act="rec-copy">Copy text</button><button class="ghost" data-act="rec-preview">'+(ui.recPreview?'Hide preview':'Preview')+'</button></div>';
+  if(ui.recPreview) h+='<div class="panel" style="padding:4px 22px 18px; background:#fff; color:#111; font-family:Georgia,serif; line-height:1.5">'+packet(r,false)+'</div>';
   if(!prefs().name) h+='<p class="small muted" style="margin:0">Tip: add your name at the top of the Experiences tab so it appears on the summary.</p>';
   h+='</div></div>';
   h+='<label class="f" style="margin-top:14px">Private notes (not included)<textarea id="ro-'+r.id+'" rows="2" data-bind="rec:'+r.id+':notes">'+esc(r.notes||"")+'</textarea></label>';
@@ -1170,7 +1192,11 @@ function packet(r, plain){
   const P=t=>plain? t+"\n" : "<p>"+esc(t).replace(/\n+/g,"</p><p>")+"</p>";
   const LI=(head,t)=>plain? "- "+(head?head+": ":"")+t+"\n" : "<li>"+(head?"<b>"+esc(head)+".</b> ":"")+esc(t)+"</li>";
   const UL=a=>plain? a.join("") : "<ul>"+a.join("")+"</ul>";
-  const block=x=>H(3,x.title||"Untitled")+(x.org||x.dates? (plain? [x.org,x.dates].filter(Boolean).join(" · ")+"\n" : '<p class="meta">'+esc([x.org,x.dates].filter(Boolean).join(" · "))+'</p>') : "")+(x.summary?P(x.summary):"")+((x.items||[]).length? (x.kind==="research"||x.kind==="clinical"? (plain?"What I learned:\n":"<p class=\"lab\">What I learned</p>"):"")+UL(x.items.map(it=>LI(it.head,it.text))) : "");
+  const off=r.itemOff||{}, notes=r.xnotes||{};
+  const block=x=>{ const its=(x.items||[]).filter(it=>!(off[x.id]||[]).includes(it.id)); const note=(notes[x.id]||"").trim();
+    return H(3,x.title||"Untitled")+(x.org||x.dates? (plain? [x.org,x.dates].filter(Boolean).join(" · ")+"\n" : '<p class="meta">'+esc([x.org,x.dates].filter(Boolean).join(" · "))+'</p>') : "")+
+      (note? (plain? "What you saw: "+note+"\n" : '<p class="note"><b>What you saw:</b> '+esc(note)+'</p>') : "")+
+      (x.summary?P(x.summary):"")+(its.length? (x.kind==="research"||x.kind==="clinical"? (plain?"What I learned:\n":"<p class=\"lab\">What I learned</p>"):"")+UL(its.map(it=>LI(it.head,it.text))) : ""); };
   let out=(plain? "Background for "+r.name+(me?"\nFrom "+me:"")+"\n" : "<h1>Background for "+esc(r.name)+"</h1>"+(me?'<p class="meta">From '+esc(me)+' · '+new Date().toLocaleDateString(undefined,{month:"long",day:"numeric",year:"numeric"})+'</p>':''));
   if(r.together) out+=H(2,"Our work together")+P(r.together);
   if(r.highlight) out+=H(2,"What I’d love you to highlight")+P(r.highlight);
@@ -1181,7 +1207,7 @@ function packet(r, plain){
   return out;
 }
 function packetHtml(r){
-  return '<!doctype html><html><head><meta charset="utf-8"><title>Background for '+esc(r.name)+'</title><style>body{font-family:Georgia,"Times New Roman",serif; max-width:720px; margin:40px auto; padding:0 24px; line-height:1.5; color:#111} h1{font-size:24px; margin-bottom:4px} h2{font-size:18px; margin-top:28px; border-bottom:1px solid #ccc; padding-bottom:4px} h3{font-size:16px; margin:18px 0 2px} .meta{color:#555; margin-top:0; font-style:italic} .lab{font-weight:bold; margin-bottom:4px} li{margin-bottom:6px}</style></head><body>'+packet(r,false)+'</body></html>';
+  return '<!doctype html><html><head><meta charset="utf-8"><title>Background for '+esc(r.name)+'</title><style>body{font-family:Georgia,"Times New Roman",serif; max-width:720px; margin:40px auto; padding:0 24px; line-height:1.5; color:#111} h1{font-size:24px; margin-bottom:4px} h2{font-size:18px; margin-top:28px; border-bottom:1px solid #ccc; padding-bottom:4px} h3{font-size:16px; margin:18px 0 2px} .meta{color:#555; margin-top:0; font-style:italic} .lab{font-weight:bold; margin-bottom:4px} li{margin-bottom:6px} .note{background:#f3f6f8; border-left:3px solid #0E6B66; padding:8px 12px}</style></head><body>'+packet(r,false)+'</body></html>';
 }
 function exportAllHtml(){
   const r={name:"my experiences", shared:"", expIds:(S.experiences||[]).map(x=>x.id)};
@@ -1952,6 +1978,8 @@ document.addEventListener("click", ev=>{
     case "story-drop": { const sc=school(ui.schoolId); if(sc){ sc.stories=(sc.stories||[]).filter(k=>k!==d.k); save(); render(); } break; }
     case "rec-doc": { const r=rec(ui.recId); if(r){ downloadFile("Background for "+(r.name||"letter writer").replace(/[\\/:*?"<>|]/g,"")+".doc", packetHtml(r), "application/msword"); toast("Downloaded. It opens in Word or Google Docs."); } break; }
     case "rec-print": { const r=rec(ui.recId); if(!r) break; const w=window.open("","_blank"); if(!w){ toast("Your browser blocked the new window. Allow pop-ups for this site, or use Download."); break; } w.document.write(packetHtml(r)); w.document.close(); setTimeout(()=>{ try{ w.focus(); w.print(); }catch(err){} },300); break; }
+    case "rec-suggest": { const r=rec(ui.recId); if(!r) break; r.expIds=suggestForWriter(r); save(); render(); toast(r.expIds.length? "Picked "+r.expIds.length+" item"+(r.expIds.length===1?"":"s")+" for "+(r.name||"this writer")+". Adjust as you like." : "Nothing matched yet. Add experiences on the Stories view, or pick by hand."); break; }
+    case "rec-preview": ui.recPreview=!ui.recPreview; render(); break;
     case "rec-copy": { const r=rec(ui.recId); if(r) copyText(packet(r,true).trim()); break; }
     case "new-letter": { const sc=school(ui.schoolId); if(!sc) break; const e=newLetter(sc, d.f); save(); go("schools",{schoolId:sc.id, essayId:e.id}); toast((FAM[d.f]||"Letter")+" added"+(e.baseId?", linked to your base “"+base(e.baseId).title+"”":"")+". Edit the description above if you like."); break; }
     case "rollover-fresh": startFresh(); break;
@@ -2139,7 +2167,7 @@ document.addEventListener("input", ev=>{
   if(el.dataset.libdeg){ ui.libDeg=el.value; render(); return; }
   if(el.dataset.libq){ ui.libQ=el.value; const pos=el.selectionStart; render(); const n=document.getElementById("libq"); n.focus(); try{ n.setSelectionRange(pos,pos);}catch(e){} return; }
   if(el.id==="pref-name"){ prefs().name=el.value; save(); return; }
-  if(el.dataset.bind && /^(exp|expi|rec):/.test(el.dataset.bind) && !(el.type==="checkbox"||el.tagName==="SELECT"||el.type==="date")){ bindExtra(el); return; }
+  if(el.dataset.bind && /^(exp|expi|rec|recn):/.test(el.dataset.bind) && !(el.type==="checkbox"||el.tagName==="SELECT"||el.type==="date")){ bindExtra(el); return; }
   const bnd=el.dataset.bind; if(!bnd) return;
   const [kind,idv,field]=bnd.split(":");
   if(el.type==="checkbox"||el.tagName==="SELECT"||el.type==="date"||el.type==="number"||el.type==="time") return; // handled on change
@@ -2151,7 +2179,8 @@ document.addEventListener("change", ev=>{
   const el=ev.target;
   if(el.id==="pref-dual"){ prefs().dual=el.checked; save(); render(); toast(el.checked?"New schools will start with MD/PhD prompts. You can switch per school.":"New schools will start with regular prompts."); return; }
   if(el.id && el.id.startsWith("track-")){ const sc=school(el.id.slice(6)); if(sc){ sc.track=el.checked?"dual":"single"; save(); render(); } return; }
-  if(el.classList && el.classList.contains("rec-x")){ const r=rec(el.dataset.r); if(r){ r.expIds=(r.expIds||[]).filter(i=>i!==el.value); if(el.checked) r.expIds.push(el.value); save(); } return; }
+  if(el.classList && el.classList.contains("rec-it")){ const r=rec(el.dataset.r); if(r){ r.itemOff=r.itemOff||{}; const a=(r.itemOff[el.dataset.x]||[]).filter(i=>i!==el.value); if(!el.checked) a.push(el.value); r.itemOff[el.dataset.x]=a; ui.recOpen=el.dataset.x; save(); render(); } return; }
+  if(el.classList && el.classList.contains("rec-x")){ const r=rec(el.dataset.r); if(r){ r.expIds=(r.expIds||[]).filter(i=>i!==el.value); if(el.checked) r.expIds.push(el.value); save(); render(); } return; }
   if(el.id && el.id.startsWith("story-add-")){ const sc=school(el.id.slice(10)); if(sc && el.value){ sc.stories=(sc.stories||[]).concat([el.value]); save(); render(); } return; }
   if(el.dataset.bind && /^(exp|expi|rec):/.test(el.dataset.bind)){ if(el.type==="checkbox"||el.tagName==="SELECT"||el.type==="date"){ bindExtra(el); render(); } return; }
   const bnd=el.dataset.bind; if(!bnd) return;
@@ -2174,6 +2203,7 @@ function bindExtra(el){
   const p=el.dataset.bind.split(":"), val=el.type==="checkbox"? el.checked : el.value;
   if(p[0]==="exp"){ const x=exp(p[1]); if(x){ x[p[2]]=val; save(); } }
   else if(p[0]==="expi"){ const x=exp(p[1]); const it=x&&(x.items||[]).find(z=>z.id===p[2]); if(it){ it[p[3]]=val; save(); } }
+  else if(p[0]==="recn"){ const r=rec(p[1]); if(r){ r.xnotes=r.xnotes||{}; r.xnotes[p[2]]=val; save(); } }
   else if(p[0]==="rec"){ const r=rec(p[1]); if(r){ r[p[2]]=val; if(p[2]==="received"&&val) r.agreed=true; save(); } }
 }
 function choosePick(li){
