@@ -77,9 +77,11 @@ Everything runs in the browser; nothing is sent anywhere and no AI rewrites text
 - Your own data is set aside in `secondaries-stash-v1` and restored by "Back to my data". In sample mode nothing syncs to Drive (`S.demo`), and connecting Drive restores your data first.
 
 ## Experience log
-- Each research, clinical or activity experience has a **log** (`x.log`: [{id, d, hrs, text}]): dated notes written as things happen, newest first (latest 6 shown, "Show all" expands). Hours: `x.hoursBefore` plus each entry's `hrs` (`expHours`), used when starting an activity.
-- **Lessons** (`items`) carry `from` (log entry ids). "Write a lesson from these" starts one from the ticked entries; the lesson shows the entries it came from, and each entry shows which lessons use it.
-- **Nudges:** `x.ongoing` ("Still doing this"); no entry in 45 days, 3+ entries not in any lesson, and an end-of-term banner (Dec 5–Jan 15, May).
+Each experience is written up when it ends: what I did (summary) and what I learned (lessons), like a letter-writer profile. Long-running ones keep one write-up that gets revised.
+- **Dates:** `start` and `end` months (`YYYY-MM`) plus `ongoing` ("Still doing this", which clears `end`). `expDates()` formats them, falling back to imported free text in `dates`. **Hours:** one total in `hours` (`expHours`), used when starting an activity.
+- **Timeline:** the Experiences sub-tab groups story experiences under Ongoing, then "Ended in <year>", newest first.
+- **Write-ups to do** (`writeupNudge`): something that ended without a summary and at least one lesson; something ongoing that has no write-up, or whose write-up (`wu`, set when the summary or a lesson changes) is more than six months old.
 - **Contact** (`contact`, `contactRole`, `contactEmail`) → "Add as a letter writer" creates a recommender linked to the experience.
 - **About me starters** (`ABOUT_STARTERS`): why medicine, career goals in medicine and research, group vs individual work, what letter writers should know.
 - **Log-only mode:** opening `#log` with nothing else saved sets `prefs.applying=false`: the app is titled "Experience Log", shows only Experiences (log, strengths & weaknesses, letter writers), and skips the tour. "I'm applying this cycle" (`applying-on`) shows everything; "Not applying yet? Show only the log" goes back. Same storage and Drive file either way. The About page links to it.
+- Older records may have `log` entries from a short-lived day-by-day version; they're ignored except that their hours count toward the total until `hours` is set.
