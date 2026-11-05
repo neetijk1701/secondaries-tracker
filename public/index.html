@@ -265,7 +265,7 @@ body.focus-mode #main{max-width:none; padding:0}
   <div class="wrap">
     <div class="top-row">
       <p class="brand">Med App <span>Workspace</span></p>
-      <span class="pill" id="demo-pill" hidden>Example data</span>
+      <span class="pill" id="demo-pill" hidden>Sample data</span>
       <span class="grow"></span>
       <span id="sync-chip"></span>
       <span class="small muted" id="today-l"></span>
@@ -322,79 +322,151 @@ function fmt(s){ const d=parse(s); return d? d.toLocaleDateString(undefined,{mon
 function daysUntil(s){ const d=parse(s); return d? Math.round((d-today())/DAY) : null; }
 function addDays(s,n){ const d=parse(s); return d? iso(new Date(d.getTime()+n*DAY)) : null; }
 
-/* ---------- sample content (fictional schools and applicant) ---------- */
+/* ---------- sample data: a fictional applicant ("Jordan") applying to real schools from the library ---------- */
+// Everything here is invented for exploring the app. Loading it sets your own data aside; "Back to my data" restores it.
 const D1 = "Every Saturday for three years, I sat between patients and physicians at the Eastside Free Clinic, translating between Spanish and English. At first I thought my job was words. Then a patient told me she had stopped her blood pressure pills because the label said to take them “once” daily, and in Spanish “once” means eleven. The gap was not vocabulary. It was context and trust. I started asking patients to repeat their plan back at the end of each visit, and I wrote a one-page guide for new volunteer interpreters. As a physician, I will bring that habit of checking what was understood, not just what was said, to every patient.";
 const D2 = D1.replace("for three years","for four years").replace("new volunteer interpreters.","new volunteer interpreters. The clinic now hands that guide to every new interpreter.");
 const D3 = D2.replace("At first I thought my job was words.","At first I believed my job was only words.").replace("As a physician, I will bring that habit of checking what was understood, not just what was said, to every patient.","As a physician, I want every patient to leave knowing their plan, and I will keep checking what was understood, not only what was said.");
-const LAKE_D = D1.replace("As a physician, I will bring that habit of checking what was understood, not just what was said, to every patient.","Lakeshore’s student-run clinic serves many Spanish-speaking families, and I want to bring that habit of checking what was understood, not just what was said, to my work there.");
-const PRAIRIE_D = "For four years I interpreted Spanish and English at the Eastside Free Clinic. At first I believed my job was only words. Then a patient told me she had stopped her blood pressure pills because the label said to take them “once” daily, and in Spanish “once” means eleven. The gap was context and trust. I began asking patients to repeat their plan back and wrote a guide for new interpreters that the clinic still uses. As a physician, I want every patient to leave knowing their plan.";
 const C1 = "I failed my first organic chemistry exam with a 41. I had studied the way I always had, by rereading notes, and it had always worked. Sitting in office hours, I learned that I could recognize every mechanism but could not draw one from a blank page. I rebuilt how I studied: blank-page practice, a weekly group where we each taught one reaction, and spaced review on Sundays. I finished the course with an A minus and later tutored nine students in the same class. The grade mattered less than what it taught me: when something stops working, I look for the reason before I work harder.";
-const LAKE_C = "I failed my first organic chemistry exam with a 41. I had studied the way I always had, by rereading notes, and it had always worked. In office hours I learned that I could recognize every mechanism but could not draw one from a blank page.";
-const PRAIRIE_W = "Prairie View’s longitudinal rural track is the reason I applied. I grew up two hours from the nearest hospital, and I want to train where continuity with one community is built into the curriculum rather than added on. The interpreter work I describe elsewhere taught me that trust takes years; a three-year rural placement gives me time to earn it.";
-
-const EXAMPLE_LIBRARY = [
-  {school:"Lakeshore School of Medicine", prompts:[
-    {p:"Describe how your background or experiences would add to the diversity of our class.", limit:150, unit:"words", fam:"diversity"},
-    {p:"Tell us about a challenge or failure and what you learned from it.", limit:200, unit:"words", fam:"challenge"},
-    {p:"Why Lakeshore?", limit:250, unit:"words", fam:"why"}]},
-  {school:"Prairie View College of Medicine", prompts:[
-    {p:"What unique perspective would you bring to our community?", limit:1000, unit:"chars", fam:"diversity"},
-    {p:"Why are you interested in Prairie View?", limit:1500, unit:"chars", fam:"why"}]},
-  {school:"Granite Ridge University School of Medicine", prompts:[
-    {p:"Share an experience that shaped how you see people different from yourself.", limit:300, unit:"words", fam:"diversity"},
-    {p:"What draws you to Granite Ridge specifically?", limit:250, unit:"words", fam:"why"},
-    {p:"If you are not currently in school, describe what you are doing this year.", limit:200, unit:"words", fam:"gap"}]},
-  {school:"Harbor City Medical College", prompts:[
-    {p:"Describe a setback and how you responded.", limit:2000, unit:"chars", fam:"challenge"},
-    {p:"Why Harbor City?", limit:1500, unit:"chars", fam:"why"}]},
-  {school:"Northern Pines School of Medicine", prompts:[
-    {p:"How will you contribute to a diverse learning environment?", limit:250, unit:"words", fam:"diversity"},
-    {p:"Describe a time you failed.", limit:250, unit:"words", fam:"challenge"}]},
-  {school:"Cedar Valley School of Medicine", prompts:[
-    {p:"Describe a time you worked on a team with a conflict. What was your role?", limit:300, unit:"words", fam:"team"},
-    {p:"Describe your background and how it would add to our class.", limit:2500, unit:"chars", fam:"diversity"},
-    {p:"Is there anything else you would like the committee to know?", limit:1000, unit:"chars", fam:"anything"}]},
-  {school:"Bayfront University College of Medicine", prompts:[
-    {p:"Tell us about the most difficult challenge you have faced.", limit:350, unit:"words", fam:"challenge"},
-    {p:"Why Bayfront?", limit:200, unit:"words", fam:"why"}]}
-];
+const C2 = C1.replace("The grade mattered less","I also learned to go to office hours in the first week, not the fifth. The grade mattered less");
+const PS1 = "The first patient I interpreted for at the Eastside Free Clinic was a man with heart failure who nodded through his whole visit. Afterward, in the hallway, he asked me what “fluid” meant. He had been told to limit it for a year.\n\nI came to medicine through that hallway. For four years I interpreted every Saturday, and I learned that a plan a patient does not understand is not really a plan. I started asking patients to repeat their instructions back, and I wrote a guide for new interpreters.\n\nIn Dr. Priya Shah’s cardiology lab, I studied why some failing hearts scar faster than others. I spent eight months on a staining protocol that did not work before it did. Research taught me patience, and it taught me to ask a better question when the first one fails.\n\nI want to be a physician who connects the two: the science of why hearts fail and the conversations that decide whether patients can live with that failure at home.";
+const PS2 = PS1.replace("I came to medicine through that hallway.","I think I came to medicine through that hallway.")
+  .replace("Research taught me patience, and it taught me to ask a better question when the first one fails.","Research taught me patience. When a method fails, I now ask what the failure is telling me before I try again, and that is how we found that the antibody was binding only after a longer fixation step.")
+  + "\n\nWorking as a scribe in the Riverside emergency department this year, I watched physicians make that connection in minutes: explaining a new diagnosis, checking what landed, and adjusting. Dr. Marcus Bell once stopped mid-sentence, pulled a chair over, and started again with a drawing of the heart on the back of a discharge form. That is the physician I am working to become.";
+const PS3 = PS2.replace("I think I came to medicine through that hallway.","I came to medicine through that hallway.")
+  .replace("I want to be a physician who connects the two:","I want to be a physician who connects the two worlds I have lived in:")
+  + "\n\nI know I still have a lot to learn about medicine. What I bring is four years of practice at making sure people understand, a research habit of looking for the reason something failed, and the patience to keep going until a plan actually works for the person it is meant for.";
+const TEAM1 = "Our lab’s fibrosis project stalled for two months because two graduate students disagreed about how to score tissue sections, and the undergraduates, including me, were scoring them both ways. I proposed that we each score the same twenty blinded slides and compare. The results showed the two methods agreed on mild and severe fibrosis but split on the middle cases. We wrote a shared rubric for those, with photos, and I built the spreadsheet that flagged any slide where two scorers differed by more than one grade. My role was not to settle the disagreement but to give the team a way to see it. The project resumed within a week, and the rubric is now part of how new students are trained.";
+const SERV1 = "At the Eastside Free Clinic I noticed that patients often missed follow-up visits in the last week of the month. When I asked, several told me it was the week their food benefits ran out and they skipped appointments to work extra shifts. With a nurse, I added a two-question food insecurity screen to intake and built a referral sheet for three nearby food pantries in English and Spanish. In six months, 140 patients were screened and 52 were referred. The numbers were modest, but they changed how I think about missed appointments: as information about a patient’s life, not a failure of motivation.";
+const CAREER1 = "I see myself as a cardiologist who spends part of each week in the lab and part in clinic, studying heart failure and caring for patients who live with it. My research on cardiac fibrosis showed me how much is still unknown about why some hearts scar faster than others. My work as an interpreter showed me that the best treatment fails if a patient cannot follow it at home. I want to work on both problems, and a medical degree is the only path that lets me ask the questions at the bedside and carry them back to the bench.";
+const GAP1 = "This year I am working full time as a clinical research coordinator in Dr. Priya Shah’s cardiology group, enrolling patients in a heart failure registry and running consent visits in English and Spanish. On weekends I continue interpreting at the Eastside Free Clinic, and two evenings a week I work as an emergency department scribe at Riverside Hospital. I am also finishing a first-author abstract on fibrosis scoring for a regional cardiology meeting in the spring.";
+const WHY = n=>"I want to train at "+n+" because I learn best where research and patient care sit close together. My work on cardiac fibrosis made me want a curriculum where I can keep asking questions from clinic in the lab, and "+n+"’s mix of strong clinical training and research opportunities would let me do both from the first year. I would also look for ways to keep doing what I have done for four years: working with Spanish-speaking patients and making sure they leave a visit understanding their plan.";
+const BOOK = "Atul Gawande’s Being Mortal changed how I listened during interpreting. Before reading it, I thought my job ended when a patient understood the plan. Gawande made me see that the more important question is often what the patient wants their life to look like, and whether the plan fits that. I started noticing how rarely anyone asked. I would share it with classmates because it is a book about medicine that is really about listening, and because it gave me words for something I had felt in the clinic for years.";
+const CURIOUS = "Outside medicine I am curious about how bread works. Two years ago I started baking sourdough, mostly because I wanted to understand why my first ten loaves were flat. I kept a notebook of hydration, temperature and timing, and I learned that the same habits I use in lab, changing one thing at a time and writing everything down, work in a kitchen too. I now bake for the clinic volunteers every month.";
+const HEALTH = "My main health-related experiences are four years as a Spanish interpreter at the Eastside Free Clinic, two years of research on cardiac fibrosis in Dr. Priya Shah’s lab, and this year’s work as a clinical research coordinator and emergency department scribe at Riverside Hospital. Since submitting my primary, I have started running consent visits in Spanish for the heart failure registry.";
+const ANYTHING1 = "One thing my application may not show clearly is how much my research and clinical work have shaped each other. Several of the questions I brought to the lab came from conversations in the clinic, including why some patients with similar heart function do so differently at home. I hope to keep those two parts of my work connected in medical school.";
+const ETHICS_D = "As a scribe, I saw a resident document a full physical exam that I had watched him skip because the department was overwhelmed. I learned that medicine is about listening. I waited until the end of the shift and asked him, privately, whether I had misunderstood what was examined. He corrected the note. Like my interpreting work, where I started asking patients to repeat their plan back at the end of each visit, and I wrote a one-page guide for new volunteer interpreters, it taught me that the gap was not vocabulary. It was context and trust.";
+const BAYLOR_CAREER = "Ever since I was young I have always wanted to help people, and medicine is the best way to make a difference. I am most interested in the Research and Global Health areas. My research in Dr. Shah’s lab was done over two years and was presented at a poster session. I have always been passionate about science and I have always wanted to understand how the heart works.";
+const UPDATE_NW = "I am writing to update you on my application and to say again how much I hope to join Feinberg.\n\nSince I applied, I have started running consent visits in Spanish for our heart failure registry, and my abstract on standardizing fibrosis scoring was accepted for a poster at the regional cardiology meeting in March.";
+const LOI_OSU = "I am writing to let you know that Ohio State is my first choice, and if I am accepted, I will attend.\n\nMy interview day confirmed what drew me to apply. The students I met described a curriculum that lets them follow a question from clinic into research, which is exactly how my own work has grown, from interpreting at the Eastside Free Clinic to studying cardiac fibrosis. I also learned about opportunities to work with Spanish-speaking patients in Columbus, which I would seek out from my first year.\n\nSince my interview, my first abstract was accepted for a poster in March, and I have taken on consent visits in Spanish for our heart failure registry.\n\nThank you for continuing to consider my application.";
+const OSU_WHY = "Ohio State’s mission to improve people’s lives matches why I want to be a physician. I want to train at Michigan Medicine because research and patient care sit close together there, and my work on cardiac fibrosis made me want a curriculum where I can bring questions from clinic to the lab. I would also continue working with Spanish-speaking patients, as I have for four years.";
 
 let seq = 1;
 function id(p){ return p + (seq++).toString(36) + Math.random().toString(36).slice(2,6); }
-
-function seed(){
-  const now = new Date().toISOString();
-  const bD = {id:"b_div", family:"diversity", title:"Clinic interpreter", draft:D3, versions:[
-    {v:1, text:D1, at:off(-30), note:"First full draft"},
-    {v:2, text:D2, at:off(-14), note:"Four years; guide now used clinic-wide"},
-    {v:3, text:D3, at:off(-2), note:"Stronger closing line"}]};
-  const bC = {id:"b_chal", family:"challenge", title:"Organic chemistry exam", draft:C1, versions:[
-    {v:1, text:C1, at:off(-20), note:"First full draft"}]};
-  const S = (o)=>Object.assign({id:id("s"), turnaround:DEFAULT_TURNAROUND, hard:"", interest:2, submitted:false, fee:false, pinned:false}, o);
-  const lake = S({name:"Lakeshore School of Medicine", received:off(-9), interest:3});
-  const prai = S({name:"Prairie View College of Medicine", received:off(-12), interest:2});
-  const gran = S({name:"Granite Ridge University School of Medicine", received:off(-3), hard:off(20), interest:3});
-  const harb = S({name:"Harbor City Medical College", received:off(-16), interest:1});
-  const nort = S({name:"Northern Pines School of Medicine", received:off(-25), interest:2, submitted:true, fee:true});
-  const E = (s, libIdx, pi, o)=>{ const L=EXAMPLE_LIBRARY[libIdx].prompts[pi]; return Object.assign({id:id("e"), schoolId:s.id, prompt:L.p, limit:L.limit, unit:L.unit, family:L.fam, baseId:null, basedOnV:null, text:"", status:"todo", localEdit:false}, o||{}); };
-  const essays = [
-    E(lake,0,0,{baseId:"b_div", basedOnV:1, text:LAKE_D, status:"drafting", localEdit:true}),
-    E(lake,0,1,{baseId:"b_chal", basedOnV:1, text:LAKE_C, status:"drafting"}),
-    E(lake,0,2),
-    E(prai,1,0,{baseId:"b_div", basedOnV:3, text:PRAIRIE_D, status:"ready"}),
-    E(prai,1,1,{text:PRAIRIE_W, status:"ready"}),
-    E(gran,2,0,{baseId:"b_div"}),
-    E(gran,2,1), E(gran,2,2),
-    E(harb,3,0,{baseId:"b_chal"}),
-    E(harb,3,1),
-    E(nort,4,0,{baseId:"b_div", basedOnV:2, text:D2, status:"pasted"}),
-    E(nort,4,1,{baseId:"b_chal", basedOnV:1, text:C1, status:"pasted"})
-  ];
-  return {v:1, demo:true, schools:[lake,prai,gran,harb,nort], bases:[bD,bC], essays, created:now};
+// trim a text to a limit at sentence boundaries, as an applicant would before pasting
+function fitTo(text, limit, unit){
+  if(!limit) return text;
+  const len=t=> unit==="words" ? (t.trim().match(/\S+/g)||[]).length : t.length;
+  if(len(text)<=limit) return text;
+  const parts=text.match(/[^.!?]+[.!?]+["”’]?\s*/g)||[text]; let out="";
+  for(const p of parts){ if(len(out+p)>limit) break; out+=p; }
+  return out.trim() || text.slice(0, limit);
 }
+function seed(){
+  const N = blank(); N.demo = true; N.created = new Date().toISOString(); S = N;
+  N.prefs = {dual:false, cycle:CYCLE, services:{amcas:true, tmdsas:true, aacomas:false}};
+  const DAY_MS = 864e5, ago = d=>Date.now()-d*DAY_MS;
+  const B = (fam, title, vs)=>{ const b={id:id("b"), family:fam, title, draft:vs[vs.length-1][0], versions:vs.map((v,i)=>({v:i+1, text:v[0], at:off(v[1]), note:v[2]}))}; N.bases.push(b); return b; };
+  const bPS = B("ps","Personal statement",[[PS1,-120,"First full draft"],[PS2,-100,"Added scribe paragraph"],[PS3,-92,"After Dr. Shah’s comments"]]);
+  const bD = B("diversity","Clinic interpreter",[[D1,-110,"First full draft"],[D2,-80,"Four years; guide now used clinic-wide"],[D3,-20,"Stronger closing line"]]);
+  const bC = B("challenge","Organic chemistry exam",[[C1,-105,"First full draft"],[C2,-40,"Added office-hours lesson"]]);
+  B("team","Lab scoring disagreement",[[TEAM1,-95,"First full draft"]]);
+  B("service","Food insecurity screen",[[SERV1,-95,"First full draft"]]);
+  B("career","Physician-scientist in heart failure",[[CAREER1,-90,"First full draft"]]);
+  B("gap","Research coordinator year",[[GAP1,-90,"First full draft"]]);
+
+  // Experiences: the story bank
+  const X = (kind, o, items)=>{ const x=newExp(kind, o); x.items=(items||[]).map(it=>newItem(it)); N.experiences.push(x); return x; };
+  const xLab = X("research",{title:"Cardiac fibrosis lab", org:"Dr. Priya Shah, State University", dates:"Jan 2023 – present", summary:"Studied why some failing hearts scar faster than others. Optimized a staining protocol, scored tissue sections, and built the team’s blinded scoring rubric. Now a full-time research coordinator enrolling patients in a heart failure registry."},[
+    {head:"A failed method is information", text:"The staining protocol failed for eight months. Logging every variable showed the antibody only bound after a longer fixation step.", tags:["Persistence","Curiosity"]},
+    {head:"Making a disagreement visible", text:"Two graduate students scored sections differently. Blinded comparison of 20 slides showed where they split; we wrote a shared rubric.", tags:["Teamwork"]},
+    {head:"Asking sooner", text:"I spent three weeks stuck before asking Dr. Shah about the fixation step. She solved it in ten minutes.", tags:[], grow:["Asking for help too late"]}]);
+  const xClinic = X("clinical",{title:"Spanish interpreter, Eastside Free Clinic", org:"Eastside Free Clinic", dates:"2021 – present · Saturdays", summary:"Interpret between Spanish-speaking patients and volunteer physicians. Started teach-back at the end of visits, wrote the interpreter guide, and added a food insecurity screen to intake."},[
+    {head:"“Once” means eleven", text:"A patient stopped her blood pressure pills because “once daily” reads as eleven in Spanish. The gap was context and trust, not vocabulary.", tags:["Clear communication"]},
+    {head:"Missed visits are information", text:"Patients missed follow-ups the week food benefits ran out. Two-question screen, pantry referral sheet; 140 screened, 52 referred.", tags:["Curiosity"]},
+    {head:"The man who asked about fluid", text:"A heart failure patient nodded through his visit, then asked me in the hallway what “fluid” meant. He’d been told to limit it for a year.", tags:["Clear communication"]}]);
+  const xScribe = X("clinical",{title:"Emergency department scribe", org:"Riverside Hospital", dates:"Jun 2025 – present", summary:"Document patient encounters in real time for emergency physicians, two evenings a week."},[
+    {head:"Starting over with a drawing", text:"Dr. Bell stopped mid-explanation, pulled up a chair, and drew the heart on the back of a discharge form.", tags:["Clear communication"]},
+    {head:"Speaking up about a note", text:"Asked a resident privately about an exam I had watched him skip; he corrected the note.", tags:["Integrity"]}]);
+  const xTutor = X("activity",{title:"Organic chemistry peer tutor", org:"State University Learning Center", dates:"2022 – 2024", summary:"Tutored nine students a semester in the course I nearly failed, using blank-page practice."},[
+    {head:"Teaching what failed me", text:"Taught students to draw mechanisms from a blank page instead of rereading notes.", tags:["Persistence"]}]);
+  const xRun = X("activity",{title:"Distance running club", org:"State University", dates:"2021 – 2025", summary:"Captain senior year; organized the club’s first charity 10K for the free clinic.", }, []);
+  X("strength",{title:"Persistence", summary:"I keep going when something fails, but I look for the reason first."});
+  X("strength",{title:"Clear communication", summary:"I check what was understood, not just what was said."});
+  X("strength",{title:"Curiosity", summary:"I treat surprises as questions."});
+  X("weakness",{title:"Asking for help too late", summary:"In lab I spent three weeks stuck on a protocol before asking my PI, who solved it in ten minutes.", doing:"I set a rule: if I’m stuck for two days, I ask. I now bring a short list of blockers to every weekly meeting."},[
+    {head:"Asked in the first week", text:"In orgo office hours, then with the registry consent workflow, I asked on day one."}]);
+  X("reflection",{title:"Why medicine", summary:"Medicine joins the two things I care about most: understanding why bodies fail, and making sure people can act on what their doctors tell them."});
+
+  // Letter writers
+  const R = o=>{ const r=Object.assign({id:id("r"), name:"", kind:"other", role:"", asked:"", agreed:false, due:"", received:"", together:"", highlight:"", shared:"", expIds:[], notes:"", xnotes:{}, itemOff:{}}, o); N.recommenders.push(r); return r; };
+  R({name:"Dr. Priya Shah", kind:"research", role:"PI, cardiology research lab", asked:off(-150), agreed:true, due:off(-120), received:off(-118), shared:off(-148), together:"Two years in her lab: staining protocol, fibrosis scoring rubric, registry work.", highlight:"Persistence through the failed protocol; the blinded scoring rubric.", expIds:[xLab.id, xClinic.id], xnotes:{[xLab.id]:"She saw the rubric meeting and the eight-month protocol log."}});
+  R({name:"Dr. Marcus Bell", kind:"clinical", role:"Emergency physician, Riverside Hospital", asked:off(-20), agreed:true, due:off(9), together:"Scribed for him two evenings a week since June.", highlight:"How I adapt explanations for patients.", expIds:[xScribe.id, xClinic.id]});
+  R({name:"Prof. Ellen Ward", kind:"science", role:"Organic chemistry professor", asked:off(-160), agreed:true, due:off(-125), received:off(-126), together:"Her course (after the 41) and two years tutoring for it.", expIds:[xTutor.id]});
+
+  // Schools
+  const addS = (name, o)=>{ const L=libFind(name); if(!L) return null; const s=Object.assign({id:id("s"), name:L.name, libName:L.name, received:off(-110), turnaround:DEFAULT_TURNAROUND, hard:"", interest:2, submitted:false, fee:false, pinned:false, track:"single"}, o); N.schools.push(s); const es=libEssays(L, s.id, false, promptCycle(L,false)); N.essays.push(...es); return {s, es}; };
+  const own = {why:null, other:null, anything:ANYTHING1, ethics:ETHICS_D};
+  // fill a school's essays: copies of bases trimmed to the limit, school-specific text otherwise
+  const fill = (x, status, texts, skipOpt)=>{ if(!x) return; x.es.forEach((e,i)=>{
+    if(skipOpt!==false && e.optional && !(texts && i in texts)) return;
+    const t = texts && texts[i];
+    if(t===null) return;
+    if(t==="drop"){ e._drop=true; return; }
+    const b = e.baseId && N.bases.find(z=>z.id===e.baseId);
+    if(typeof t==="string") e.text=fitTo(t, e.limit, e.unit);
+    else if(b){ const v=(t&&t.v)||b.versions.length; e.basedOnV=v; e.text=fitTo(b.versions[v-1].text, e.limit, e.unit); if(e.text!==b.versions[v-1].text) e.localEdit=true; }
+    else if(e.family==="why") e.text=fitTo(WHY(x.s.name.replace(/ (School|College) of .*$/,"").replace(/^University of /,"U of ")), e.limit, e.unit);
+    else if(own[e.family]) e.text=fitTo(own[e.family], e.limit, e.unit);
+    else return;
+    e.status=(t&&t.status)||status; }); N.essays=N.essays.filter(e=>!e._drop); };
+  const sub = (d)=>({submitted:true, fee:true, submittedAt:off(d), complete:off(d+6)});
+
+  const washu = addS("Washington University in St. Louis School of Medicine", Object.assign(sub(-98), {interest:3, feeAmt:100, ii:off(-50), iv:off(-10), ivMode:"in person", ivTime:"8:00 AM", thanks:false, notes:"Interviewer: Dr. Lin (cardiology). Asked a lot about the registry."}));
+  fill(washu, "pasted", {0:GAP1, 3:"No."});
+  newLetterFor(washu.s, "thanks", {status:"drafting", text:"Dear Dr. Lin,\n\nThank you for taking the time to talk with me on Tuesday. I especially enjoyed our conversation about heart failure registries"});
+  const mn = addS("University of Minnesota Medical School", Object.assign(sub(-95), {interest:3, feeAmt:100, ii:off(-21), iv:off(6), ivMode:"virtual", ivTime:"7:45 AM", stories:[xClinic.id+"|", xLab.id+"|"]}));
+  fill(mn, "pasted", {0:SERV1, 1:"drop", 2:"drop", 3:{v:1}});
+  const nw = addS("Northwestern University Feinberg School of Medicine", Object.assign(sub(-96), {interest:3, feeAmt:100, outcome:"hold", outcomeDate:off(-12), hist:[{o:"hold", d:off(-12)}]}));
+  fill(nw, "pasted", {1:BOOK, 2:GAP1});
+  newLetterFor(nw.s, "update", {status:"drafting", text:UPDATE_NW, due:off(9)});
+  const emory = addS("Emory University School of Medicine", Object.assign(sub(-90), {interest:2, feeAmt:120, outcome:"rej", outcomeDate:off(-6), hist:[{o:"rej", d:off(-6)}]}));
+  fill(emory, "pasted", {0:GAP1, 1:HEALTH});
+  const umich = addS("University of Michigan Medical School", Object.assign(sub(-100), {interest:3, feeAmt:85, ii:off(-70), iv:off(-41), ivMode:"virtual", thanks:true, outcome:"acc", outcomeDate:off(-3), hist:[{o:"acc", d:off(-3)}], reflect:"Felt like a conversation, not a test. Students clearly knew each other well."}));
+  fill(umich, "pasted", {3:CURIOUS});
+  const mayo = addS("Mayo Clinic Alix School of Medicine, Minnesota", Object.assign(sub(-88), {interest:3, feeAmt:0, waiver:true, ii:off(-2)}));
+  fill(mayo, "pasted");
+  const osu = addS("Ohio State University College of Medicine", Object.assign(sub(-92), {interest:2, feeAmt:90, ii:off(-60), iv:off(-33), ivMode:"virtual", thanks:true, outcome:"wl", outcomeDate:off(-8), hist:[{o:"wl", d:off(-8)}]}));
+  fill(osu, "pasted", {0:OSU_WHY});
+  newLetterFor(osu.s, "loi", {status:"ready", text:LOI_OSU, due:off(4)});
+  // still writing these
+  const baylor = addS("Baylor College of Medicine", {received:off(-6), hard:off(10), interest:3, feeAmt:100});
+  fill(baylor, "drafting", {0:BAYLOR_CAREER, 1:{status:"ready"}, 2:null});
+  const utsw = addS("UT Southwestern Medical School", {received:off(-3), interest:2, feeAmt:100});
+  fill(utsw, "drafting", {0:{status:"ready"}, 1:ETHICS_D, 2:{v:2}});
+
+  // Primary applications
+  const amcas = appRec("amcas"); amcas.submitted = true; const tm = appRec("tmdsas"); tm.submitted = true;
+  const pe = (k, key, text, b, hist)=>{ const d=SVC[k].essays.find(z=>z.k===key); const e=startPrimary(k, d); e.text=fitTo(text, d.limit, "chars"); e.status="pasted"; if(b){ e.baseId=b.id; e.basedOnV=b.versions.length; } if(hist) e.hist=hist; return e; };
+  pe("amcas","ps",PS3,bPS,[{t:ago(120), text:PS1, label:"First full draft"},{t:ago(100), text:PS2, label:""},{t:ago(92), text:PS3, label:"After Dr. Shah’s comments"}]);
+  pe("tmdsas","ps",PS3,bPS); pe("tmdsas","pchar",D3,bD);
+  const A = (svc, x, o)=>{ const a=Object.assign({id:id("a"), svc, expId:x?x.id:"", title:x?x.title:"", type:x?actType(svc,x.kind):SVC[svc].act.types[0], org:x?x.org:"", dates:x?x.dates:"", hours:"", desc:"", mm:false, mmText:""}, o); N.acts.push(a); return a; };
+  A("amcas", xClinic, {hours:"800", desc:"Interpret between Spanish-speaking patients and volunteer physicians every Saturday. Introduced teach-back at the end of visits, wrote the one-page guide now given to every new interpreter, and added a two-question food insecurity screen to intake (140 patients screened, 52 referred to pantries).", mm:true, mmText:"A patient once told me she had stopped her blood pressure pills because the label said to take them “once” daily, and in Spanish “once” means eleven. That moment taught me that the gap in care is often not vocabulary but context and trust. I began asking every patient to repeat the plan back, and the habit has followed me into the lab and the emergency department. It is the clearest reason I want to be a physician: a plan only works if the person it is for understands it."});
+  A("amcas", xLab, {hours:"2,100", desc:"Studied mechanisms of cardiac fibrosis in heart failure. Optimized an immunostaining protocol, scored tissue sections, and built the blinded scoring rubric the lab now uses to train new students. Abstract accepted for a regional cardiology meeting.", mm:true, mmText:"For eight months my staining protocol failed. Logging every variable eventually showed the antibody bound only after a longer fixation step. I learned to treat failure as information, and also that I should have asked for help much sooner, a habit I have since changed."});
+  A("amcas", xScribe, {type:"Paid employment: medical/clinical", hours:"450", desc:"Document patient encounters in real time for emergency physicians two evenings a week."});
+  A("amcas", xTutor, {type:"Teaching/tutoring/teaching assistant", hours:"300", desc:"Tutored nine students per semester in organic chemistry, the course I nearly failed, using blank-page practice and weekly teaching groups."});
+  A("amcas", xRun, {type:"Extracurricular activities", hours:"600", desc:"Captain senior year. Organized the club’s first charity 10K, which raised $4,200 for the Eastside Free Clinic.", mm:true, mmText:"Running taught me to plan for the long middle of something hard. Organizing the 10K was the first time I had to ask dozens of people for help, which did not come naturally."});
+  A("amcas", null, {title:"Dean’s List", type:"Honors/awards/recognitions", dates:"2021 – 2025", desc:"Seven of eight semesters."});
+  A("tmdsas", xClinic, {hours:"800", desc:"Interpret Spanish and English for patients and volunteer physicians every Saturday; started teach-back and wrote the interpreter guide."});
+  A("tmdsas", xLab, {hours:"2,100", desc:"Cardiac fibrosis research: optimized staining, built the lab’s blinded scoring rubric; now a research coordinator for a heart failure registry."});
+  return N;
+}
+function newLetterFor(s, fam, o){ const e=newLetter(s, fam); Object.assign(e, o||{}); return e; }
 
 /* ---------- storage ---------- */
 let S;
+const STASH = "secondaries-stash-v1";
+function sampleStash(){ try{ const o=JSON.parse(localStorage.getItem(STASH)||"null"); if(o && o.schools){ const b=blank(); return Object.assign(b, o, {demo:false}); } }catch(e){} return blank(); }
 function blank(){ return {v:1, demo:false, schools:[], bases:[], essays:[], archives:[], experiences:[], recommenders:[], apps:[], acts:[], del:{}}; }
 function load(){ try{ const raw=localStorage.getItem(KEY); if(raw){ const o=JSON.parse(raw); if(o && o.schools){ o.del=o.del||{}; o.archives=o.archives||[]; o.experiences=o.experiences||[]; o.recommenders=o.recommenders||[]; o.apps=o.apps||[]; o.acts=o.acts||[]; return o; } } }catch(e){} return blank(); }
 const COLLS=["schools","bases","essays","archives","experiences","recommenders","apps","acts"];   // experiences and letter writers stay across cycles   // archives: one record per past cycle
@@ -575,7 +647,7 @@ const Sync = (function(){
       setStatus("busy");
       await getToken(true);
       if(!st.email) st.email = await whoAmI();
-      if(S.demo){ S=blank(); snapshot(); try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+      if(S.demo){ S=sampleStash(); snapshot(); try{ localStorage.setItem(KEY, JSON.stringify(S)); localStorage.removeItem(STASH); }catch(e){} }
       st.connected=true; st.dirty=true; persist();
       userRetry=true; await run();
       if(status==="ok"){ render(); toast("Connected. Your work now saves to your Google Drive"+(st.email?" ("+st.email+")":"")+"."); }
@@ -600,7 +672,7 @@ const Sync = (function(){
   function chipHTML(){
     if(!available() || locked) return "";
     const ago = lastOk ? (Date.now()-lastOk<60e3 ? "just now" : Math.round((Date.now()-lastOk)/60e3)+" min ago") : "";
-    if(S.demo && !st.connected) return "";
+    if(S.demo) return "";
     switch(status){
       case "local": return '<button class="schip local" data-act="sync-connect" title="Your work is saved only in this browser"><i></i>This browser only · Save to Google Drive</button>';
       case "busy": return '<span class="schip busy"><i></i>Saving to Drive…</span>';
@@ -1633,7 +1705,7 @@ function vNext(){
   let h = '<h1>Do next</h1><p class="sub">Schools ranked by how soon they are due, how much you want them, and how much writing is left. Schools you can finish quickly move up.</p>';
   h += vBrief(rows) + '<!--SIDE-M-->';
   { const t=cycleTodos(); if(t.length) h += '<div class="panel" style="margin-bottom:16px"><div class="ph"><h2 style="flex:1">Interviews and letters</h2><button class="ghost small" data-tab="cycle">Cycle tab</button></div><ul class="list">'+t.slice(0,5).map(x=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(x.s?x.s.name:x.who)+'</div><div class="chips"><span class="chip '+x.c+'">'+esc(x.t)+'</span></div></div>'+(x.e?'<button data-act="open-essay" data-id="'+x.e.id+'">Open</button>':x.r?'<button data-act="open-rec" data-id="'+x.r.id+'">Open</button>':'<button data-act="open-school" data-id="'+x.s.id+'">Open</button>')+'</li>').join("")+'</ul></div>'; }
-  if(!S.schools.length) h += '<div class="panel hero-empty"><h2>Add a school when its secondary arrives</h2><p>Pick it from the prompt library and its prompts come with it, or paste them yourself. Prompts that ask the same thing at different schools can share one base essay, and this list will rank your schools by what to work on first.</p><div class="row"><button class="primary" data-act="first-school">Add your first school</button>'+(SHOW_LIBRARY?'<button data-act="go-library">Browse the prompt library</button>':'')+'<button data-act="try-examples">Try with examples</button></div><p class="small">'+(Sync.state().connected?'Your work saves in this browser and to your own Google Drive.':(Sync.available()?'Your work saves in this browser. Connect Google Drive at the top to keep it safe on any computer.':'Everything you enter stays on this device. Nothing is sent anywhere.'))+'</p></div>';
+  if(!S.schools.length) h += '<div class="panel hero-empty"><h2>Add a school when its secondary arrives</h2><p>Pick it from the prompt library and its prompts come with it, or paste them yourself. Prompts that ask the same thing at different schools can share one base essay, and this list will rank your schools by what to work on first.</p><div class="row"><button class="primary" data-act="first-school">Add your first school</button>'+(SHOW_LIBRARY?'<button data-act="go-library">Browse the prompt library</button>':'')+'<button data-act="try-examples">Explore with sample data</button></div><p class="small">'+(Sync.state().connected?'Your work saves in this browser and to your own Google Drive.':(Sync.available()?'Your work saves in this browser. Connect Google Drive at the top to keep it safe on any computer.':'Everything you enter stays on this device. Nothing is sent anywhere.'))+'</p></div>';
   else if(!rows.length) h += '<div class="panel empty">Nothing open. Add a school when a secondary arrives.</div>';
   else {
     h += '<div class="panel"><ol class="list">';
@@ -2100,6 +2172,7 @@ function vLibrary(){
 
 function topBanners(){
   let h='';
+  if(S.demo && !ui.essayId) h+='<div class="banner info" style="margin-bottom:16px"><div class="grow"><strong>You’re exploring sample data</strong> for a fictional applicant, Jordan, applying to real schools. Change anything you like: none of it is saved to Google Drive, and your own data is set aside until you go back.</div><button class="primary" data-act="exit-sample">Back to my data</button></div>';
   const dc=prefs().cycle;
   if(!S.demo && S.schools.length && dc && dc < CYCLE && !ui.essayId){
     const fresh=LIB.schools.filter(x=>x.prompts.length && !x.pc).length;
@@ -2120,7 +2193,7 @@ function vFoot(){
   const since = S.lastBackup ? daysUntil(S.lastBackup) : null;
   let h='';
   if(hasWork && !S.demo && !Sync.state().connected && (since==null || since<=-7)) h += '<div class="banner warn" style="margin-bottom:12px"><div class="grow small"><strong>'+(since==null?'You haven’t saved a backup yet.':'Last backup was '+Math.abs(since)+' days ago.')+'</strong> Your essays live only in this browser. Clearing site data or losing this device erases them.</div><button data-act="backup">Download backup</button></div>';
-  h += '<div class="stack" style="gap:10px"><div class="row" style="justify-content:space-between"><span>'+(Sync.state().connected? 'Saved to your Google Drive'+(Sync.state().email?' ('+esc(Sync.state().email)+')':'')+' and in this browser. <button class="ghost small" data-act="sync-disconnect" style="padding:0">Disconnect</button>' : 'Your entries are saved only in this browser.'+(Sync.available()?' <button class="ghost small" data-act="sync-connect" style="padding:0">Save to Google Drive</button>':''))+(S.lastBackup?' Last backup '+fmt(S.lastBackup)+'.':'')+'</span><span class="row"><button class="ghost" data-act="backup">Download backup</button><button class="ghost" data-act="restore">Restore backup</button>'+(S.demo?confirmBtn("clear","Clear examples","Erase the examples and start empty"):confirmBtn("clear","Erase everything",Sync.state().connected?"Erase all schools and essays here and in Google Drive":"Erase all schools and essays on this device"))+'</span></div>'+
+  h += '<div class="stack" style="gap:10px"><div class="row" style="justify-content:space-between"><span>'+(Sync.state().connected? 'Saved to your Google Drive'+(Sync.state().email?' ('+esc(Sync.state().email)+')':'')+' and in this browser. <button class="ghost small" data-act="sync-disconnect" style="padding:0">Disconnect</button>' : 'Your entries are saved only in this browser.'+(Sync.available()?' <button class="ghost small" data-act="sync-connect" style="padding:0">Save to Google Drive</button>':''))+(S.lastBackup?' Last backup '+fmt(S.lastBackup)+'.':'')+'</span><span class="row"><button class="ghost" data-act="backup">Download backup</button><button class="ghost" data-act="restore">Restore backup</button>'+(S.demo?'<button data-act="exit-sample">Back to my data</button>':'<button class="ghost" data-act="try-examples">Explore with sample data</button>'+confirmBtn("clear","Erase everything",Sync.state().connected?"Erase all schools and essays here and in Google Drive":"Erase all schools and essays on this device"))+'</span></div>'+
     '<div class="row" style="justify-content:space-between"><span>Student-built tool. Not affiliated with AMCAS, the AAMC, or any medical school. Always check prompts, limits and deadlines in each school’s portal.</span><span class="row"><a class="small" href="about.html">About</a><a class="small" href="privacy.html">Privacy</a><button class="ghost" data-act="tour">How to use this app</button></span></div></div>';
   return h;
 }
@@ -2251,7 +2324,8 @@ document.addEventListener("click", ev=>{
     case "prev-use": { const x=essay(ui.essayId); const i2=+d.i; if(x&&x.prev&&x.prev[i2]){ const old=x.text; x.text=x.prev[i2].text; x.prev[i2]={text:old, at:Date.now()}; save(); render(); toast("Switched to the other version. The one you had is kept below."); } break; }
     case "prev-drop": { const x=essay(ui.essayId); if(x&&x.prev){ x.prev.splice(+d.i,1); if(!x.prev.length) delete x.prev; save(); render(); } break; }
     case "restore": { const f=document.getElementById("restore-file"); f.value=""; f.click(); break; }
-    case "try-examples": S=seed(); S.del={}; snapshot(); save(); go("next"); toast("Examples loaded. Clear them from the bottom of the page."); break;
+    case "try-examples": { flush(); if(!S.demo){ try{ localStorage.setItem(STASH, JSON.stringify(S)); }catch(e){ toast("Couldn’t set your data aside in this browser, so the sample wasn’t loaded."); break; } } S=seed(); S.del={}; snapshot(); writeLocal(); go("next"); toast("Sample loaded. Your own data is set aside until you click Back to my data."); break; }
+    case "exit-sample": { S=sampleStash(); snapshot(); try{ localStorage.setItem(KEY, JSON.stringify(S)); localStorage.removeItem(STASH); }catch(e){} go("next"); toast("Back to your own data."); break; }
     case "first-school": go("schools",{addSchool:true}); setTimeout(()=>{ const n=document.getElementById("pick-q"); if(n) n.focus(); },0); break;
     case "tour": openTour(); break;
   }
@@ -2268,6 +2342,7 @@ function doConfirm(key){
   else if(k==="del-exp"){ S.experiences=(S.experiences||[]).filter(x=>x.id!==idv); (S.recommenders||[]).forEach(r=>{ r.expIds=(r.expIds||[]).filter(i=>i!==idv); if(r.shared===idv) r.shared=""; }); S.schools.forEach(sc=>{ if(sc.stories) sc.stories=sc.stories.filter(k2=>!k2.startsWith(idv+"|")); }); save(); go("experiences"); toast("Deleted"); }
   else if(k==="del-rec"){ S.recommenders=(S.recommenders||[]).filter(r=>r.id!==idv); ui.expView="writers"; save(); go("experiences"); toast("Deleted"); }
   else if(k==="del-act"){ S.acts=(S.acts||[]).filter(a=>a.id!==idv); ui.actOpen=null; save(); render(); }
+  else if(k==="clear" && S.demo){ S=sampleStash(); snapshot(); try{ localStorage.setItem(KEY, JSON.stringify(S)); localStorage.removeItem(STASH); }catch(e){} go("next"); toast("Back to your own data."); }
   else if(k==="clear"){ S=blank(); save(); go("next"); toast("Erased. This device now has no schools or essays."); }
 }
 function copyText(t){

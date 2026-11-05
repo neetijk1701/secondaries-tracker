@@ -71,3 +71,7 @@ Everything runs in the browser; nothing is sent anywhere and no AI rewrites text
   - Named versions keep the last 10.
   - Compare shows a diff against the current text; Restore saves the current text first ("Before restoring"). Starting from a base also saves first.
 - **Writing checks** (`essayChecks`): common phrases, wording repeated from another essay for the same school or service (shared 8-word runs ≥ 15%), overused words, many sentences starting with "I", sentences over 35 words, passive voice, paragraph balance. "Show" selects the passage in the editor.
+
+## Sample data
+"Explore with sample data" (footer, and the empty Do next page) loads a fictional applicant, Jordan, applying to 9 real library schools at every stage: secondaries in progress (Baylor with clichés for the checks, UT Southwestern with repeated wording and an out-of-date base copy), interviews coming up and done, an acceptance, a waitlist with a letter of intent, a hold with an update letter, a rejection; 7 base essays with versions; AMCAS and TMDSAS essays and activities; 10 experiences with strengths and a weakness; 3 letter writers. `seed()` builds it with the same helpers the app uses.
+- Your own data is set aside in `secondaries-stash-v1` and restored by "Back to my data". In sample mode nothing syncs to Drive (`S.demo`), and connecting Drive restores your data first.
