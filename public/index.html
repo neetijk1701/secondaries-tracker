@@ -238,6 +238,8 @@ footer.foot{border-top:1px solid var(--line); padding-block:18px 30px; color:var
 .bcol h3{margin:0 0 8px; font-size:13px}
 .bcard{display:flex; flex-direction:column; align-items:flex-start; gap:6px; width:100%; text-align:left; background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:9px 10px; margin-bottom:8px; cursor:pointer; font:inherit; color:inherit}
 .bcard:hover{border-color:var(--accent)}
+.two-col{display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start}
+@media (max-width:800px){ .two-col{grid-template-columns:1fr} }
 .bcard .nm{font-weight:600; font-size:14px; line-height:1.25}
 .bcard .chip{white-space:normal; text-align:left}
 @media (max-width:900px){ .board{grid-template-columns:1fr 1fr} }
@@ -982,19 +984,21 @@ function render(){
 
 /* ---------- experiences (story bank) and letter writers ---------- */
 // Longitudinal: these stay across cycles (Start a fresh list leaves them alone).
-const EXP_KINDS = {research:"Research", clinical:"Clinical", activity:"Other activities", strength:"Strengths", reflection:"Reflections"};
-const EXP_ONE = {research:"Research experience", clinical:"Clinical experience", activity:"Activity", strength:"Strength", reflection:"Reflection"};
-const EXP_ORDER = ["research","clinical","activity","strength","reflection"];
-const EXP_SUM = {research:"What you did", clinical:"What you did", activity:"What you did", strength:"What this strength looks like for you (optional)", reflection:"Your thoughts"};
-const EXP_ITEMS = {research:"What I learned", clinical:"What I learned", activity:"Reflections", strength:"Evidence", reflection:"Parts"};
+const EXP_KINDS = {research:"Research", clinical:"Clinical", activity:"Other activities", strength:"Strengths", weakness:"Weaknesses", reflection:"About me"};
+const EXP_ONE = {research:"Research experience", clinical:"Clinical experience", activity:"Activity", strength:"Strength", weakness:"Weakness", reflection:"Reflection"};
+const EXP_ORDER = ["research","clinical","activity","strength","weakness","reflection"];
+const STORY_KINDS = ["research","clinical","activity"], SELF_KINDS = ["strength","weakness","reflection"];
+const EXP_SUM = {research:"What you did", clinical:"What you did", activity:"What you did", strength:"In a line or two, what this strength looks like for you", weakness:"How it shows up: an honest, specific example", reflection:"Your thoughts"};
+const EXP_ITEMS = {research:"What I learned", clinical:"What I learned", activity:"Reflections", strength:"Evidence", weakness:"Signs of progress", reflection:"Parts"};
 const REC_KINDS = {research:"Research mentor", clinical:"Clinical supervisor", science:"Science professor", nonscience:"Non-science professor", committee:"Committee or advisor", other:"Other"};
 const exp = id=>(S.experiences||[]).find(x=>x.id===id);
 const rec = id=>(S.recommenders||[]).find(x=>x.id===id);
+function weaknessNames(){ return (S.experiences||[]).filter(x=>x.kind==="weakness" && x.title).map(x=>x.title); }
 function strengthNames(){ return (S.experiences||[]).filter(x=>x.kind==="strength" && x.title).map(x=>x.title); }
 function newExp(kind, o){ return Object.assign({id:id("x"), kind, title:"", org:"", dates:"", summary:"", items:[]}, o||{}); }
 function newItem(o){ return Object.assign({id:id("i"), head:"", text:"", tags:[]}, o||{}); }
 // every story: an experience's summary, or one of its lessons
-function allStories(){ const out=[]; (S.experiences||[]).forEach(x=>{ if(x.summary && x.kind!=="strength") out.push({x, it:null, key:x.id+"|", head:x.title, sub:EXP_ONE[x.kind], text:x.summary}); (x.items||[]).forEach(it=>{ const generic=!it.head || /^reflections?$/i.test(it.head); out.push({x, it, key:x.id+"|"+it.id, head:generic? x.title : it.head, sub:generic? (it.head||EXP_ONE[x.kind]) : x.title, text:it.text||""}); }); }); return out; }
+function allStories(){ const out=[]; (S.experiences||[]).forEach(x=>{ if((x.summary||x.doing) && x.kind!=="strength") out.push({x, it:null, key:x.id+"|", head:x.title, sub:EXP_ONE[x.kind], text:x.kind==="weakness"? [x.summary, x.doing&&("What I’m doing about it: "+x.doing)].filter(Boolean).join("\n\n") : x.summary}); (x.items||[]).forEach(it=>{ const generic=!it.head || /^reflections?$/i.test(it.head); out.push({x, it, key:x.id+"|"+it.id, head:generic? x.title : it.head, sub:generic? (it.head||EXP_ONE[x.kind]) : x.title, text:it.text||""}); }); }); return out; }
 function storyByKey(k){ return allStories().find(s=>s.key===k); }
 // stories that fit a prompt: shared words weighted by rarity, plus which kind of story usually answers that prompt type
 function storyMatches(promptText, fam, n){
@@ -1002,13 +1006,14 @@ function storyMatches(promptText, fam, n){
   const tk=t=>((t||"").toLowerCase().match(/[a-z]{4,}/g)||[]).filter(w=>!STOP.has(w)).map(stem);
   const df=new Map(); const docs=st.map(s=>{ const set=new Set(tk(s.head+" "+s.text+" "+s.x.title)); set.forEach(w=>df.set(w,(df.get(w)||0)+1)); return set; });
   const q=new Set(tk(promptText)), N=st.length;
-  const pref={research:["research"], resint:["research"], mdphd:["research","reflection"], career:["reflection","clinical","research"], service:["clinical","activity"], challenge:["research","activity","clinical"], diversity:["activity","reflection"], team:["reflection","research","activity"], why:["reflection"], gap:["research","clinical","activity"], osteo:["clinical"], update:["research","clinical","activity"], loi:["reflection"], ethics:["clinical"]}[fam]||[];
+  const pref={research:["research"], resint:["research"], mdphd:["research","reflection"], career:["reflection","clinical","research"], service:["clinical","activity"], challenge:["weakness","research","activity"], diversity:["activity","reflection"], team:["reflection","research","activity"], why:["reflection"], gap:["research","clinical","activity"], osteo:["clinical"], update:["research","clinical","activity"], loi:["reflection"], ethics:["clinical"]}[fam]||[];
   return st.map((s,i)=>{ let sc=0; q.forEach(w=>{ if(docs[i].has(w)) sc+=Math.log(1+N/(df.get(w)||1)); });
     const bi=pref.indexOf(s.x.kind); if(bi>=0) sc+=(3-bi)*0.8;
     if(fam==="challenge" && /setback|fail|struggl|difficult|mistake|problem|adversit/i.test(s.head+" "+s.text)) sc+=2.5;
     if((fam==="career"||fam==="mdphd") && /career|goal|physician-scientist/i.test(s.x.title+" "+s.head)) sc+=3;
     if(fam==="team" && /group|team|collaborat/i.test(s.x.title+" "+s.head)) sc+=3;
     if(s.x.kind==="strength") sc-=0.5;
+    if(fam==="challenge" && s.x.kind==="weakness" && !s.it) sc+=6;   // a weakness with what you did about it is a ready-made growth story
     return {s, sc}; }).filter(o=>o.sc>1.2).sort((a,b)=>b.sc-a.sc).slice(0,n||4).map(o=>o.s);
 }
 // pick what a writer should see: experiences of the kind they supervised (most relevant first), the strengths those lessons show, and career goals
@@ -1035,7 +1040,7 @@ function parseProfile(text){
   const BUL=/^[•▪●➢‣⁃∙◦■*>-]+\s*/;
   const FIELD=/^(summary|what i learned|lessons?|description|reflections?|what i did)\s*:?\s*:?\s*/i;
   const lines=text.replace(/\r/g,"").replace(/\f/g,"\n").split("\n").map(l=>l.replace(/\s+$/,""));
-  const kindOf=t=>/strength/i.test(t)?"strength": /research|lab\b/i.test(t)?"research": /clinic|medical|shadow|patient|hospital|scribe|emt/i.test(t)?"clinical": /career|goal|group|individual|why|reflect|about me|values/i.test(t)?"reflection":"activity";
+  const kindOf=t=>/strength/i.test(t)?"strength": /weakness|growth|improv/i.test(t)?"weakness": /research|lab\b/i.test(t)?"research": /clinic|medical|shadow|patient|hospital|scribe|emt/i.test(t)?"clinical": /career|goal|group|individual|why|reflect|about me|values/i.test(t)?"reflection":"activity";
   const out=[]; let sec=null, cur=null, mode="summary", item=null, titleOpen=false;
   const dates={};   // from a table of contents: "Kumar Lab, Mayo Clinic (Summer 2017)"
   const finishItem=()=>{ if(item){ item.text=item.text.trim(); if(item.text||item.head) cur.items.push(item); item=null; } };
@@ -1097,21 +1102,43 @@ function parseProfile(text){
 
 function vExperiences(){
   ui.expView=ui.expView||"stories";
-  let h='<h1>Experiences</h1><p class="sub">Your research, clinical work and activities, what each one taught you, and the strengths they show. This stays with you from cycle to cycle. Essays and interview prep pull stories from here, and each letter writer can get a summary tailored to them.</p>';
-  h+='<div class="row" style="justify-content:space-between; margin-bottom:14px"><span class="seg" role="group" aria-label="View"><button data-act="exp-view" data-v="stories" aria-pressed="'+(ui.expView==="stories")+'">Stories</button><button data-act="exp-view" data-v="writers" aria-pressed="'+(ui.expView==="writers")+'">Letter writers'+((S.recommenders||[]).length?' ('+S.recommenders.length+')':'')+'</button></span>'+
+  let h='<h1>Experiences</h1><p class="sub">What you’ve done, what it taught you, and what it shows about you. This stays with you from cycle to cycle. Essays and interview prep pull stories from here, and each letter writer can get a summary tailored to them.</p>';
+  h+='<div class="row" style="justify-content:space-between; margin-bottom:14px"><span class="seg" role="group" aria-label="View"><button data-act="exp-view" data-v="stories" aria-pressed="'+(ui.expView==="stories")+'">Experiences</button><button data-act="exp-view" data-v="self" aria-pressed="'+(ui.expView==="self")+'">Strengths &amp; weaknesses</button><button data-act="exp-view" data-v="writers" aria-pressed="'+(ui.expView==="writers")+'">Letter writers'+((S.recommenders||[]).length?' ('+S.recommenders.length+')':'')+'</button></span>'+
     '<label class="chk small">Your name <input id="pref-name" value="'+esc(prefs().name||"")+'" placeholder="For letter-writer summaries" style="width:200px"></label></div>';
-  return h+(ui.expView==="writers"? vWriters() : vStories());
+  return h+(ui.expView==="writers"? vWriters() : ui.expView==="self"? vSelf() : vStories());
 }
 function vStories(){
   const X=S.experiences||[];
-  let h='<div class="row" style="margin-bottom:14px"><select id="exp-new-kind" aria-label="Kind of experience">'+EXP_ORDER.map(k=>'<option value="'+k+'">'+EXP_ONE[k]+'</option>').join("")+'</select><button class="primary" data-act="exp-add">Add</button><button data-act="exp-import">'+(ui.expImport?'Close import':'Import from a document')+'</button>'+(X.length?'<button class="ghost" data-act="exp-export">Download all as a document</button>':'')+'</div>';
+  let h='<div class="row" style="margin-bottom:14px"><select id="exp-new-kind" aria-label="Kind of experience">'+STORY_KINDS.map(k=>'<option value="'+k+'">'+EXP_ONE[k]+'</option>').join("")+'</select><button class="primary" data-act="exp-add">Add</button><button data-act="exp-import">'+(ui.expImport?'Close import':'Import from a document')+'</button>'+(X.length?'<button class="ghost" data-act="exp-export">Download all as a document</button>':'')+'</div>';
   if(ui.expImport) h+=importPanel();
-  if(!X.length && !ui.expImport) h+='<div class="panel"><div class="pb stack"><h2>Start your story bank</h2><p style="margin:0">Many applicants keep one running document about their experiences and give it to letter writers. It’s also the best raw material for secondaries and interviews. For each research or clinical experience, and your main activities:</p><ul style="margin:0; padding-left:20px"><li><b>What you did:</b> the project or role, in a short paragraph.</li><li><b>What you learned:</b> two to four lessons, each with a one-line headline (“How to improve processes”) and the story behind it.</li></ul><p style="margin:0">Then add a few <b>strengths</b> with evidence from two or three experiences each, and <b>reflections</b> such as your career goals or whether you prefer group or individual work. Already have a document like this? Use <b>Import from a document</b>.</p></div></div>';
-  EXP_ORDER.forEach(k=>{ const xs=X.filter(x=>x.kind===k); if(!xs.length) return;
+  if(!X.some(x=>STORY_KINDS.includes(x.kind)) && !ui.expImport) h+='<div class="panel"><div class="pb stack"><h2>Start your story bank</h2><p style="margin:0">Many applicants keep one running document about their experiences and give it to letter writers. It’s also the best raw material for secondaries and interviews. For each research or clinical experience, and your main activities:</p><ul style="margin:0; padding-left:20px"><li><b>What you did:</b> the project or role, in a short paragraph.</li><li><b>What you learned:</b> two to four lessons, each with a one-line headline (“How to improve processes”) and the story behind it.</li></ul><p style="margin:0">Then add a few <b>strengths</b> with evidence from two or three experiences each, and <b>reflections</b> such as your career goals or whether you prefer group or individual work. Already have a document like this? Use <b>Import from a document</b>.</p></div></div>';
+  if(X.some(x=>SELF_KINDS.includes(x.kind))) h+='<p class="small muted" style="margin:-4px 0 12px">Strengths, weaknesses and reflections are on the <button class="ghost small" data-act="exp-view" data-v="self" style="padding:0">Strengths &amp; weaknesses</button> tab.</p>';
+  STORY_KINDS.forEach(k=>{ const xs=X.filter(x=>x.kind===k); if(!xs.length) return;
     h+='<div class="panel" style="margin-bottom:14px"><div class="ph"><h2 style="flex:1">'+EXP_KINDS[k]+'</h2><span class="small muted">'+xs.length+'</span></div><ul class="list">'+xs.map(x=>{
       const tagged=k==="strength"? X.reduce((a,y)=>a+(y.items||[]).filter(it=>(it.tags||[]).includes(x.title)).length,0):0;
       return '<li><div class="main"><div class="row"><b>'+esc(x.title||"Untitled")+'</b>'+(x.org||x.dates?'<span class="small muted">'+esc([x.org,x.dates].filter(Boolean).join(" · "))+'</span>':'')+'</div><div class="chips">'+((x.items||[]).length?'<span class="chip">'+x.items.length+' '+(k==="strength"?'pieces of evidence':k==="reflection"?'parts':'lessons')+'</span>':'')+(tagged?'<span class="chip acc">Tagged in '+tagged+' lesson'+(tagged===1?'':'s')+'</span>':'')+((x.items||[]).flatMap(it=>it.tags||[]).filter((t,i,a)=>a.indexOf(t)===i).slice(0,4).map(t=>'<span class="chip acc">'+esc(t)+'</span>').join(""))+'</div></div><button data-act="open-exp" data-id="'+x.id+'">Open</button></li>'; }).join("")+'</ul></div>'; });
   return h;
+}
+function evidenceCount(x){ const tag=x.kind==="weakness"?"grow":"tags"; return (x.items||[]).length + (S.experiences||[]).reduce((a,y)=>a+(y.items||[]).filter(it=>(it[tag]||[]).includes(x.title)).length,0); }
+function vSelf(){
+  const X=S.experiences||[], st=X.filter(x=>x.kind==="strength"), wk=X.filter(x=>x.kind==="weakness"), rf=X.filter(x=>x.kind==="reflection");
+  const card=(x,extra)=>'<li><div class="main"><b>'+esc(x.title||"Untitled")+'</b>'+(x.summary?'<div class="small muted" style="margin-top:2px">'+esc(x.summary.slice(0,140))+(x.summary.length>140?'…':'')+'</div>':'')+'<div class="chips">'+extra+'</div></div><button data-act="open-exp" data-id="'+x.id+'">Open</button></li>';
+  let h='<div class="two-col">';
+  h+='<div class="panel"><div class="ph"><h2 style="flex:1">Strengths</h2><button data-act="exp-add-self" data-k="strength">Add</button></div>'+
+    '<div class="pb small muted" style="border-bottom:1px solid var(--line-soft)">Name a strength, then back it with moments from two or three experiences. Tag lessons on the Experiences tab and they count here too.</div>'+
+    (st.length?'<ul class="list">'+st.map(x=>{ const n=evidenceCount(x); return card(x,'<span class="chip'+(n>=2?' good':' warn')+'">'+n+' piece'+(n===1?'':'s')+' of evidence</span>'+(n<2?'<span class="chip">Add another</span>':'')); }).join("")+'</ul>':'<div class="empty small">No strengths yet.</div>')+'</div>';
+  h+='<div class="panel"><div class="ph"><h2 style="flex:1">Weaknesses</h2><button data-act="exp-add-self" data-k="weakness">Add</button></div>'+
+    '<div class="pb small" style="border-bottom:1px solid var(--line-soft); background:var(--accent-soft)"><b>These are about growth.</b> When programs ask about a weakness, they want self-awareness and progress, not a confession. For each one: name it honestly, give a real example of how it shows up, say what you’re doing about it, and collect signs you’re improving. They stay private unless you choose to share one.</div>'+
+    (wk.length?'<ul class="list">'+wk.map(x=>{ const n=evidenceCount(x); return card(x,(x.doing?'<span class="chip acc">Working on it</span>':'<span class="chip warn">Add what you’re doing about it</span>')+(n?'<span class="chip good">'+n+' sign'+(n===1?'':'s')+' of progress</span>':'')); }).join("")+'</ul>':'<div class="empty small">No weaknesses yet.</div>')+'</div>';
+  h+='</div>';
+  h+='<div class="panel" style="margin-top:14px"><div class="ph"><h2 style="flex:1">About me</h2><button data-act="exp-add-self" data-k="reflection">Add</button></div>'+
+    '<div class="pb small muted" style="border-bottom:1px solid var(--line-soft)">Bigger reflections: career goals, why medicine, how you work best with others.</div>'+
+    (rf.length?'<ul class="list">'+rf.map(x=>card(x,(x.items||[]).length?'<span class="chip">'+x.items.length+' parts</span>':'')).join("")+'</ul>':'<div class="empty small">Nothing here yet.</div>')+'</div>';
+  return h;
+}
+function weaknessOutline(x){
+  const prog=[...(x.items||[]).map(it=>it.head||it.text), ...(S.experiences||[]).flatMap(y=>(y.items||[]).filter(it=>(it.grow||[]).includes(x.title)).map(it=>(it.head||"")+" ("+y.title+")"))].filter(Boolean);
+  return [["Name it", x.title], ["A real example", x.summary], ["What I’m doing about it", x.doing], ["How I know it’s working", prog.slice(0,3).join("; ")]];
 }
 function importPanel(){
   let h='<div class="panel" style="margin-bottom:14px"><div class="pb stack"><h2>Import from a document</h2><p class="small muted" style="margin:0">Paste the text of a document like a letter-writer profile. Numbered sections (“1. Research Experiences”), lettered entries (“a. Cole Lab, St. Olaf College”), labels like Summary, What I learned, Description and Reflection, and bullets with “Headline: story” are picked up. You can fix anything afterward.</p>'+
@@ -1123,24 +1150,31 @@ function importPanel(){
   return h+'</div></div>';
 }
 function vExp(x){
-  const k=x.kind, strengths=strengthNames().filter(t=>t!==x.title);
-  let h='<button class="ghost back" data-act="back-exp">← Experiences</button>';
+  const k=x.kind, strengths=strengthNames().filter(t=>t!==x.title), weaknesses=weaknessNames().filter(t=>t!==x.title), selfk=SELF_KINDS.includes(k);
+  let h='<button class="ghost back" data-act="'+(selfk?'back-self':'back-exp')+'">← '+(selfk?'Strengths &amp; weaknesses':'Experiences')+'</button>';
   h+='<div class="grid-f" style="margin-bottom:12px"><label class="f" style="grid-column:1/-1">Title<input id="xt-'+x.id+'" data-bind="exp:'+x.id+':title" value="'+esc(x.title)+'" style="font-weight:700; font-size:18px"></label>'+
-    (k==="strength"||k==="reflection"?'':'<label class="f">Where<input id="xo-'+x.id+'" data-bind="exp:'+x.id+':org" value="'+esc(x.org)+'" placeholder="e.g. MD Anderson Cancer Center"></label><label class="f">When<input id="xd-'+x.id+'" data-bind="exp:'+x.id+':dates" value="'+esc(x.dates)+'" placeholder="e.g. Summer 2019"></label>')+
+    (selfk?'':'<label class="f">Where<input id="xo-'+x.id+'" data-bind="exp:'+x.id+':org" value="'+esc(x.org)+'" placeholder="e.g. MD Anderson Cancer Center"></label><label class="f">When<input id="xd-'+x.id+'" data-bind="exp:'+x.id+':dates" value="'+esc(x.dates)+'" placeholder="e.g. Summer 2019"></label>')+
     '<label class="f">Kind<select id="xk-'+x.id+'" data-bind="exp:'+x.id+':kind">'+EXP_ORDER.map(o=>'<option value="'+o+'"'+(o===k?' selected':'')+'>'+EXP_ONE[o]+'</option>').join("")+'</select></label></div>';
-  h+='<label class="f">'+EXP_SUM[k]+'<textarea id="xs-'+x.id+'" rows="5" data-bind="exp:'+x.id+':summary">'+esc(x.summary)+'</textarea></label>';
+  if(k==="weakness") h+='<p class="small" style="margin:0 0 10px; padding:8px 10px; border-radius:8px; background:var(--accent-soft)">Frame this as growth: a real weakness, a specific example, and what you’re actively doing about it. Avoid disguised strengths (“I work too hard”); interviewers see through them.</p>';
+  h+='<label class="f">'+EXP_SUM[k]+'<textarea id="xs-'+x.id+'" rows="'+(k==="strength"?2:5)+'" data-bind="exp:'+x.id+':summary"'+(k==="weakness"?' placeholder="e.g. I wait too long to ask for help. In my first months at the NIH, I spent two weeks troubleshooting a protocol alone before asking a postdoc, who spotted the problem in minutes."':k==="strength"?' placeholder="e.g. I stay steady through setbacks and keep troubleshooting without getting discouraged."':'')+'>'+esc(x.summary)+'</textarea></label>';
+  if(k==="weakness") h+='<label class="f" style="margin-top:10px">What I’m doing about it<textarea id="xw-'+x.id+'" rows="3" data-bind="exp:'+x.id+':doing" placeholder="Concrete steps: e.g. I set a rule to ask after a day of being stuck, and I bring a list of questions to weekly check-ins.">'+esc(x.doing||"")+'</textarea></label>';
   h+='<div class="panel" style="margin-top:14px"><div class="ph"><h2 style="flex:1">'+EXP_ITEMS[k]+'</h2><button data-act="exp-item-add">Add</button></div><div class="pb stack">';
-  if(!(x.items||[]).length) h+='<p class="small muted" style="margin:0">'+(k==="strength"?'Add a moment from two or three experiences that shows this strength.':k==="reflection"?'Optional: break this into parts, like “Medicine” and “Research”.':'Add two to four lessons. Give each a one-line headline and the story behind it.')+'</p>';
+  if(!(x.items||[]).length) h+='<p class="small muted" style="margin:0">'+(k==="strength"?'Add a moment from two or three experiences that shows this strength.':k==="weakness"?'Add moments that show you’re improving: feedback you acted on, a time you handled it better. You can also tag lessons on the Experiences tab.':k==="reflection"?'Optional: break this into parts, like “Medicine” and “Research”.':'Add two to four lessons. Give each a one-line headline and the story behind it.')+'</p>';
   (x.items||[]).forEach((it,i)=>{
     h+='<div class="stack" style="gap:6px; padding-bottom:12px; border-bottom:1px solid var(--line-soft)">'+
-      '<div class="row" style="flex-wrap:nowrap"><input id="xih-'+it.id+'" data-bind="expi:'+x.id+':'+it.id+':head" value="'+esc(it.head)+'" placeholder="'+(k==="strength"?'Where this happened (optional)':'One-line headline, e.g. How to improve processes')+'" style="flex:1; font-weight:600"><button class="ghost danger small" data-act="exp-item-del" data-i="'+it.id+'" aria-label="Remove">Remove</button></div>'+
+      '<div class="row" style="flex-wrap:nowrap"><input id="xih-'+it.id+'" data-bind="expi:'+x.id+':'+it.id+':head" value="'+esc(it.head)+'" placeholder="'+(k==="strength"||k==="weakness"?'Where this happened (optional)':'One-line headline, e.g. How to improve processes')+'" style="flex:1; font-weight:600"><button class="ghost danger small" data-act="exp-item-del" data-i="'+it.id+'" aria-label="Remove">Remove</button></div>'+
       '<textarea id="xit-'+it.id+'" rows="4" data-bind="expi:'+x.id+':'+it.id+':text">'+esc(it.text)+'</textarea>'+
-      (k!=="strength" && strengths.length?'<div class="chips"><span class="small muted" style="margin-right:4px">Shows:</span>'+strengths.map(t=>'<button class="chip'+((it.tags||[]).includes(t)?' acc':'')+'" data-act="exp-tag" data-i="'+it.id+'" data-t="'+esc(t)+'" aria-pressed="'+((it.tags||[]).includes(t))+'" style="cursor:pointer">'+esc(t)+'</button>').join("")+'</div>':'')+
+      (!selfk && strengths.length?'<div class="chips"><span class="small muted" style="margin-right:4px">Shows:</span>'+strengths.map(t=>'<button class="chip'+((it.tags||[]).includes(t)?' acc':'')+'" data-act="exp-tag" data-i="'+it.id+'" data-t="'+esc(t)+'" aria-pressed="'+((it.tags||[]).includes(t))+'" style="cursor:pointer">'+esc(t)+'</button>').join("")+'</div>':'')+
+      (!selfk && weaknesses.length?'<div class="chips"><span class="small muted" style="margin-right:4px">Working on:</span>'+weaknesses.map(t=>'<button class="chip'+((it.grow||[]).includes(t)?' warn':'')+'" data-act="exp-grow" data-i="'+it.id+'" data-t="'+esc(t)+'" aria-pressed="'+((it.grow||[]).includes(t))+'" style="cursor:pointer">'+esc(t)+'</button>').join("")+'</div>':'')+
     '</div>';
   });
   h+='</div></div>';
   if(k==="strength"){ const tagged=(S.experiences||[]).flatMap(y=>(y.items||[]).filter(it=>(it.tags||[]).includes(x.title)).map(it=>({y,it})));
     h+='<div class="panel" style="margin-top:14px"><div class="ph"><h2>Tagged in your experiences</h2></div>'+(tagged.length?'<ul class="list">'+tagged.map(o=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(o.it.head||o.y.title)+'</div><div class="small muted">'+esc(o.y.title)+'</div></div><button class="ghost" data-act="open-exp" data-id="'+o.y.id+'">Open</button></li>').join("")+'</ul>':'<div class="empty small">None yet. Open an experience and tap “'+esc(x.title)+'” under a lesson that shows it.</div>')+'</div>'; }
+  if(k==="weakness"){ const tagged=(S.experiences||[]).flatMap(y=>(y.items||[]).filter(it=>(it.grow||[]).includes(x.title)).map(it=>({y,it})));
+    h+='<div class="panel" style="margin-top:14px"><div class="ph"><h2>Lessons that show progress</h2></div>'+(tagged.length?'<ul class="list">'+tagged.map(o=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(o.it.head||o.y.title)+'</div><div class="small muted">'+esc(o.y.title)+'</div></div><button class="ghost" data-act="open-exp" data-id="'+o.y.id+'">Open</button></li>').join("")+'</ul>':'<div class="empty small">None yet. On the Experiences tab, tap “'+esc(x.title||"this weakness")+'” under “Working on” for a lesson that shows progress.</div>')+'</div>';
+    const ol=weaknessOutline(x);
+    h+='<div class="panel" style="margin-top:14px"><div class="ph"><h2 style="flex:1">Practice: “Tell me about a weakness”</h2><button class="ghost" data-act="weak-copy">Copy outline</button></div><div class="pb stack" style="gap:6px">'+ol.map(([a,b])=>'<div><div class="small" style="font-weight:600">'+a+'</div><div class="small'+(b?'':' muted')+'">'+(b?esc(b):'Not filled in yet')+'</div></div>').join("")+'<p class="small muted" style="margin:4px 0 0">Aim for about a minute out loud: most of it on what you’re doing and how it’s going.</p></div></div>'; }
   const writers=(S.recommenders||[]).filter(r=>(r.expIds||[]).includes(x.id)||r.shared===x.id);
   if(writers.length) h+='<p class="small muted" style="margin-top:12px">In the summaries for '+writers.map(r=>esc(r.name||"a letter writer")).join(", ")+'.</p>';
   h+='<div class="row" style="margin-top:18px">'+confirmBtn("del-exp:"+x.id,"Delete","Delete “"+esc(x.title||"this")+"” for good")+'</div>';
@@ -1166,10 +1200,10 @@ function vWriter(r){
   h+='<div class="panel"><div class="ph"><h2>Their summary</h2></div><div class="pb stack">';
   h+='<label class="f">Our work together<textarea id="rt-'+r.id+'" rows="6" data-bind="rec:'+r.id+':together" placeholder="How long and in what setting they know you (course, lab, clinic). Specific moments they saw: a presentation, a hard problem you worked through, feedback you took and acted on. What you learned from them, and how working with them shaped your path.">'+esc(r.together||"")+'</textarea></label>';
   h+='<label class="f">What I’d love you to highlight<textarea id="rh-'+r.id+'" rows="3" data-bind="rec:'+r.id+':highlight" placeholder="Two or three qualities or moments you hope the letter speaks to, ideally ones only this person saw.">'+esc(r.highlight||"")+'</textarea></label>';
-  h+='<label class="f">The experience you shared, if any<select id="rx-'+r.id+'" data-bind="rec:'+r.id+':shared"><option value="">None</option>'+X.filter(x=>x.kind!=="strength"&&x.kind!=="reflection").map(x=>'<option value="'+x.id+'"'+(r.shared===x.id?' selected':'')+'>'+esc(x.title)+'</option>').join("")+'</select></label>';
+  h+='<label class="f">The experience you shared, if any<select id="rx-'+r.id+'" data-bind="rec:'+r.id+':shared"><option value="">None</option>'+X.filter(x=>STORY_KINDS.includes(x.kind)).map(x=>'<option value="'+x.id+'"'+(r.shared===x.id?' selected':'')+'>'+esc(x.title)+'</option>').join("")+'</select></label>';
   if(!X.length) h+='<p class="small muted" style="margin:0">Add experiences on the Stories view to include them.</p>';
-  else h+='<div><div class="row" style="justify-content:space-between"><h3 style="margin-bottom:6px">Also include</h3><button class="ghost small" data-act="rec-suggest">Suggest for '+esc(REC_KINDS[r.kind]||"this writer").toLowerCase()+'</button></div><p class="small muted" style="margin:0 0 6px">Pick what’s useful to this writer. Your shared experience goes first either way.</p>'+EXP_ORDER.map(k=>{ const xs=X.filter(x=>x.kind===k && x.id!==r.shared); if(!xs.length) return ''; return '<div class="small" style="font-weight:600; margin-top:8px">'+EXP_KINDS[k]+'</div>'+xs.map(x=>'<label class="chk" style="display:flex; margin:4px 0"><input type="checkbox" class="rec-x" data-r="'+r.id+'" value="'+x.id+'"'+(sel.has(x.id)?' checked':'')+'> '+esc(x.title||"Untitled")+'</label>').join(""); }).join("")+'</div>';
-  { const ids=[r.shared, ...(r.expIds||[]).filter(i=>i!==r.shared)].filter(Boolean).map(exp).filter(x=>x && x.kind!=="strength" && x.kind!=="reflection");
+  else h+='<div><div class="row" style="justify-content:space-between"><h3 style="margin-bottom:6px">Also include</h3><button class="ghost small" data-act="rec-suggest">Suggest for '+esc(REC_KINDS[r.kind]||"this writer").toLowerCase()+'</button></div><p class="small muted" style="margin:0 0 6px">Pick what’s useful to this writer. Your shared experience goes first either way.</p>'+EXP_ORDER.map(k=>{ const xs=X.filter(x=>x.kind===k && x.id!==r.shared); if(!xs.length) return ''; return '<div class="small" style="font-weight:600; margin-top:8px">'+EXP_KINDS[k]+(k==="weakness"?' <span class="muted" style="font-weight:400">(private unless you check one)</span>':'')+'</div>'+xs.map(x=>'<label class="chk" style="display:flex; margin:4px 0"><input type="checkbox" class="rec-x" data-r="'+r.id+'" value="'+x.id+'"'+(sel.has(x.id)?' checked':'')+'> '+esc(x.title||"Untitled")+'</label>').join(""); }).join("")+'</div>';
+  { const ids=[r.shared, ...(r.expIds||[]).filter(i=>i!==r.shared)].filter(Boolean).map(exp).filter(x=>x && STORY_KINDS.includes(x.kind));
     if(ids.length) h+='<div><h3 style="margin-bottom:6px">Tailor each experience for '+esc(r.name||"them")+'</h3><p class="small muted" style="margin:0 0 6px">Keep the lessons this writer can speak to, and add a line about what they saw firsthand.</p>'+ids.map(x=>{ const offs=(r.itemOff||{})[x.id]||[]; const kept=(x.items||[]).filter(it=>!offs.includes(it.id)).length;
       return '<details class="panel" style="margin:6px 0"'+(ui.recOpen===x.id?' open':'')+' data-x="'+x.id+'"><summary class="ph" style="cursor:pointer"><span style="flex:1"><b>'+esc(x.title||"Untitled")+'</b>'+(x.id===r.shared?' <span class="chip acc">Shared</span>':'')+'</span><span class="small muted">'+kept+' of '+(x.items||[]).length+' lessons'+(((r.xnotes||{})[x.id]||"").trim()?' · note added':'')+'</span></summary><div class="pb stack" style="gap:6px">'+
         (x.items||[]).map(it=>'<label class="chk" style="display:flex; align-items:flex-start; gap:8px"><input type="checkbox" class="rec-it" data-r="'+r.id+'" data-x="'+x.id+'" value="'+it.id+'"'+(offs.includes(it.id)?'':' checked')+'> <span><b>'+esc(it.head||"Untitled lesson")+'</b> <span class="small muted">'+esc((it.text||"").slice(0,110))+((it.text||"").length>110?'…':'')+'</span></span></label>').join("")+
@@ -1200,9 +1234,10 @@ function packet(r, plain){
   let out=(plain? "Background for "+r.name+(me?"\nFrom "+me:"")+"\n" : "<h1>Background for "+esc(r.name)+"</h1>"+(me?'<p class="meta">From '+esc(me)+' · '+new Date().toLocaleDateString(undefined,{month:"long",day:"numeric",year:"numeric"})+'</p>':''));
   if(r.together) out+=H(2,"Our work together")+P(r.together);
   if(r.highlight) out+=H(2,"What I’d love you to highlight")+P(r.highlight);
-  const exps=pick.filter(x=>x.kind!=="strength"&&x.kind!=="reflection"), strs=pick.filter(x=>x.kind==="strength"), refl=pick.filter(x=>x.kind==="reflection");
+  const exps=pick.filter(x=>STORY_KINDS.includes(x.kind)), strs=pick.filter(x=>x.kind==="strength"), wks=pick.filter(x=>x.kind==="weakness"), refl=pick.filter(x=>x.kind==="reflection");
   if(exps.length) out+=H(2,"Experiences")+exps.map(block).join("");
   if(strs.length) out+=H(2,"Strengths")+strs.map(block).join("");
+  if(wks.length) out+=H(2,"What I’m working on")+wks.map(x=>H(3,x.title||"Untitled")+(x.summary?P(x.summary):"")+(x.doing?P("What I’m doing about it: "+x.doing):"")+((x.items||[]).length?UL(x.items.map(it=>LI(it.head,it.text))):"")).join("");
   if(refl.length) out+=H(2,"Reflections and goals")+refl.map(block).join("");
   return out;
 }
@@ -1210,7 +1245,7 @@ function packetHtml(r){
   return '<!doctype html><html><head><meta charset="utf-8"><title>Background for '+esc(r.name)+'</title><style>body{font-family:Georgia,"Times New Roman",serif; max-width:720px; margin:40px auto; padding:0 24px; line-height:1.5; color:#111} h1{font-size:24px; margin-bottom:4px} h2{font-size:18px; margin-top:28px; border-bottom:1px solid #ccc; padding-bottom:4px} h3{font-size:16px; margin:18px 0 2px} .meta{color:#555; margin-top:0; font-style:italic} .lab{font-weight:bold; margin-bottom:4px} li{margin-bottom:6px} .note{background:#f3f6f8; border-left:3px solid #0E6B66; padding:8px 12px}</style></head><body>'+packet(r,false)+'</body></html>';
 }
 function exportAllHtml(){
-  const r={name:"my experiences", shared:"", expIds:(S.experiences||[]).map(x=>x.id)};
+  const r={name:"my experiences", shared:"", expIds:(S.experiences||[]).filter(x=>x.kind!=="weakness").map(x=>x.id)};
   return packetHtml(r).replace("Background for my experiences","My experiences"+(prefs().name?": "+esc(prefs().name):""));
 }
 function downloadFile(name, content, type){ const blob=new Blob([content],{type}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000); }
@@ -1960,8 +1995,12 @@ document.addEventListener("click", ev=>{
     case "cancel-confirm": ui.confirm=null; render(); break;
     case "confirm": doConfirm(d.key); break;
     case "exp-view": ui.expView=d.v; render(); break;
-    case "open-exp": go("experiences",{expId:d.id}); break;
-    case "back-exp": go("experiences"); break;
+    case "open-exp": { const x=exp(d.id); if(x) ui.expView=SELF_KINDS.includes(x.kind)?"self":"stories"; go("experiences",{expId:d.id}); break; }
+    case "back-exp": ui.expView="stories"; go("experiences"); break;
+    case "back-self": ui.expView="self"; go("experiences"); break;
+    case "exp-add-self": { const x=newExp(d.k); S.experiences=S.experiences||[]; S.experiences.push(x); ui.expView="self"; save(); go("experiences",{expId:x.id}); setTimeout(()=>{ const n=document.getElementById("xt-"+x.id); if(n){ n.focus(); n.placeholder=d.k==="weakness"?"Name it, e.g. Asking for help too late":d.k==="strength"?"e.g. Patient":"e.g. Career goals"; } },0); break; }
+    case "exp-grow": { const x=exp(ui.expId); const it=x&&(x.items||[]).find(z=>z.id===d.i); if(!it) break; it.grow=it.grow||[]; it.grow=it.grow.includes(d.t)? it.grow.filter(z=>z!==d.t) : it.grow.concat([d.t]); save(); render(); break; }
+    case "weak-copy": { const x=exp(ui.expId); if(x) copyText(weaknessOutline(x).map(([a,b])=>a+": "+(b||"")).join("\n")); break; }
     case "open-rec": ui.expView="writers"; go("experiences",{recId:d.id}); break;
     case "back-writers": ui.expView="writers"; go("experiences"); break;
     case "exp-add": { const k=(document.getElementById("exp-new-kind")||{}).value||"research"; const x=newExp(k); S.experiences=S.experiences||[]; S.experiences.push(x); save(); go("experiences",{expId:x.id}); setTimeout(()=>{ const n=document.getElementById("xt-"+x.id); if(n) n.focus(); },0); break; }
@@ -2201,7 +2240,9 @@ document.addEventListener("change", ev=>{
 });
 function bindExtra(el){
   const p=el.dataset.bind.split(":"), val=el.type==="checkbox"? el.checked : el.value;
-  if(p[0]==="exp"){ const x=exp(p[1]); if(x){ x[p[2]]=val; save(); } }
+  if(p[0]==="exp"){ const x=exp(p[1]); if(x){ const old=x[p[2]]; x[p[2]]=val;
+      if(p[2]==="title" && old && val && (x.kind==="strength"||x.kind==="weakness")){ const f=x.kind==="strength"?"tags":"grow"; (S.experiences||[]).forEach(y=>(y.items||[]).forEach(it=>{ if((it[f]||[]).includes(old)) it[f]=it[f].map(t=>t===old?val:t); })); }
+      save(); } }
   else if(p[0]==="expi"){ const x=exp(p[1]); const it=x&&(x.items||[]).find(z=>z.id===p[2]); if(it){ it[p[3]]=val; save(); } }
   else if(p[0]==="recn"){ const r=rec(p[1]); if(r){ r.xnotes=r.xnotes||{}; r.xnotes[p[2]]=val; save(); } }
   else if(p[0]==="rec"){ const r=rec(p[1]); if(r){ r[p[2]]=val; if(p[2]==="received"&&val) r.agreed=true; save(); } }
