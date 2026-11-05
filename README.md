@@ -75,3 +75,11 @@ Everything runs in the browser; nothing is sent anywhere and no AI rewrites text
 ## Sample data
 "Explore with sample data" (footer, and the empty Do next page) loads a fictional applicant, Jordan, applying to 9 real library schools at every stage: secondaries in progress (Baylor with clichés for the checks, UT Southwestern with repeated wording and an out-of-date base copy), interviews coming up and done, an acceptance, a waitlist with a letter of intent, a hold with an update letter, a rejection; 7 base essays with versions; AMCAS and TMDSAS essays and activities; 10 experiences with strengths and a weakness; 3 letter writers. `seed()` builds it with the same helpers the app uses.
 - Your own data is set aside in `secondaries-stash-v1` and restored by "Back to my data". In sample mode nothing syncs to Drive (`S.demo`), and connecting Drive restores your data first.
+
+## Experience log
+- Each research, clinical or activity experience has a **log** (`x.log`: [{id, d, hrs, text}]): dated notes written as things happen, newest first (latest 6 shown, "Show all" expands). Hours: `x.hoursBefore` plus each entry's `hrs` (`expHours`), used when starting an activity.
+- **Lessons** (`items`) carry `from` (log entry ids). "Write a lesson from these" starts one from the ticked entries; the lesson shows the entries it came from, and each entry shows which lessons use it.
+- **Nudges:** `x.ongoing` ("Still doing this"); no entry in 45 days, 3+ entries not in any lesson, and an end-of-term banner (Dec 5–Jan 15, May).
+- **Contact** (`contact`, `contactRole`, `contactEmail`) → "Add as a letter writer" creates a recommender linked to the experience.
+- **About me starters** (`ABOUT_STARTERS`): why medicine, career goals in medicine and research, group vs individual work, what letter writers should know.
+- **Log-only mode:** opening `#log` with nothing else saved sets `prefs.applying=false`: the app is titled "Experience Log", shows only Experiences (log, strengths & weaknesses, letter writers), and skips the tour. "I'm applying this cycle" (`applying-on`) shows everything; "Not applying yet? Show only the log" goes back. Same storage and Drive file either way. The About page links to it.
