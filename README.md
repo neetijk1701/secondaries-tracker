@@ -37,3 +37,11 @@ Student-built. Not affiliated with AMCAS, the AAMC, or any medical school.
 - **Calendar file** now also has interviews (timed if a time is entered), next-day thank-you reminders, and letter send-by dates.
 - **Invite timing:** `public/invites.js` (built from `data/invites-<cycle>.json` by `tools/build_invites.py`) holds per-school first/latest invite dates, report counts and first acceptance from SDN threads. It's shown on the school page and on Waiting cards; small counts are labeled. The harvest procedure is in `HARVEST.md`.
 
+## Experiences (story bank) and letter writers
+- Two synced collections that stay across cycles: `experiences` ({kind: research | clinical | activity | strength | reflection, title, org, dates, summary, items: [{id, head, text, tags}]}) and `recommenders` ({name, role, kind, asked, agreed, due, received, together, highlight, shared, expIds, notes}).
+- **Experiences tab:** Stories view (grouped by kind; lessons can be tagged with strengths, and each strength lists the lessons tagged with it) and Letter writers view.
+- **Import:** paste a document or choose a .txt/.json file. `parseProfile()` reads numbered sections, lettered entries, Summary / What I learned / Description / Reflection labels and "Headline: story" bullets, with a preview before import.
+- **Letter writers:** tracking (asked, agreed, due, submitted; due dates show in Coming up, on Do next and in the calendar file) and a tailored summary for each writer: "Our work together", "What I'd love you to highlight", the shared experience first, then the chosen experiences, strengths and reflections. Download as a .doc (HTML), print or save as PDF, or copy as text.
+- **Essays:** a "Stories that fit" panel ranks stories by shared rare words plus the kind of story that usually answers that prompt type.
+- **Interviews:** each school's "After you submit" panel has "Stories to have ready" (`s.stories`, keys "expId|itemId").
+
