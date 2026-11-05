@@ -264,6 +264,7 @@ footer.foot{border-top:1px solid var(--line); padding-block:18px 30px; color:var
 <div class="lockout" id="lockout" hidden><div class="card2"><h2>Open in another tab</h2><p>Secondaries is open in another tab or window. To keep your work from being overwritten, only one can be used at a time.</p><button class="primary" id="lock-take">Use it here instead</button></div></div>
 <div class="tour" id="tour" role="dialog" aria-modal="true" aria-labelledby="tour-title" hidden></div>
 <input type="file" id="restore-file" accept="application/json,.json" hidden>
+<input type="file" id="exp-file" accept=".json,.txt,.md,text/plain,application/json" hidden>
 <script src="config.js"></script>
 <script src="library.js"></script>
 <script src="invites.js"></script>
@@ -378,9 +379,9 @@ function seed(){
 
 /* ---------- storage ---------- */
 let S;
-function blank(){ return {v:1, demo:false, schools:[], bases:[], essays:[], archives:[], del:{}}; }
-function load(){ try{ const raw=localStorage.getItem(KEY); if(raw){ const o=JSON.parse(raw); if(o && o.schools){ o.del=o.del||{}; o.archives=o.archives||[]; return o; } } }catch(e){} return blank(); }
-const COLLS=["schools","bases","essays","archives"];   // archives: one record per past cycle
+function blank(){ return {v:1, demo:false, schools:[], bases:[], essays:[], archives:[], experiences:[], recommenders:[], del:{}}; }
+function load(){ try{ const raw=localStorage.getItem(KEY); if(raw){ const o=JSON.parse(raw); if(o && o.schools){ o.del=o.del||{}; o.archives=o.archives||[]; o.experiences=o.experiences||[]; o.recommenders=o.recommenders||[]; return o; } } }catch(e){} return blank(); }
+const COLLS=["schools","bases","essays","archives","experiences","recommenders"];   // experiences and letter writers stay across cycles   // archives: one record per past cycle
 let SNAP=new Map();
 function recJson(r){ const {u, ...rest}=r; return JSON.stringify(rest); }
 function snapshot(){ SNAP=new Map(); COLLS.forEach(c=>(S[c]||[]).forEach(r=>SNAP.set(c+":"+r.id, recJson(r)))); SNAP.set("meta", JSON.stringify([S.dismissed||[], S.prefs||{}])); }
@@ -938,12 +939,12 @@ function suggPanel(list, title, mobile){
 
 /* ---------- UI state ---------- */
 const ui = {tab:"next", schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, libQ:"", libState:"", libDeg:"", libOpen:null, restore:false, pick:null, pickQ:"", pickI:0, editPrompt:false, sgAll:false, sgOpen:false};
-const TABS = [["next","Do next"],["schools","Schools"],["cycle","Cycle"],["essays","Base essays"]].concat(SHOW_LIBRARY? [["library","Prompt library"]] : []);
+const TABS = [["next","Do next"],["schools","Schools"],["cycle","Cycle"],["essays","Base essays"],["experiences","Experiences"]].concat(SHOW_LIBRARY? [["library","Prompt library"]] : []);
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function stars(n){ let h=""; for(let i=1;i<=3;i++) h+= i<=n? "●" : '<span class="off">●</span>'; return '<span class="stars" aria-label="Interest '+n+' of 3">'+h+'</span>'; }
 let toastT;
 function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, 2400); }
-function go(tab, extra){ Object.assign(ui, {schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, editPrompt:false, pick:null, pickQ:"", pickI:0}, extra||{}); ui.tab=tab; if(location.hash!=="#"+tab){ try{ history.replaceState(null,"","#"+tab);}catch(e){ location.hash=tab; } } render(); window.scrollTo(0,0); }
+function go(tab, extra){ Object.assign(ui, {schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, editPrompt:false, pick:null, pickQ:"", pickI:0, expId:null, recId:null, expImport:false, expParsed:null}, extra||{}); ui.tab=tab; if(location.hash!=="#"+tab){ try{ history.replaceState(null,"","#"+tab);}catch(e){ location.hash=tab; } } render(); window.scrollTo(0,0); }
 
 function render(){
   NAMEIDX=null;
@@ -961,9 +962,12 @@ function render(){
   else if(ui.tab==="essays") h = vEssays();
   else if(ui.tab==="library") h = vLibrary();
   else if(ui.tab==="cycle") h = vCycle();
+  else if(ui.expId && exp(ui.expId)) h = vExp(exp(ui.expId));
+  else if(ui.recId && rec(ui.recId)) h = vWriter(rec(ui.recId));
+  else if(ui.tab==="experiences") h = vExperiences();
   else h = vNext();
   const essayView = !!(ui.essayId && essay(ui.essayId));
-  const showSide = S.essays.length>1 && !essayView && !(ui.tab==="cycle" && !ui.schoolId && !ui.baseId);
+  const showSide = S.essays.length>1 && !essayView && !((ui.tab==="cycle"||ui.tab==="experiences") && !ui.schoolId && !ui.baseId);
   let side="";
   if(showSide){
     const list=suggestions();
@@ -973,6 +977,222 @@ function render(){
   m.innerHTML = '<div class="layout'+(showSide?' has-side':'')+'"><div style="min-width:0">'+topBanners()+h+'</div>'+side+'</div>';
   const dm=document.getElementById("side-m"); if(dm) dm.addEventListener("toggle",()=>{ ui.sgOpen=dm.open; });
   document.getElementById("foot").innerHTML = vFoot();
+}
+
+
+/* ---------- experiences (story bank) and letter writers ---------- */
+// Longitudinal: these stay across cycles (Start a fresh list leaves them alone).
+const EXP_KINDS = {research:"Research", clinical:"Clinical", activity:"Other activities", strength:"Strengths", reflection:"Reflections"};
+const EXP_ONE = {research:"Research experience", clinical:"Clinical experience", activity:"Activity", strength:"Strength", reflection:"Reflection"};
+const EXP_ORDER = ["research","clinical","activity","strength","reflection"];
+const EXP_SUM = {research:"What you did", clinical:"What you did", activity:"What you did", strength:"What this strength looks like for you (optional)", reflection:"Your thoughts"};
+const EXP_ITEMS = {research:"What I learned", clinical:"What I learned", activity:"Reflections", strength:"Evidence", reflection:"Parts"};
+const REC_KINDS = {research:"Research mentor", clinical:"Clinical supervisor", science:"Science professor", nonscience:"Non-science professor", committee:"Committee or advisor", other:"Other"};
+const exp = id=>(S.experiences||[]).find(x=>x.id===id);
+const rec = id=>(S.recommenders||[]).find(x=>x.id===id);
+function strengthNames(){ return (S.experiences||[]).filter(x=>x.kind==="strength" && x.title).map(x=>x.title); }
+function newExp(kind, o){ return Object.assign({id:id("x"), kind, title:"", org:"", dates:"", summary:"", items:[]}, o||{}); }
+function newItem(o){ return Object.assign({id:id("i"), head:"", text:"", tags:[]}, o||{}); }
+// every story: an experience's summary, or one of its lessons
+function allStories(){ const out=[]; (S.experiences||[]).forEach(x=>{ if(x.summary && x.kind!=="strength") out.push({x, it:null, key:x.id+"|", head:x.title, sub:EXP_ONE[x.kind], text:x.summary}); (x.items||[]).forEach(it=>{ const generic=!it.head || /^reflections?$/i.test(it.head); out.push({x, it, key:x.id+"|"+it.id, head:generic? x.title : it.head, sub:generic? (it.head||EXP_ONE[x.kind]) : x.title, text:it.text||""}); }); }); return out; }
+function storyByKey(k){ return allStories().find(s=>s.key===k); }
+// stories that fit a prompt: shared words weighted by rarity, plus which kind of story usually answers that prompt type
+function storyMatches(promptText, fam, n){
+  const st=allStories(); if(!st.length) return [];
+  const tk=t=>((t||"").toLowerCase().match(/[a-z]{4,}/g)||[]).filter(w=>!STOP.has(w)).map(stem);
+  const df=new Map(); const docs=st.map(s=>{ const set=new Set(tk(s.head+" "+s.text+" "+s.x.title)); set.forEach(w=>df.set(w,(df.get(w)||0)+1)); return set; });
+  const q=new Set(tk(promptText)), N=st.length;
+  const pref={research:["research"], resint:["research"], mdphd:["research","reflection"], career:["reflection","clinical","research"], service:["clinical","activity"], challenge:["research","activity","clinical"], diversity:["activity","reflection"], team:["reflection","research","activity"], why:["reflection"], gap:["research","clinical","activity"], osteo:["clinical"], update:["research","clinical","activity"], loi:["reflection"], ethics:["clinical"]}[fam]||[];
+  return st.map((s,i)=>{ let sc=0; q.forEach(w=>{ if(docs[i].has(w)) sc+=Math.log(1+N/(df.get(w)||1)); });
+    const bi=pref.indexOf(s.x.kind); if(bi>=0) sc+=(3-bi)*0.8;
+    if(fam==="challenge" && /setback|fail|struggl|difficult|mistake|problem|adversit/i.test(s.head+" "+s.text)) sc+=2.5;
+    if((fam==="career"||fam==="mdphd") && /career|goal|physician-scientist/i.test(s.x.title+" "+s.head)) sc+=3;
+    if(fam==="team" && /group|team|collaborat/i.test(s.x.title+" "+s.head)) sc+=3;
+    if(s.x.kind==="strength") sc-=0.5;
+    return {s, sc}; }).filter(o=>o.sc>1.2).sort((a,b)=>b.sc-a.sc).slice(0,n||4).map(o=>o.s);
+}
+function recStatus(r){ if(r.received) return {t:"Submitted "+fmt(r.received), c:"good"}; if(r.agreed) return {t:"Agreed"+(r.due?" · due "+fmt(r.due):""), c:"acc"}; if(r.asked) return {t:"Asked "+fmt(r.asked), c:"warn"}; return {t:"Not asked yet", c:""}; }
+// Turn a pasted "profile" document into experience records.
+// Handles numbered sections ("1. Research Experiences"), lettered entries ("a. Cole Lab, St. Olaf"),
+// field labels (Summary / What I learned / Description / Reflection) and bulleted lessons ("Head: text").
+function parseProfile(text){
+  const BUL=/^[•▪●➢‣⁃∙◦■*>-]+\s*/;
+  const FIELD=/^(summary|what i learned|lessons?|description|reflections?|what i did)\s*:?\s*:?\s*/i;
+  const lines=text.replace(/\r/g,"").replace(/\f/g,"\n").split("\n").map(l=>l.replace(/\s+$/,""));
+  const kindOf=t=>/strength/i.test(t)?"strength": /research|lab\b/i.test(t)?"research": /clinic|medical|shadow|patient|hospital|scribe|emt/i.test(t)?"clinical": /career|goal|group|individual|why|reflect|about me|values/i.test(t)?"reflection":"activity";
+  const out=[]; let sec=null, cur=null, mode="summary", item=null, titleOpen=false;
+  const dates={};   // from a table of contents: "Kumar Lab, Mayo Clinic (Summer 2017)"
+  const finishItem=()=>{ if(item){ item.text=item.text.trim(); if(item.text||item.head) cur.items.push(item); item=null; } };
+  const finish=()=>{ finishItem(); if(cur){ cur.summary=cur.summary.trim(); out.push(cur); } cur=null; };
+  const start=(title, kind)=>{ finish(); cur={kind, title:title.trim(), org:"", dates:"", summary:"", items:[]}; mode="summary"; titleOpen=true; };
+  const add=(t)=>{
+    if(item){ item.text+=(item.text?" ":"")+t; return; }
+    if(mode==="items" && cur){ const m=t.match(/^([^:]{3,90}):\s*(.*)$/); item={head:m?m[1].trim():"", text:m?m[2]:t, tags:[]}; return; }
+    if(cur) cur.summary+=(cur.summary?" ":"")+t;
+  };
+  for(let raw of lines){
+    let l=raw.trim(); if(!l){ continue; }
+    const bullet=BUL.test(l) && !/^-\d/.test(l); l=l.replace(BUL,"").trim(); if(!l) continue;
+    let m;
+    if(!bullet && (m=l.match(/^(\d{1,2})[.)]\s+(.+)$/))){   // section heading
+      finish(); sec={title:m[2].replace(/:$/,""), kind:kindOf(m[2])};
+      if(sec.kind==="reflection" && !/interests|goals/i.test(m[2])) start(sec.title, "reflection");
+      titleOpen=false; continue;
+    }
+    if(!bullet && (m=l.match(/^([a-h])[.)]\s+(.+)$/)) && sec){   // lettered entry
+      let t=m[2].trim(); const dm=t.match(/^(.*?)\s*\(([^()]*\d{4}[^()]*)\)\s*$/);
+      if(dm){ dates[dm[1].toLowerCase()]={d:dm[2], name:dm[1]}; t=dm[1]; }
+      const inline=t.match(/^([^:]{2,60}):\s+(.{20,})$/);
+      if(sec.kind==="reflection" && inline){   // "a. Medicine: I hope to..."
+        if(!cur || cur.title!==sec.title) start(sec.title, "reflection");
+        finishItem(); mode="items"; item={head:inline[1].trim(), text:inline[2], tags:[]}; titleOpen=false; continue;
+      }
+      const k = sec.kind==="activity" ? kindOf(t)==="clinical"?"clinical":"activity" : sec.kind==="reflection" ? "reflection" : sec.kind;
+      start(t, k); continue;
+    }
+    if(FIELD.test(l)){
+      const lab=l.match(FIELD)[1].toLowerCase(); const rest=l.replace(FIELD,"").trim(); finishItem(); titleOpen=false;
+      if(!cur) continue;
+      if(/learned|lesson/.test(lab)) mode="items";
+      else if(/reflection/.test(lab)){ mode="refl"; item={head:"Reflection", text:rest, tags:[]}; continue; }
+      else mode="summary";
+      if(rest) add(rest); continue;
+    }
+    if(titleOpen && cur && !bullet && !cur.summary && l.length<90 && !/[.!?]$/.test(l)){ cur.title+=" "+l; continue; }   // wrapped title
+    titleOpen=false;
+    if(!cur) continue;
+    if(bullet){
+      finishItem();
+      if(cur.kind==="strength" || mode==="items"){ const mh=l.match(/^([^:]{3,90}):\s+(.*)$/); item={head:mh&&mode==="items"?mh[1].trim():"", text:mh&&mode==="items"?mh[2]:l, tags:[]}; continue; }
+    }
+    add(l);
+  }
+  finish();
+  // drop table-of-contents stubs (no body) when a fuller entry with a similar title exists, and attach dates
+  const words=t=>new Set(t.toLowerCase().replace(/[^a-z0-9 ]/g," ").split(/\s+/).filter(w=>w.length>2));
+  const full=out.filter(x=>x.summary||x.items.length);
+  full.forEach(x=>{
+    const w=words(x.title);
+    Object.entries(dates).forEach(([k,v])=>{ const kw=[...words(k)]; if(!x.dates && kw.length && kw.filter(z=>w.has(z)).length>=Math.min(2,kw.length)){ x.dates=v.d; const parts=v.name.split(","); if(parts.length>1) x.org=parts.slice(1).join(",").trim(); } });
+    if(x.kind==="reflection" && !x.summary && x.items.length===1 && x.items[0].head==="Reflection"){ x.summary=x.items[0].text; x.items=[]; }
+  });
+  return full;
+}
+
+function vExperiences(){
+  ui.expView=ui.expView||"stories";
+  let h='<h1>Experiences</h1><p class="sub">Your research, clinical work and activities, what each one taught you, and the strengths they show. This stays with you from cycle to cycle. Essays and interview prep pull stories from here, and each letter writer can get a summary tailored to them.</p>';
+  h+='<div class="row" style="justify-content:space-between; margin-bottom:14px"><span class="seg" role="group" aria-label="View"><button data-act="exp-view" data-v="stories" aria-pressed="'+(ui.expView==="stories")+'">Stories</button><button data-act="exp-view" data-v="writers" aria-pressed="'+(ui.expView==="writers")+'">Letter writers'+((S.recommenders||[]).length?' ('+S.recommenders.length+')':'')+'</button></span>'+
+    '<label class="chk small">Your name <input id="pref-name" value="'+esc(prefs().name||"")+'" placeholder="For letter-writer summaries" style="width:200px"></label></div>';
+  return h+(ui.expView==="writers"? vWriters() : vStories());
+}
+function vStories(){
+  const X=S.experiences||[];
+  let h='<div class="row" style="margin-bottom:14px"><select id="exp-new-kind" aria-label="Kind of experience">'+EXP_ORDER.map(k=>'<option value="'+k+'">'+EXP_ONE[k]+'</option>').join("")+'</select><button class="primary" data-act="exp-add">Add</button><button data-act="exp-import">'+(ui.expImport?'Close import':'Import from a document')+'</button>'+(X.length?'<button class="ghost" data-act="exp-export">Download all as a document</button>':'')+'</div>';
+  if(ui.expImport) h+=importPanel();
+  if(!X.length && !ui.expImport) h+='<div class="panel"><div class="pb stack"><h2>Start your story bank</h2><p style="margin:0">Many applicants keep one running document about their experiences and give it to letter writers. It’s also the best raw material for secondaries and interviews. For each research or clinical experience, and your main activities:</p><ul style="margin:0; padding-left:20px"><li><b>What you did:</b> the project or role, in a short paragraph.</li><li><b>What you learned:</b> two to four lessons, each with a one-line headline (“How to improve processes”) and the story behind it.</li></ul><p style="margin:0">Then add a few <b>strengths</b> with evidence from two or three experiences each, and <b>reflections</b> such as your career goals or whether you prefer group or individual work. Already have a document like this? Use <b>Import from a document</b>.</p></div></div>';
+  EXP_ORDER.forEach(k=>{ const xs=X.filter(x=>x.kind===k); if(!xs.length) return;
+    h+='<div class="panel" style="margin-bottom:14px"><div class="ph"><h2 style="flex:1">'+EXP_KINDS[k]+'</h2><span class="small muted">'+xs.length+'</span></div><ul class="list">'+xs.map(x=>{
+      const tagged=k==="strength"? X.reduce((a,y)=>a+(y.items||[]).filter(it=>(it.tags||[]).includes(x.title)).length,0):0;
+      return '<li><div class="main"><div class="row"><b>'+esc(x.title||"Untitled")+'</b>'+(x.org||x.dates?'<span class="small muted">'+esc([x.org,x.dates].filter(Boolean).join(" · "))+'</span>':'')+'</div><div class="chips">'+((x.items||[]).length?'<span class="chip">'+x.items.length+' '+(k==="strength"?'pieces of evidence':k==="reflection"?'parts':'lessons')+'</span>':'')+(tagged?'<span class="chip acc">Tagged in '+tagged+' lesson'+(tagged===1?'':'s')+'</span>':'')+((x.items||[]).flatMap(it=>it.tags||[]).filter((t,i,a)=>a.indexOf(t)===i).slice(0,4).map(t=>'<span class="chip acc">'+esc(t)+'</span>').join(""))+'</div></div><button data-act="open-exp" data-id="'+x.id+'">Open</button></li>'; }).join("")+'</ul></div>'; });
+  return h;
+}
+function importPanel(){
+  let h='<div class="panel" style="margin-bottom:14px"><div class="pb stack"><h2>Import from a document</h2><p class="small muted" style="margin:0">Paste the text of a document like a letter-writer profile. Numbered sections (“1. Research Experiences”), lettered entries (“a. Cole Lab, St. Olaf College”), labels like Summary, What I learned, Description and Reflection, and bullets with “Headline: story” are picked up. You can fix anything afterward.</p>'+
+    '<textarea id="exp-paste" rows="8" placeholder="Paste here">'+esc(ui.expPaste||"")+'</textarea><div class="row"><button class="primary" data-act="exp-parse">Preview</button><button data-act="exp-file">Or choose a file (.txt or .json)</button></div>';
+  if(ui.expParsed){
+    if(!ui.expParsed.length) h+='<p class="small" style="margin:0">Nothing recognizable was found. Try pasting with the headings included.</p>';
+    else h+='<h3 style="margin:6px 0 0">Found '+ui.expParsed.length+'</h3><ul class="plist">'+ui.expParsed.map((x,i)=>'<li><label><input type="checkbox" class="exp-pick" value="'+i+'" checked><span><b>'+esc(x.title)+'</b> <span class="chip">'+EXP_ONE[x.kind]+'</span><div class="pm">'+esc([x.org,x.dates].filter(Boolean).join(" · "))+(x.summary?(x.org||x.dates?' · ':'')+x.summary.length.toLocaleString()+' characters of description':'')+((x.items||[]).length?' · '+x.items.length+' '+(x.kind==="strength"?'pieces of evidence':'lessons'):'')+'</div></span></label></li>').join("")+'</ul><div class="row"><button class="primary" data-act="exp-import-go">Import selected</button></div>';
+  }
+  return h+'</div></div>';
+}
+function vExp(x){
+  const k=x.kind, strengths=strengthNames().filter(t=>t!==x.title);
+  let h='<button class="ghost back" data-act="back-exp">← Experiences</button>';
+  h+='<div class="grid-f" style="margin-bottom:12px"><label class="f" style="grid-column:1/-1">Title<input id="xt-'+x.id+'" data-bind="exp:'+x.id+':title" value="'+esc(x.title)+'" style="font-weight:700; font-size:18px"></label>'+
+    (k==="strength"||k==="reflection"?'':'<label class="f">Where<input id="xo-'+x.id+'" data-bind="exp:'+x.id+':org" value="'+esc(x.org)+'" placeholder="e.g. MD Anderson Cancer Center"></label><label class="f">When<input id="xd-'+x.id+'" data-bind="exp:'+x.id+':dates" value="'+esc(x.dates)+'" placeholder="e.g. Summer 2019"></label>')+
+    '<label class="f">Kind<select id="xk-'+x.id+'" data-bind="exp:'+x.id+':kind">'+EXP_ORDER.map(o=>'<option value="'+o+'"'+(o===k?' selected':'')+'>'+EXP_ONE[o]+'</option>').join("")+'</select></label></div>';
+  h+='<label class="f">'+EXP_SUM[k]+'<textarea id="xs-'+x.id+'" rows="5" data-bind="exp:'+x.id+':summary">'+esc(x.summary)+'</textarea></label>';
+  h+='<div class="panel" style="margin-top:14px"><div class="ph"><h2 style="flex:1">'+EXP_ITEMS[k]+'</h2><button data-act="exp-item-add">Add</button></div><div class="pb stack">';
+  if(!(x.items||[]).length) h+='<p class="small muted" style="margin:0">'+(k==="strength"?'Add a moment from two or three experiences that shows this strength.':k==="reflection"?'Optional: break this into parts, like “Medicine” and “Research”.':'Add two to four lessons. Give each a one-line headline and the story behind it.')+'</p>';
+  (x.items||[]).forEach((it,i)=>{
+    h+='<div class="stack" style="gap:6px; padding-bottom:12px; border-bottom:1px solid var(--line-soft)">'+
+      '<div class="row" style="flex-wrap:nowrap"><input id="xih-'+it.id+'" data-bind="expi:'+x.id+':'+it.id+':head" value="'+esc(it.head)+'" placeholder="'+(k==="strength"?'Where this happened (optional)':'One-line headline, e.g. How to improve processes')+'" style="flex:1; font-weight:600"><button class="ghost danger small" data-act="exp-item-del" data-i="'+it.id+'" aria-label="Remove">Remove</button></div>'+
+      '<textarea id="xit-'+it.id+'" rows="4" data-bind="expi:'+x.id+':'+it.id+':text">'+esc(it.text)+'</textarea>'+
+      (k!=="strength" && strengths.length?'<div class="chips"><span class="small muted" style="margin-right:4px">Shows:</span>'+strengths.map(t=>'<button class="chip'+((it.tags||[]).includes(t)?' acc':'')+'" data-act="exp-tag" data-i="'+it.id+'" data-t="'+esc(t)+'" aria-pressed="'+((it.tags||[]).includes(t))+'" style="cursor:pointer">'+esc(t)+'</button>').join("")+'</div>':'')+
+    '</div>';
+  });
+  h+='</div></div>';
+  if(k==="strength"){ const tagged=(S.experiences||[]).flatMap(y=>(y.items||[]).filter(it=>(it.tags||[]).includes(x.title)).map(it=>({y,it})));
+    h+='<div class="panel" style="margin-top:14px"><div class="ph"><h2>Tagged in your experiences</h2></div>'+(tagged.length?'<ul class="list">'+tagged.map(o=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(o.it.head||o.y.title)+'</div><div class="small muted">'+esc(o.y.title)+'</div></div><button class="ghost" data-act="open-exp" data-id="'+o.y.id+'">Open</button></li>').join("")+'</ul>':'<div class="empty small">None yet. Open an experience and tap “'+esc(x.title)+'” under a lesson that shows it.</div>')+'</div>'; }
+  const writers=(S.recommenders||[]).filter(r=>(r.expIds||[]).includes(x.id)||r.shared===x.id);
+  if(writers.length) h+='<p class="small muted" style="margin-top:12px">In the summaries for '+writers.map(r=>esc(r.name||"a letter writer")).join(", ")+'.</p>';
+  h+='<div class="row" style="margin-top:18px">'+confirmBtn("del-exp:"+x.id,"Delete","Delete “"+esc(x.title||"this")+"” for good")+'</div>';
+  return h;
+}
+function vWriters(){
+  const R=S.recommenders||[];
+  let h='<form class="row" data-form="add-rec" style="margin-bottom:14px"><input id="rec-name" placeholder="Letter writer’s name, e.g. Dr. Cole" required style="flex:1; min-width:200px"><select id="rec-kind" aria-label="Relationship">'+Object.entries(REC_KINDS).map(([k,l])=>'<option value="'+k+'">'+l+'</option>').join("")+'</select><button class="primary" type="submit">Add letter writer</button></form>';
+  if(!R.length) return h+'<div class="panel"><div class="pb stack"><h2>Track your letters and help your writers</h2><p style="margin:0">Add each person writing you a letter. Track when you asked and when it’s due, then put together a summary for them: what you did together, what you’d like them to highlight, and the experiences and strengths most relevant to them. Download it as a document or PDF to send with your request.</p></div></div>';
+  h+='<div class="panel"><ul class="list">'+R.map(r=>{ const st=recStatus(r); const n=(r.expIds||[]).length; return '<li><div class="main"><div class="row"><b>'+esc(r.name)+'</b><span class="small muted">'+esc(REC_KINDS[r.kind]||"")+(r.role?' · '+esc(r.role):'')+'</span></div><div class="chips"><span class="chip '+st.c+'">'+esc(st.t)+'</span>'+(!r.received&&r.due&&daysUntil(r.due)<=14?'<span class="chip warn">Due '+dayLabel(r.due)+'</span>':'')+'<span class="chip">'+(n?n+' item'+(n===1?'':'s')+' in summary':'Summary not set up')+'</span></div></div><button data-act="open-rec" data-id="'+r.id+'">Open</button></li>'; }).join("")+'</ul></div>';
+  return h;
+}
+function vWriter(r){
+  const X=S.experiences||[], sel=new Set(r.expIds||[]);
+  let h='<button class="ghost back" data-act="back-writers">← Letter writers</button>';
+  h+='<div class="grid-f" style="margin-bottom:12px"><label class="f">Name<input id="rn-'+r.id+'" data-bind="rec:'+r.id+':name" value="'+esc(r.name)+'" style="font-weight:700"></label>'+
+    '<label class="f">Title or role<input id="rr-'+r.id+'" data-bind="rec:'+r.id+':role" value="'+esc(r.role||"")+'" placeholder="e.g. Professor of Biology, St. Olaf"></label>'+
+    '<label class="f">Relationship<select id="rk-'+r.id+'" data-bind="rec:'+r.id+':kind">'+Object.entries(REC_KINDS).map(([k,l])=>'<option value="'+k+'"'+(r.kind===k?' selected':'')+'>'+l+'</option>').join("")+'</select></label>'+
+    '<label class="f">Asked<input type="date" id="ra-'+r.id+'" data-bind="rec:'+r.id+':asked" value="'+esc(r.asked||"")+'"></label>'+
+    '<div class="f" style="justify-content:flex-end"><label class="chk"><input type="checkbox" id="rg-'+r.id+'" data-bind="rec:'+r.id+':agreed"'+(r.agreed?' checked':'')+'> Agreed to write</label></div>'+
+    '<label class="f">Due<input type="date" id="rd-'+r.id+'" data-bind="rec:'+r.id+':due" value="'+esc(r.due||"")+'"></label>'+
+    '<label class="f">Submitted<input type="date" id="rs-'+r.id+'" data-bind="rec:'+r.id+':received" value="'+esc(r.received||"")+'"></label></div>';
+  h+='<div class="panel"><div class="ph"><h2>Their summary</h2></div><div class="pb stack">';
+  h+='<label class="f">Our work together<textarea id="rt-'+r.id+'" rows="6" data-bind="rec:'+r.id+':together" placeholder="How long and in what setting they know you (course, lab, clinic). Specific moments they saw: a presentation, a hard problem you worked through, feedback you took and acted on. What you learned from them, and how working with them shaped your path.">'+esc(r.together||"")+'</textarea></label>';
+  h+='<label class="f">What I’d love you to highlight<textarea id="rh-'+r.id+'" rows="3" data-bind="rec:'+r.id+':highlight" placeholder="Two or three qualities or moments you hope the letter speaks to, ideally ones only this person saw.">'+esc(r.highlight||"")+'</textarea></label>';
+  h+='<label class="f">The experience you shared, if any<select id="rx-'+r.id+'" data-bind="rec:'+r.id+':shared"><option value="">None</option>'+X.filter(x=>x.kind!=="strength"&&x.kind!=="reflection").map(x=>'<option value="'+x.id+'"'+(r.shared===x.id?' selected':'')+'>'+esc(x.title)+'</option>').join("")+'</select></label>';
+  if(!X.length) h+='<p class="small muted" style="margin:0">Add experiences on the Stories view to include them.</p>';
+  else h+='<div><h3 style="margin-bottom:6px">Also include</h3><p class="small muted" style="margin:0 0 6px">Pick what’s useful to this writer. Your shared experience goes first either way.</p>'+EXP_ORDER.map(k=>{ const xs=X.filter(x=>x.kind===k && x.id!==r.shared); if(!xs.length) return ''; return '<div class="small" style="font-weight:600; margin-top:8px">'+EXP_KINDS[k]+'</div>'+xs.map(x=>'<label class="chk" style="display:flex; margin:4px 0"><input type="checkbox" class="rec-x" data-r="'+r.id+'" value="'+x.id+'"'+(sel.has(x.id)?' checked':'')+'> '+esc(x.title||"Untitled")+'</label>').join(""); }).join("")+'</div>';
+  h+='<div class="row" style="margin-top:6px"><button class="primary" data-act="rec-doc">Download as a document</button><button data-act="rec-print">Print or save as PDF</button><button data-act="rec-copy">Copy text</button></div>';
+  if(!prefs().name) h+='<p class="small muted" style="margin:0">Tip: add your name at the top of the Experiences tab so it appears on the summary.</p>';
+  h+='</div></div>';
+  h+='<label class="f" style="margin-top:14px">Private notes (not included)<textarea id="ro-'+r.id+'" rows="2" data-bind="rec:'+r.id+':notes">'+esc(r.notes||"")+'</textarea></label>';
+  h+='<div class="row" style="margin-top:18px">'+confirmBtn("del-rec:"+r.id,"Delete letter writer","Delete "+esc(r.name||"this letter writer"))+'</div>';
+  return h;
+}
+// the summary a letter writer gets: HTML for the document/print, and plain text
+function packet(r, plain){
+  const X=S.experiences||[], me=prefs().name||"";
+  const ids=[r.shared, ...(r.expIds||[]).filter(i=>i!==r.shared)].filter(Boolean);
+  const pick=ids.map(exp).filter(Boolean);
+  const e=t=>plain? t : esc(t);
+  const H=(lvl,t)=>plain? "\n"+t.toUpperCase()+"\n" : "<h"+lvl+">"+esc(t)+"</h"+lvl+">";
+  const P=t=>plain? t+"\n" : "<p>"+esc(t).replace(/\n+/g,"</p><p>")+"</p>";
+  const LI=(head,t)=>plain? "- "+(head?head+": ":"")+t+"\n" : "<li>"+(head?"<b>"+esc(head)+".</b> ":"")+esc(t)+"</li>";
+  const UL=a=>plain? a.join("") : "<ul>"+a.join("")+"</ul>";
+  const block=x=>H(3,x.title||"Untitled")+(x.org||x.dates? (plain? [x.org,x.dates].filter(Boolean).join(" · ")+"\n" : '<p class="meta">'+esc([x.org,x.dates].filter(Boolean).join(" · "))+'</p>') : "")+(x.summary?P(x.summary):"")+((x.items||[]).length? (x.kind==="research"||x.kind==="clinical"? (plain?"What I learned:\n":"<p class=\"lab\">What I learned</p>"):"")+UL(x.items.map(it=>LI(it.head,it.text))) : "");
+  let out=(plain? "Background for "+r.name+(me?"\nFrom "+me:"")+"\n" : "<h1>Background for "+esc(r.name)+"</h1>"+(me?'<p class="meta">From '+esc(me)+' · '+new Date().toLocaleDateString(undefined,{month:"long",day:"numeric",year:"numeric"})+'</p>':''));
+  if(r.together) out+=H(2,"Our work together")+P(r.together);
+  if(r.highlight) out+=H(2,"What I’d love you to highlight")+P(r.highlight);
+  const exps=pick.filter(x=>x.kind!=="strength"&&x.kind!=="reflection"), strs=pick.filter(x=>x.kind==="strength"), refl=pick.filter(x=>x.kind==="reflection");
+  if(exps.length) out+=H(2,"Experiences")+exps.map(block).join("");
+  if(strs.length) out+=H(2,"Strengths")+strs.map(block).join("");
+  if(refl.length) out+=H(2,"Reflections and goals")+refl.map(block).join("");
+  return out;
+}
+function packetHtml(r){
+  return '<!doctype html><html><head><meta charset="utf-8"><title>Background for '+esc(r.name)+'</title><style>body{font-family:Georgia,"Times New Roman",serif; max-width:720px; margin:40px auto; padding:0 24px; line-height:1.5; color:#111} h1{font-size:24px; margin-bottom:4px} h2{font-size:18px; margin-top:28px; border-bottom:1px solid #ccc; padding-bottom:4px} h3{font-size:16px; margin:18px 0 2px} .meta{color:#555; margin-top:0; font-style:italic} .lab{font-weight:bold; margin-bottom:4px} li{margin-bottom:6px}</style></head><body>'+packet(r,false)+'</body></html>';
+}
+function exportAllHtml(){
+  const r={name:"my experiences", shared:"", expIds:(S.experiences||[]).map(x=>x.id)};
+  return packetHtml(r).replace("Background for my experiences","My experiences"+(prefs().name?": "+esc(prefs().name):""));
+}
+function downloadFile(name, content, type){ const blob=new Blob([content],{type}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000); }
+function storiesPanel(e){
+  const m=storyMatches(e.prompt, e.family, 4);
+  if(!(S.experiences||[]).length) return '<div class="panel"><div class="ph"><h3>Your stories</h3></div><div class="pb small muted">Add your experiences on the Experiences tab, and the ones that fit this prompt will show up here. <button class="ghost small" data-tab="experiences" style="padding:0">Experiences</button></div></div>';
+  if(!m.length) return '';
+  return '<div class="panel"><div class="ph"><h3 style="flex:1">Stories that fit</h3><span class="small muted">From Experiences</span></div><ul class="list">'+m.map(o=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(o.head)+'</div><div class="small muted">'+esc(o.sub)+'</div><details><summary class="small" style="cursor:pointer">Read</summary><div class="small" style="margin-top:4px; white-space:pre-wrap">'+esc(o.text)+'</div></details></div><button class="ghost" data-act="story-copy" data-k="'+esc(o.key)+'">Copy</button></li>').join("")+'</ul></div>';
 }
 
 /* ---------- whole-cycle tracking ---------- */
@@ -1009,6 +1229,8 @@ function cycleTodos(){
   });
   S.essays.filter(e=>isLetter(e) && e.status!=="pasted").forEach(e=>{ const s=school(e.schoolId); if(!s) return; const n=e.due?daysUntil(e.due):null;
     out.push({s, e, k:"letter", n:n==null?30:n, d:e.due, t:(FAM[e.family]||"Letter")+(e.due?" · send by "+fmt(e.due):"")+(e.status==="ready"?" · ready to send":""), c:n!=null&&n<=3?"warn":""}); });
+  (S.recommenders||[]).forEach(r=>{ if(r.received || !r.due) return; const n=daysUntil(r.due); if(n>30) return;
+    out.push({s:null, r, who:"Letter from "+(r.name||"letter writer"), k:"rec", n, d:r.due, t:(n<0?"Letter overdue since "+fmt(r.due):"Letter due "+(n===0?"today":dayLabel(r.due)))+(r.asked?"":" · not asked yet"), c:n<=7?"warn":""}); });
   return out.sort((a,b)=>a.n-b.n);
 }
 function newLetter(s, fam){
@@ -1034,6 +1256,7 @@ function cycleIcsEvents(stampv, esc2){
     if(s.iv && !s.thanks && daysUntil(s.iv)>=-1) ev("thanks-"+s.id, addDays(s.iv,1), "Send thank-you notes: "+s.name, "Thank your interviewers at "+s.name+".");
   });
   S.essays.filter(e=>isLetter(e) && e.due && e.status!=="pasted").forEach(e=>{ const s=school(e.schoolId); if(s) ev("letter-"+e.id, e.due, "Send "+(FAM[e.family]||"letter").toLowerCase()+": "+s.name, (FAM[e.family]||"Letter")+" for "+s.name+"."); });
+  (S.recommenders||[]).filter(r=>r.due && !r.received).forEach(r=>ev("rec-"+r.id, r.due, "Letter due: "+(r.name||"letter writer"), "Recommendation letter from "+(r.name||"your letter writer")+". Check whether it has been submitted."));
   return L;
 }
 function vCycle(){
@@ -1050,7 +1273,7 @@ function vCycle(){
   if(waiting) bits.push(waiting+' waiting to hear');
   h+='<dl class="brief"><dt>So far</dt><dd>'+(bits.length?bits.join(' · ')+'.':'No invites or decisions logged yet. When one comes in, open the school and add it.')+'</dd></dl>';
   const todos=cycleTodos();
-  if(todos.length) h+='<div class="panel" style="margin-bottom:16px"><div class="ph"><h2>Coming up</h2></div><ul class="list">'+todos.slice(0,8).map(t=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(t.s.name)+'</div><div class="chips"><span class="chip '+t.c+'">'+esc(t.t)+'</span></div></div>'+(t.e?'<button data-act="open-essay" data-id="'+t.e.id+'">Open</button>':'<button data-act="open-school" data-id="'+t.s.id+'">Open</button>')+'</li>').join("")+'</ul></div>';
+  if(todos.length) h+='<div class="panel" style="margin-bottom:16px"><div class="ph"><h2>Coming up</h2></div><ul class="list">'+todos.slice(0,8).map(t=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(t.s?t.s.name:t.who)+'</div><div class="chips"><span class="chip '+t.c+'">'+esc(t.t)+'</span></div></div>'+(t.e?'<button data-act="open-essay" data-id="'+t.e.id+'">Open</button>':t.r?'<button data-act="open-rec" data-id="'+t.r.id+'">Open</button>':'<button data-act="open-school" data-id="'+t.s.id+'">Open</button>')+'</li>').join("")+'</ul></div>';
   const COLS=[["sec","Secondaries"],["wait","Waiting"],["iv","Interviews"],["post","After interview"],["dec","Decisions"]];
   h+='<div class="board">'+COLS.map(([k,l])=>{ const xs=st.filter(x=>x.g.col===k).sort((a,b)=>(a.g.d||"9")<(b.g.d||"9")?-1:1);
     return '<section class="bcol"><h3>'+l+' <span class="muted">'+xs.length+'</span></h3>'+(xs.length? xs.map(x=>'<button class="bcard" data-act="open-school" data-id="'+x.s.id+'"><span class="nm">'+esc(schoolShort(x.s.id))+'</span><span class="chip '+x.g.c+'">'+esc(x.g.t)+'</span>'+(x.g.col==="wait"&&invHint(x.s)?'<span class="small muted">'+esc(invHint(x.s))+'</span>':'')+'</button>').join("") : '<p class="small muted" style="margin:4px 2px">None</p>')+'</section>'; }).join("")+'</div>';
@@ -1076,6 +1299,9 @@ function cyclePanel(s){
   if(hint) h+='<p class="small muted" style="margin:0">'+esc(hint)+' <a href="'+esc((INV.schools[s.libName||s.name]||{}).url||"#")+'" target="_blank" rel="noopener">Thread</a></p>';
   h+='<label class="f">Interview prep<textarea id="cy-notes-'+s.id+'" rows="4" data-bind="school:'+s.id+':notes" placeholder="Why this school, programs and people to mention, questions to ask, what you want them to remember about you">'+esc(s.notes||"")+'</textarea></label>';
   if(s.iv && daysUntil(s.iv)<=0) h+='<label class="f">How it went<textarea id="cy-refl-'+s.id+'" rows="3" data-bind="school:'+s.id+':reflect" placeholder="Interviewers’ names, what you talked about, anything to follow up on in a thank-you note or update letter">'+esc(s.reflect||"")+'</textarea></label>';
+  { const st=(s.stories||[]).map(storyByKey).filter(Boolean), all=allStories().filter(o=>o.x.kind!=="strength");
+    h+='<div><h3 style="margin-bottom:6px">Stories to have ready</h3>'+(st.length?'<ul class="list">'+st.map(o=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(o.head)+'</div><div class="small muted">'+esc(o.sub)+'</div></div><button class="ghost small" data-act="story-drop" data-k="'+esc(o.key)+'">Remove</button></li>').join("")+'</ul>':'')+
+      (all.length?'<div class="row" style="margin-top:6px"><select id="story-add-'+s.id+'" aria-label="Add a story" style="max-width:100%"><option value="">Add a story from Experiences…</option>'+all.filter(o=>!(s.stories||[]).includes(o.key)).map(o=>'<option value="'+esc(o.key)+'">'+esc((o.head||"").slice(0,70)+" · "+(o.sub||"").slice(0,40))+'</option>').join("")+'</select></div>':'<p class="small muted" style="margin:0">Add experiences on the Experiences tab to pick stories here.</p>')+'</div>'; }
   h+='<div><h3 style="margin-bottom:6px">Letters</h3>'+(letters.length?'<ul class="list">'+letters.map(e=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(FAM[e.family])+'</div><div class="chips"><span class="chip'+(e.status==="pasted"?' good':'')+'">'+(e.status==="pasted"?"Sent":STATUS[e.status])+'</span>'+(e.due&&e.status!=="pasted"?'<span class="chip">Send by '+fmt(e.due)+'</span>':'')+(wrongNames(e).length?'<span class="chip warn">Names '+esc(wrongNames(e).map(x=>x.alias).join(", "))+'</span>':'')+'</div></div><button data-act="open-essay" data-id="'+e.id+'">Open</button></li>').join("")+'</ul>':'')+
     '<div class="row" style="margin-top:8px"><button data-act="new-letter" data-f="update">Write an update letter</button><button data-act="new-letter" data-f="loi">Write a letter of intent</button>'+(s.iv?'<button data-act="new-letter" data-f="thanks">Draft thank-you notes</button>':'')+'</div></div>';
   return h+'</div></div>';
@@ -1149,7 +1375,7 @@ function vNext(){
   const flagged = S.essays.filter(behind);
   let h = '<h1>Do next</h1><p class="sub">Schools ranked by how soon they are due, how much you want them, and how much writing is left. Schools you can finish quickly move up.</p>';
   h += vBrief(rows) + '<!--SIDE-M-->';
-  { const t=cycleTodos(); if(t.length) h += '<div class="panel" style="margin-bottom:16px"><div class="ph"><h2 style="flex:1">Interviews and letters</h2><button class="ghost small" data-tab="cycle">Cycle tab</button></div><ul class="list">'+t.slice(0,5).map(x=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(x.s.name)+'</div><div class="chips"><span class="chip '+x.c+'">'+esc(x.t)+'</span></div></div>'+(x.e?'<button data-act="open-essay" data-id="'+x.e.id+'">Open</button>':'<button data-act="open-school" data-id="'+x.s.id+'">Open</button>')+'</li>').join("")+'</ul></div>'; }
+  { const t=cycleTodos(); if(t.length) h += '<div class="panel" style="margin-bottom:16px"><div class="ph"><h2 style="flex:1">Interviews and letters</h2><button class="ghost small" data-tab="cycle">Cycle tab</button></div><ul class="list">'+t.slice(0,5).map(x=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(x.s?x.s.name:x.who)+'</div><div class="chips"><span class="chip '+x.c+'">'+esc(x.t)+'</span></div></div>'+(x.e?'<button data-act="open-essay" data-id="'+x.e.id+'">Open</button>':x.r?'<button data-act="open-rec" data-id="'+x.r.id+'">Open</button>':'<button data-act="open-school" data-id="'+x.s.id+'">Open</button>')+'</li>').join("")+'</ul></div>'; }
   if(!S.schools.length) h += '<div class="panel hero-empty"><h2>Add a school when its secondary arrives</h2><p>Pick it from the prompt library and its prompts come with it, or paste them yourself. Prompts that ask the same thing at different schools can share one base essay, and this list will rank your schools by what to work on first.</p><div class="row"><button class="primary" data-act="first-school">Add your first school</button>'+(SHOW_LIBRARY?'<button data-act="go-library">Browse the prompt library</button>':'')+'<button data-act="try-examples">Try with examples</button></div><p class="small">'+(Sync.state().connected?'Your work saves in this browser and to your own Google Drive.':(Sync.available()?'Your work saves in this browser. Connect Google Drive at the top to keep it safe on any computer.':'Everything you enter stays on this device. Nothing is sent anywhere.'))+'</p></div>';
   else if(!rows.length) h += '<div class="panel empty">Nothing open. Add a school when a secondary arrives.</div>';
   else {
@@ -1398,6 +1624,7 @@ function vEssay(e){
   h += '<div class="row" style="gap:10px"><button class="primary" data-act="copy-portal" data-id="'+e.id+'">Copy for portal</button><span class="small muted" id="copy-note-'+e.id+'">Cleans up curly quotes and extra spaces, then copies.</span></div>';
   h += '<div class="row" style="justify-content:space-between">'+meter(e)+'<label class="chk small">Status <select id="st2-'+e.id+'" data-bind="essay:'+e.id+':status">'+statusOpts(e)+'</select></label></div>';
   h += '</div><aside class="stack">';
+  h += storiesPanel(e);
   { const ctx=suggestions(e.id); if(ctx.length) h += '<div class="sugg"><div class="sugg-h"><h2>Similar at your other schools</h2><span class="badge">'+ctx.length+'</span></div>'+ctx.slice(0,4).map(sgCard).join("")+'</div>'; }
   // base box
   h += '<div class="panel"><div class="ph"><h3 style="flex:1">Base essay</h3></div><div class="pb stack" style="gap:10px">';
@@ -1706,6 +1933,26 @@ document.addEventListener("click", ev=>{
     case "ask-confirm": ui.confirm=d.key; render(); break;
     case "cancel-confirm": ui.confirm=null; render(); break;
     case "confirm": doConfirm(d.key); break;
+    case "exp-view": ui.expView=d.v; render(); break;
+    case "open-exp": go("experiences",{expId:d.id}); break;
+    case "back-exp": go("experiences"); break;
+    case "open-rec": ui.expView="writers"; go("experiences",{recId:d.id}); break;
+    case "back-writers": ui.expView="writers"; go("experiences"); break;
+    case "exp-add": { const k=(document.getElementById("exp-new-kind")||{}).value||"research"; const x=newExp(k); S.experiences=S.experiences||[]; S.experiences.push(x); save(); go("experiences",{expId:x.id}); setTimeout(()=>{ const n=document.getElementById("xt-"+x.id); if(n) n.focus(); },0); break; }
+    case "exp-import": ui.expImport=!ui.expImport; ui.expParsed=null; render(); break;
+    case "exp-parse": { const t=(document.getElementById("exp-paste")||{}).value||""; ui.expPaste=t; ui.expParsed=parseProfile(t); render(); break; }
+    case "exp-file": { const f=document.getElementById("exp-file"); f.value=""; f.click(); break; }
+    case "exp-import-go": { const pick=new Set([...document.querySelectorAll(".exp-pick")].filter(c=>c.checked).map(c=>+c.value)); const add=(ui.expParsed||[]).filter((x,i)=>pick.has(i)).map(x=>newExp(x.kind,{title:x.title||"", org:x.org||"", dates:x.dates||"", summary:x.summary||"", items:(x.items||[]).map(it=>newItem({head:it.head||"", text:it.text||"", tags:it.tags||[]}))}));
+      S.experiences=(S.experiences||[]).concat(add); ui.expImport=false; ui.expParsed=null; ui.expPaste=""; save(); render(); toast("Imported "+add.length+(add.length===1?" item":" items")+". Open any of them to edit."); break; }
+    case "exp-export": downloadFile("My experiences.doc", exportAllHtml(), "application/msword"); toast("Downloaded. It opens in Word or Google Docs."); break;
+    case "exp-item-add": { const x=exp(ui.expId); if(!x) break; x.items=x.items||[]; const it=newItem(); x.items.push(it); save(); render(); setTimeout(()=>{ const n=document.getElementById("xih-"+it.id); if(n) n.focus(); },0); break; }
+    case "exp-item-del": { const x=exp(ui.expId); if(!x) break; x.items=(x.items||[]).filter(it=>it.id!==d.i); save(); render(); break; }
+    case "exp-tag": { const x=exp(ui.expId); const it=x&&(x.items||[]).find(z=>z.id===d.i); if(!it) break; it.tags=it.tags||[]; it.tags=it.tags.includes(d.t)? it.tags.filter(z=>z!==d.t) : it.tags.concat([d.t]); save(); render(); break; }
+    case "story-copy": { const o=storyByKey(d.k); if(o) copyText((o.it&&o.it.head?o.it.head+": ":"")+o.text); break; }
+    case "story-drop": { const sc=school(ui.schoolId); if(sc){ sc.stories=(sc.stories||[]).filter(k=>k!==d.k); save(); render(); } break; }
+    case "rec-doc": { const r=rec(ui.recId); if(r){ downloadFile("Background for "+(r.name||"letter writer").replace(/[\\/:*?"<>|]/g,"")+".doc", packetHtml(r), "application/msword"); toast("Downloaded. It opens in Word or Google Docs."); } break; }
+    case "rec-print": { const r=rec(ui.recId); if(!r) break; const w=window.open("","_blank"); if(!w){ toast("Your browser blocked the new window. Allow pop-ups for this site, or use Download."); break; } w.document.write(packetHtml(r)); w.document.close(); setTimeout(()=>{ try{ w.focus(); w.print(); }catch(err){} },300); break; }
+    case "rec-copy": { const r=rec(ui.recId); if(r) copyText(packet(r,true).trim()); break; }
     case "new-letter": { const sc=school(ui.schoolId); if(!sc) break; const e=newLetter(sc, d.f); save(); go("schools",{schoolId:sc.id, essayId:e.id}); toast((FAM[d.f]||"Letter")+" added"+(e.baseId?", linked to your base “"+base(e.baseId).title+"”":"")+". Edit the description above if you like."); break; }
     case "rollover-fresh": startFresh(); break;
     case "rollover-keep": prefs().cycle=CYCLE; save(); render(); toast("Keeping your list. Prompts that change in the library will be flagged."); break;
@@ -1740,6 +1987,8 @@ function doConfirm(key){
   else if(k==="del-essay"){ const x=essay(idv); if(x){ S.essays=S.essays.filter(e=>e.id!==idv); save(); go("schools",{schoolId:x.schoolId}); toast("Prompt removed"); } }
   else if(k==="del-archive"){ S.archives=(S.archives||[]).filter(a=>a.id!==idv); save(); render(); toast("Deleted"); }
   else if(k==="rollover"){ startFresh(); }
+  else if(k==="del-exp"){ S.experiences=(S.experiences||[]).filter(x=>x.id!==idv); (S.recommenders||[]).forEach(r=>{ r.expIds=(r.expIds||[]).filter(i=>i!==idv); if(r.shared===idv) r.shared=""; }); S.schools.forEach(sc=>{ if(sc.stories) sc.stories=sc.stories.filter(k2=>!k2.startsWith(idv+"|")); }); save(); go("experiences"); toast("Deleted"); }
+  else if(k==="del-rec"){ S.recommenders=(S.recommenders||[]).filter(r=>r.id!==idv); ui.expView="writers"; save(); go("experiences"); toast("Deleted"); }
   else if(k==="clear"){ S=blank(); save(); go("next"); toast("Erased. This device now has no schools or essays."); }
 }
 function copyText(t){
@@ -1763,6 +2012,14 @@ function downloadBackup(){
   setTimeout(()=>URL.revokeObjectURL(url), 2000);
   render(); toast("Backup downloaded. Keep it somewhere safe, like email or cloud storage.");
 }
+document.getElementById("exp-file").addEventListener("change", ev=>{
+  const f=ev.target.files[0]; if(!f) return; const rd=new FileReader();
+  rd.onload=()=>{ const t=String(rd.result||""); let parsed=null;
+    if(/\.json$/i.test(f.name) || /^\s*[\[{]/.test(t)){ try{ const j=JSON.parse(t); const arr=Array.isArray(j)? j : (j.experiences||[]); parsed=arr.filter(x=>x && x.title && EXP_ORDER.includes(x.kind)); }catch(e){ parsed=[]; } }
+    else { ui.expPaste=t; parsed=parseProfile(t); }
+    ui.expImport=true; ui.expParsed=parsed; render(); };
+  rd.readAsText(f);
+});
 document.getElementById("restore-file").addEventListener("change", ev=>{
   const file = ev.target.files && ev.target.files[0]; if(!file) return;
   const r = new FileReader();
@@ -1842,6 +2099,7 @@ function addFromLibrary(name, extra, keys, dual){
 }
 document.addEventListener("submit", ev=>{
   const f=ev.target; ev.preventDefault();
+  if(f.dataset.form==="add-rec"){ const n=document.getElementById("rec-name").value.trim(); if(!n) return; const r={id:id("r"), name:n, kind:document.getElementById("rec-kind").value, role:"", asked:"", agreed:false, due:"", received:"", together:"", highlight:"", shared:"", expIds:[], notes:""}; S.recommenders=S.recommenders||[]; S.recommenders.push(r); ui.expView="writers"; save(); go("experiences",{recId:r.id}); return; }
   if(f.dataset.form==="add-school"){
     const pk=ui.pick; if(!pk) return;
     const extra={received:document.getElementById("ns-rec").value||iso(today()), turnaround:+document.getElementById("ns-turn").value||DEFAULT_TURNAROUND, hard:document.getElementById("ns-hard").value, interest:+document.getElementById("ns-int").value, feeAmt:(document.getElementById("ns-fee")||{}).value ? Math.round(+document.getElementById("ns-fee").value) : ""};
@@ -1880,6 +2138,8 @@ document.addEventListener("input", ev=>{
   if(el.dataset.libstate){ ui.libState=el.value; render(); return; }
   if(el.dataset.libdeg){ ui.libDeg=el.value; render(); return; }
   if(el.dataset.libq){ ui.libQ=el.value; const pos=el.selectionStart; render(); const n=document.getElementById("libq"); n.focus(); try{ n.setSelectionRange(pos,pos);}catch(e){} return; }
+  if(el.id==="pref-name"){ prefs().name=el.value; save(); return; }
+  if(el.dataset.bind && /^(exp|expi|rec):/.test(el.dataset.bind) && !(el.type==="checkbox"||el.tagName==="SELECT"||el.type==="date")){ bindExtra(el); return; }
   const bnd=el.dataset.bind; if(!bnd) return;
   const [kind,idv,field]=bnd.split(":");
   if(el.type==="checkbox"||el.tagName==="SELECT"||el.type==="date"||el.type==="number"||el.type==="time") return; // handled on change
@@ -1891,6 +2151,9 @@ document.addEventListener("change", ev=>{
   const el=ev.target;
   if(el.id==="pref-dual"){ prefs().dual=el.checked; save(); render(); toast(el.checked?"New schools will start with MD/PhD prompts. You can switch per school.":"New schools will start with regular prompts."); return; }
   if(el.id && el.id.startsWith("track-")){ const sc=school(el.id.slice(6)); if(sc){ sc.track=el.checked?"dual":"single"; save(); render(); } return; }
+  if(el.classList && el.classList.contains("rec-x")){ const r=rec(el.dataset.r); if(r){ r.expIds=(r.expIds||[]).filter(i=>i!==el.value); if(el.checked) r.expIds.push(el.value); save(); } return; }
+  if(el.id && el.id.startsWith("story-add-")){ const sc=school(el.id.slice(10)); if(sc && el.value){ sc.stories=(sc.stories||[]).concat([el.value]); save(); render(); } return; }
+  if(el.dataset.bind && /^(exp|expi|rec):/.test(el.dataset.bind)){ if(el.type==="checkbox"||el.tagName==="SELECT"||el.type==="date"){ bindExtra(el); render(); } return; }
   const bnd=el.dataset.bind; if(!bnd) return;
   const [kind,idv,field]=bnd.split(":");
   let val = el.type==="checkbox"? el.checked : el.value;
@@ -1907,6 +2170,12 @@ document.addEventListener("change", ev=>{
   if(kind==="school" && (field==="ii"||field==="iv"||field==="complete") && val && !obj.submitted){ obj.submitted=true; obj.submittedAt=obj.submittedAt||val; }
   save(); render();
 });
+function bindExtra(el){
+  const p=el.dataset.bind.split(":"), val=el.type==="checkbox"? el.checked : el.value;
+  if(p[0]==="exp"){ const x=exp(p[1]); if(x){ x[p[2]]=val; save(); } }
+  else if(p[0]==="expi"){ const x=exp(p[1]); const it=x&&(x.items||[]).find(z=>z.id===p[2]); if(it){ it[p[3]]=val; save(); } }
+  else if(p[0]==="rec"){ const r=rec(p[1]); if(r){ r[p[2]]=val; if(p[2]==="received"&&val) r.agreed=true; save(); } }
+}
 function choosePick(li){
   if(!li || li.getAttribute("aria-disabled")==="true"){ if(li) toast("Already on your list"); return; }
   ui.pick = li.dataset.pick==="lib" ? {kind:"lib", name:li.dataset.name} : {kind:"custom", name:ui.pickQ.trim()};
