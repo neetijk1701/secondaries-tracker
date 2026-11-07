@@ -101,3 +101,7 @@ Every essay (secondaries, primary, letters) has numbered versions (`e.vers`: [{n
 - **Updates:** 2 minutes after changes or "Update now"; only Docs whose content hash changed are rewritten (same file, so shared links keep working); renames follow; Docs for things deleted in the app go to Drive's Trash, except earlier cycles' folders, which stay as an archive.
 - **Edited in Drive:** if a Doc's modifiedTime is newer than the app's last write, it's skipped and listed with See the Drive text / Replace with the app's version / Keep my Drive edits (stop updating).
 - Sample mode never writes to Drive. Turning it off leaves the folder alone.
+
+## Guides
+- The app tour (`tourCards`) covers versions and the experience log along with the rest.
+- The Experiences tab has its own 5-card guide (`expCards`): what the log is for, writing it up when an experience ends, strengths/weaknesses/About me, letter writers, and how it feeds essays, activities and interviews. It opens the first time someone visits the tab (including in log-only mode, which skips the app tour), is remembered in `maw-exp-intro`, and reopens from "How this works" on the tab.
