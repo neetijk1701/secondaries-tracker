@@ -1174,6 +1174,7 @@ function render(){
   Sync.paintChip();
   const open = S.schools.filter(s=>!s.submitted).length;
   const lm=logMode(); if(lm && ui.tab!=="experiences") ui.tab="experiences";
+  if(ui.tab==="experiences" && !ui.expId && !ui.recId && !expIntroSeen()){ const tr=document.getElementById("tour"); if(tr && tr.hidden) setTimeout(()=>{ if(document.getElementById("tour").hidden && !expIntroSeen()) openTour("exp"); },0); }
   const br=document.querySelector(".brand"); if(br) br.innerHTML = lm? 'Experience <span>Log</span>' : 'Med App <span>Workspace</span>';
   document.title = lm? "Experience Log" : "Med App Workspace";
   document.getElementById("tabs").hidden = lm;
@@ -1346,8 +1347,8 @@ function parseProfile(text){
 function vExperiences(){
   ui.expView=ui.expView||"stories";
   let h = logMode()
-    ? '<div class="row" style="justify-content:space-between; align-items:flex-end"><div><h1>Experience log</h1><p class="sub" style="margin-bottom:0">Keep a running record of what you do and what it teaches you, starting whenever you start. Letter writers can get a summary tailored to them. When you apply, turn on the application tools and everything here is ready for your essays, activities and interviews.</p></div><button data-act="applying-on">I’m applying this cycle</button></div><div style="height:14px"></div>'
-    : '<h1>Experiences</h1><p class="sub">What you’ve done, what it taught you, and what it shows about you. This stays with you from cycle to cycle. Essays and interview prep pull stories from here, and each letter writer can get a summary tailored to them.'+(!S.schools.length && !(S.apps||[]).some(a=>a.submitted)?' <button class="ghost small" data-act="applying-off" style="padding:0">Not applying yet? Show only the log</button>':'')+'</p>';
+    ? '<div class="row" style="justify-content:space-between; align-items:flex-end"><div><h1>Experience log</h1><p class="sub" style="margin-bottom:0">Keep a running record of what you do and what it teaches you, starting whenever you start. Letter writers can get a summary tailored to them. When you apply, turn on the application tools and everything here is ready for your essays, activities and interviews.</p></div><span class="row"><button class="ghost" data-act="exp-intro">How this works</button><button data-act="applying-on">I’m applying this cycle</button></span></div><div style="height:14px"></div>'
+    : '<h1>Experiences</h1><p class="sub">What you’ve done, what it taught you, and what it shows about you. This stays with you from cycle to cycle. Essays and interview prep pull stories from here, and each letter writer can get a summary tailored to them. <button class="ghost small" data-act="exp-intro" style="padding:0">How this works</button>'+(!S.schools.length && !(S.apps||[]).some(a=>a.submitted)?' <button class="ghost small" data-act="applying-off" style="padding:0">Not applying yet? Show only the log</button>':'')+'</p>';
   h+='<div class="row" style="justify-content:space-between; margin-bottom:14px"><span class="seg" role="group" aria-label="View"><button data-act="exp-view" data-v="stories" aria-pressed="'+(ui.expView==="stories")+'">Experiences</button><button data-act="exp-view" data-v="self" aria-pressed="'+(ui.expView==="self")+'">Strengths &amp; weaknesses</button><button data-act="exp-view" data-v="writers" aria-pressed="'+(ui.expView==="writers")+'">Letter writers'+((S.recommenders||[]).length?' ('+S.recommenders.length+')':'')+'</button></span>'+
     '<label class="chk small">Your name <input id="pref-name" value="'+esc(prefs().name||"")+'" placeholder="For letter-writer summaries" style="width:200px"></label></div>';
   return h+(ui.expView==="writers"? vWriters() : ui.expView==="self"? vSelf() : vStories());
@@ -2518,6 +2519,7 @@ document.addEventListener("click", ev=>{
     case "act-open": ui.actOpen = ui.actOpen===d.id? null : d.id; render(); break;
     case "act-copy": { const a=(S.acts||[]).find(z=>z.id===d.id); if(a) copyText(portalText(a.desc||"")); break; }
     case "exp-view": ui.expView=d.v; render(); break;
+    case "exp-intro": openTour("exp"); break;
     case "exp-writer": { const x=exp(ui.expId); if(!x) break; if(!(x.contact||"").trim()){ toast("Add the supervisor’s name first."); break; } const r={id:id("r"), name:x.contact.trim(), kind:x.kind==="research"?"research":x.kind==="clinical"?"clinical":"other", role:x.contactRole||"", asked:"", agreed:false, due:"", received:"", together:x.title, highlight:"", shared:x.id, expIds:[x.id], notes:x.contactEmail?"Email: "+x.contactEmail:""}; S.recommenders=S.recommenders||[]; S.recommenders.push(r); save(); render(); toast(r.name+" added to Letter writers."); break; }
     case "applying-on": prefs().applying=true; save(); go("next"); toast("Application tools are on. Your log is under Experiences."); break;
     case "applying-off": prefs().applying=false; save(); go("experiences"); break;
@@ -2643,27 +2645,47 @@ function tourCards(){
      d:'<div class="r"><span class="fake warn">Base updated · v1 → v3</span><span class="fake acc">Review changes</span></div><div class="r"><del style="background:var(--del)">three years</del><ins style="background:var(--ins); text-decoration:none">four years</ins><span class="fake">Apply here</span></div>'},
     {t:"Know what to do next", p:"<b>Do next</b> opens with a short summary: what’s due this week, how much is left to write, and the one thing to do first. Below it, schools are ranked by due date and how much you want them. The <b>Suggestions</b> panel points out prompts at different schools that ask the same thing.",
      d:'<div class="r"><b style="font-size:11px; letter-spacing:.07em; color:var(--muted)">DO FIRST</b><span>Lakeshore: finish Challenge</span><span class="fake acc">Start</span></div><div class="r"><span class="fake">Reuse what you wrote · 3 schools</span></div>'},
+    {t:"Finish versions as you go", p:"Above every essay is a version strip. When a draft is done, click <b>Mark v2 done</b>; whatever you write next is v3. Click any earlier version to read it, compare it, copy from it, or start over from it. Submitting an essay saves a “Submitted” version automatically.",
+     d:'<div class="r"><span class="fake">v1 · First draft</span><span class="fake">v2 · Submitted</span><span class="fake acc">v3 · working</span></div>'},
+    {t:"Keep an experience log", p:"On the <b>Experiences</b> tab, write up each research, clinical or other experience when it ends: what you did and what you learned. It becomes stories for your essays, starting points for AMCAS activities, and a summary tailored to each letter writer. The tab walks you through it the first time you open it.",
+     d:'<div class="r"><span class="fake">Cardiac fibrosis lab</span><span>→</span><span class="fake acc">Essay stories</span><span class="fake acc">Activities</span><span class="fake acc">Letter writers</span></div>'},
     {t:"Your work is saved as you type", p: drive ? "It saves in this browser right away. Click <b>Save to Google Drive</b> at the top to keep it in your own Drive too, so it opens on any computer and survives clearing your browser." : "It saves in this browser right away, and nothing is sent anywhere. Use <b>Download backup</b> at the bottom of the page now and then, since clearing your browser data would erase it.",
      d: drive ? '<div class="r"><span class="fake"><span style="width:8px;height:8px;border-radius:50%;background:var(--good)"></span>Saved to Drive</span></div>' : '<div class="r"><span class="fake">Download backup</span><span class="fake">Restore backup</span></div>'}
   ];
 }
-let tourStep=0, tourReturn=null, TOUR=[];
+function expCards(){
+  return [
+    {t:"Your experience log", p:"This is where you keep a write-up of everything you’ve done: research, clinical work, activities. Many pre-health advisors recommend keeping one for letter writers, and it pays off again when you write essays and prepare for interviews. Start whenever you start, even freshman year.",
+     d:'<div class="r"><span class="fake">Experiences</span><span class="fake">Strengths &amp; weaknesses</span><span class="fake">Letter writers</span></div><div class="muted">Three parts. Here’s what goes in each.</div>'},
+    {t:"Write it up when it ends", p:"Add each experience with its dates, hours and supervisor. Then write two things: <b>What I did</b> (a paragraph about the role) and <b>What I learned</b> (two to four lessons, each a one-line headline plus the story: what happened, what you did about it, what you do differently now). For something that lasts years, keep one write-up and revise it each term.",
+     d:'<div class="r"><span class="fake warn">Ended Aug 2025: write it up while it’s fresh</span></div><div class="r"><b style="font-size:12px">A failed method is information</b><span class="muted" style="font-size:12px">For eight months my stain failed…</span></div>'},
+    {t:"Strengths, weaknesses and you", p:"On <b>Strengths &amp; weaknesses</b>, name a few strengths and tag lessons that show them. Weaknesses are about growth: a real one, an example, and what you’re doing about it. They stay private unless you choose to share one. <b>About me</b> holds bigger answers, like why medicine and your career goals.",
+     d:'<div class="r"><span class="fake good">Persistence · 3 pieces of evidence</span><span class="fake acc">Working on it</span></div>'},
+    {t:"Give letter writers what they need", p:"Under <b>Letter writers</b>, add each person (or click <b>Add as a letter writer</b> on an experience’s supervisor). Pick what to include, add a line about what they saw firsthand, and download or share a summary tailored to them.",
+     d:'<div class="r"><span class="fake">Dr. Priya Shah</span><span>→</span><span class="fake acc">Summary for Dr. Shah</span></div>'},
+    {t:"It feeds everything else", p:"Your lessons show up as <b>Stories that fit</b> next to each essay, primary activities can start from an experience (hours and dates filled in), and interview prep lists the stories to have ready. Write it once here and use it everywhere.",
+     d:'<div class="r"><span class="fake">Lesson</span><span>→</span><span class="fake acc">Why us essay</span><span class="fake acc">AMCAS activity</span><span class="fake acc">Interview prep</span></div>'}
+  ];
+}
+const EXPKEY="maw-exp-intro";
+function expIntroSeen(){ try{ return localStorage.getItem(EXPKEY)==="1"; }catch(e){ return true; } }
+let tourStep=0, tourReturn=null, TOUR=[], tourMode="main";
 function tourHidden(){ try{ return localStorage.getItem(TOURKEY)==="1"; }catch(e){ return false; } }
 function renderTour(){
   const s=TOUR[tourStep], last=tourStep===TOUR.length-1;
   document.getElementById("tour").innerHTML='<div class="card2"><button class="x" id="tour-x" aria-label="Close">×</button>'+
-    '<div class="step-n">'+(tourStep===0?'Welcome':'How it works · '+tourStep+' of '+(TOUR.length-1))+'</div><h2 id="tour-title">'+s.t+'</h2><p>'+s.p+'</p>'+
+    '<div class="step-n">'+(tourMode==="exp"? (tourStep===0?'The Experiences tab':'Experiences · '+tourStep+' of '+(TOUR.length-1)) : (tourStep===0?'Welcome':'How it works · '+tourStep+' of '+(TOUR.length-1)))+'</div><h2 id="tour-title">'+s.t+'</h2><p>'+s.p+'</p>'+
     (s.d?'<div class="demo" aria-hidden="true">'+s.d+'</div>':'')+
     '<div class="dots">'+TOUR.map((_,i)=>'<button class="'+(i===tourStep?'on':'')+'" data-step="'+i+'" aria-label="Go to card '+(i+1)+'"></button>').join("")+'</div>'+
-    '<div class="acts">'+(tourStep? '<button id="tour-back">Back</button>' : '<button class="ghost" id="tour-skip">I know how it works, skip</button>')+
-      '<button class="primary" id="tour-next">'+(last?'Get started':(tourStep===0?'Show me':'Next'))+'</button></div>'+
-    '<div class="foot2"><label><input type="checkbox" id="tour-hide"'+(tourHidden()?' checked':'')+'> Don’t show this when I open the app</label><span class="small muted keys"><kbd>Esc</kbd> to close · <kbd>←</kbd> <kbd>→</kbd> to move</span></div></div>';
+    '<div class="acts">'+(tourStep? '<button id="tour-back">Back</button>' : '<button class="ghost" id="tour-skip">'+(tourMode==="exp"?'Skip for now':'I know how it works, skip')+'</button>')+
+      '<button class="primary" id="tour-next">'+(last?(tourMode==="exp"?'Start my log':'Get started'):(tourStep===0?'Show me':'Next'))+'</button></div>'+
+    (tourMode==="exp"?'':'<div class="foot2"><label><input type="checkbox" id="tour-hide"'+(tourHidden()?' checked':'')+'> Don’t show this when I open the app</label><span class="small muted keys"><kbd>Esc</kbd> to close · <kbd>←</kbd> <kbd>→</kbd> to move</span></div>')+'</div>';
   document.getElementById("tour-next").focus();
 }
-function openTour(){ TOUR=tourCards(); tourReturn=document.activeElement; tourStep=0; document.getElementById("tour").hidden=false; renderTour(); }
+function openTour(mode){ tourMode=mode==="exp"?"exp":"main"; TOUR=tourMode==="exp"? expCards() : tourCards(); tourReturn=document.activeElement; tourStep=0; document.getElementById("tour").hidden=false; renderTour(); }
 function closeTour(){
   const hide=document.getElementById("tour-hide");
-  try{ if(hide) localStorage.setItem(TOURKEY, hide.checked?"1":"0"); sessionStorage.setItem("secondaries-intro-seen","1"); }catch(e){}
+  try{ if(tourMode==="exp") localStorage.setItem(EXPKEY,"1"); else { if(hide) localStorage.setItem(TOURKEY, hide.checked?"1":"0"); sessionStorage.setItem("secondaries-intro-seen","1"); } }catch(e){}
   document.getElementById("tour").hidden=true; if(tourReturn&&tourReturn.focus) tourReturn.focus();
 }
 document.getElementById("tour").addEventListener("click", ev=>{
