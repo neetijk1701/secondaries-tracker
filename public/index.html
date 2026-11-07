@@ -83,6 +83,20 @@ header.top{background:var(--surface); border-bottom:1px solid var(--line); posit
 nav.tabs{display:flex; gap:4px; overflow-x:auto; padding-block:8px 0; scrollbar-width:none}
 nav.tabs a{padding:8px 12px 10px; color:var(--muted); text-decoration:none; font-weight:600; border-bottom:2.5px solid transparent; white-space:nowrap}
 nav.tabs a[aria-current="page"]{color:var(--ink); border-color:var(--accent)}
+.tip{display:flex; align-items:flex-start; gap:10px; padding:10px 12px; margin-bottom:14px; border:1px solid var(--accent); border-radius:10px; background:var(--accent-soft)}
+.tip-i{flex:none; width:20px; height:20px; border-radius:50%; background:var(--accent); color:#fff; font:700 12px/20px Georgia,serif; text-align:center; font-style:italic}
+.ck-bar{height:4px; background:var(--line-soft); margin:0 16px}
+.ck-bar i{display:block; height:100%; background:var(--accent); border-radius:2px}
+.ck-list li{align-items:center}
+.ck-list .ck-box{width:20px; height:20px; flex:none; border:1.5px solid var(--line); border-radius:6px; display:inline-flex; align-items:center; justify-content:center; font-size:13px; color:#fff; margin-right:10px}
+.ck-list li.done .ck-box{background:var(--accent); border-color:var(--accent)}
+.ck-list li.done .main{color:var(--muted); text-decoration:line-through}
+.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)}
+.stage-opt{display:flex; flex-direction:column; align-items:flex-start; gap:2px; text-align:left; width:100%; padding:10px 14px; border:1px solid var(--line); border-radius:10px; background:var(--card, transparent); color:inherit; font:inherit; cursor:pointer}
+.stage-opt:hover,.stage-opt:focus-visible,.stage-opt.on{border-color:var(--accent); background:var(--accent-soft)}
+.stage-opt span{font-size:13px; color:var(--muted)}
+nav.tabs .tab-more{font:inherit; background:none; border:0; border-bottom:2.5px solid transparent; padding:8px 12px 10px; color:var(--muted); font-weight:600; cursor:pointer; white-space:nowrap}
+nav.tabs .tab-more[aria-expanded="true"]{color:var(--ink)}
 nav.tabs a .n{font-size:12px; margin-left:4px; color:var(--muted)}
 main{padding-block:20px 60px}
 .layout{display:grid; grid-template-columns:minmax(0,1fr); gap:20px; align-items:start}
@@ -1165,7 +1179,7 @@ function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;
 function stars(n){ let h=""; for(let i=1;i<=3;i++) h+= i<=n? "●" : '<span class="off">●</span>'; return '<span class="stars" aria-label="Interest '+n+' of 3">'+h+'</span>'; }
 let toastT;
 function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, 2400); }
-function go(tab, extra){ Object.assign(ui, {schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, editPrompt:false, pick:null, pickQ:"", pickI:0, focus:false, histSel:null, verSel:null, verCmp:false, verDone:false, expId:null, recId:null, recPreview:false, recOpen:null, expImport:false, expParsed:null}, extra||{}); ui.tab=tab; if(location.hash!=="#"+tab){ try{ history.replaceState(null,"","#"+tab);}catch(e){ location.hash=tab; } } render(); window.scrollTo(0,0); }
+function go(tab, extra){ Object.assign(ui, {more:false, schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, editPrompt:false, pick:null, pickQ:"", pickI:0, focus:false, histSel:null, verSel:null, verCmp:false, verDone:false, expId:null, recId:null, recPreview:false, recOpen:null, expImport:false, expParsed:null}, extra||{}); ui.tab=tab; if(location.hash!=="#"+tab){ try{ history.replaceState(null,"","#"+tab);}catch(e){ location.hash=tab; } } render(); window.scrollTo(0,0); }
 
 function render(){
   NAMEIDX=null;
@@ -1178,24 +1192,26 @@ function render(){
   const br=document.querySelector(".brand"); if(br) br.innerHTML = lm? 'Experience <span>Log</span>' : 'Med App <span>Workspace</span>';
   document.title = lm? "Experience Log" : "Med App Workspace";
   document.getElementById("tabs").hidden = lm;
-  document.getElementById("tabs").innerHTML = lm? "" : TABS.map(([k,l])=>'<a href="#'+k+'" data-tab="'+k+'"'+(ui.tab===k?' aria-current="page"':'')+'>'+l+(k==="schools"?'<span class="n">'+open+' open</span>':'')+(k==="cycle"&&cycleTodos().filter(t=>t.k==="iv").length?'<span class="n">'+cycleTodos().filter(t=>t.k==="iv").length+' upcoming</span>':'')+'</a>').join("");
+  const vis=new Set(visibleTabs()), hidden=TABS.filter(([k])=>!vis.has(k));
+  document.getElementById("tabs").innerHTML = lm? "" : visibleTabs().map(k=>TABS.find(t=>t[0]===k)).filter(Boolean).map(([k,l])=>'<a href="#'+k+'" data-tab="'+k+'"'+(ui.tab===k?' aria-current="page"':'')+'>'+l+(k==="schools"?'<span class="n">'+open+' open</span>':'')+(k==="cycle"&&cycleTodos().filter(t=>t.k==="iv").length?'<span class="n">'+cycleTodos().filter(t=>t.k==="iv").length+' upcoming</span>':'')+'</a>').join("")+(lm?'':'<button class="tab-more" data-act="more" aria-expanded="'+(!!ui.more)+'">More'+(ui.more?' ▴':' ▾')+'</button>');
   const m = document.getElementById("main");
   const fx = ui.focus && ui.essayId && essay(ui.essayId);
   document.body.classList.toggle("focus-mode", !!fx);
   if(fx){ m.innerHTML = vFocus(essay(ui.essayId)); document.getElementById("foot").innerHTML=""; return; }
   let h="";
-  if(ui.essayId && essay(ui.essayId)) h = vEssay(essay(ui.essayId));
-  else if(ui.baseId && base(ui.baseId)) h = vBase(base(ui.baseId));
-  else if(ui.schoolId && school(ui.schoolId)) h = vSchool(school(ui.schoolId));
-  else if(ui.tab==="schools") h = vSchools();
-  else if(ui.tab==="essays") h = vEssays();
-  else if(ui.tab==="library") h = vLibrary();
-  else if(ui.tab==="cycle") h = vCycle();
-  else if(ui.tab==="primary") h = vPrimary();
-  else if(ui.expId && exp(ui.expId)) h = vExp(exp(ui.expId));
-  else if(ui.recId && rec(ui.recId)) h = vWriter(rec(ui.recId));
-  else if(ui.tab==="experiences") h = vExperiences();
-  else h = vNext();
+  if(ui.more && !lm) h += '<div class="panel" style="margin-bottom:16px"><div class="pb row" style="flex-wrap:wrap; gap:8px">'+(hidden.length?'<span class="small muted">Also here:</span>'+hidden.map(([k,l])=>'<button class="ghost" data-tab="'+k+'">'+l+'</button>').join(""):'<span class="small muted">You’re seeing every section.</span>')+'<span style="flex:1"></span><button data-act="stage-pick">Change what I see</button><button class="ghost" data-act="tour">How to use this app</button></div></div>';
+  if(ui.essayId && essay(ui.essayId)) h += vEssay(essay(ui.essayId));
+  else if(ui.baseId && base(ui.baseId)) h += vBase(base(ui.baseId));
+  else if(ui.schoolId && school(ui.schoolId)) h += vSchool(school(ui.schoolId));
+  else if(ui.tab==="schools") h += vSchools();
+  else if(ui.tab==="essays") h += vEssays();
+  else if(ui.tab==="library") h += vLibrary();
+  else if(ui.tab==="cycle") h += vCycle();
+  else if(ui.tab==="primary") h += vPrimary();
+  else if(ui.expId && exp(ui.expId)) h += vExp(exp(ui.expId));
+  else if(ui.recId && rec(ui.recId)) h += vWriter(rec(ui.recId));
+  else if(ui.tab==="experiences") h += vExperiences();
+  else h += vNext();
   const essayView = !!(ui.essayId && essay(ui.essayId));
   const showSide = S.essays.length>1 && !essayView && !((ui.tab==="cycle"||ui.tab==="experiences"||ui.tab==="primary") && !ui.schoolId && !ui.baseId);
   let side="";
@@ -1239,7 +1255,35 @@ function writeupNudge(x){
   return "";
 }
 function yearOf(x){ if(x.ongoing) return "Now"; const v=x.end||x.start; if(v) return v.slice(0,4); const m=/(\d{4})(?!.*\d{4})/.exec(x.dates||""); return m? m[1] : "No dates"; }
-function logMode(){ return prefs().applying===false; }
+// Where someone is in the process decides which tabs they see and what the checklist asks for.
+// Undefined (people who used the app before stages existed) shows everything.
+const STAGES = {
+  log:{label:"Not applying yet", sub:"Keep an experience log now; it turns into letters, essays and interview answers later.", tabs:["experiences"]},
+  primary:{label:"Getting ready to apply", sub:"Personal statement and activities for AMCAS, TMDSAS or AACOMAS.", tabs:["next","primary","experiences"]},
+  secondaries:{label:"Secondaries are arriving", sub:"Add schools as their secondaries come in and reuse what you write.", tabs:["next","schools","primary","experiences"]},
+  interviews:{label:"Interviews and decisions", sub:"Invites, interview prep, thank-you notes, update letters and decisions.", tabs:["next","cycle","schools","experiences"]}
+};
+function appStage(){ const p=prefs(); if(p.applying===false) return "log"; return STAGES[p.stage]? p.stage : "all"; }
+function logMode(){ return appStage()==="log"; }
+function visibleTabs(){
+  const st=appStage(); if(st==="all") return TABS.map(t=>t[0]);
+  const v=new Set(STAGES[st].tabs);
+  if(S.bases.length || S.schools.length>=2) v.add("essays");                          // base essays once there's something to share
+  if(S.schools.some(s=>s.submitted||s.ii||s.outcome)) v.add("cycle");                 // the cycle once something is submitted
+  if(ui.tab) v.add(ui.tab);
+  const order=STAGES[st].tabs.concat(TABS.map(t=>t[0]).filter(k=>!STAGES[st].tabs.includes(k)));
+  return order.filter(k=>v.has(k));
+}
+function newUser(){ return !S.demo && !S.schools.length && !S.essays.length && !(S.experiences||[]).length && !(S.acts||[]).length && prefs().stage===undefined && prefs().applying===undefined; }
+// one-time tips, shown when a feature first becomes useful; dismissed for good (synced with your data)
+function tipHtml(id, html){ if((prefs().tips||{})[id]) return ""; return '<div class="tip" role="note"><span class="tip-i" aria-hidden="true">i</span><div class="grow small">'+html+'</div><button class="ghost small" data-act="tip-x" data-id="'+id+'" aria-label="Dismiss tip">Got it</button></div>'; }
+function setStage(k){
+  const p=prefs(); if(p.ckHide) delete p.ckHide[k];
+  if(k==="log"){ p.applying=false; p.stage="log"; }
+  else { p.applying=true; p.stage = STAGES[k]? k : "all"; }
+  save(); ui.more=false;
+  go(k==="log"?"experiences":"next");
+}
 const ABOUT_STARTERS = ["Why medicine?","Career goals: medicine","Career goals: research","Do I prefer group work or individual work? Why?","What should my letter writers know about me?"];
 // every story: an experience's summary, or one of its lessons
 function allStories(){ const out=[]; (S.experiences||[]).forEach(x=>{ if((x.summary||x.doing) && x.kind!=="strength") out.push({x, it:null, key:x.id+"|", head:x.title, sub:EXP_ONE[x.kind], text:x.kind==="weakness"? [x.summary, x.doing&&("What I’m doing about it: "+x.doing)].filter(Boolean).join("\n\n") : x.summary}); (x.items||[]).forEach(it=>{ const generic=!it.head || /^reflections?$/i.test(it.head); out.push({x, it, key:x.id+"|"+it.id, head:generic? x.title : it.head, sub:generic? (it.head||EXP_ONE[x.kind]) : x.title, text:it.text||""}); }); }); return out; }
@@ -1349,6 +1393,7 @@ function vExperiences(){
   let h = logMode()
     ? '<div class="row" style="justify-content:space-between; align-items:flex-end"><div><h1>Experience log</h1><p class="sub" style="margin-bottom:0">Write up each experience when it ends, while you still remember the details. Years from now those write-ups become specific letters of recommendation, ready-made AMCAS activities and secondary essays, and answers for interviews. When you apply, turn on the application tools and everything here is waiting.</p></div><span class="row"><button class="ghost" data-act="exp-intro">How this works</button><button data-act="applying-on">I’m applying this cycle</button></span></div><div style="height:14px"></div>'
     : '<h1>Experiences</h1><p class="sub">What you’ve done, what it taught you, and what it shows about you. This stays with you from cycle to cycle. Essays and interview prep pull stories from here, and each letter writer can get a summary tailored to them. <button class="ghost small" data-act="exp-intro" style="padding:0">How this works</button>'+(!S.schools.length && !(S.apps||[]).some(a=>a.submitted)?' <button class="ghost small" data-act="applying-off" style="padding:0">Not applying yet? Show only the log</button>':'')+'</p>';
+  if(logMode()) h+=checklistHtml();
   h+='<div class="row" style="justify-content:space-between; margin-bottom:14px"><span class="seg" role="group" aria-label="View"><button data-act="exp-view" data-v="stories" aria-pressed="'+(ui.expView==="stories")+'">Experiences</button><button data-act="exp-view" data-v="self" aria-pressed="'+(ui.expView==="self")+'">Strengths &amp; weaknesses</button><button data-act="exp-view" data-v="writers" aria-pressed="'+(ui.expView==="writers")+'">Letter writers'+((S.recommenders||[]).length?' ('+S.recommenders.length+')':'')+'</button></span>'+
     '<label class="chk small">Your name <input id="pref-name" value="'+esc(prefs().name||"")+'" placeholder="For letter-writer summaries" style="width:200px"></label></div>';
   return h+(ui.expView==="writers"? vWriters() : ui.expView==="self"? vSelf() : vStories());
@@ -1444,6 +1489,7 @@ function vExp(x){
 function vWriters(){
   const R=S.recommenders||[];
   let h='<form class="row" data-form="add-rec" style="margin-bottom:14px"><input id="rec-name" placeholder="Letter writer’s name, e.g. Dr. Cole" required style="flex:1; min-width:200px"><select id="rec-kind" aria-label="Relationship">'+Object.entries(REC_KINDS).map(([k,l])=>'<option value="'+k+'">'+l+'</option>').join("")+'</select><button class="primary" type="submit">Add letter writer</button></form>';
+  if(R.length) h+=tipHtml("writer", '<b>Open a writer to build their summary.</b> Pick the experiences they know, add a line about what they saw firsthand, preview it, then download or share it. If your Drive copy is on, it’s also in Drive under Letter writers.');
   if(!R.length) return h+'<div class="panel"><div class="pb stack"><h2>Track your letters and help your writers</h2><p style="margin:0">Add each person writing you a letter. Track when you asked and when it’s due, then put together a summary for them: what you did together, what you’d like them to highlight, and the experiences and strengths most relevant to them. Download it as a document or PDF to send with your request.</p></div></div>';
   h+='<div class="panel"><ul class="list">'+R.map(r=>{ const st=recStatus(r); const n=(r.expIds||[]).length; return '<li><div class="main"><div class="row"><b>'+esc(r.name)+'</b><span class="small muted">'+esc(REC_KINDS[r.kind]||"")+(r.role?' · '+esc(r.role):'')+'</span></div><div class="chips"><span class="chip '+st.c+'">'+esc(st.t)+'</span>'+(!r.received&&r.due&&daysUntil(r.due)<=14?'<span class="chip warn">Due '+dayLabel(r.due)+'</span>':'')+'<span class="chip">'+(n?n+' item'+(n===1?'':'s')+' in summary':'Summary not set up')+'</span></div></div><button data-act="open-rec" data-id="'+r.id+'">Open</button></li>'; }).join("")+'</ul></div>';
   return h;
@@ -1929,11 +1975,61 @@ function vBrief(rows){
   if(first) h+='<div class="first" style="display:contents"><dt>Do first</dt><dd>'+first+btn+'</dd></div>';
   return h+'</dl>';
 }
+// A short, stage-specific "Getting started" list; each step ticks itself off and has one button that goes there.
+function checklist(){
+  const st=appStage(); if(st==="all") return null;
+  const X=S.experiences||[], story=X.filter(x=>STORY_KINDS.includes(x.kind)), drive=Sync.available();
+  const schoolEs=S.essays.filter(e=>!isPrimaryE(e) && !isLetter(e));
+  const fams={}; schoolEs.filter(e=>!e.baseId && e.family!=="why" && e.family!=="other").forEach(e=>{ fams[e.family]=(fams[e.family]||new Set()).add(e.schoolId); });
+  const top=Object.entries(fams).sort((a,b)=>b[1].size-a[1].size)[0];
+  const step=(t, done, to, extra)=>({t, done:!!done, to, extra});
+  let steps=[];
+  if(st==="log") steps=[
+    step("Add your first experience: a lab, a clinical role, an activity", story.length, "exp"),
+    step("Write it up: what you did, and one lesson you learned", story.some(writtenUp), "exp"),
+    step("Name a strength and back it with a moment from an experience", X.some(x=>x.kind==="strength"), "self"),
+    step("Add a letter writer, even one you’ll ask years from now", (S.recommenders||[]).length, "writers")];
+  else if(st==="primary") steps=[
+    step("Choose which applications you’re using (AMCAS, TMDSAS, AACOMAS)", prefs().services!==undefined, "primary"),
+    step("Start your personal statement", S.essays.some(e=>isPrimaryE(e) && e.family==="ps" && (e.text||"").trim()), "primary"),
+    step("Write up your main experiences, so activities and essays can draw on them", story.some(writtenUp), "exp"),
+    step("Add your activities (start each from an experience)", (S.acts||[]).length, "primary")];
+  else if(st==="secondaries") steps=[
+    step("Add the schools whose secondaries you’ve received", S.schools.length, "add-school"),
+    step("Write one base essay for your most common prompt"+(top? " ("+(FAM[top[0]]||top[0]).toLowerCase()+", asked by "+top[1].size+" school"+(top[1].size===1?"":"s")+")" : ""), S.bases.length, top? "fam:"+top[0] : "essays"),
+    step("Draft your first secondary", schoolEs.some(e=>(e.text||"").trim()), "first-school"),
+    step("Add a few experiences, so each essay can suggest stories", story.length, "exp")];
+  else if(st==="interviews") steps=[
+    step("Mark the schools you’ve submitted", S.schools.some(s=>s.submitted), "schools"),
+    step("Record interview invites and dates", S.schools.some(s=>s.ii||s.iv), "cycle"),
+    step("Pick the stories to have ready for each interview", S.schools.some(s=>(s.stories||[]).length), "cycle"),
+    step("Send thank-you notes and update letters", S.essays.some(isLetter), "cycle")];
+  if(drive) steps.push(step("Save to Google Drive, so your work is safe and opens on any computer", Sync.state().connected, "drive"));
+  return steps;
+}
+function stageNudge(){
+  const st=appStage(), mo=today().getMonth(), seen=prefs().tips||{};
+  if(st==="primary" && mo>=5 && mo<=7 && !seen["nudge-sec-"+CYCLE]) return '<div class="banner info" style="margin-bottom:14px"><div class="grow small"><strong>Secondaries usually start arriving in July.</strong> Switch to the Secondaries view when yours do.</div><button data-act="set-stage" data-k="secondaries">Switch now</button><button class="ghost" data-act="tip-x" data-id="nudge-sec-'+CYCLE+'">Not yet</button></div>';
+  if(st==="secondaries" && S.schools.some(s=>s.ii) && !seen["nudge-iv-"+CYCLE]) return '<div class="banner info" style="margin-bottom:14px"><div class="grow small"><strong>Interview season.</strong> The Interviews view puts invites, interview prep and letters front and center.</div><button data-act="set-stage" data-k="interviews">Switch</button><button class="ghost" data-act="tip-x" data-id="nudge-iv-'+CYCLE+'">Not now</button></div>';
+  return "";
+}
+function checklistHtml(){
+  const steps=checklist(); if(!steps || (prefs().ckHide||{})[appStage()]) return "";
+  const n=steps.filter(x=>x.done).length; if(n===steps.length) return "";
+  const next=steps.find(x=>!x.done);
+  return '<div class="panel ck" style="margin-bottom:16px"><div class="ph"><h2 style="flex:1">Getting started <span class="small muted" style="font-weight:400">· '+n+' of '+steps.length+'</span></h2><button class="ghost small" data-act="ck-hide">Hide</button></div>'+
+    '<div class="ck-bar" aria-hidden="true"><i style="width:'+Math.round(100*n/steps.length)+'%"></i></div><ol class="list ck-list">'+
+    steps.map(x=>'<li class="'+(x.done?'done':'')+'"><span class="ck-box" aria-hidden="true">'+(x.done?'✓':'')+'</span><div class="main">'+esc(x.t)+(x.done?'<span class="sr-only"> (done)</span>':'')+'</div>'+(x.done?'':'<button class="'+(x===next?'primary':'ghost')+'" data-act="ck-go" data-to="'+esc(x.to)+'">'+(x===next?'Do this':'Go')+'</button>')+'</li>').join("")+'</ol></div>';
+}
 function vNext(){
   const rows = S.schools.filter(s=>!s.submitted).map(s=>({s, p:plan(s)})).sort((a,b)=>b.p.score-a.p.score);
   const done = S.schools.filter(s=>s.submitted);
   const flagged = S.essays.filter(behind);
-  let h = '<h1>Do next</h1><p class="sub">Schools ranked by how soon they are due, how much you want them, and how much writing is left. Schools you can finish quickly move up.</p>';
+  let h = '<h1>Do next</h1><p class="sub">'+(appStage()==="primary"? 'Your primary application first; schools show up here once their secondaries arrive.' : 'Schools ranked by how soon they are due, how much you want them, and how much writing is left. Schools you can finish quickly move up.')+'</p>';
+  h += stageNudge() + checklistHtml();
+  { const st=appStage(); if(STAGES[st]){ const v=visibleTabs();
+      if(v.includes("cycle") && !STAGES[st].tabs.includes("cycle")) h += tipHtml("cycle-tab", '<b>A Cycle tab just appeared.</b> Now that you’ve submitted, track interview invites and dates, thank-you notes, update letters and decisions there.');
+      if(v.includes("essays") && !STAGES[st].tabs.includes("essays")) h += tipHtml("base-tab", '<b>A Base essays tab just appeared.</b> Once two schools ask the same kind of question, write it once there and give each school its own trimmed copy.'); } }
   h += vBrief(rows) + '<!--SIDE-M-->';
   { const t=cycleTodos(); if(t.length) h += '<div class="panel" style="margin-bottom:16px"><div class="ph"><h2 style="flex:1">Interviews and letters</h2><button class="ghost small" data-tab="cycle">Cycle tab</button></div><ul class="list">'+t.slice(0,5).map(x=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(x.s?x.s.name:x.who)+'</div><div class="chips"><span class="chip '+x.c+'">'+esc(x.t)+'</span></div></div>'+(x.e?'<button data-act="open-essay" data-id="'+x.e.id+'">Open</button>':x.r?'<button data-act="open-rec" data-id="'+x.r.id+'">Open</button>':'<button data-act="open-school" data-id="'+x.s.id+'">Open</button>')+'</li>').join("")+'</ul></div>'; }
   if(!S.schools.length) h += '<div class="panel hero-empty"><h2>Add a school when its secondary arrives</h2><p>Pick it from the prompt library and its prompts come with it, or paste them yourself. Prompts that ask the same thing at different schools can share one base essay, and this list will rank your schools by what to work on first.</p><div class="row"><button class="primary" data-act="first-school">Add your first school</button>'+(SHOW_LIBRARY?'<button data-act="go-library">Browse the prompt library</button>':'')+'<button data-act="try-examples">Explore with sample data</button></div><p class="small">'+(Sync.state().connected?'Your work saves in this browser and to your own Google Drive.':(Sync.available()?'Your work saves in this browser. Connect Google Drive at the top to keep it safe on any computer.':'Everything you enter stays on this device. Nothing is sent anywhere.'))+'</p></div>';
@@ -2166,6 +2262,14 @@ function vEssay(e){
     '<div class="f" style="justify-content:flex-end"><label class="chk"><input type="checkbox" id="ep-o"'+(e.optional?' checked':'')+'> Optional</label></div></div>'+
     '<div class="row"><button class="primary" type="submit">Save prompt</button><button type="button" data-act="edit-prompt">Cancel</button></div></div></form>';
   else h += '<div class="row" style="gap:14px; margin-top:4px"><button class="ghost small" data-act="edit-prompt" style="padding-left:0">Edit prompt, limit or type</button>'+(s.libName?reportLink(s.libName, !!e.dual):'')+'</div>';
+  { let t="";
+    if(!isPrimaryE(e) && !isLetter(e) && !e.baseId && e.family!=="why" && e.family!=="other" && S.essays.some(o=>o.id!==e.id && o.family===e.family && o.schoolId!==e.schoolId && !isPrimaryE(o)))
+      t=tipHtml("base", '<b>Another school asks a similar question.</b> Write this once as a base essay (<b>Make this the base</b>, beside the essay), then trim a copy for each school. When you improve the base, every copy that’s behind gets flagged.');
+    else if(e.status==="pasted" && vers(e).some(v=>v.note==="Submitted"))
+      t=tipHtml("submitted", '<b>This exact text is saved as your Submitted version.</b> Keep editing if you like; you’ll always be able to see what '+esc(s.name)+' received.');
+    else if(!vers(e).length && words(e.text||"")>=100)
+      t=tipHtml("versions", '<b>When this draft is done, click Mark v1 done</b> above the text. What you write next becomes v2, and you can always compare with or go back to v1.');
+    if(t) h += '<div style="margin-top:12px">'+t+'</div>'; }
   h += '<div class="two" style="margin-top:16px"><div class="stack" style="min-width:0">';
   if(behind(e)){
     h += '<div class="banner warn"><div class="grow"><strong>Base updated.</strong> You adapted this from “'+esc(b.title)+'” v'+e.basedOnV+'. The base is now v'+L.v+' ('+esc(ver(b,L.v).note||"no note")+').</div><button class="primary" data-act="panel" data-p="review">Review changes</button></div>';
@@ -2416,7 +2520,7 @@ function topBanners(){
   if(saveError) h+='<div class="banner warn" style="margin-bottom:16px"><div class="grow"><strong>Your latest changes couldn’t be saved in this browser.</strong> Its storage is full or blocked. '+(ss.connected?'They’re still going to your Google Drive, but download a backup to be safe.':'Download a backup now so nothing is lost.')+'</div><button data-act="backup">Download backup</button></div>';
   const hasWork = S.schools.length && !S.demo;
   let snooze=0; try{ snooze=+localStorage.getItem("secondaries-drive-nudge")||0; }catch(e){}
-  if(Sync.available() && !ss.connected && hasWork && Date.now()>snooze && !ui.essayId) h+='<div class="banner info" style="margin-bottom:16px"><div class="grow"><strong>Keep your essays safe on any computer.</strong> Right now they’re saved only in this browser. Connect Google Drive and they’ll save to a private app folder in your own Drive, and open on any computer you sign in on.</div><button class="primary gbtn" data-act="sync-connect">'+GICON+'Save to Google Drive</button><button class="ghost" data-act="sync-snooze">Not now</button></div>';
+  if(Sync.available() && !ss.connected && hasWork && Date.now()>snooze && !ui.essayId && !checklistHtml()) h+='<div class="banner info" style="margin-bottom:16px"><div class="grow"><strong>Keep your essays safe on any computer.</strong> Right now they’re saved only in this browser. Connect Google Drive and they’ll save to a private app folder in your own Drive, and open on any computer you sign in on.</div><button class="primary gbtn" data-act="sync-connect">'+GICON+'Save to Google Drive</button><button class="ghost" data-act="sync-snooze">Not now</button></div>';
   return h;
 }
 const GICON='<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
@@ -2520,9 +2624,24 @@ document.addEventListener("click", ev=>{
     case "act-copy": { const a=(S.acts||[]).find(z=>z.id===d.id); if(a) copyText(portalText(a.desc||"")); break; }
     case "exp-view": ui.expView=d.v; render(); break;
     case "exp-intro": openTour("exp"); break;
+    case "more": ui.more=!ui.more; render(); break;
+    case "ck-hide": { const p=prefs(); p.ckHide=Object.assign({}, p.ckHide, {[appStage()]:true}); save(); render(); toast("Checklist hidden. Bring it back from More → Change what I see."); break; }
+    case "tip-x": { const p=prefs(); p.tips=Object.assign({}, p.tips, {[d.id]:true}); save(); render(); break; }
+    case "ck-go": { const to=d.to||"";
+      if(to==="exp"){ ui.expView="stories"; go("experiences"); }
+      else if(to==="self"){ ui.expView="self"; go("experiences"); }
+      else if(to==="writers"){ ui.expView="writers"; go("experiences"); }
+      else if(to==="drive") Sync.connect();
+      else if(to==="add-school") go("schools",{addSchool:true});
+      else if(to==="first-school"){ const sc=S.schools[0]; if(sc) go("schools",{schoolId:sc.id}); else go("schools",{addSchool:true}); }
+      else if(to.startsWith("fam:")){ const f=to.slice(4); const e=S.essays.find(x=>x.family===f && !isPrimaryE(x)); if(e) go("schools",{schoolId:e.schoolId, essayId:e.id}); else go("essays"); }
+      else go(to);
+      break; }
+    case "stage-pick": openTour("stage"); break;
+    case "set-stage": setStage(d.k); break;
     case "exp-writer": { const x=exp(ui.expId); if(!x) break; if(!(x.contact||"").trim()){ toast("Add the supervisor’s name first."); break; } const r={id:id("r"), name:x.contact.trim(), kind:x.kind==="research"?"research":x.kind==="clinical"?"clinical":"other", role:x.contactRole||"", asked:"", agreed:false, due:"", received:"", together:x.title, highlight:"", shared:x.id, expIds:[x.id], notes:x.contactEmail?"Email: "+x.contactEmail:""}; S.recommenders=S.recommenders||[]; S.recommenders.push(r); save(); render(); toast(r.name+" added to Letter writers."); break; }
-    case "applying-on": prefs().applying=true; save(); go("next"); toast("Application tools are on. Your log is under Experiences."); break;
-    case "applying-off": prefs().applying=false; save(); go("experiences"); break;
+    case "applying-on": openTour("stage"); break;
+    case "applying-off": setStage("log"); break;
     case "open-exp": { const x=exp(d.id); if(x) ui.expView=SELF_KINDS.includes(x.kind)?"self":"stories"; go("experiences",{expId:d.id}); break; }
     case "back-exp": ui.expView="stories"; go("experiences"); break;
     case "back-self": ui.expView="self"; go("experiences"); break;
@@ -2635,21 +2754,11 @@ document.getElementById("restore-file").addEventListener("change", ev=>{
 function tourCards(){
   const drive = Sync.available();
   return [
-    {t:"Your whole application, in one place", p:"Write your primary application and every school’s secondaries, reuse what you write across schools, and follow each school through interviews and decisions. Here’s how it works in about a minute.",
-     d:'<div class="r"><span class="fake">Do next</span><span class="fake">Primary</span><span class="fake">Secondaries</span><span class="fake">Cycle</span><span class="fake">Base essays</span><span class="fake">Experiences</span></div><div class="muted">In application order. Do next is home base.</div>'},
-    {t:"Add a school when its secondary arrives", p:"Click <b>Add school</b> and search the list of "+libCountText()+". Pick one to see its prompts and limits, uncheck any you won’t write, and add it. Applying MD/PhD? Switch to MD/PhD and its extra prompts come too. School not listed? Type its name and add it yourself, then paste in the prompts.",
-     d:'<div class="r"><span class="fake" style="flex:1; font-weight:400; color:var(--muted)">Search '+libCountText()+'…</span></div><div class="r"><span class="fake good">✓ Why us · 300 words</span><span class="fake good">✓ Challenge · 2,000 chars</span></div>'},
-    {t:"Write each kind of essay once", p:"Many schools ask the same things: diversity, a challenge, your gap year. Write one <b>base essay</b> for each kind, then each school gets its own copy that you trim to its limit. “Why us” essays are written fresh for each school.",
-     d:'<div class="r"><span class="fake acc">Base: Challenge v2</span><span>→</span><span class="fake">WashU · 3,000 chars</span><span class="fake">Duke · 400 words</span></div>'},
-    {t:"Keep the copies in sync", p:"Improve a base and save a new version, and every school still on the older one is flagged. Click <b>Review changes</b> to apply edits in one click. Fixed something in one school’s copy? <b>Compare with base</b> sends it back to the base.",
-     d:'<div class="r"><span class="fake warn">Base updated · v1 → v3</span><span class="fake acc">Review changes</span></div><div class="r"><del style="background:var(--del)">three years</del><ins style="background:var(--ins); text-decoration:none">four years</ins><span class="fake">Apply here</span></div>'},
-    {t:"Know what to do next", p:"<b>Do next</b> opens with a short summary: what’s due this week, how much is left to write, and the one thing to do first. Below it, schools are ranked by due date and how much you want them. The <b>Suggestions</b> panel points out prompts at different schools that ask the same thing.",
-     d:'<div class="r"><b style="font-size:11px; letter-spacing:.07em; color:var(--muted)">DO FIRST</b><span>Lakeshore: finish Challenge</span><span class="fake acc">Start</span></div><div class="r"><span class="fake">Reuse what you wrote · 3 schools</span></div>'},
-    {t:"Finish versions as you go", p:"Above every essay is a version strip. When a draft is done, click <b>Mark v2 done</b>; whatever you write next is v3. Click any earlier version to read it, compare it, copy from it, or start over from it. Submitting an essay saves a “Submitted” version automatically.",
-     d:'<div class="r"><span class="fake">v1 · First draft</span><span class="fake">v2 · Submitted</span><span class="fake acc">v3 · working</span></div>'},
-    {t:"Keep an experience log", p:"On the <b>Experiences</b> tab, write up each research, clinical or other experience when it ends: what you did and what you learned. It becomes stories for your essays, starting points for AMCAS activities, and a summary tailored to each letter writer. The tab walks you through it the first time you open it.",
-     d:'<div class="r"><span class="fake">Cardiac fibrosis lab</span><span>→</span><span class="fake acc">Essay stories</span><span class="fake acc">Activities</span><span class="fake acc">Letter writers</span></div>'},
-    {t:"Your work is saved as you type", p: drive ? "It saves in this browser right away. Click <b>Save to Google Drive</b> at the top to keep it in your own Drive too, so it opens on any computer and survives clearing your browser." : "It saves in this browser right away, and nothing is sent anywhere. Use <b>Download backup</b> at the bottom of the page now and then, since clearing your browser data would erase it.",
+    {t:"Your whole application, in one place", p:"Keep an experience log, write your primary application and every school’s secondaries, reuse what you write across schools, and follow each school through interviews and decisions. You only see the sections you need right now; more appear as you go, and everything is under <b>More</b>.",
+     d:'<div class="r"><span class="fake">Do next</span><span class="fake">Primary</span><span class="fake">Secondaries</span><span class="fake">Experiences</span><span class="fake acc">More ▾</span></div>'},
+    {t:"Follow the checklist", p:"<b>Do next</b> starts with a short <b>Getting started</b> list for where you are. Each step has one button that takes you there, and it ticks itself off. Tips like this one appear the first time a feature becomes useful.",
+     d:'<div class="r"><span class="fake good">✓ Add the schools whose secondaries arrived</span></div><div class="r"><span class="fake acc">Do this</span><span>Write one base essay for your most common prompt</span></div>'},
+    {t:"Your work is saved as you type", p: drive ? "It saves in this browser right away. Click <b>Save to Google Drive</b> at the top to keep it in your own Drive too, so it opens on any computer and survives clearing your browser. You can also keep readable Google Docs of everything." : "It saves in this browser right away, and nothing is sent anywhere. Use <b>Download backup</b> at the bottom now and then.",
      d: drive ? '<div class="r"><span class="fake"><span style="width:8px;height:8px;border-radius:50%;background:var(--good)"></span>Saved to Drive</span></div>' : '<div class="r"><span class="fake">Download backup</span><span class="fake">Restore backup</span></div>'}
   ];
 }
@@ -2671,7 +2780,14 @@ const EXPKEY="maw-exp-intro";
 function expIntroSeen(){ try{ return localStorage.getItem(EXPKEY)==="1"; }catch(e){ return true; } }
 let tourStep=0, tourReturn=null, TOUR=[], tourMode="main";
 function tourHidden(){ try{ return localStorage.getItem(TOURKEY)==="1"; }catch(e){ return false; } }
+function stageCard(){
+  const cur=prefs().stage===undefined && prefs().applying===undefined ? "" : appStage();
+  return '<div class="card2"><button class="x" id="tour-x" aria-label="Close">×</button><div class="step-n">'+(cur?'Change what you see':'Welcome to Med App Workspace')+'</div><h2 id="tour-title">Where are you in the process?</h2><p>We’ll show you just what you need now. You can change this anytime under <b>More</b>.</p>'+
+    '<div class="stack" style="gap:8px; margin:12px 0">'+Object.entries(STAGES).map(([k,v])=>'<button class="stage-opt'+(cur===k?' on':'')+'" data-stage="'+k+'"><b>'+v.label+'</b><span>'+v.sub+'</span></button>').join("")+'</div>'+
+    '<div class="row" style="justify-content:space-between; flex-wrap:wrap"><button class="ghost" data-stage="sample">Just looking? See a finished example</button><button class="ghost" data-stage="all"'+(cur==="all"?' aria-pressed="true"':'')+'>Show me everything</button></div></div>';
+}
 function renderTour(){
+  if(tourMode==="stage"){ document.getElementById("tour").innerHTML=stageCard(); const f=document.querySelector("#tour .stage-opt"); if(f) f.focus(); return; }
   const s=TOUR[tourStep], last=tourStep===TOUR.length-1;
   document.getElementById("tour").innerHTML='<div class="card2"><button class="x" id="tour-x" aria-label="Close">×</button>'+
     '<div class="step-n">'+(tourMode==="exp"? (tourStep===0?'The Experiences tab':'Experiences · '+tourStep+' of '+(TOUR.length-1)) : (tourStep===0?'Welcome':'How it works · '+tourStep+' of '+(TOUR.length-1)))+'</div><h2 id="tour-title">'+s.t+'</h2><p>'+s.p+'</p>'+
@@ -2682,16 +2798,17 @@ function renderTour(){
     (tourMode==="exp"?'':'<div class="foot2"><label><input type="checkbox" id="tour-hide"'+(tourHidden()?' checked':'')+'> Don’t show this when I open the app</label><span class="small muted keys"><kbd>Esc</kbd> to close · <kbd>←</kbd> <kbd>→</kbd> to move</span></div>')+'</div>';
   document.getElementById("tour-next").focus();
 }
-function openTour(mode){ tourMode=mode==="exp"?"exp":"main"; TOUR=tourMode==="exp"? expCards() : tourCards(); tourReturn=document.activeElement; tourStep=0; document.getElementById("tour").hidden=false; renderTour(); }
+function openTour(mode){ tourMode=mode==="exp"?"exp":mode==="stage"?"stage":"main"; TOUR=tourMode==="exp"? expCards() : tourCards(); tourReturn=document.activeElement; tourStep=0; document.getElementById("tour").hidden=false; renderTour(); }
 function closeTour(){
   const hide=document.getElementById("tour-hide");
-  try{ if(tourMode==="exp") localStorage.setItem(EXPKEY,"1"); else { if(hide) localStorage.setItem(TOURKEY, hide.checked?"1":"0"); sessionStorage.setItem("secondaries-intro-seen","1"); } }catch(e){}
+  try{ if(tourMode==="stage") sessionStorage.setItem("secondaries-intro-seen","1"); else if(tourMode==="exp") localStorage.setItem(EXPKEY,"1"); else { if(hide) localStorage.setItem(TOURKEY, hide.checked?"1":"0"); sessionStorage.setItem("secondaries-intro-seen","1"); } }catch(e){}
   document.getElementById("tour").hidden=true; if(tourReturn&&tourReturn.focus) tourReturn.focus();
 }
 document.getElementById("tour").addEventListener("click", ev=>{
   ev.stopPropagation();
   if(ev.target.id==="tour"){ closeTour(); return; }
   const t=ev.target.closest("button"); if(!t) return;
+  if(t.dataset.stage){ const k=t.dataset.stage; closeTour(); try{ localStorage.setItem(TOURKEY,"1"); }catch(e){} if(k==="sample"){ const b=document.createElement("button"); b.dataset.act="try-examples"; b.hidden=true; document.body.appendChild(b); b.click(); b.remove(); } else setStage(k); return; }
   if(t.id==="tour-x"||t.id==="tour-skip"){ closeTour(); return; }
   if(t.dataset.step){ tourStep=+t.dataset.step; renderTour(); return; }
   if(t.id==="tour-back"){ tourStep=Math.max(0,tourStep-1); renderTour(); return; }
@@ -2854,7 +2971,7 @@ const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform=
 const standalone = window.navigator.standalone===true || window.matchMedia("(display-mode: standalone)").matches;
 if(ios && !standalone) document.getElementById("install-wrap").hidden=false;
 let seenThisVisit=false; try{ seenThisVisit = sessionStorage.getItem("secondaries-intro-seen")==="1"; }catch(e){}
-if(!tourHidden() && !seenThisVisit && !(ios && !standalone) && !logMode()) openTour();
+if(!tourHidden() && !seenThisVisit && !(ios && !standalone) && !logMode()) openTour(newUser()? "stage" : "main");
 try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
 if(Sync.state().connected) setTimeout(()=>Sync.run(), 400);
 // load Google's sign-in script early, so clicking the Drive button opens the sign-in window straight away (browsers block windows opened after a delay)

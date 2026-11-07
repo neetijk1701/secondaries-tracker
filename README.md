@@ -105,3 +105,10 @@ Every essay (secondaries, primary, letters) has numbered versions (`e.vers`: [{n
 ## Guides
 - The app tour (`tourCards`) covers versions and the experience log along with the rest.
 - The Experiences tab has its own 5-card guide (`expCards`): what the log is for, writing it up when an experience ends, strengths/weaknesses/About me, letter writers, and how it feeds essays, activities and interviews. It opens the first time someone visits the tab (including in log-only mode, which skips the app tour), is remembered in `maw-exp-intro`, and reopens from "How this works" on the tab.
+
+## First run and onboarding
+- **Stage question** (`STAGES`, `appStage()`): new users are asked "Where are you in the process?": Not applying yet (`log`, the Experience Log), Getting ready to apply (`primary`), Secondaries are arriving (`secondaries`), Interviews and decisions (`interviews`), plus "See a finished example" (sample data) and "Show me everything" (`all`). People with data from before stages existed see everything. Change it under More → Change what I see.
+- **Tabs** (`visibleTabs()`): each stage shows its own tabs in its own order; Base essays appears once there are 2 schools or a base, Cycle once something is submitted; everything else is under **More**.
+- **Getting started checklist** (`checklist()`): 4 steps per stage plus Save to Google Drive, on Do next (on Experiences in log mode); steps tick themselves off, each has one button (`ck-go`); hidden per stage with `prefs.ckHide`.
+- **Tips** (`tipHtml`, dismissed in `prefs.tips`): shared prompt → base essays; first 100 words → Mark v1 done; submitted → Submitted version; Cycle / Base essays tabs appearing; letter-writer summaries. Month nudges: primary in Jun–Aug → switch to Secondaries; secondaries with an invite → switch to Interviews.
+- The app tour is 3 cards; the Experiences guide is separate.
