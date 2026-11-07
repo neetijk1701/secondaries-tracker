@@ -92,3 +92,12 @@ Every essay (secondaries, primary, letters) has numbered versions (`e.vers`: [{n
 - Setting an essay to In portal (Sent, for letters) or ticking a school's Submitted freezes a "Submitted" version, so what each school received is always kept.
 - Autosaves (`e.hist`: every 15 minutes, before a big cut, before restoring or starting over) are a recovery net under "Recovery copies". Older named saves were converted to numbered versions on first load (`migrateVers`).
 - Base essays keep their own numbered versions (Save as vN), as before.
+
+## Readable copy in Drive (opt-in)
+"Readable copy in your Drive" (footer, when Drive is connected) writes Google Docs into a visible `Med App Workspace` folder. One-way: the hidden `secondaries.json` stays the source of truth.
+- **Permission:** adds `drive.file` (only files this app creates), requested when the user turns it on (`prefs.mirror`). Add `drive.file` under Data access on the Google Cloud consent screen.
+- **Layout** (`mirrorDocs()`): Experience log; Strengths and reflections (weaknesses only with "Include weaknesses", `prefs.mirrorWeak`); Base essays; Letter writers/Summary for <name> (no header line, so it can be shared); `<cycle> cycle/Primary/Primary – AMCAS` (essays + activities); `<cycle> cycle/Secondaries/<School>/<School> – current drafts` (every prompt, letters, notes); `.../Versions/<Prompt> – vN (note)` for each frozen version, written once.
+- **Bookkeeping** (`S.mirror`: root, folders, files {key: id, hash, modifiedTime, folder, cyc}) syncs with the data (`mergeMirror`), and every file carries `appProperties.maw = key` (folders: a hash of their path), so a lost map finds existing files instead of duplicating them.
+- **Updates:** 2 minutes after changes or "Update now"; only Docs whose content hash changed are rewritten (same file, so shared links keep working); renames follow; Docs for things deleted in the app go to Drive's Trash, except earlier cycles' folders, which stay as an archive.
+- **Edited in Drive:** if a Doc's modifiedTime is newer than the app's last write, it's skipped and listed with See the Drive text / Replace with the app's version / Keep my Drive edits (stop updating).
+- Sample mode never writes to Drive. Turning it off leaves the folder alone.
