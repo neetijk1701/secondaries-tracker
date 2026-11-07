@@ -20,7 +20,7 @@
 :root{
   --bg:#F2F5F7; --surface:#FFFFFF; --ink:#15202B; --muted:#5A6774; --line:#D7DEE4; --line-soft:#E7ECF0;
   --accent:#0E6B66; --accent-ink:#FFFFFF; --accent-soft:#DCEEEB;
-  --warn:#9A5800; --warn-soft:#FBEED6; --bad:#A1322A; --bad-soft:#F8E1DD; --good:#2C7537; --good-soft:#E0F0E2;
+  --warn:#9A5800; --warn-soft:#FBEED6; --bad:#A1322A; --bad-soft:#F8E1DD; --good:#2C7537; --good-soft:#E0F0E2; --info:#1F5FA8; --info-soft:#E1ECF8;
   --ins:#CDEBD3; --del:#F5D6D1;
   --f-display:"Bricolage Grotesque", "Figtree", system-ui, sans-serif;
   --f-ui:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -30,12 +30,12 @@
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --bg:#0E141A; --surface:#161F28; --ink:#E3E9EF; --muted:#94A2AF; --line:#2A3641; --line-soft:#212B35;
   --accent:#55BDB4; --accent-ink:#0B1A19; --accent-soft:#16332F;
-  --warn:#E5A84E; --warn-soft:#3A2A11; --bad:#EF887E; --bad-soft:#3E1D1A; --good:#80CB8D; --good-soft:#18311E;
+  --warn:#E5A84E; --warn-soft:#3A2A11; --bad:#EF887E; --bad-soft:#3E1D1A; --good:#80CB8D; --good-soft:#18311E; --info:#8CB8EC; --info-soft:#17283D;
   --ins:#1F4228; --del:#4A2420; color-scheme:dark; } }
 :root[data-theme="dark"]{
   --bg:#0E141A; --surface:#161F28; --ink:#E3E9EF; --muted:#94A2AF; --line:#2A3641; --line-soft:#212B35;
   --accent:#55BDB4; --accent-ink:#0B1A19; --accent-soft:#16332F;
-  --warn:#E5A84E; --warn-soft:#3A2A11; --bad:#EF887E; --bad-soft:#3E1D1A; --good:#80CB8D; --good-soft:#18311E;
+  --warn:#E5A84E; --warn-soft:#3A2A11; --bad:#EF887E; --bad-soft:#3E1D1A; --good:#80CB8D; --good-soft:#18311E; --info:#8CB8EC; --info-soft:#17283D;
   --ins:#1F4228; --del:#4A2420; color-scheme:dark; }
 
 *{box-sizing:border-box}
@@ -182,6 +182,12 @@ label.chk{display:inline-flex; gap:8px; align-items:center; font-weight:600; fon
 .chip.warn{background:var(--warn-soft); color:var(--warn)}
 .chip.good{background:var(--good-soft); color:var(--good)}
 .chip.acc{background:var(--accent-soft); color:var(--accent)}
+/* one status color system: Not started grey, Drafting amber, Ready blue, In portal / Submitted green */
+.st-todo{--sc:var(--muted); --sb:var(--line-soft)} .st-drafting{--sc:var(--warn); --sb:var(--warn-soft)} .st-ready{--sc:var(--info); --sb:var(--info-soft)} .st-pasted{--sc:var(--good); --sb:var(--good-soft)}
+.pill{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:650; padding:3px 10px; border-radius:999px; background:var(--sb); color:var(--sc); white-space:nowrap}
+.pill::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--sc)}
+select.pill{appearance:none; -webkit-appearance:none; border:1px solid transparent; padding:4px 26px 4px 12px; cursor:pointer; background-image:linear-gradient(45deg,transparent 50%,var(--sc) 50%),linear-gradient(135deg,var(--sc) 50%,transparent 50%); background-position:calc(100% - 13px) 55%, calc(100% - 9px) 55%; background-size:4px 4px; background-repeat:no-repeat; background-color:var(--sb); height:auto; min-height:0}
+select.pill::before{display:none}
 .next{margin-top:8px; font-size:14px}
 .next b{font-weight:700}
 .stars{color:var(--accent); letter-spacing:1px; font-size:13px}
@@ -204,6 +210,26 @@ label.chk{display:inline-flex; gap:8px; align-items:center; font-weight:600; fon
 .banner.info{background:var(--accent-soft)}
 .banner .grow{flex:1; min-width:200px}
 .page{font-family:var(--f-essay); font-size:17px; line-height:1.65; width:100%; min-height:260px; padding:16px 18px; resize:vertical; border-radius:var(--r)}
+#essay-text.page{min-height:max(320px, 52vh); resize:none; overflow:hidden; padding:22px 26px; font-size:17.5px; line-height:1.7}
+.promptbox.clamp{display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+.ebar{position:sticky; bottom:0; z-index:5; display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:10px 12px; margin-top:-6px; background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:0 -6px 18px rgba(0,0,0,.06)}
+.ebar .grow{flex:1}
+.emenu{position:relative} .emenu>summary{list-style:none; cursor:pointer; padding:6px 10px; border-radius:8px; font-weight:700} .emenu>summary::-webkit-details-marker{display:none}
+.emenu[open]>div{position:absolute; right:0; bottom:calc(100% + 6px); z-index:20; min-width:220px; padding:6px; background:var(--surface); border:1px solid var(--line); border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,.15); display:flex; flex-direction:column; gap:2px}
+.emenu[open]>div button{justify-content:flex-start; text-align:left; width:100%}
+.sumline{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; padding:10px 14px; margin:4px 0 16px; background:var(--surface); border:1px solid var(--line); border-radius:var(--r); font-size:14.5px}
+.sumline .dot{margin:0 8px; color:var(--muted)}
+.erows .erow{display:grid; grid-template-columns:minmax(0,1fr) auto auto auto auto; align-items:center; gap:12px}
+.erow-t{font-weight:650; font-size:15.5px}
+.erow-t .linkish{font:inherit; background:none; border:0; padding:0; color:var(--ink); cursor:pointer; text-align:left}
+.erow-t .linkish:hover{color:var(--accent); text-decoration:underline}
+.erow-p{display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; margin-top:2px; max-width:72ch}
+.erow .emenu[open]>div{bottom:auto; top:calc(100% + 6px)}
+@media (max-width:760px){ .erows .erow{grid-template-columns:minmax(0,1fr) auto auto; gap:8px 10px} .erows .erow .main{grid-column:1/-1} .erow-m{grid-column:1/-1} .erows .erow select.pill{justify-self:start; width:auto; max-width:100%} }
+.stabs{display:flex; gap:4px; flex-wrap:wrap; margin-bottom:8px}
+.stabs button{font-size:13px; padding:5px 10px; border-radius:999px; border:1px solid var(--line); background:transparent; color:var(--muted); font-weight:600}
+.stabs button[aria-pressed="true"]{background:var(--accent-soft); color:var(--accent); border-color:var(--accent)}
+.stabs .n{font-size:11.5px; margin-left:4px; opacity:.8}
 .promptbox{font-family:var(--f-essay); font-size:17px; line-height:1.5; margin:4px 0 0; max-width:70ch}
 .diff{font-family:var(--f-essay); font-size:16px; line-height:1.8; white-space:pre-wrap; overflow-wrap:anywhere}
 .diff del{background:var(--del); text-decoration:line-through; text-decoration-color:var(--bad); border-radius:3px; padding:1px 1px}
@@ -335,6 +361,8 @@ const FAM = {
 const STATUS = {todo:"Not started", drafting:"Drafting", ready:"Ready", pasted:"In portal"};
 const LETTER_FAMS = ["update","loi","thanks"];
 function isLetter(e){ return !!e && LETTER_FAMS.includes(e.family); }
+function stClass(e){ return "st-"+(e.status||"todo"); }
+function statusLabel(e){ return isLetter(e)&&e.status==="pasted" ? "Sent" : (STATUS[e.status]||STATUS.todo); }
 function statusOpts(e){ return Object.entries(STATUS).map(([k,l])=>'<option value="'+k+'"'+(e.status===k?' selected':'')+'>'+(isLetter(e)&&k==="pasted"?"Sent":l)+'</option>').join(""); }
 const OUTCOME = {hold:"On hold", wl:"Waitlisted", acc:"Accepted", rej:"Rejected", wd:"Withdrawn"};
 const INV = (window.INVITE_DATA && window.INVITE_DATA.schools) ? window.INVITE_DATA : {schools:{}};
@@ -1189,8 +1217,10 @@ function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;
 function stars(n){ let h=""; for(let i=1;i<=3;i++) h+= i<=n? "●" : '<span class="off">●</span>'; return '<span class="stars" aria-label="Interest '+n+' of 3">'+h+'</span>'; }
 let toastT;
 function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, 2400); }
-function go(tab, extra){ Object.assign(ui, {more:false, schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, editPrompt:false, pick:null, pickQ:"", pickI:0, focus:false, histSel:null, verSel:null, verCmp:false, verDone:false, expId:null, recId:null, recPreview:false, recOpen:null, expImport:false, expParsed:null}, extra||{}); ui.tab=tab; if(location.hash!=="#"+tab){ try{ history.replaceState(null,"","#"+tab);}catch(e){ location.hash=tab; } } render(); window.scrollTo(0,0); }
+function go(tab, extra){ Object.assign(ui, {more:false, editDetails:false, promptOpen:false, schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, editPrompt:false, pick:null, pickQ:"", pickI:0, focus:false, histSel:null, verSel:null, verCmp:false, verDone:false, expId:null, recId:null, recPreview:false, recOpen:null, expImport:false, expParsed:null}, extra||{}); ui.tab=tab; if(location.hash!=="#"+tab){ try{ history.replaceState(null,"","#"+tab);}catch(e){ location.hash=tab; } } render(); window.scrollTo(0,0); }
 
+function sizeEditor(){ const t=document.getElementById("essay-text"); if(!t || document.body.classList.contains("focus-mode")) return; const y=window.scrollY; t.style.height="auto"; t.style.height=Math.max(t.scrollHeight+4, 0)+"px"; window.scrollTo(0,y); }
+window.addEventListener("resize", ()=>sizeEditor());
 function render(){
   NAMEIDX=null;
   document.getElementById("today-l").textContent = "Today: " + today().toLocaleDateString(undefined,{weekday:"short", month:"short", day:"numeric"});
@@ -1231,6 +1261,7 @@ function render(){
     if(list.length){ const dm='<details class="side-m"'+(ui.sgOpen?' open':'')+' id="side-m"><summary>Suggestions <span class="badge">'+list.length+'</span></summary>'+suggPanel(list,"Suggestions",true)+'</details>'; h = h.includes('<!--SIDE-M-->') ? h.replace('<!--SIDE-M-->', dm) : dm+h; }
   }
   m.innerHTML = '<div class="layout'+(showSide?' has-side':'')+'"><div style="min-width:0">'+topBanners()+h+'</div>'+side+'</div>';
+  if(ui.essayId) setTimeout(sizeEditor,0);
   const dm=document.getElementById("side-m"); if(dm) dm.addEventListener("toggle",()=>{ ui.sgOpen=dm.open; });
   document.getElementById("foot").innerHTML = vFoot();
 }
@@ -1654,7 +1685,7 @@ function vPrimary(){
     const c=SVC[k], docs=c.essays.filter(d=>!d.dual||dual), a=(S.apps||[]).find(x=>x.id==="app-"+k);
     h+='<div class="panel" data-tour="primary-svc" style="margin-bottom:16px"><div class="ph"><h2 style="flex:1">'+c.name+'</h2><label class="chk small"><input type="checkbox" class="svc-sub" value="'+k+'"'+(a&&a.submitted?' checked':'')+'> Submitted</label></div>';
     h+='<ul class="list">'+docs.map(d=>{ const e=primaryEssay(k,d.k); const b=e&&base(e.baseId);
-      return '<li><div class="main"><div class="row"><b>'+esc(d.t)+'</b>'+(d.opt?'<span class="chip">Optional</span>':'')+(d.dual?'<span class="chip acc">MD/PhD</span>':'')+'</div><div class="chips">'+(e?'<span class="chip">'+STATUS[e.status]+'</span>'+(b?'<span class="chip acc">Base: '+esc(b.title)+'</span>':'')+(behind(e)?'<span class="chip warn">Base now v'+latest(b).v+'</span>':''):'<span class="chip">'+d.limit.toLocaleString()+' characters</span>')+'</div>'+(e?meter(e):'')+'</div>'+
+      return '<li><div class="main"><div class="row"><b>'+esc(d.t)+'</b>'+(d.opt?'<span class="chip">Optional</span>':'')+(d.dual?'<span class="chip acc">MD/PhD</span>':'')+'</div><div class="chips">'+(e?'<span class="pill '+stClass(e)+'">'+statusLabel(e)+'</span>'+(b?'<span class="chip acc">Base: '+esc(b.title)+'</span>':'')+(behind(e)?'<span class="chip warn">Base now v'+latest(b).v+'</span>':''):'<span class="chip">'+d.limit.toLocaleString()+' characters</span>')+'</div>'+(e?meter(e):'')+'</div>'+
         (e?'<button data-act="open-essay" data-id="'+e.id+'">Open</button>':'<button class="primary" data-act="prim-start" data-k="'+k+'" data-d="'+d.k+'">Start</button>')+'</li>'; }).join("")+'</ul>';
     if(k==="aacomas" && dual) h+='<div class="pb small muted" style="border-top:1px solid var(--line-soft)">DO/PhD programs don’t use a shared essay in AACOMAS; each program asks for its own materials.</div>';
     h+=actsPanel(k);
@@ -1918,7 +1949,7 @@ function cyclePanel(s){
   { const st=(s.stories||[]).map(storyByKey).filter(Boolean), all=allStories().filter(o=>o.x.kind!=="strength");
     h+='<div><h3 style="margin-bottom:6px">Stories to have ready</h3>'+(st.length?'<ul class="list">'+st.map(o=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(o.head)+'</div><div class="small muted">'+esc(o.sub)+'</div></div><button class="ghost small" data-act="story-drop" data-k="'+esc(o.key)+'">Remove</button></li>').join("")+'</ul>':'')+
       (all.length?'<div class="row" style="margin-top:6px"><select id="story-add-'+s.id+'" aria-label="Add a story" style="max-width:100%"><option value="">Add a story from Experiences…</option>'+all.filter(o=>!(s.stories||[]).includes(o.key)).map(o=>'<option value="'+esc(o.key)+'">'+esc((o.head||"").slice(0,70)+" · "+(o.sub||"").slice(0,40))+'</option>').join("")+'</select></div>':'<p class="small muted" style="margin:0">Add experiences on the Experiences tab to pick stories here.</p>')+'</div>'; }
-  h+='<div><h3 style="margin-bottom:6px">Letters</h3>'+(letters.length?'<ul class="list">'+letters.map(e=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(FAM[e.family])+'</div><div class="chips"><span class="chip'+(e.status==="pasted"?' good':'')+'">'+(e.status==="pasted"?"Sent":STATUS[e.status])+'</span>'+(e.due&&e.status!=="pasted"?'<span class="chip">Send by '+fmt(e.due)+'</span>':'')+(wrongNames(e).length?'<span class="chip warn">Names '+esc(wrongNames(e).map(x=>x.alias).join(", "))+'</span>':'')+'</div></div><button data-act="open-essay" data-id="'+e.id+'">Open</button></li>').join("")+'</ul>':'')+
+  h+='<div><h3 style="margin-bottom:6px">Letters</h3>'+(letters.length?'<ul class="list">'+letters.map(e=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(FAM[e.family])+'</div><div class="chips"><span class="pill '+stClass(e)+'">'+statusLabel(e)+'</span>'+(e.due&&e.status!=="pasted"?'<span class="chip">Send by '+fmt(e.due)+'</span>':'')+(wrongNames(e).length?'<span class="chip warn">Names '+esc(wrongNames(e).map(x=>x.alias).join(", "))+'</span>':'')+'</div></div><button data-act="open-essay" data-id="'+e.id+'">Open</button></li>').join("")+'</ul>':'')+
     '<div class="row" style="margin-top:8px"><button data-act="new-letter" data-f="update">Write an update letter</button><button data-act="new-letter" data-f="loi">Write a letter of intent</button>'+(s.iv?'<button data-act="new-letter" data-f="thanks">Draft thank-you notes</button>':'')+'</div></div>';
   return h+'</div></div>';
 }
@@ -2177,16 +2208,20 @@ function libPromptsMissing(s){
 function vSchool(s){
   const p=plan(s), es=secEssays(s.id);
   let h = '<button class="ghost back" data-act="back-schools">← Schools</button>';
-  h += '<div class="row" style="justify-content:space-between"><h1>'+esc(s.name)+'</h1><span class="row"><label class="chk"><input type="checkbox" id="track-'+s.id+'"'+(s.track==="dual"?' checked':'')+'> Applying '+esc(dualLabel(libFind(s.libName||s.name)))+' here</label><label class="chk"><input type="checkbox" id="pin-'+s.id+'" data-bind="school:'+s.id+':pinned" '+(s.pinned?'checked':'')+'> Pin to top of Do next</label></span></div>';
+  h += '<h1>'+esc(s.name)+'</h1>';
   h += '<div class="chips" style="margin-bottom:16px">'+p.reasons.map(c=>'<span class="chip '+c.c+'">'+esc(c.t)+'</span>').join("")+'</div>';
-  h += '<div class="panel" style="margin-bottom:16px"><div class="pb grid-f">'+
+  const intL={3:"Top choice",2:"Middle",1:"Lower"}[s.interest]||"Middle";
+  const facts=[s.received?'Received '+fmt(s.received):'', 'Your target '+fmt(target(s)), s.hard?'Due '+fmt(s.hard):'', intL, s.track==="dual"? esc(dualLabel(libFind(s.libName||s.name))) : '', s.waiver?'Fee waived' : (s.feeAmt!=null&&s.feeAmt!==""? '$'+esc(s.feeAmt)+' fee'+(s.fee?' paid':' unpaid') : (s.fee?'Fee paid':'')), s.pinned?'Pinned':''].filter(Boolean);
+  if(!ui.editDetails) h += '<div class="sumline"><span>'+facts.join('<span class="dot">·</span>')+'</span><span class="row" style="flex-wrap:nowrap"><label class="chk"><input type="checkbox" id="sub-'+s.id+'" data-bind="school:'+s.id+':submitted" '+(s.submitted?'checked':'')+'> Submitted</label><button class="ghost small" data-act="edit-details">Edit details</button></span></div>';
+  else h += '<div class="panel" style="margin-bottom:16px"><div class="ph"><h3 style="flex:1">School details</h3><button class="ghost small" data-act="edit-details">Done</button></div><div class="pb grid-f">'+
     '<label class="f">Secondary received<input type="date" id="rec-'+s.id+'" data-bind="school:'+s.id+':received" value="'+esc(s.received)+'"></label>'+
     '<label class="f">Turnaround (days)<input type="number" min="1" max="60" id="turn-'+s.id+'" data-bind="school:'+s.id+':turnaround" value="'+esc(s.turnaround)+'"></label>'+
     '<div class="f"><span class="small muted" style="font-weight:600">Your target</span><span class="computed">'+fmt(target(s))+'</span></div>'+
     '<label class="f">School deadline<input type="date" id="hard-'+s.id+'" data-bind="school:'+s.id+':hard" value="'+esc(s.hard)+'"></label>'+
     '<label class="f">Interest<select id="int-'+s.id+'" data-bind="school:'+s.id+':interest">'+[[3,"Top choice"],[2,"Middle"],[1,"Lower"]].map(([v,l])=>'<option value="'+v+'"'+(s.interest===v?' selected':'')+'>'+l+'</option>').join("")+'</select></label>'+
-    '<div class="f" style="gap:8px"><label class="chk"><input type="checkbox" id="sub-'+s.id+'" data-bind="school:'+s.id+':submitted" '+(s.submitted?'checked':'')+'> Submitted</label><label class="chk"><input type="checkbox" id="fee-'+s.id+'" data-bind="school:'+s.id+':fee" '+(s.fee?'checked':'')+'> Fee paid</label><label class="chk"><input type="checkbox" id="waiv-'+s.id+'" data-bind="school:'+s.id+':waiver" '+(s.waiver?'checked':'')+'> Fee waived</label></div>'+
+    '<div class="f" style="gap:8px"><label class="chk"><input type="checkbox" id="fee-'+s.id+'" data-bind="school:'+s.id+':fee" '+(s.fee?'checked':'')+'> Fee paid</label><label class="chk"><input type="checkbox" id="waiv-'+s.id+'" data-bind="school:'+s.id+':waiver" '+(s.waiver?'checked':'')+'> Fee waived</label></div>'+
     '<label class="f">Secondary fee ($)<input type="number" min="0" max="1000" step="1" id="amt-'+s.id+'" data-bind="school:'+s.id+':feeAmt" value="'+(s.feeAmt!=null&&s.feeAmt!==""?esc(s.feeAmt):"")+'" placeholder="e.g. 100"'+(s.waiver?' disabled':'')+'></label>'+
+    '<div class="f" style="gap:8px"><label class="chk"><input type="checkbox" id="track-'+s.id+'"'+(s.track==="dual"?' checked':'')+'> Applying '+esc(dualLabel(libFind(s.libName||s.name)))+' here</label><label class="chk"><input type="checkbox" id="pin-'+s.id+'" data-bind="school:'+s.id+':pinned" '+(s.pinned?'checked':'')+'> Pin to top of Do next</label></div>'+
     '</div></div>';
   const missing=libPromptsMissing(s);
   h += '<div class="panel" data-tour="school-essays"><div class="ph"><h2 style="flex:1">Essays</h2>'+(s.libName?reportLink(s.libName, s.track==="dual"):'')+'<button data-act="toggle-add-prompt">'+(ui.addPrompt?'Close':'Add prompt')+'</button></div>';
@@ -2194,15 +2229,18 @@ function vSchool(s){
   else if(missing.length && es.length) h += '<div class="pb small muted" style="border-bottom:1px solid var(--line-soft)">'+(missing.length===1?'1 more prompt from the library isn’t':missing.length+' more prompts from the library aren’t')+' on your list. <button class="ghost small" data-act="toggle-add-prompt" style="padding:0">Show them</button></div>';
   if(!es.length) h += '<div class="empty">No prompts yet. Add each prompt from the school’s secondary.</div>';
   else {
-    h += '<table class="etable"><tbody>';
+    const lab=e=>{ const base=FAM[e.family]||"Other", same=es.filter(x=>(FAM[x.family]||"Other")===base); return same.length>1? base+" "+(same.indexOf(e)+1) : base; };
+    h += '<ul class="list erows">';
     es.forEach(e=>{
       const b=base(e.baseId);
-      h += '<tr><td style="width:46%"><div class="prompt-t">'+esc(shortP(e.prompt))+'</div><div class="chips"><span class="chip">'+esc(FAM[e.family]||"Other")+'</span>'+(e.dual?'<span class="chip acc">'+esc(dualLabel(libFind(s.libName||s.name)))+'</span>':'')+(e.pc?'<span class="chip">'+cyc(e.pc)+' prompt</span>':'')+(libUpdate(e)?'<span class="chip warn">'+(libUpdate(e).kind==="gone"?'Not in '+cyc(CYCLE)+' prompts':'Prompt updated')+'</span>':'')+(wrongNames(e).length?'<span class="chip warn">Names '+esc(wrongNames(e).map(x=>x.alias).join(", "))+'</span>':'')+(e.optional?'<span class="chip">Optional</span>':'')+(e.group?'<span class="chip">'+esc(e.group)+'</span>':'')+(b?'<span class="chip acc">Base: '+esc(b.title)+(e.basedOnV?' · from v'+e.basedOnV:'')+'</span>':'')+(behind(e)?'<span class="chip warn">Base now v'+latest(b).v+'</span>':'')+(e.localEdit&&b&&!s.submitted?'<span class="chip">Edited here</span>':'')+'</div></td>'+
-        '<td>'+meter(e)+'</td>'+
-        '<td><select aria-label="Status" id="st-'+e.id+'" data-bind="essay:'+e.id+':status">'+statusOpts(e)+'</select></td>'+
-        '<td style="text-align:right"><div class="row" style="justify-content:flex-end; flex-wrap:nowrap">'+(ui.confirm==="del-essay:"+e.id? '<button class="danger" data-act="confirm" data-key="del-essay:'+e.id+'">'+(e.text.trim()?'Remove and delete text':'Remove')+'</button><button data-act="cancel-confirm">Keep</button>' : '<button data-act="open-essay" data-id="'+e.id+'">Open</button><button class="ghost danger" data-act="ask-confirm" data-key="del-essay:'+e.id+'" aria-label="Remove this prompt">Remove</button>')+'</div></td></tr>';
+      h += '<li class="erow"><div class="main"><div class="erow-t"><button class="linkish" data-act="open-essay" data-id="'+e.id+'">'+esc(lab(e))+'</button><span class="muted"> · '+limitL(e)+(e.optional?' · optional':'')+'</span></div><div class="erow-p small muted">'+esc(e.prompt)+'</div>'+
+        '<div class="chips">'+(e.dual?'<span class="chip acc">'+esc(dualLabel(libFind(s.libName||s.name)))+'</span>':'')+(e.pc?'<span class="chip">'+cyc(e.pc)+' prompt</span>':'')+(libUpdate(e)?'<span class="chip warn">'+(libUpdate(e).kind==="gone"?'Not in '+cyc(CYCLE)+' prompts':'Prompt updated')+'</span>':'')+(wrongNames(e).length?'<span class="chip warn">Names '+esc(wrongNames(e).map(x=>x.alias).join(", "))+'</span>':'')+(e.group?'<span class="chip">'+esc(e.group)+'</span>':'')+(b?'<span class="chip '+(behind(e)?'warn':'acc')+'">Base: '+esc(b.title)+(behind(e)?' · behind':'')+'</span>':'')+(vers(e).length?'<span class="chip">v'+lastVer(e).n+(lastVer(e).note?' '+esc(lastVer(e).note):'')+'</span>':'')+'</div></div>'+
+        '<div class="erow-m">'+meter(e)+'</div>'+
+        '<select class="pill '+stClass(e)+'" aria-label="Status" id="st-'+e.id+'" data-bind="essay:'+e.id+':status">'+statusOpts(e)+'</select>'+
+        '<button data-act="open-essay" data-id="'+e.id+'">Open</button>'+
+        '<details class="emenu"><summary aria-label="More for this prompt">⋯</summary><div>'+(ui.confirm==="del-essay:"+e.id? '<button class="danger" data-act="confirm" data-key="del-essay:'+e.id+'">'+(e.text.trim()?'Remove and delete text':'Yes, remove')+'</button><button data-act="cancel-confirm">Keep it</button>' : '<button class="ghost danger" data-act="ask-confirm" data-key="del-essay:'+e.id+'">Remove this prompt</button>')+'</div></details></li>';
     });
-    h += '</tbody></table>';
+    h += '</ul>';
   }
   h += '</div>';
   h += cyclePanel(s);
@@ -2253,7 +2291,8 @@ function vEssay(e){
   const s=school(e.schoolId), b=base(e.baseId), L=latest(b);
   const fams = S.bases.filter(x=>x.family===e.family);
   let h = '<button class="ghost back" data-act="open-school" data-id="'+s.id+'">← '+esc(s.name)+'</button>';
-  h += '<h3>'+esc(FAM[e.family]||"Other")+' · '+limitL(e)+(e.optional?' · Optional':'')+(e.group?' · '+esc(e.group):'')+'</h3><p class="promptbox">'+esc(e.prompt)+'</p>';
+  h += '<h3>'+esc(FAM[e.family]||"Other")+' · '+limitL(e)+(e.optional?' · Optional':'')+(e.group?' · '+esc(e.group):'')+'</h3>'+
+    ((()=>{ const long=(e.prompt||"").length>160 && (e.text||"").trim().length>=40; return '<p class="promptbox'+(long && !ui.promptOpen?' clamp':'')+'">'+esc(e.prompt)+'</p>'+(long?'<button class="ghost small" data-act="prompt-toggle" style="padding:0; margin-top:2px">'+(ui.promptOpen?'Show less':'Show the full prompt')+'</button>':''); })());
   if(e.cut) h += '<p class="small muted" style="margin:6px 0 0">This prompt was shortened in the library. Copy the full wording from the school’s portal.</p>';
   if(e.pc && !libUpdate(e)) h += '<p class="small muted" style="margin:6px 0 0">This prompt is from the '+cyc(e.pc)+' cycle; nothing newer had been posted when you added it. Check the wording in the portal.</p>';
   { const u=libUpdate(e);
@@ -2297,13 +2336,25 @@ function vEssay(e){
   h += '<textarea class="page" id="essay-text" data-bind="essay:'+e.id+':text" aria-label="Essay for '+esc(s.name)+'" placeholder="Write or paste this school’s version here.">'+esc(e.text)+'</textarea>';
   h += '<div id="names-slot">'+namesBanner(e)+'</div>';
   if(isLetter(e)) h += '<div class="row"><label class="chk small">Send by <input type="date" id="due-'+e.id+'" data-bind="essay:'+e.id+':due" value="'+esc(e.due||"")+'"></label><span class="small muted">Shows up on Do next and the Cycle tab, and in your calendar file.</span></div>';
-  h += '<div class="row" style="gap:10px"><button class="primary" data-act="copy-portal" data-id="'+e.id+'">Copy for portal</button><button data-act="focus-on">Focus</button>'+((()=>{ const lv=lastVer(e), u=Sync.docLink("essay:"+e.id)||(lv?Sync.docLink("ver:"+e.id+":"+lv.n):""); return u?'<a class="small" href="'+u+'" target="_blank" rel="noopener">Open in Drive</a>':''; })())+'<span class="small muted" id="copy-note-'+e.id+'">Cleans up curly quotes and extra spaces, then copies.</span></div>';
-  h += '<div class="row" style="justify-content:space-between">'+meter(e)+'<label class="chk small">Status <select id="st2-'+e.id+'" data-bind="essay:'+e.id+':status">'+statusOpts(e)+'</select></label></div>';
+  { const lv=lastVer(e), u=Sync.docLink("essay:"+e.id)||(lv?Sync.docLink("ver:"+e.id+":"+lv.n):"");
+    h += '<div class="ebar">'+meter(e)+'<span class="grow"></span>'+
+      '<select class="pill '+stClass(e)+'" aria-label="Status" id="st2-'+e.id+'" data-bind="essay:'+e.id+':status">'+statusOpts(e)+'</select>'+
+      '<button data-act="focus-on">Focus</button><button class="primary" data-act="copy-portal" data-id="'+e.id+'">Copy for portal</button>'+
+      '<details class="emenu"><summary aria-label="More actions">⋯</summary><div>'+
+        (u?'<a class="small" style="padding:6px 10px" href="'+u+'" target="_blank" rel="noopener">Open in Drive</a>':'')+
+        ((e.hist||[]).length?'<button class="ghost" data-act="panel" data-p="hist">Recovery copies ('+e.hist.length+')</button>':'')+
+        (ui.confirm==="del-essay:"+e.id? '<button class="danger" data-act="confirm" data-key="del-essay:'+e.id+'">Yes, remove this prompt</button>' : '<button class="ghost danger" data-act="ask-confirm" data-key="del-essay:'+e.id+'">Remove this prompt</button>')+
+      '</div></details></div>';
+    h += '<p class="small muted" id="copy-note-'+e.id+'" style="margin:2px 0 0">Copy for portal cleans up curly quotes and extra spaces, then copies.</p>'; }
   h += '</div><aside class="stack">';
-  h += '<div id="checks-slot">'+checksHtml(e)+'</div>';
-  h += storiesPanel(e);
-  { const ctx=suggestions(e.id); if(ctx.length) h += '<div class="sugg"><div class="sugg-h"><h2>Similar at your other schools</h2><span class="badge">'+ctx.length+'</span></div>'+ctx.slice(0,4).map(sgCard).join("")+'</div>'; }
-  // base box
+  const ckN=(essayChecks(e).out||[]).length, stP=storiesPanel(e), sugg=suggestions(e.id), sibs=b? S.essays.filter(x=>x.baseId===b.id && x.id!==e.id) : [];
+  const side=["checks","stories","base","similar"].includes(ui.side)? ui.side : "checks";
+  const tab=(k,l,n)=>'<button data-act="side" data-k="'+k+'" aria-pressed="'+(side===k)+'">'+l+(n?'<span class="n">'+n+'</span>':'')+'</button>';
+  h += '<div class="stabs" role="group" aria-label="Side panel">'+tab("checks","Checks",ckN)+tab("stories","Stories",stP?(stP.match(/<li>/g)||[]).length:0)+tab("base",b?"Base & copies":"Base",sibs.length)+(sugg.length?tab("similar","Similar",sugg.length):'')+'</div>';
+  if(side==="checks") h += '<div id="checks-slot">'+checksHtml(e)+'</div>';
+  if(side==="stories") h += stP || '<div class="panel empty small">No matching stories yet. Add experiences and lessons on the Experiences tab, and the ones that fit this prompt show up here.</div>';
+  if(side==="similar"){ const ctx=sugg; if(ctx.length) h += '<div class="sugg"><div class="sugg-h"><h2>Similar at your other schools</h2><span class="badge">'+ctx.length+'</span></div>'+ctx.slice(0,4).map(sgCard).join("")+'</div>'; }
+  if(side==="base"){
   h += '<div class="panel"><div class="ph"><h3 style="flex:1">Base essay</h3></div><div class="pb stack" style="gap:10px">';
   if(b){
     h += '<div><b>'+esc(b.title)+'</b> <span class="muted">· v'+L.v+(unsaved(b)?' + unsaved edits':'')+'</span></div>';
@@ -2324,14 +2375,14 @@ function vEssay(e){
     else h += '<ul class="list">'+sib.map(x=>sibRow(x,b)).join("")+'</ul>';
     h += '</div>';
   }
-  h += '<div class="row">'+confirmBtn("del-essay:"+e.id,"Remove this prompt","Remove this prompt and its text")+'</div>';
+  }
   h += '</aside></div>';
   return h;
 }
 function sibRow(x,b){
   const sc=school(x.schoolId);
-  let st = sc.submitted? '<span class="chip good">Submitted</span>' : behind(x)? '<span class="chip warn">From v'+x.basedOnV+' · base is v'+latest(b).v+'</span>' : x.basedOnV? '<span class="chip">Up to date · v'+x.basedOnV+'</span>' : '<span class="chip">Not adapted yet</span>';
-  return '<li><div class="main"><div class="small" style="font-weight:600">'+esc(sc.name)+'</div><div class="chips">'+st+'<span class="chip">'+STATUS[x.status]+'</span><span class="chip">'+limitL(x)+'</span></div></div><button class="ghost" data-act="open-essay" data-id="'+x.id+'">Open</button></li>';
+  let st = sc.submitted? '<span class="pill st-pasted">Submitted</span>' : behind(x)? '<span class="chip warn">From v'+x.basedOnV+' · base is v'+latest(b).v+'</span>' : x.basedOnV? '<span class="chip">Up to date · v'+x.basedOnV+'</span>' : '<span class="chip">Not adapted yet</span>';
+  return '<li><div class="main"><div class="small" style="font-weight:600">'+esc(sc.name)+'</div><div class="chips">'+st+'<span class="pill '+stClass(x)+'">'+statusLabel(x)+'</span><span class="chip">'+limitL(x)+'</span></div></div><button class="ghost" data-act="open-essay" data-id="'+x.id+'">Open</button></li>';
 }
 function reviewPanel(e,b){
   const L=latest(b), old=ver(b,e.basedOnV);
@@ -2397,7 +2448,7 @@ function pastCycles(){
     h += '<details class="panel"><summary class="ph" style="cursor:pointer"><h3 style="flex:1">'+cyc(a.cycle)+'</h3><span class="small muted">'+(a.schools||[]).length+' schools · '+written.length+' essays written</span></summary><div class="pb stack">';
     (a.schools||[]).forEach(sc=>{
       const es=(a.essays||[]).filter(x=>x.schoolId===sc.id && (x.text||"").trim()); if(!es.length) return;
-      h += '<div><b>'+esc(sc.name)+'</b>'+(sc.submitted?' <span class="chip good">Submitted</span>':'')+'<ul class="list">'+es.map(x=>'<li><div class="main"><div class="small">'+esc(shortP(x.prompt))+'</div><details><summary class="small muted" style="cursor:pointer">'+words(x.text)+' words</summary><div style="white-space:pre-wrap; font-family:var(--f-essay); margin:6px 0">'+esc(x.text)+'</div></details></div><button class="ghost" data-act="arch-copy" data-a="'+esc(a.id)+'" data-e="'+esc(x.id)+'">Copy</button></li>').join("")+'</ul></div>';
+      h += '<div><b>'+esc(sc.name)+'</b>'+(sc.submitted?' <span class="pill st-pasted">Submitted</span>':'')+'<ul class="list">'+es.map(x=>'<li><div class="main"><div class="small">'+esc(shortP(x.prompt))+'</div><details><summary class="small muted" style="cursor:pointer">'+words(x.text)+' words</summary><div style="white-space:pre-wrap; font-family:var(--f-essay); margin:6px 0">'+esc(x.text)+'</div></details></div><button class="ghost" data-act="arch-copy" data-a="'+esc(a.id)+'" data-e="'+esc(x.id)+'">Copy</button></li>').join("")+'</ul></div>';
     });
     if((a.bases||[]).length) h += '<div class="small muted">Base essays then: '+a.bases.map(b=>esc(b.title)+' (v'+latest(b).v+')').join(", ")+'</div>';
     h += '<div class="row">'+confirmBtn("del-archive:"+a.id, "Delete this cycle", "Delete "+cyc(a.cycle)+" for good")+'</div></div></details>';
@@ -2649,6 +2700,9 @@ document.addEventListener("click", ev=>{
       break; }
     case "stage-pick": openTour("stage"); break;
     case "gtour": gtStart(); break;
+    case "side": ui.side=d.k; render(); break;
+    case "edit-details": ui.editDetails=!ui.editDetails; render(); break;
+    case "prompt-toggle": ui.promptOpen=!ui.promptOpen; render(); break;
     case "gtour-page": gtStart(gtSection()); break;
     case "set-stage": setStage(d.k); break;
     case "exp-writer": { const x=exp(ui.expId); if(!x) break; if(!(x.contact||"").trim()){ toast("Add the supervisor’s name first."); break; } const r={id:id("r"), name:x.contact.trim(), kind:x.kind==="research"?"research":x.kind==="clinical"?"clinical":"other", role:x.contactRole||"", asked:"", agreed:false, due:"", received:"", together:x.title, highlight:"", shared:x.id, expIds:[x.id], notes:x.contactEmail?"Email: "+x.contactEmail:""}; S.recommenders=S.recommenders||[]; S.recommenders.push(r); save(); render(); toast(r.name+" added to Letter writers."); break; }
@@ -2800,7 +2854,7 @@ function gtSteps(){
   const ess=(n, pred)=>{ const sc=sch(n); return S.essays.find(e=>e.schoolId===sc.id && pred(e)) || S.essays.find(e=>e.schoolId===sc.id) || {}; };
   const xp=n=>(S.experiences||[]).find(x=>(x.title||"").includes(n))||{};
   const rc=n=>(S.recommenders||[]).find(r=>(r.name||"").includes(n))||{};
-  const essayAt=(n,pred)=>()=>{ const e=ess(n,pred); go("schools",{schoolId:e.schoolId, essayId:e.id}); };
+  const essayAt=(n,pred,side)=>()=>{ const e=ess(n,pred); ui.side=side||"checks"; go("schools",{schoolId:e.schoolId, essayId:e.id}); };
   return [
     {go:()=>go("next"), sel:".brief", sec:"next", t:"Do next: your home base", p:"This walk-through uses an example applicant, Jordan. Every day starts here: what’s due soon, how much writing is left, and the one thing to do first."},
     {go:()=>go("next"), sel:'[data-tour="ranked"]', sec:"next", t:"Schools ranked for you", p:"Open schools are ranked by due date, how much you want them and how much is left to write. <b>Start</b> opens the next essay to work on."},
@@ -2808,7 +2862,7 @@ function gtSteps(){
     {go:()=>go("schools",{schoolId:sch("Baylor").id}), sel:'[data-tour="school-essays"]', sec:"school", t:"One school’s essays", p:"Each prompt with its limit, status and word count. Prompts that ask the same thing at different schools share a <b>base essay</b>, so you write it once."},
     {go:essayAt("Baylor", e=>/Ever since/.test(e.text||"")), sel:".vstrip", sec:"essay", t:"Versions", p:"When a draft is done, click <b>Mark v2 done</b>; whatever you write next becomes v3. Click any earlier version to read it, compare it or start over from it. Submitting saves a “Submitted” version automatically."},
     {go:essayAt("Baylor", e=>/Ever since/.test(e.text||"")), sel:"#checks-slot", sec:"essay", t:"Writing checks", p:"Checks run as you type, entirely in your browser: clichés like “ever since I was young,” wording repeated from your other essays for this school, very long sentences, passive voice. Nothing is rewritten for you; <b>Show</b> highlights the spot."},
-    {go:essayAt("Baylor", e=>/Ever since/.test(e.text||"")), sel:'[data-tour="stories"]', sec:"essay", t:"Stories that fit", p:"Lessons from your experience log that match this prompt, so you’re never starting from a blank page."},
+    {go:essayAt("Baylor", e=>/Ever since/.test(e.text||""), "stories"), sel:'[data-tour="stories"]', sec:"essay", t:"Stories that fit", p:"Lessons from your experience log that match this prompt, so you’re never starting from a blank page."},
     {go:essayAt("Southwestern", e=>e.family==="diversity"), sel:'[data-tour="behind"]', sec:"essay", t:"Copies stay in sync with the base", p:"This copy came from a base essay that has since improved. <b>Review changes</b> shows exactly what changed and applies it in one click."},
     {go:essayAt("Ohio State", e=>e.family==="why"), sel:"#names-slot", sec:"essay", t:"Wrong-school check", p:"This Ohio State essay still mentions Michigan Medicine. The app flags other schools’ names before you paste anything into a portal."},
     {go:()=>go("essays"), sel:'[data-tour="base-fam"]', sec:"essays", t:"Base essays", p:"Write each kind of essay once (diversity, a challenge, your gap year) and give every school its own trimmed copy. Saving a new version flags every copy that’s behind."},
@@ -2989,6 +3043,7 @@ document.addEventListener("input", ev=>{
   const [kind,idv,field]=bnd.split(":");
   if(el.type==="checkbox"||el.tagName==="SELECT"||el.type==="date"||el.type==="number"||el.type==="time") return; // handled on change
   if(kind==="school"){ const sc=school(idv); if(sc){ sc[field]=el.value; save(); } return; }
+  if(kind==="essay" && el.id==="essay-text") sizeEditor();
   if(kind==="essay"){ const x=essay(idv); const before=x[field]; x[field]=el.value; if(field==="text"){ autoSnap(x, before); clearTimeout(window.__chkT); window.__chkT=setTimeout(()=>{ const cs=document.getElementById("checks-slot"); if(cs) cs.innerHTML=checksHtml(x); },700); const mb=document.querySelector('[data-act="make-base"]'); if(mb) mb.disabled=!x.text.trim(); const vd=document.querySelector('[data-act="ver-done"]'); if(vd){ const lv=lastVer(x); vd.disabled=!(x.text.trim() && (!lv || lv.text!==x.text)); } if(x.baseId && x.basedOnV) x.localEdit=true; if(x.status==="todo" && x.text.trim()) x.status="drafting"; const m=document.getElementById("m-"+x.id); if(m) m.outerHTML=meter(x); clearTimeout(namesT); namesT=setTimeout(()=>{ const slot=document.getElementById("names-slot"); if(slot) slot.innerHTML=namesBanner(x); }, 600); } save(); }
   if(kind==="base"){ const b=base(idv); b[field]=el.value; if(field==="draft"){ document.getElementById("bmeter").textContent=words(b.draft)+" words · "+b.draft.length.toLocaleString()+" characters"; document.getElementById("bstate").innerHTML = unsaved(b)?'<span class="chip warn">Unsaved edits since v'+latest(b).v+'</span>':'<span class="chip">Matches v'+latest(b).v+'</span>'; } save(); }
 });
