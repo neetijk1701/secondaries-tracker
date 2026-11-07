@@ -726,7 +726,7 @@ const Sync = (function(){
     ms.folders[key]=f.id; if(path.length===1) ms.root=f.id; return f.id;
   }
   async function writeDoc(d, idx, total){
-    const ms=mstate(); const cur=ms.files[d.key]; const h=hash(d.name+"\n"+d.body);
+    const ms=mstate(); const cur=ms.files[d.key]; const h=hash(d.path.join("/")+"\n"+d.name+"\n"+d.body);
     if(cur && cur.h===h && !cur.edited) return false;
     if(cur && (cur.edited || cur.detached)) return false;
     M.progress = idx+"/"+total; paintMirror();
@@ -754,7 +754,8 @@ const Sync = (function(){
     try{
       if(saveT) flush();
       const ms=mstate(); const docs=mirrorDocs(); const keys=new Set(docs.map(d=>d.key));
-      for(let i=0;i<docs.length;i++){ const d=docs[i]; if(d.fixed && ms.files[d.key] && ms.files[d.key].name===d.name) continue; if(await writeDoc(d, i+1, docs.length)) wrote++; }
+      for(let i=0;i<docs.length;i++){ const d=docs[i]; if(await writeDoc(d, i+1, docs.length)) wrote++; }
+      const ix=indexDoc(docs, ms); if(await writeDoc(ix, docs.length, docs.length)) wrote++; keys.add(ix.key);
       // things deleted in the app go to Drive's Trash; earlier cycles' folders stay as an archive
       for(const [k,f] of Object.entries(ms.files)){ if(keys.has(k) || f.detached) continue; if(f.cyc && f.cyc!==CYCLE) continue; try{ await api(D+"/"+f.id, {method:"PATCH", headers:{"Content-Type":"application/json"}, body:JSON.stringify({trashed:true})}); }catch(e){} delete ms.files[k]; wrote++; }
       ms.at=Date.now(); M.progress="";
@@ -762,6 +763,12 @@ const Sync = (function(){
     } catch(e){ M.progress=""; M.msg = e.scope? "needs-permission" : (e.message||"Couldn’t update the Drive copy"); if(force) toast(M.msg==="needs-permission"?"Allow access to files this app creates, then try again.":M.msg); }
     finally{ M.running=false; paintMirror(); if(M.again){ M.again=false; setTimeout(()=>mirrorRun(), 500); } }
     if(force && !M.msg) toast(wrote? "Drive copy updated." : "Drive copy is already up to date.");
+  }
+  function indexDoc(docs, ms){
+    const link=d=>{ const f=ms.files[d.key]; return f? '<a href="https://docs.google.com/document/d/'+f.id+'/edit">'+esc(d.name)+'</a>' : esc(d.name); };
+    const groups=new Map(); docs.forEach(d=>{ if(d.fixed) return; const g=d.path.slice(1).join(" › ")||"Top level"; if(!groups.has(g)) groups.set(g,[]); groups.get(g).push(d); });
+    const vcount=docs.filter(d=>d.fixed).length;
+    return {key:"index", path:["Med App Workspace"], name:"Start here", body:'<h1>Med App Workspace</h1><p>Links to every Doc the app keeps in this folder. Earlier versions of each essay sit next to it in its folder'+(vcount?' ('+vcount+' saved versions)':'')+'.</p>'+[...groups].map(([g,ds])=>'<h2>'+esc(g)+'</h2><ul>'+ds.map(d=>'<li>'+link(d)+'</li>').join("")+'</ul>').join("")};
   }
   function mirrorSoon(){ clearTimeout(M.timer); if(prefs().mirror && st.connected && !S.demo) M.timer=setTimeout(()=>mirrorRun(), window.__DRIVE_MOCK? 300 : 120000); }
   async function mirrorOn(){
@@ -806,7 +813,7 @@ const Sync = (function(){
     }
   }
   function paintChip(){ const c=document.getElementById("sync-chip"); if(c) c.innerHTML=chipHTML(); }
-  return {connect, resume, retry, disconnect, run, changed, paintChip, available, state:()=>({...st, status, lastOk, msg:errMsg}), _merge:mergeInto, mirrorRun, mirrorOn, mirrorOff, mirrorFix, mirrorHtml, paintMirror};
+  return {connect, resume, retry, disconnect, run, changed, paintChip, available, state:()=>({...st, status, lastOk, msg:errMsg}), _merge:mergeInto, mirrorRun, docLink:k=>{ const f=prefs().mirror && S.mirror && S.mirror.files && S.mirror.files[k]; return f && !f.detached ? "https://docs.google.com/document/d/"+f.id+"/edit" : ""; }, mirrorOn, mirrorOff, mirrorFix, mirrorHtml, paintMirror};
 })();
 
 
@@ -1494,7 +1501,7 @@ function packet(r, plain){
 }
 // What goes in the readable Drive copy: one Doc per thing a person would read, plus frozen essay versions.
 function mirrorDocs(){
-  const ROOT="Med App Workspace", CY=cyc(CYCLE)+" cycle", out=[];
+  const ROOT="Med App Workspace", CY=cyc(CYCLE), out=[];
   const E=t=>esc(t||""), P=t=>(t||"").trim()? '<p>'+esc(t.trim()).replace(/\n\s*\n/g,'</p><p>').replace(/\n/g,'<br>')+'</p>' : '<p style="color:#999"><i>Not written yet</i></p>';
   const fname=t=>(t||"Untitled").replace(/[\/\\]/g,"-").replace(/\s+/g," ").trim().slice(0,110);
   const count=e=> e.unit==="chars"? (e.text||"").length.toLocaleString()+" characters" : words(e.text||"")+" words";
@@ -1517,11 +1524,11 @@ function mirrorDocs(){
   // primary applications
   SVC_ORDER.forEach(k=>{ const a=(S.apps||[]).find(x=>x.id==="app-"+k); const es=S.essays.filter(e=>e.schoolId==="app-"+k), acts=(S.acts||[]).filter(x=>x.svc===k);
     if(!es.length && !acts.length) return;
-    const path=[ROOT,CY,"Primary",SVC[k].name];
-    es.forEach(e=>essayDocs(e, path, labelFor(es,e), SVC[k].name+(a&&a.submitted?" (submitted)":"")));
-    if(acts.length) out.push({key:"acts:"+k, path, cyc:CYCLE, name:"Activities", body:'<h1>'+E(SVC[k].name)+' activities</h1>'+acts.map(x=>'<h2>'+E(x.title||"Untitled")+(x.mm?' (most meaningful)':'')+'</h2><p style="color:#555">'+E([x.type, x.org, x.dates, x.hours? x.hours+" hours":""].filter(Boolean).join(" · "))+'</p>'+P(x.desc)+(x.mm&&x.mmText?'<h3>Most meaningful</h3>'+P(x.mmText):'')).join("")}); });
+    const path=[ROOT,CY+" Primary"];
+    es.forEach(e=>essayDocs(e, path, SVC[k].name+" – "+labelFor(es,e), SVC[k].name+(a&&a.submitted?" (submitted)":"")));
+    if(acts.length) out.push({key:"acts:"+k, path, cyc:CYCLE, name:SVC[k].name+" – Activities", body:'<h1>'+E(SVC[k].name)+' activities</h1>'+acts.map(x=>'<h2>'+E(x.title||"Untitled")+(x.mm?' (most meaningful)':'')+'</h2><p style="color:#555">'+E([x.type, x.org, x.dates, x.hours? x.hours+" hours":""].filter(Boolean).join(" · "))+'</p>'+P(x.desc)+(x.mm&&x.mmText?'<h3>Most meaningful</h3>'+P(x.mmText):'')).join("")}); });
   // each school: every prompt, letters and notes in one Doc; frozen versions alongside
-  S.schools.forEach(s=>{ const es=S.essays.filter(e=>e.schoolId===s.id), main=es.filter(e=>!isLetter(e)), lets=es.filter(isLetter); const path=[ROOT,CY,"Secondaries",fname(s.name)];
+  S.schools.forEach(s=>{ const es=S.essays.filter(e=>e.schoolId===s.id), main=es.filter(e=>!isLetter(e)), lets=es.filter(isLetter); const path=[ROOT,CY+" Secondaries",fname(s.name)];
     const facts=[s.submitted?'Submitted '+(s.submittedAt?fmt(s.submittedAt):''):'Not submitted yet', s.ii?'Interview invite '+fmt(s.ii):'', s.iv?'Interview '+fmt(s.iv)+(s.ivMode?' ('+s.ivMode+')':''):'', s.outcome?(OUTCOME[s.outcome]||s.outcome)+(s.outcomeDate?' '+fmt(s.outcomeDate):''):''].filter(Boolean).join(" · ");
     main.forEach(e=>essayDocs(e, path, labelFor(main,e), s.name)); lets.forEach(e=>essayDocs(e, path, labelFor(lets,e), s.name));
     if((s.notes||"").trim() || (s.reflect||"").trim()) out.push({key:"notes:"+s.id, path, cyc:CYCLE, name:"Notes", body:'<h1>'+E(s.name)+'</h1><p style="color:#555">'+E(facts)+'</p>'+(s.notes?'<h2>Notes</h2>'+P(s.notes):'')+(s.reflect?'<h2>After the interview</h2>'+P(s.reflect):'')}); });
@@ -2172,7 +2179,7 @@ function vEssay(e){
   h += '<textarea class="page" id="essay-text" data-bind="essay:'+e.id+':text" aria-label="Essay for '+esc(s.name)+'" placeholder="Write or paste this school’s version here.">'+esc(e.text)+'</textarea>';
   h += '<div id="names-slot">'+namesBanner(e)+'</div>';
   if(isLetter(e)) h += '<div class="row"><label class="chk small">Send by <input type="date" id="due-'+e.id+'" data-bind="essay:'+e.id+':due" value="'+esc(e.due||"")+'"></label><span class="small muted">Shows up on Do next and the Cycle tab, and in your calendar file.</span></div>';
-  h += '<div class="row" style="gap:10px"><button class="primary" data-act="copy-portal" data-id="'+e.id+'">Copy for portal</button><button data-act="focus-on">Focus</button><span class="small muted" id="copy-note-'+e.id+'">Cleans up curly quotes and extra spaces, then copies.</span></div>';
+  h += '<div class="row" style="gap:10px"><button class="primary" data-act="copy-portal" data-id="'+e.id+'">Copy for portal</button><button data-act="focus-on">Focus</button>'+(Sync.docLink("essay:"+e.id)?'<a class="small" href="'+Sync.docLink("essay:"+e.id)+'" target="_blank" rel="noopener">Open in Drive</a>':'')+'<span class="small muted" id="copy-note-'+e.id+'">Cleans up curly quotes and extra spaces, then copies.</span></div>';
   h += '<div class="row" style="justify-content:space-between">'+meter(e)+'<label class="chk small">Status <select id="st2-'+e.id+'" data-bind="essay:'+e.id+':status">'+statusOpts(e)+'</select></label></div>';
   h += '</div><aside class="stack">';
   h += '<div id="checks-slot">'+checksHtml(e)+'</div>';
