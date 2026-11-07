@@ -258,6 +258,10 @@ body.focus-mode #main{max-width:none; padding:0}
 .frail{position:sticky; top:70px; align-self:start; max-height:calc(100vh - 160px); overflow:auto; display:flex; flex-direction:column; gap:12px}
 .fstatus{position:fixed; left:0; right:0; bottom:0; display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px 20px; background:var(--surface); border-top:1px solid var(--line); flex-wrap:wrap}
 @media (max-width:900px){ .fgrid.with-rail{grid-template-columns:minmax(0,1fr)} .frail{position:static; max-height:none} }
+.vstrip{display:flex; flex-wrap:wrap; align-items:center; gap:6px}
+.vchip{font:inherit; font-size:13px; padding:3px 10px; border-radius:999px; border:1px solid var(--line); background:var(--card, transparent); color:inherit; cursor:pointer}
+.vchip.on{border-color:var(--accent); background:var(--accent-soft); font-weight:600}
+.vchip.work{cursor:default; border-style:dashed}
 </style>
 </head>
 <body>
@@ -463,9 +467,12 @@ function seed(){
   const utsw = addS("UT Southwestern Medical School", {received:off(-3), interest:2, feeAmt:100});
   fill(utsw, "drafting", {0:{status:"ready"}, 1:ETHICS_D, 2:{v:2}});
 
+  // what went in to each school is frozen as a "Submitted" version; Baylor's draft has an earlier v1
+  N.essays.forEach(e=>{ if(e.status==="pasted") freezeVer(e, isLetter(e)?"Sent":"Submitted"); });
+  { const bc=N.essays.find(e=>e.schoolId===baylor.s.id && /Ever since/.test(e.text||"")); if(bc) bc.vers=[{n:1, text:CAREER1, at:ago(5), note:"Copied from my career base"}]; }
   // Primary applications
   const amcas = appRec("amcas"); amcas.submitted = true; const tm = appRec("tmdsas"); tm.submitted = true;
-  const pe = (k, key, text, b, hist)=>{ const d=SVC[k].essays.find(z=>z.k===key); const e=startPrimary(k, d); e.text=fitTo(text, d.limit, "chars"); e.status="pasted"; if(b){ e.baseId=b.id; e.basedOnV=b.versions.length; } if(hist) e.hist=hist; return e; };
+  const pe = (k, key, text, b, hist)=>{ const d=SVC[k].essays.find(z=>z.k===key); const e=startPrimary(k, d); e.text=fitTo(text, d.limit, "chars"); e.status="pasted"; if(b){ e.baseId=b.id; e.basedOnV=b.versions.length; } if(hist){ e.vers=hist.filter(h=>h.label).map((h,i)=>({n:i+1, text:h.text, at:h.t, note:h.label})); e.hist=hist.filter(h=>!h.label); } return e; };
   pe("amcas","ps",PS3,bPS,[{t:ago(120), text:PS1, label:"First full draft"},{t:ago(100), text:PS2, label:""},{t:ago(92), text:PS3, label:"After Dr. Shah’s comments"}]);
   pe("tmdsas","ps",PS3,bPS); pe("tmdsas","pchar",D3,bD);
   const A = (svc, x, o)=>{ const a=Object.assign({id:id("a"), svc, expId:x?x.id:"", title:x?x.title:"", type:x?actType(svc,x.kind):SVC[svc].act.types[0], org:x?x.org:"", dates:x?expDates(x):"", hours:x?String(expHours(x)||""):"", desc:"", mm:false, mmText:""}, o); N.acts.push(a); return a; };
@@ -1051,7 +1058,7 @@ function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;
 function stars(n){ let h=""; for(let i=1;i<=3;i++) h+= i<=n? "●" : '<span class="off">●</span>'; return '<span class="stars" aria-label="Interest '+n+' of 3">'+h+'</span>'; }
 let toastT;
 function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, 2400); }
-function go(tab, extra){ Object.assign(ui, {schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, editPrompt:false, pick:null, pickQ:"", pickI:0, focus:false, histSel:null, expId:null, recId:null, recPreview:false, recOpen:null, expImport:false, expParsed:null}, extra||{}); ui.tab=tab; if(location.hash!=="#"+tab){ try{ history.replaceState(null,"","#"+tab);}catch(e){ location.hash=tab; } } render(); window.scrollTo(0,0); }
+function go(tab, extra){ Object.assign(ui, {schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, editPrompt:false, pick:null, pickQ:"", pickI:0, focus:false, histSel:null, verSel:null, verCmp:false, verDone:false, expId:null, recId:null, recPreview:false, recOpen:null, expImport:false, expParsed:null}, extra||{}); ui.tab=tab; if(location.hash!=="#"+tab){ try{ history.replaceState(null,"","#"+tab);}catch(e){ location.hash=tab; } } render(); window.scrollTo(0,0); }
 
 function render(){
   NAMEIDX=null;
@@ -1496,12 +1503,37 @@ function autoSnap(e, before){
   if(before && before.length>200 && e.text.length < before.length*0.85){ if(last && last.text===before){ if(!last.label){ last.label="Before a big cut"; } } else snapEssay(e, before, "Before a big cut"); }
   else if(e.text.trim().length>=50 && (!last || (Date.now()-last.t>SNAP_EVERY && last.text!==e.text))) snapEssay(e);
 }
+// Numbered versions: "Mark v2 done" freezes the text; everything after is v3. Autosaves are only a recovery net.
+const RECOVERY_LABELS=/^(Before a big cut|Before restoring|Before starting from base|Abandoned v\d+ draft)$/;
+function vers(e){ return e.vers||[]; }
+function workingN(e){ return vers(e).length+1; }
+function lastVer(e){ const v=vers(e); return v[v.length-1]||null; }
+function freezeVer(e, note){ const t=e.text||""; if(!t.trim()) return null; const l=lastVer(e); if(l && l.text===t){ if(note && !l.note) l.note=note; return l; } e.vers=vers(e).concat([{n:workingN(e), text:t, at:Date.now(), note:note||""}]); return lastVer(e); }
+// older named saves become numbered versions, in order; automatic ones stay as recovery copies
+function migrateVers(e){ if(e.vers || !(e.hist||[]).some(h=>h.label && !RECOVERY_LABELS.test(h.label))) return false; e.vers=[]; e.hist.filter(h=>h.label && !RECOVERY_LABELS.test(h.label)).forEach(h=>e.vers.push({n:e.vers.length+1, text:h.text, at:h.t, note:h.label})); e.hist=e.hist.filter(h=>!h.label || RECOVERY_LABELS.test(h.label)); return true; }
+function versionsHtml(e, compact){
+  const V=vers(e), n=workingN(e), l=lastVer(e), changed=!l || l.text!==e.text;
+  let h='<div class="vstrip" role="group" aria-label="Versions"><span class="small muted" style="margin-right:4px">Versions</span>'+
+    V.map(v=>'<button class="vchip'+(ui.verSel===v.n?' on':'')+'" data-act="ver-see" data-n="'+v.n+'" title="'+esc((v.note?v.note+" · ":"")+new Date(v.at).toLocaleDateString(undefined,{month:"short",day:"numeric"}))+'">v'+v.n+(v.note?' · '+esc(v.note.length>18?v.note.slice(0,17)+"…":v.note):'')+'</button>').join("")+
+    '<span class="vchip work'+(ui.verSel?'':' on')+'">v'+n+' · working</span>'+
+    (ui.verDone? '' : '<button class="ghost small" data-act="ver-done"'+(e.text.trim()&&changed?'':' disabled')+'>Mark v'+n+' done</button>')+
+    ((e.hist||[]).length?'<button class="ghost small" data-act="panel" data-p="'+(ui.panel==="hist"?'':'hist')+'" style="margin-left:auto">Recovery copies ('+e.hist.length+')</button>':'')+'</div>';
+  if(ui.verDone) h+='<div class="row" style="margin-top:6px"><input id="ver-note" placeholder="Note for v'+n+' (optional), e.g. Sent to Dr. Shah" style="flex:1; min-width:160px"><button class="primary" data-act="ver-save">Save v'+n+'</button><button class="ghost" data-act="ver-cancel">Cancel</button></div>';
+  const sel=ui.verSel && V.find(v=>v.n===ui.verSel);
+  if(sel){
+    h+='<div class="panel" style="margin-top:8px"><div class="ph" style="flex-wrap:wrap"><h3 style="flex:1">v'+sel.n+(sel.note?' · '+esc(sel.note):'')+' <span class="small muted" style="font-weight:400">'+new Date(sel.at).toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})+' · '+words(sel.text)+' words</span></h3>'+
+      '<button class="ghost small" data-act="ver-cmp">'+(ui.verCmp?'Show text':'Compare with v'+n)+'</button><button class="ghost small" data-act="ver-copy" data-n="'+sel.n+'">Copy text</button>'+(sel.text!==e.text?'<button class="small" data-act="ver-over" data-n="'+sel.n+'">Start v'+n+' over from v'+sel.n+'</button>':'')+'<button class="ghost small" data-act="ver-see" data-n="">Close</button></div>'+
+      '<div class="pb">'+(ui.verCmp? '<div class="legend small"><span><del>v'+sel.n+'</del></span><span><ins>v'+n+' (working)</ins></span></div><div class="diff" style="font-size:14px; max-height:'+(compact?260:380)+'px; overflow:auto">'+diff(sel.text, e.text).map(x=>x.type==="eq"?esc(x.a.join("")):'<del>'+esc(x.a.join(""))+'</del><ins>'+esc(x.b.join(""))+'</ins>').join("")+'</div>'
+        : '<div class="small" style="white-space:pre-wrap; font-family:var(--f-essay, Georgia, serif); font-size:15px; line-height:1.6; max-height:'+(compact?260:380)+'px; overflow:auto; user-select:text">'+esc(sel.text)+'</div><p class="small muted" style="margin:6px 0 0">Select any passage to copy it into your draft.</p>')+'</div></div>';
+  }
+  return h;
+}
 function when(t){ const d=new Date(t), n=Date.now()-t; if(n<60e3) return "just now"; if(n<36e5) return Math.round(n/6e4)+" min ago"; return d.toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}); }
 function historyHtml(e){
   const H=(e.hist||[]).map((h,i)=>({h,i})).reverse();
-  let h='<div class="stack" style="gap:10px"><div class="row"><input id="snap-label" placeholder="Name this version (optional)" style="flex:1; min-width:160px"><button class="primary" data-act="snap-save">Save a version</button></div>';
-  if(!H.length) return h+'<p class="small muted" style="margin:0">Versions are saved automatically every 15 minutes while you write, and before you cut a big chunk. You can also save one by name.</p></div>';
-  h+='<ul class="list">'+H.map(({h:v,i})=>'<li><div class="main"><div class="small" style="font-weight:600">'+(v.label?esc(v.label):'Saved automatically')+'</div><div class="small muted">'+when(v.t)+' · '+words(v.text)+' words'+(v.text===e.text?' · same as now':'')+'</div></div><div class="row" style="flex-wrap:nowrap"><button class="ghost small" data-act="hist-see" data-i="'+i+'">'+(ui.histSel===i?'Hide':'Compare')+'</button>'+(v.text!==e.text?'<button class="small" data-act="hist-restore" data-i="'+i+'">Restore</button>':'')+'</div></li>'+
+  let h='<div class="stack" style="gap:10px"><p class="small muted" style="margin:0">Saved automatically every 15 minutes while you write, before a big cut, and before you restore or start over. They’re a safety net; your numbered versions are above the essay.</p>';
+  if(!H.length) return h+'</div>';
+  h+='<ul class="list">'+H.map(({h:v,i})=>'<li><div class="main"><div class="small" style="font-weight:600">'+(v.label?esc(v.label):'Autosave')+'</div><div class="small muted">'+when(v.t)+' · '+words(v.text)+' words'+(v.text===e.text?' · same as now':'')+'</div></div><div class="row" style="flex-wrap:nowrap"><button class="ghost small" data-act="hist-see" data-i="'+i+'">'+(ui.histSel===i?'Hide':'Compare')+'</button>'+(v.text!==e.text?'<button class="small" data-act="hist-restore" data-i="'+i+'">Restore</button>':'')+'</div></li>'+
     (ui.histSel===i? '<li style="display:block"><div class="legend small"><span><del>this version</del></span><span><ins>now</ins></span></div><div class="diff" style="font-size:14px; max-height:340px; overflow:auto">'+diff(v.text, e.text).map(x=>x.type==="eq"?esc(x.a.join("")):'<del>'+esc(x.a.join(""))+'</del><ins>'+esc(x.b.join(""))+'</ins>').join("")+'</div></li>' : '')).join("")+'</ul>';
   return h+'<p class="small muted" style="margin:0">Restoring keeps your current text as a version too, so nothing is lost.</p></div>';
 }
@@ -1572,7 +1604,7 @@ function vFocus(e){
     else if(rail==="base") h+= b? '<div class="panel"><div class="ph"><h3 style="flex:1">'+esc(b.title)+' · v'+latest(b).v+'</h3><button class="ghost small" data-act="open-base" data-id="'+b.id+'">Open</button></div><div class="pb" style="white-space:pre-wrap; font-family:var(--f-essay); font-size:15px; line-height:1.6">'+esc(latest(b).text||"(empty)")+'</div></div>' : '<p class="small muted">No base linked. Leave focus to link one or make this the base.</p>';
     else if(rail==="notes") h+='<label class="f">Notes for this essay<textarea id="scratch-'+e.id+'" rows="14" data-bind="essay:'+e.id+':scratch" placeholder="Outline, lines to keep, ideas to try. Only you see this.">'+esc(e.scratch||"")+'</textarea></label>';
     else if(rail==="checks") h+='<div id="checks-slot">'+checksHtml(e)+'</div>';
-    else if(rail==="hist") h+='<div class="panel"><div class="ph"><h3>History</h3></div><div class="pb">'+historyHtml(e)+'</div></div>';
+    else if(rail==="hist") h+='<div class="panel"><div class="ph"><h3>Versions</h3></div><div class="pb">'+versionsHtml(e, true)+(ui.panel==="hist"?'<div style="margin-top:10px">'+historyHtml(e)+'</div>':'')+'</div></div>';
     h+='</aside>';
   }
   h+='</div><div class="fstatus">'+meter(e)+'<span class="row" style="gap:8px"><label class="chk small">Status <select id="st3-'+e.id+'" data-bind="essay:'+e.id+':status">'+statusOpts(e)+'</select></label><button class="primary" data-act="copy-portal" data-id="'+e.id+'">Copy for portal</button><span class="small muted" id="copy-note-'+e.id+'"></span></span></div></div>';
@@ -2002,11 +2034,12 @@ function vEssay(e){
   if(e.prev && e.prev.length) h += '<div class="banner info"><div class="grow small"><strong>This essay was edited on two computers at once.</strong> The version shown is the newer one. The other '+(e.prev.length===1?'version is':e.prev.length+' versions are')+' kept here:'+e.prev.map((p,i)=>'<details style="margin-top:6px"><summary style="cursor:pointer">Version from '+new Date(p.at).toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})+' ('+words(p.text)+' words)</summary><div style="white-space:pre-wrap; font-family:var(--f-essay); margin:6px 0">'+esc(p.text)+'</div><button class="small" data-act="prev-use" data-i="'+i+'">Use this version</button> <button class="ghost small" data-act="prev-drop" data-i="'+i+'">Discard it</button></details>').join("")+'</div></div>';
   if(ui.panel==="review" && b) h += reviewPanel(e,b);
   if(ui.panel==="compare" && b) h += comparePanel(e,b);
-  if(ui.panel==="hist") h += '<div class="panel"><div class="ph"><h2 style="flex:1">Version history</h2><button class="ghost" data-act="panel" data-p="">Close</button></div><div class="pb">'+historyHtml(e)+'</div></div>';
+  h += versionsHtml(e);
+  if(ui.panel==="hist") h += '<div class="panel"><div class="ph"><h2 style="flex:1">Recovery copies</h2><button class="ghost" data-act="panel" data-p="">Close</button></div><div class="pb">'+historyHtml(e)+'</div></div>';
   h += '<textarea class="page" id="essay-text" data-bind="essay:'+e.id+':text" aria-label="Essay for '+esc(s.name)+'" placeholder="Write or paste this school’s version here.">'+esc(e.text)+'</textarea>';
   h += '<div id="names-slot">'+namesBanner(e)+'</div>';
   if(isLetter(e)) h += '<div class="row"><label class="chk small">Send by <input type="date" id="due-'+e.id+'" data-bind="essay:'+e.id+':due" value="'+esc(e.due||"")+'"></label><span class="small muted">Shows up on Do next and the Cycle tab, and in your calendar file.</span></div>';
-  h += '<div class="row" style="gap:10px"><button class="primary" data-act="copy-portal" data-id="'+e.id+'">Copy for portal</button><button data-act="focus-on">Focus</button><button class="ghost" data-act="panel" data-p="'+(ui.panel==="hist"?'':'hist')+'">History'+((e.hist||[]).length?' ('+e.hist.length+')':'')+'</button><span class="small muted" id="copy-note-'+e.id+'">Cleans up curly quotes and extra spaces, then copies.</span></div>';
+  h += '<div class="row" style="gap:10px"><button class="primary" data-act="copy-portal" data-id="'+e.id+'">Copy for portal</button><button data-act="focus-on">Focus</button><span class="small muted" id="copy-note-'+e.id+'">Cleans up curly quotes and extra spaces, then copies.</span></div>';
   h += '<div class="row" style="justify-content:space-between">'+meter(e)+'<label class="chk small">Status <select id="st2-'+e.id+'" data-bind="essay:'+e.id+':status">'+statusOpts(e)+'</select></label></div>';
   h += '</div><aside class="stack">';
   h += '<div id="checks-slot">'+checksHtml(e)+'</div>';
@@ -2324,6 +2357,13 @@ document.addEventListener("click", ev=>{
     case "focus-off": ui.focus=false; render(); break;
     case "rail": ui.rail = ui.rail===d.v? "" : d.v; render(); break;
     case "snap-save": { const x=essay(ui.essayId); if(!x) break; if(!x.text.trim()){ toast("Nothing to save yet."); break; } const lab=(document.getElementById("snap-label")||{}).value||""; snapEssay(x, null, lab.trim()||"Saved version"); save(); render(); toast("Version saved"); break; }
+    case "ver-see": ui.verSel = d.n? +d.n : null; ui.verCmp=false; render(); break;
+    case "ver-cmp": ui.verCmp=!ui.verCmp; render(); break;
+    case "ver-done": ui.verDone=true; render(); setTimeout(()=>{ const n=document.getElementById("ver-note"); if(n) n.focus(); },0); break;
+    case "ver-cancel": ui.verDone=false; render(); break;
+    case "ver-save": { const x=essay(ui.essayId); if(!x) break; const note=((document.getElementById("ver-note")||{}).value||"").trim(); const v=freezeVer(x, note); ui.verDone=false; save(); render(); if(v) toast("v"+v.n+" saved. You’re now working on v"+workingN(x)+"."); break; }
+    case "ver-copy": { const x=essay(ui.essayId); const v=x&&vers(x).find(z=>z.n===+d.n); if(!v) break; try{ navigator.clipboard.writeText(v.text).then(()=>toast("v"+v.n+" copied."),()=>toast("Couldn’t copy. Select the text instead.")); }catch(err){ toast("Couldn’t copy. Select the text instead."); } break; }
+    case "ver-over": { const x=essay(ui.essayId); const v=x&&vers(x).find(z=>z.n===+d.n); if(!v) break; const l=lastVer(x); if(x.text.trim() && (!l || l.text!==x.text)) snapEssay(x, x.text, "Abandoned v"+workingN(x)+" draft"); x.text=v.text; ui.verSel=null; save(); render(); toast("v"+workingN(x)+" now starts from v"+v.n+". Your unfinished draft is in Recovery copies."); break; }
     case "hist-see": ui.histSel = ui.histSel===+d.i? null : +d.i; render(); break;
     case "hist-restore": { const x=essay(ui.essayId); const v=x&&(x.hist||[])[+d.i]; if(!v) break; snapEssay(x, x.text, "Before restoring"); x.text=v.text; if(x.baseId && x.basedOnV) x.localEdit=true; ui.histSel=null; save(); render(); toast("Restored. Your previous text is saved in History."); break; }
     case "chk-show": { const ta=document.getElementById("essay-text"); if(!ta) break; const a=+d.a, b2=+d.b; ta.focus(); ta.setSelectionRange(a, Math.min(b2, ta.value.length)); const ratio=a/Math.max(1,ta.value.length); ta.scrollTop=Math.max(0, ratio*ta.scrollHeight - ta.clientHeight/3); ta.scrollIntoView({block:"center"}); break; }
@@ -2558,7 +2598,7 @@ document.addEventListener("input", ev=>{
   const [kind,idv,field]=bnd.split(":");
   if(el.type==="checkbox"||el.tagName==="SELECT"||el.type==="date"||el.type==="number"||el.type==="time") return; // handled on change
   if(kind==="school"){ const sc=school(idv); if(sc){ sc[field]=el.value; save(); } return; }
-  if(kind==="essay"){ const x=essay(idv); const before=x[field]; x[field]=el.value; if(field==="text"){ autoSnap(x, before); clearTimeout(window.__chkT); window.__chkT=setTimeout(()=>{ const cs=document.getElementById("checks-slot"); if(cs) cs.innerHTML=checksHtml(x); },700); const mb=document.querySelector('[data-act="make-base"]'); if(mb) mb.disabled=!x.text.trim(); if(x.baseId && x.basedOnV) x.localEdit=true; if(x.status==="todo" && x.text.trim()) x.status="drafting"; const m=document.getElementById("m-"+x.id); if(m) m.outerHTML=meter(x); clearTimeout(namesT); namesT=setTimeout(()=>{ const slot=document.getElementById("names-slot"); if(slot) slot.innerHTML=namesBanner(x); }, 600); } save(); }
+  if(kind==="essay"){ const x=essay(idv); const before=x[field]; x[field]=el.value; if(field==="text"){ autoSnap(x, before); clearTimeout(window.__chkT); window.__chkT=setTimeout(()=>{ const cs=document.getElementById("checks-slot"); if(cs) cs.innerHTML=checksHtml(x); },700); const mb=document.querySelector('[data-act="make-base"]'); if(mb) mb.disabled=!x.text.trim(); const vd=document.querySelector('[data-act="ver-done"]'); if(vd){ const lv=lastVer(x); vd.disabled=!(x.text.trim() && (!lv || lv.text!==x.text)); } if(x.baseId && x.basedOnV) x.localEdit=true; if(x.status==="todo" && x.text.trim()) x.status="drafting"; const m=document.getElementById("m-"+x.id); if(m) m.outerHTML=meter(x); clearTimeout(namesT); namesT=setTimeout(()=>{ const slot=document.getElementById("names-slot"); if(slot) slot.innerHTML=namesBanner(x); }, 600); } save(); }
   if(kind==="base"){ const b=base(idv); b[field]=el.value; if(field==="draft"){ document.getElementById("bmeter").textContent=words(b.draft)+" words · "+b.draft.length.toLocaleString()+" characters"; document.getElementById("bstate").innerHTML = unsaved(b)?'<span class="chip warn">Unsaved edits since v'+latest(b).v+'</span>':'<span class="chip">Matches v'+latest(b).v+'</span>'; } save(); }
 });
 document.addEventListener("change", ev=>{
@@ -2582,6 +2622,8 @@ document.addEventListener("change", ev=>{
   if(!obj) return;
   if(el.tagName==="TEXTAREA"||(el.tagName==="INPUT"&&el.type==="text")) return;
   obj[field]=val;
+  if(kind==="essay" && field==="status" && val==="pasted") freezeVer(obj, isLetter(obj)?"Sent":"Submitted");
+  if(kind==="school" && field==="submitted" && val) S.essays.filter(x=>x.schoolId===obj.id && (x.text||"").trim()).forEach(x=>{ if(x.status!=="pasted") x.status="pasted"; freezeVer(x, "Submitted"); });
   if(kind==="essay" && field==="status" && (val==="ready"||val==="pasted")){ const w=wrongNames(obj); if(w.length) setTimeout(()=>toast("Heads up: this essay still mentions "+w.map(x=>x.alias).join(", ")+"."),50); }
   if(kind==="school" && field==="submitted") obj.submittedAt = val ? (obj.submittedAt||iso(today())) : null;
   if(kind==="school" && field==="submittedAt" && val) obj.submitted = true;
@@ -2629,6 +2671,7 @@ document.addEventListener("keydown", ev=>{
 let lastDay=iso(today());
 document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState!=="visible") return; const a=document.activeElement; if(a && (a.tagName==="TEXTAREA" || a.tagName==="INPUT")) return; if(iso(today())!==lastDay){ lastDay=iso(today()); } render(); });
 window.addEventListener("hashchange", ()=>{ const t=location.hash.slice(1); if(t==="log"){ go("experiences"); return; } if(TABS.some(x=>x[0]===t) && t!==ui.tab) go(t); });
+if(!S.demo && (S.essays||[]).map(migrateVers).some(Boolean)) save();
 const h0=location.hash.slice(1); if(TABS.some(x=>x[0]===h0)) ui.tab=h0;
 // the Experience Log front door: someone arriving at #log with nothing else here gets the log on its own
 if(h0==="log"){ ui.tab="experiences"; if(prefs().applying===undefined && !S.schools.length && !S.essays.length && !S.demo){ prefs().applying=false; save(); } try{ history.replaceState(null,"","#experiences"); }catch(e){} }

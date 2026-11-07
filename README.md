@@ -85,3 +85,10 @@ Each experience is written up when it ends: what I did (summary) and what I lear
 - **About me starters** (`ABOUT_STARTERS`): why medicine, career goals in medicine and research, group vs individual work, what letter writers should know.
 - **Log-only mode:** opening `#log` with nothing else saved sets `prefs.applying=false`: the app is titled "Experience Log", shows only Experiences (log, strengths & weaknesses, letter writers), and skips the tour. "I'm applying this cycle" (`applying-on`) shows everything; "Not applying yet? Show only the log" goes back. Same storage and Drive file either way. The About page links to it.
 - Older records may have `log` entries from a short-lived day-by-day version; they're ignored except that their hours count toward the total until `hours` is set.
+
+## Numbered versions
+Every essay (secondaries, primary, letters) has numbered versions (`e.vers`: [{n, text, at, note}]); the working draft is v(n+1).
+- "Mark vN done" freezes the text with an optional note; the strip above the editor shows v1 · v2 · v3 (working). Clicking a version shows it read-only, compares it with the draft, copies it, or starts the draft over from it (the unfinished draft goes to Recovery copies as "Abandoned vN draft").
+- Setting an essay to In portal (Sent, for letters) or ticking a school's Submitted freezes a "Submitted" version, so what each school received is always kept.
+- Autosaves (`e.hist`: every 15 minutes, before a big cut, before restoring or starting over) are a recovery net under "Recovery copies". Older named saves were converted to numbered versions on first load (`migrateVers`).
+- Base essays keep their own numbered versions (Save as vN), as before.
