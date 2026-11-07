@@ -742,7 +742,7 @@ const Sync = (function(){
     let r;
     if(id){ const mp=multipart({name:d.name}, html); r=await api(U+"/"+id+"?uploadType=multipart&fields=id,modifiedTime"+(cur&&cur.folder&&cur.folder!==parent?"&addParents="+parent+"&removeParents="+cur.folder:""), {method:"PATCH", headers:mp.headers, body:mp.body}); }
     else { const mp=multipart({name:d.name, mimeType:GDOC, parents:[parent], appProperties:{maw:d.key}}, html); r=await api(U+"?uploadType=multipart&fields=id,modifiedTime", {method:"POST", headers:mp.headers, body:mp.body}); }
-    ms.files[d.key]={id:r.id, h, mt:r.modifiedTime||new Date().toISOString(), name:d.name, folder:parent, cyc:d.cyc||"", fixed:!!d.fixed};
+    ms.files[d.key]={id:r.id, h, mt:r.modifiedTime||new Date().toISOString(), name:d.name, folder:parent, cyc:d.cyc||"", fixed:!!d.fixed, wn:d.wn||0};
     return true;
   }
   async function mirrorRun(force){
@@ -753,7 +753,9 @@ const Sync = (function(){
     let wrote=0;
     try{
       if(saveT) flush();
-      const ms=mstate(); const docs=mirrorDocs(); const keys=new Set(docs.map(d=>d.key));
+      const ms=mstate();
+      S.essays.forEach(e=>{ const k="essay:"+e.id, f=ms.files[k]; if(!f || !f.wn || f.wn>=workingN(e)) return; const vk="ver:"+e.id+":"+f.wn; if(!ms.files[vk] && vers(e).some(v=>v.n===f.wn)){ ms.files[vk]=f; delete ms.files[k]; } });
+      const docs=mirrorDocs(); const keys=new Set(docs.map(d=>d.key));
       for(let i=0;i<docs.length;i++){ const d=docs[i]; if(await writeDoc(d, i+1, docs.length)) wrote++; }
       const ix=indexDoc(docs, ms); if(await writeDoc(ix, docs.length, docs.length)) wrote++; keys.add(ix.key);
       // things deleted in the app go to Drive's Trash; earlier cycles' folders stay as an archive
@@ -766,9 +768,9 @@ const Sync = (function(){
   }
   function indexDoc(docs, ms){
     const link=d=>{ const f=ms.files[d.key]; return f? '<a href="https://docs.google.com/document/d/'+f.id+'/edit">'+esc(d.name)+'</a>' : esc(d.name); };
-    const groups=new Map(); docs.forEach(d=>{ if(d.fixed) return; const g=d.path.slice(1).join(" › ")||"Top level"; if(!groups.has(g)) groups.set(g,[]); groups.get(g).push(d); });
+    const groups=new Map(); docs.forEach(d=>{ if(d.fixed && !d.latest) return; const g=d.path.slice(1).join(" › ")||"Top level"; if(!groups.has(g)) groups.set(g,[]); groups.get(g).push(d); });
     const vcount=docs.filter(d=>d.fixed).length;
-    return {key:"index", path:["Med App Workspace"], name:"Start here", body:'<h1>Med App Workspace</h1><p>Links to every Doc the app keeps in this folder. Earlier versions of each essay sit next to it in its folder'+(vcount?' ('+vcount+' saved versions)':'')+'.</p>'+[...groups].map(([g,ds])=>'<h2>'+esc(g)+'</h2><ul>'+ds.map(d=>'<li>'+link(d)+'</li>').join("")+'</ul>').join("")};
+    return {key:"index", path:["Med App Workspace"], name:"Start here", body:'<h1>Med App Workspace</h1><p>Links to the latest file for every essay, plus your experience log, base essays and letter-writer summaries. Earlier versions of each essay sit next to it in its folder'+(vcount?' ('+vcount+' saved versions)':'')+'. Prompts you haven’t started don’t have a file yet.</p>'+[...groups].map(([g,ds])=>'<h2>'+esc(g)+'</h2><ul>'+ds.map(d=>'<li>'+link(d)+'</li>').join("")+'</ul>').join("")};
   }
   function mirrorSoon(){ clearTimeout(M.timer); if(prefs().mirror && st.connected && !S.demo) M.timer=setTimeout(()=>mirrorRun(), window.__DRIVE_MOCK? 300 : 120000); }
   async function mirrorOn(){
@@ -1506,10 +1508,11 @@ function mirrorDocs(){
   const fname=t=>(t||"Untitled").replace(/[\/\\]/g,"-").replace(/\s+/g," ").trim().slice(0,110);
   const count=e=> e.unit==="chars"? (e.text||"").length.toLocaleString()+" characters" : words(e.text||"")+" words";
   const verLabel=e=>{ const l=lastVer(e); return (l && l.text===e.text)? 'v'+l.n+(l.note?' ('+l.note+')':'') : 'v'+workingN(e)+' (working)'; };
-  const verDocs=(e, path, prefix)=>{ vers(e).forEach(v=>out.push({key:"ver:"+e.id+":"+v.n, path, fixed:true, cyc:CYCLE, name:fname(prefix+" – v"+v.n+(v.note?" ("+v.note+")":"")), body:'<h1>'+E(prefix)+' – v'+v.n+'</h1><p style="color:#555;font-size:9pt">'+new Date(v.at).toLocaleString(undefined,{month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit"})+(v.note?' · '+E(v.note):'')+' · '+(e.unit==="chars"?v.text.length.toLocaleString()+" characters":words(v.text)+" words")+'</p>'+(isLetter(e)?'':'<p style="color:#555"><i>'+E(e.prompt)+'</i></p>')+P(v.text)})); };
+  const verDocs=(e, path, prefix, lastIsCurrent)=>{ const V=vers(e); V.forEach(v=>out.push({key:"ver:"+e.id+":"+v.n, path, fixed:true, latest:!!lastIsCurrent && v===V[V.length-1], cyc:CYCLE, name:fname(prefix+" – v"+v.n+(v.note?" ("+v.note+")":"")), body:'<h1>'+E(prefix)+' – v'+v.n+'</h1><p style="color:#555;font-size:9pt">'+new Date(v.at).toLocaleString(undefined,{month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit"})+(v.note?' · '+E(v.note):'')+' · '+(e.unit==="chars"?v.text.length.toLocaleString()+" characters":words(v.text)+" words")+'</p>'+(isLetter(e)?'':'<p style="color:#555"><i>'+E(e.prompt)+'</i></p>')+P(v.text)})); };
   const essayDocs=(e, path, label, where)=>{
-    out.push({key:"essay:"+e.id, path, cyc:CYCLE, name:fname(label+" – current draft"), body:'<h1>'+E(where)+': '+E(label)+'</h1>'+(isLetter(e)?'':'<p style="color:#555"><i>'+E(e.prompt)+'</i></p>')+'<p style="color:#555;font-size:9pt">'+E(limitL(e))+' · '+count(e)+' · '+E(isLetter(e)&&e.status==="pasted"?"Sent":(STATUS[e.status]||""))+' · '+verLabel(e)+(vers(e).length?' · earlier versions are in this folder':'')+'</p>'+P(e.text)});
-    verDocs(e, path, label); };
+    const l=lastVer(e), wn=workingN(e), working=(e.text||"").trim() && !(l && l.text===e.text);
+    if(working) out.push({key:"essay:"+e.id, wn, path, cyc:CYCLE, name:fname(label+" – v"+wn+" (working)"), body:'<h1>'+E(where)+': '+E(label)+' – v'+wn+' (working)</h1>'+(isLetter(e)?'':'<p style="color:#555"><i>'+E(e.prompt)+'</i></p>')+'<p style="color:#555;font-size:9pt">'+E(limitL(e))+' · '+count(e)+' · '+E(isLetter(e)&&e.status==="pasted"?"Sent":(STATUS[e.status]||""))+(l?' · earlier versions are next to this file':'')+'</p>'+P(e.text)});
+    verDocs(e, path, label, !working); };
   const labelFor=(list, e)=>{ const base=isLetter(e)? (FAM[e.family]||"Letter") : (FAM[e.family]||"Essay"); const same=list.filter(x=>(FAM[x.family]||"Essay")===base); return same.length>1? base+" "+(same.indexOf(e)+1) : base; };
   // experiences
   const X=S.experiences||[], st=X.filter(x=>STORY_KINDS.includes(x.kind)).sort((a,b)=> (b.ongoing?1:0)-(a.ongoing?1:0) || (b.end||b.start||"").localeCompare(a.end||a.start||""));
@@ -2179,7 +2182,7 @@ function vEssay(e){
   h += '<textarea class="page" id="essay-text" data-bind="essay:'+e.id+':text" aria-label="Essay for '+esc(s.name)+'" placeholder="Write or paste this school’s version here.">'+esc(e.text)+'</textarea>';
   h += '<div id="names-slot">'+namesBanner(e)+'</div>';
   if(isLetter(e)) h += '<div class="row"><label class="chk small">Send by <input type="date" id="due-'+e.id+'" data-bind="essay:'+e.id+':due" value="'+esc(e.due||"")+'"></label><span class="small muted">Shows up on Do next and the Cycle tab, and in your calendar file.</span></div>';
-  h += '<div class="row" style="gap:10px"><button class="primary" data-act="copy-portal" data-id="'+e.id+'">Copy for portal</button><button data-act="focus-on">Focus</button>'+(Sync.docLink("essay:"+e.id)?'<a class="small" href="'+Sync.docLink("essay:"+e.id)+'" target="_blank" rel="noopener">Open in Drive</a>':'')+'<span class="small muted" id="copy-note-'+e.id+'">Cleans up curly quotes and extra spaces, then copies.</span></div>';
+  h += '<div class="row" style="gap:10px"><button class="primary" data-act="copy-portal" data-id="'+e.id+'">Copy for portal</button><button data-act="focus-on">Focus</button>'+((()=>{ const lv=lastVer(e), u=Sync.docLink("essay:"+e.id)||(lv?Sync.docLink("ver:"+e.id+":"+lv.n):""); return u?'<a class="small" href="'+u+'" target="_blank" rel="noopener">Open in Drive</a>':''; })())+'<span class="small muted" id="copy-note-'+e.id+'">Cleans up curly quotes and extra spaces, then copies.</span></div>';
   h += '<div class="row" style="justify-content:space-between">'+meter(e)+'<label class="chk small">Status <select id="st2-'+e.id+'" data-bind="essay:'+e.id+':status">'+statusOpts(e)+'</select></label></div>';
   h += '</div><aside class="stack">';
   h += '<div id="checks-slot">'+checksHtml(e)+'</div>';
