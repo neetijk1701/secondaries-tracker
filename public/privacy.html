@@ -21,6 +21,7 @@
   <ul>
     <li><strong>In your browser.</strong> The schools, prompts, essays, base essays, dates, and settings you enter are saved in your browser’s local storage on your device. They are not sent to the app’s developer.</li>
     <li><strong>In your Google Drive, only if you connect it.</strong> If you click “Save to Google Drive,” the app saves a copy of that same data as one file in a hidden app-specific folder in your own Google Drive. Only this app can see that folder, and the app cannot see any of your other Drive files.</li>
+    <li><strong>A readable copy in your Google Drive, only if you turn it on.</strong> If you turn on “Readable copy in your Drive,” the app also writes Google Docs of your essays, experience write-ups, base essays and letter-writer summaries into a visible “Med App Workspace” folder in your Drive. Those Docs are yours: you can open, share or delete them like any other file. The app only updates Docs it created, moves Docs for things you delete in the app to your Drive’s Trash, and never reads them back as data.</li>
     <li><strong>Backup files.</strong> If you click “Download backup,” the app saves a file to your device. What you do with it is up to you.</li>
   </ul>
 
@@ -28,6 +29,7 @@
   <p>If you connect Google Drive, the app asks Google for these permissions:</p>
   <ul>
     <li><strong>Google Drive app data</strong> (<code>drive.appdata</code>): to create, read, update, and delete the app’s own data file in its hidden app folder in your Drive. It cannot access any other files.</li>
+    <li><strong>Files this app creates</strong> (<code>drive.file</code>), only if you turn on the readable copy: to create and update the Docs and folders in “Med App Workspace,” and to read back a Doc you edited in Drive when you ask to see it. It cannot see or change any Drive file the app didn’t create.</li>
     <li><strong>Your email address and basic sign-in</strong> (<code>email</code>, <code>openid</code>): to show you which Google account your work is saving to.</li>
   </ul>
   <p>This data goes directly between your browser and Google. It is not sent to, stored by, or shared with the app’s developer or anyone else. It is used only to save and load your own work. It is not used for advertising, is not sold, and is not used to train AI or machine-learning models. The app’s use of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>

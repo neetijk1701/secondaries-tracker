@@ -258,6 +258,10 @@ body.focus-mode #main{max-width:none; padding:0}
 .frail{position:sticky; top:70px; align-self:start; max-height:calc(100vh - 160px); overflow:auto; display:flex; flex-direction:column; gap:12px}
 .fstatus{position:fixed; left:0; right:0; bottom:0; display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px 20px; background:var(--surface); border-top:1px solid var(--line); flex-wrap:wrap}
 @media (max-width:900px){ .fgrid.with-rail{grid-template-columns:minmax(0,1fr)} .frail{position:static; max-height:none} }
+.vstrip{display:flex; flex-wrap:wrap; align-items:center; gap:6px}
+.vchip{font:inherit; font-size:13px; padding:3px 10px; border-radius:999px; border:1px solid var(--line); background:var(--card, transparent); color:inherit; cursor:pointer}
+.vchip.on{border-color:var(--accent); background:var(--accent-soft); font-weight:600}
+.vchip.work{cursor:default; border-style:dashed}
 </style>
 </head>
 <body>
@@ -463,9 +467,12 @@ function seed(){
   const utsw = addS("UT Southwestern Medical School", {received:off(-3), interest:2, feeAmt:100});
   fill(utsw, "drafting", {0:{status:"ready"}, 1:ETHICS_D, 2:{v:2}});
 
+  // what went in to each school is frozen as a "Submitted" version; Baylor's draft has an earlier v1
+  N.essays.forEach(e=>{ if(e.status==="pasted") freezeVer(e, isLetter(e)?"Sent":"Submitted"); });
+  { const bc=N.essays.find(e=>e.schoolId===baylor.s.id && /Ever since/.test(e.text||"")); if(bc) bc.vers=[{n:1, text:CAREER1, at:ago(5), note:"Copied from my career base"}]; }
   // Primary applications
   const amcas = appRec("amcas"); amcas.submitted = true; const tm = appRec("tmdsas"); tm.submitted = true;
-  const pe = (k, key, text, b, hist)=>{ const d=SVC[k].essays.find(z=>z.k===key); const e=startPrimary(k, d); e.text=fitTo(text, d.limit, "chars"); e.status="pasted"; if(b){ e.baseId=b.id; e.basedOnV=b.versions.length; } if(hist) e.hist=hist; return e; };
+  const pe = (k, key, text, b, hist)=>{ const d=SVC[k].essays.find(z=>z.k===key); const e=startPrimary(k, d); e.text=fitTo(text, d.limit, "chars"); e.status="pasted"; if(b){ e.baseId=b.id; e.basedOnV=b.versions.length; } if(hist){ e.vers=hist.filter(h=>h.label).map((h,i)=>({n:i+1, text:h.text, at:h.t, note:h.label})); e.hist=hist.filter(h=>!h.label); } return e; };
   pe("amcas","ps",PS3,bPS,[{t:ago(120), text:PS1, label:"First full draft"},{t:ago(100), text:PS2, label:""},{t:ago(92), text:PS3, label:"After Dr. Shah’s comments"}]);
   pe("tmdsas","ps",PS3,bPS); pe("tmdsas","pchar",D3,bD);
   const A = (svc, x, o)=>{ const a=Object.assign({id:id("a"), svc, expId:x?x.id:"", title:x?x.title:"", type:x?actType(svc,x.kind):SVC[svc].act.types[0], org:x?x.org:"", dates:x?expDates(x):"", hours:x?String(expHours(x)||""):"", desc:"", mm:false, mmText:""}, o); N.acts.push(a); return a; };
@@ -525,7 +532,10 @@ const DRIVE_FILE = "secondaries.json";
 const Sync = (function(){
   let st = {connected:false, email:"", fileId:"", version:"", syncedAt:0, dirty:false};
   try{ Object.assign(st, JSON.parse(localStorage.getItem(SYNC_KEY)||"{}")); }catch(e){}
-  let token="", tokenExp=0, tokenClient=null, gisLoading=null;
+  let token="", tokenExp=0, tokenClient=null, gisLoading=null, fileScope=false;
+  const FILE_SCOPE="https://www.googleapis.com/auth/drive.file";
+  try{ fileScope = sessionStorage.getItem(SYNC_KEY+"-fs")==="1"; }catch(e){}
+  const scopeStr = ()=> "https://www.googleapis.com/auth/drive.appdata openid email"+(prefs().mirror? " "+FILE_SCOPE : "");
   try{ const t=JSON.parse(sessionStorage.getItem(SYNC_KEY+"-t")||"{}"); if(t.exp>Date.now()+60e3){ token=t.token; tokenExp=t.exp; } }catch(e){}
   let status = st.connected ? (token? "ok" : "paused") : "local";   // local | busy | ok | paused | offline | error
   let lastOk = st.syncedAt||0, timer=null, running=false, again=false, errMsg="", userRetry=false;
@@ -546,11 +556,13 @@ const Sync = (function(){
     if(token && tokenExp>Date.now()+60e3) return Promise.resolve(token);
     return loadGis().then(()=>new Promise((res,rej)=>{
       if(!tokenClient) tokenClient = google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID, scope:"https://www.googleapis.com/auth/drive.appdata openid email", callback:()=>{}});
+      const want = scopeStr();
       tokenClient.callback = (r)=>{
         if(r && r.access_token && google.accounts.oauth2.hasGrantedAllScopes && !google.accounts.oauth2.hasGrantedAllScopes(r, "https://www.googleapis.com/auth/drive.appdata")){ rej(Object.assign(new Error("To save to Drive, tick the box that lets this app (Google may still call it Secondaries Tracker) see, create and delete its own configuration data in your Google Drive, then try again."), {scope:true})); return; }
-        if(r && r.access_token){ token=r.access_token; tokenExp=Date.now()+(+r.expires_in||3600)*1000; try{ sessionStorage.setItem(SYNC_KEY+"-t", JSON.stringify({token, exp:tokenExp})); }catch(e){} res(token); } else rej(new Error((r&&r.error)||"Sign-in was cancelled")); };
+        if(r && r.access_token){ fileScope = !!(google.accounts.oauth2.hasGrantedAllScopes && google.accounts.oauth2.hasGrantedAllScopes(r, FILE_SCOPE)); try{ sessionStorage.setItem(SYNC_KEY+"-fs", fileScope?"1":""); }catch(e){} token=r.access_token; tokenExp=Date.now()+(+r.expires_in||3600)*1000; try{ sessionStorage.setItem(SYNC_KEY+"-t", JSON.stringify({token, exp:tokenExp})); }catch(e){} res(token); } else rej(new Error((r&&r.error)||"Sign-in was cancelled")); };
       tokenClient.error_callback = (e)=>rej(new Error(e && e.type==="popup_closed" ? "Sign-in window was closed" : "Sign-in was blocked"));
-      tokenClient.requestAccessToken(interactive ? {prompt: st.connected? "" : "consent", login_hint: st.email||undefined} : {prompt:"", login_hint: st.email||undefined});
+      const needsAsk = want.includes(FILE_SCOPE) && !fileScope;
+      tokenClient.requestAccessToken(interactive ? {scope:want, include_granted_scopes:true, prompt: (st.connected && !needsAsk)? "" : "consent", login_hint: st.email||undefined} : {scope:want, include_granted_scopes:true, prompt:"", login_hint: st.email||undefined});
     }));
   }
   // --- Drive REST (or a test double) ---
@@ -611,8 +623,14 @@ const Sync = (function(){
     out.prefs = (remote.mu||0) > (local.mu||0) ? (remote.prefs||local.prefs) : (local.prefs||remote.prefs);
     out.mu = Math.max(local.mu||0, remote.mu||0);
     out.lastBackup = [local.lastBackup, remote.lastBackup].filter(Boolean).sort().pop();
+    out.mirror = mergeMirror(local.mirror, remote.mirror);
     out.demo=false;
     return {merged:out, conflicts};
+  }
+  function mergeMirror(a, b){
+    if(!a && !b) return undefined; a=a||{}; b=b||{};
+    const files={...(b.files||{})}; Object.entries(a.files||{}).forEach(([k,v])=>{ const o=files[k]; if(!o || (v.mt||"")>=(o.mt||"")) files[k]=v; });
+    return {root:a.root||b.root||"", folders:{...(b.folders||{}), ...(a.folders||{})}, files, at:Math.max(a.at||0, b.at||0)};
   }
   function maxU(o){ let m=0; COLLS.forEach(c=>(o[c]||[]).forEach(r=>{ if((r.u||0)>m) m=r.u; })); return m; }
   function payload(){ const o=JSON.parse(JSON.stringify(S)); delete o.demo; return o; }
@@ -659,7 +677,7 @@ const Sync = (function(){
     } finally { running=false; if(again){ again=false; setTimeout(run, 300); } }
   }
   let changeT=null;
-  function changed(){ if(!st.connected || S.demo) return; st.dirty=true; persist(); clearTimeout(changeT); changeT=setTimeout(run, 3000); if(status==="ok") setStatus("ok"); }
+  function changed(){ if(!st.connected || S.demo) return; st.dirty=true; persist(); clearTimeout(changeT); changeT=setTimeout(run, 3000); if(status==="ok") setStatus("ok"); mirrorSoon(); }
   async function connect(){
     try{
       setStatus("busy");
@@ -687,6 +705,100 @@ const Sync = (function(){
   // the first click after the hour-long Google token runs out quietly renews it (browsers allow sign-in windows only from a click)
   document.addEventListener("click", ev=>{ if(st.connected && status==="paused" && !ev.target.closest("#sync-chip") && !window.__DRIVE_MOCK){ resume(); } }, true);
 
+  /* ---------- readable copy: Google Docs in a visible "Med App Workspace" folder ----------
+     One-way. The hidden file stays the source of truth; nothing here is read back as data.
+     Each Doc is tagged with appProperties.maw = its key, so a lost map never makes duplicates. */
+  const M = {running:false, again:false, timer:null, msg:"", progress:""};
+  const FOLDER="application/vnd.google-apps.folder", GDOC="application/vnd.google-apps.document";
+  function mstate(){ S.mirror = S.mirror || {root:"", folders:{}, files:{}, at:0}; return S.mirror; }
+  function hash(t){ let h=5381; for(let i=0;i<t.length;i++) h=((h<<5)+h+t.charCodeAt(i))|0; return (h>>>0).toString(36)+":"+t.length; }
+  function multipart(meta, html){
+    const b="maw"+Math.random().toString(36).slice(2);
+    return {headers:{"Content-Type":"multipart/related; boundary="+b}, body:"--"+b+"\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n"+JSON.stringify(meta)+"\r\n--"+b+"\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n"+html+"\r\n--"+b+"--"};
+  }
+  async function findTagged(key){ const q="appProperties has { key='maw' and value='"+key.replace(/'/g,"\\'")+"' } and trashed=false"; const r=await api(D+"?q="+encodeURIComponent(q)+"&fields=files(id,modifiedTime)&pageSize=1"); return (r.files||[])[0]||null; }
+  async function folder(path){
+    const ms=mstate(); const key=path.join("/");
+    if(ms.folders[key]) return ms.folders[key];
+    const parent = path.length>1 ? await folder(path.slice(0,-1)) : "root";
+    const tag="folder:"+hash(key); let f=await findTagged(tag);
+    if(!f) f=await api(D+"?fields=id", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({name:path[path.length-1], mimeType:FOLDER, parents:[parent], appProperties:{maw:tag}})});
+    ms.folders[key]=f.id; if(path.length===1) ms.root=f.id; return f.id;
+  }
+  async function writeDoc(d, idx, total){
+    const ms=mstate(); const cur=ms.files[d.key]; const h=hash(d.path.join("/")+"\n"+d.name+"\n"+d.body);
+    if(cur && cur.h===h && !cur.edited) return false;
+    if(cur && (cur.edited || cur.detached)) return false;
+    M.progress = idx+"/"+total; paintMirror();
+    const html='<html><head><meta charset="utf-8"></head><body>'+(d.shareable?'':'<p style="color:#666;font-size:9pt">Copy from Med App Workspace · updated '+new Date().toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})+' · Edit in the app. If this Doc is edited here, the app will ask before replacing it.</p>')+d.body+'</body></html>';
+    const parent=await folder(d.path);
+    let id=cur && cur.id;
+    if(id){
+      let m=null; try{ m=await api(D+"/"+id+"?fields=id,modifiedTime,trashed,name"); }catch(e){ m=null; }
+      if(!m || m.trashed) id="";
+      else if(cur.mt && m.modifiedTime && Date.parse(m.modifiedTime) > Date.parse(cur.mt)+5000){ cur.edited=true; return true; }
+    }
+    if(!id){ const f=await findTagged(d.key); if(f) id=f.id; }
+    let r;
+    if(id){ const mp=multipart({name:d.name}, html); r=await api(U+"/"+id+"?uploadType=multipart&fields=id,modifiedTime"+(cur&&cur.folder&&cur.folder!==parent?"&addParents="+parent+"&removeParents="+cur.folder:""), {method:"PATCH", headers:mp.headers, body:mp.body}); }
+    else { const mp=multipart({name:d.name, mimeType:GDOC, parents:[parent], appProperties:{maw:d.key}}, html); r=await api(U+"?uploadType=multipart&fields=id,modifiedTime", {method:"POST", headers:mp.headers, body:mp.body}); }
+    ms.files[d.key]={id:r.id, h, mt:r.modifiedTime||new Date().toISOString(), name:d.name, folder:parent, cyc:d.cyc||"", fixed:!!d.fixed};
+    return true;
+  }
+  async function mirrorRun(force){
+    if(!prefs().mirror || !st.connected || S.demo || locked) return;
+    if(M.running){ M.again=true; return; }
+    if(!fileScope && !window.__DRIVE_MOCK){ M.msg="needs-permission"; paintMirror(); return; }
+    M.running=true; M.msg=""; paintMirror();
+    let wrote=0;
+    try{
+      if(saveT) flush();
+      const ms=mstate(); const docs=mirrorDocs(); const keys=new Set(docs.map(d=>d.key));
+      for(let i=0;i<docs.length;i++){ const d=docs[i]; if(await writeDoc(d, i+1, docs.length)) wrote++; }
+      const ix=indexDoc(docs, ms); if(await writeDoc(ix, docs.length, docs.length)) wrote++; keys.add(ix.key);
+      // things deleted in the app go to Drive's Trash; earlier cycles' folders stay as an archive
+      for(const [k,f] of Object.entries(ms.files)){ if(keys.has(k) || f.detached) continue; if(f.cyc && f.cyc!==CYCLE) continue; try{ await api(D+"/"+f.id, {method:"PATCH", headers:{"Content-Type":"application/json"}, body:JSON.stringify({trashed:true})}); }catch(e){} delete ms.files[k]; wrote++; }
+      ms.at=Date.now(); M.progress="";
+      if(wrote){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} changed(); }
+    } catch(e){ M.progress=""; M.msg = e.scope? "needs-permission" : (e.message||"Couldn’t update the Drive copy"); if(force) toast(M.msg==="needs-permission"?"Allow access to files this app creates, then try again.":M.msg); }
+    finally{ M.running=false; paintMirror(); if(M.again){ M.again=false; setTimeout(()=>mirrorRun(), 500); } }
+    if(force && !M.msg) toast(wrote? "Drive copy updated." : "Drive copy is already up to date.");
+  }
+  function indexDoc(docs, ms){
+    const link=d=>{ const f=ms.files[d.key]; return f? '<a href="https://docs.google.com/document/d/'+f.id+'/edit">'+esc(d.name)+'</a>' : esc(d.name); };
+    const groups=new Map(); docs.forEach(d=>{ if(d.fixed) return; const g=d.path.slice(1).join(" › ")||"Top level"; if(!groups.has(g)) groups.set(g,[]); groups.get(g).push(d); });
+    const vcount=docs.filter(d=>d.fixed).length;
+    return {key:"index", path:["Med App Workspace"], name:"Start here", body:'<h1>Med App Workspace</h1><p>Links to every Doc the app keeps in this folder. Earlier versions of each essay sit next to it in its folder'+(vcount?' ('+vcount+' saved versions)':'')+'.</p>'+[...groups].map(([g,ds])=>'<h2>'+esc(g)+'</h2><ul>'+ds.map(d=>'<li>'+link(d)+'</li>').join("")+'</ul>').join("")};
+  }
+  function mirrorSoon(){ clearTimeout(M.timer); if(prefs().mirror && st.connected && !S.demo) M.timer=setTimeout(()=>mirrorRun(), window.__DRIVE_MOCK? 300 : 120000); }
+  async function mirrorOn(){
+    prefs().mirror=true; save();
+    if(!st.connected){ await connect(); }
+    else { try{ token=""; tokenExp=0; await getToken(true); }catch(e){ M.msg="needs-permission"; paintMirror(); toast(e.message||"Google didn’t grant access."); return; } }
+    if(!fileScope && !window.__DRIVE_MOCK){ M.msg="needs-permission"; paintMirror(); toast("To keep a copy in your Drive, allow access to files this app creates."); return; }
+    toast("Creating your Med App Workspace folder in Drive…"); await mirrorRun(true); render();
+  }
+  function mirrorOff(){ prefs().mirror=false; save(); clearTimeout(M.timer); render(); toast("Drive copy paused. The folder and Docs stay in your Drive."); }
+  async function mirrorFix(key, how){
+    const ms=mstate(), f=ms.files[key]; if(!f) return;
+    if(how==="overwrite"){ f.edited=false; f.h=""; f.mt=""; await mirrorRun(true); }
+    else if(how==="detach"){ f.detached=true; f.edited=false; save(); paintMirror(); render(); toast("The app won’t touch that Doc again. It’s yours."); }
+    else if(how==="see"){ try{ const t=await api(D+"/"+f.id+"/export?mimeType=text/plain"); ui.mirrorText={key, name:f.name, text:typeof t==="string"?t:JSON.stringify(t)}; render(); }catch(e){ toast(e.message||"Couldn’t read that Doc."); } }
+  }
+  function paintMirror(){ const el=document.getElementById("mirror-slot"); if(el) el.innerHTML=mirrorHtml(); }
+  function mirrorHtml(){
+    if(!available() || S.demo) return "";
+    if(!prefs().mirror) return '<div class="row small" style="justify-content:space-between"><span><b>Readable copy in your Drive:</b> off. Turn it on to keep Google Docs of everything in a “Med App Workspace” folder you can open, search and share.</span><button class="ghost" data-act="mirror-on">Turn on</button></div>';
+    const ms=S.mirror||{}, ed=Object.entries(ms.files||{}).filter(([k,f])=>f.edited);
+    let h='<div class="stack" style="gap:6px"><div class="row small" style="justify-content:space-between; flex-wrap:wrap"><span><b>Readable copy in your Drive:</b> '+
+      (M.msg==="needs-permission"? 'needs permission to create files in your Drive.' : M.running? 'updating'+(M.progress?' ('+M.progress+')':'')+'…' : M.msg? esc(M.msg) : ms.at? 'updated '+(Date.now()-ms.at<60e3?'just now':Math.round((Date.now()-ms.at)/6e4)+' min ago') : 'not created yet.')+
+      (ms.root?' <a href="https://drive.google.com/drive/folders/'+esc(ms.root)+'" target="_blank" rel="noopener">Open folder</a>':'')+'</span><span class="row">'+
+      (M.msg==="needs-permission"?'<button data-act="mirror-on">Allow access</button>':'<button class="ghost" data-act="mirror-now">Update now</button>')+
+      '<label class="chk small"><input type="checkbox" data-act="mirror-weak"'+(prefs().mirrorWeak?' checked':'')+'> Include weaknesses</label><button class="ghost" data-act="mirror-off">Turn off</button></span></div>';
+    if(ed.length) h+='<div class="banner warn"><div class="grow small"><strong>Edited in Drive, so the app stopped updating '+(ed.length===1?'this Doc':'these Docs')+':</strong>'+ed.map(([k,f])=>'<div class="row" style="margin-top:6px; flex-wrap:wrap"><span style="flex:1">'+esc(f.name)+'</span><button class="ghost small" data-act="mirror-fix" data-k="'+esc(k)+'" data-how="see">See the Drive text</button><button class="small" data-act="mirror-fix" data-k="'+esc(k)+'" data-how="overwrite">Replace with the app’s version</button><button class="ghost small" data-act="mirror-fix" data-k="'+esc(k)+'" data-how="detach">Keep my Drive edits (stop updating)</button></div>').join("")+'</div></div>';
+    if(ui.mirrorText) h+='<div class="panel"><div class="ph"><h3 style="flex:1">'+esc(ui.mirrorText.name)+' (as it is in Drive)</h3><button class="ghost" data-act="mirror-close">Close</button></div><div class="pb small" style="white-space:pre-wrap; max-height:360px; overflow:auto; user-select:text">'+esc(ui.mirrorText.text)+'</div><p class="small muted" style="margin:0; padding:0 16px 12px">Copy anything you want to keep into the app, then choose Replace or Keep above.</p></div>';
+    return h+'</div>';
+  }
   function chipHTML(){
     if(!available() || locked) return "";
     const ago = lastOk ? (Date.now()-lastOk<60e3 ? "just now" : Math.round((Date.now()-lastOk)/60e3)+" min ago") : "";
@@ -701,7 +813,7 @@ const Sync = (function(){
     }
   }
   function paintChip(){ const c=document.getElementById("sync-chip"); if(c) c.innerHTML=chipHTML(); }
-  return {connect, resume, retry, disconnect, run, changed, paintChip, available, state:()=>({...st, status, lastOk, msg:errMsg}), _merge:mergeInto};
+  return {connect, resume, retry, disconnect, run, changed, paintChip, available, state:()=>({...st, status, lastOk, msg:errMsg}), _merge:mergeInto, mirrorRun, docLink:k=>{ const f=prefs().mirror && S.mirror && S.mirror.files && S.mirror.files[k]; return f && !f.detached ? "https://docs.google.com/document/d/"+f.id+"/edit" : ""; }, mirrorOn, mirrorOff, mirrorFix, mirrorHtml, paintMirror};
 })();
 
 
@@ -1051,7 +1163,7 @@ function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;
 function stars(n){ let h=""; for(let i=1;i<=3;i++) h+= i<=n? "●" : '<span class="off">●</span>'; return '<span class="stars" aria-label="Interest '+n+' of 3">'+h+'</span>'; }
 let toastT;
 function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, 2400); }
-function go(tab, extra){ Object.assign(ui, {schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, editPrompt:false, pick:null, pickQ:"", pickI:0, focus:false, histSel:null, expId:null, recId:null, recPreview:false, recOpen:null, expImport:false, expParsed:null}, extra||{}); ui.tab=tab; if(location.hash!=="#"+tab){ try{ history.replaceState(null,"","#"+tab);}catch(e){ location.hash=tab; } } render(); window.scrollTo(0,0); }
+function go(tab, extra){ Object.assign(ui, {schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, editPrompt:false, pick:null, pickQ:"", pickI:0, focus:false, histSel:null, verSel:null, verCmp:false, verDone:false, expId:null, recId:null, recPreview:false, recOpen:null, expImport:false, expParsed:null}, extra||{}); ui.tab=tab; if(location.hash!=="#"+tab){ try{ history.replaceState(null,"","#"+tab);}catch(e){ location.hash=tab; } } render(); window.scrollTo(0,0); }
 
 function render(){
   NAMEIDX=null;
@@ -1387,6 +1499,41 @@ function packet(r, plain){
   if(refl.length) out+=H(2,"Reflections and goals")+refl.map(block).join("");
   return out;
 }
+// What goes in the readable Drive copy: one Doc per thing a person would read, plus frozen essay versions.
+function mirrorDocs(){
+  const ROOT="Med App Workspace", CY=cyc(CYCLE), out=[];
+  const E=t=>esc(t||""), P=t=>(t||"").trim()? '<p>'+esc(t.trim()).replace(/\n\s*\n/g,'</p><p>').replace(/\n/g,'<br>')+'</p>' : '<p style="color:#999"><i>Not written yet</i></p>';
+  const fname=t=>(t||"Untitled").replace(/[\/\\]/g,"-").replace(/\s+/g," ").trim().slice(0,110);
+  const count=e=> e.unit==="chars"? (e.text||"").length.toLocaleString()+" characters" : words(e.text||"")+" words";
+  const verLabel=e=>{ const l=lastVer(e); return (l && l.text===e.text)? 'v'+l.n+(l.note?' ('+l.note+')':'') : 'v'+workingN(e)+' (working)'; };
+  const verDocs=(e, path, prefix)=>{ vers(e).forEach(v=>out.push({key:"ver:"+e.id+":"+v.n, path, fixed:true, cyc:CYCLE, name:fname(prefix+" – v"+v.n+(v.note?" ("+v.note+")":"")), body:'<h1>'+E(prefix)+' – v'+v.n+'</h1><p style="color:#555;font-size:9pt">'+new Date(v.at).toLocaleString(undefined,{month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit"})+(v.note?' · '+E(v.note):'')+' · '+(e.unit==="chars"?v.text.length.toLocaleString()+" characters":words(v.text)+" words")+'</p>'+(isLetter(e)?'':'<p style="color:#555"><i>'+E(e.prompt)+'</i></p>')+P(v.text)})); };
+  const essayDocs=(e, path, label, where)=>{
+    out.push({key:"essay:"+e.id, path, cyc:CYCLE, name:fname(label+" – current draft"), body:'<h1>'+E(where)+': '+E(label)+'</h1>'+(isLetter(e)?'':'<p style="color:#555"><i>'+E(e.prompt)+'</i></p>')+'<p style="color:#555;font-size:9pt">'+E(limitL(e))+' · '+count(e)+' · '+E(isLetter(e)&&e.status==="pasted"?"Sent":(STATUS[e.status]||""))+' · '+verLabel(e)+(vers(e).length?' · earlier versions are in this folder':'')+'</p>'+P(e.text)});
+    verDocs(e, path, label); };
+  const labelFor=(list, e)=>{ const base=isLetter(e)? (FAM[e.family]||"Letter") : (FAM[e.family]||"Essay"); const same=list.filter(x=>(FAM[x.family]||"Essay")===base); return same.length>1? base+" "+(same.indexOf(e)+1) : base; };
+  // experiences
+  const X=S.experiences||[], st=X.filter(x=>STORY_KINDS.includes(x.kind)).sort((a,b)=> (b.ongoing?1:0)-(a.ongoing?1:0) || (b.end||b.start||"").localeCompare(a.end||a.start||""));
+  if(st.length) out.push({key:"log", path:[ROOT], name:"Experience log", body:'<h1>Experience log</h1>'+st.map(x=>'<h2>'+E(x.title||"Untitled")+'</h2><p style="color:#555">'+E([EXP_ONE[x.kind], x.org, expDates(x), expHours(x)? expHours(x).toLocaleString()+" hours":""].filter(Boolean).join(" · "))+(x.contact?'<br>Supervisor: '+E([x.contact, x.contactRole, x.contactEmail].filter(Boolean).join(", ")):'')+'</p><h3>What I did</h3>'+P(x.summary)+((x.items||[]).length?'<h3>What I learned</h3>'+x.items.map(it=>'<p><b>'+E(it.head||"")+(it.head?'.</b> ':'</b>')+E(it.text)+((it.tags||[]).length?' <span style="color:#777">(Shows: '+E(it.tags.join(", "))+')</span>':'')+'</p>').join(""):'')).join("")});
+  const strs=X.filter(x=>x.kind==="strength"), wks=X.filter(x=>x.kind==="weakness"), refl=X.filter(x=>x.kind==="reflection");
+  if(strs.length || refl.length || (wks.length && prefs().mirrorWeak)) out.push({key:"self", path:[ROOT], name:"Strengths and reflections", body:
+    (strs.length?'<h1>Strengths</h1>'+strs.map(x=>{ const ev=X.flatMap(y=>(y.items||[]).filter(it=>(it.tags||[]).includes(x.title)).map(it=>(it.head||"")+" ("+(y.title||"")+")")); return '<h2>'+E(x.title)+'</h2>'+P(x.summary)+((x.items||[]).length||ev.length?'<ul>'+(x.items||[]).map(it=>'<li>'+(it.head?'<b>'+E(it.head)+'.</b> ':'')+E(it.text)+'</li>').join("")+ev.map(t=>'<li>'+E(t)+'</li>').join("")+'</ul>':''); }).join(""):'')+
+    (wks.length && prefs().mirrorWeak?'<h1>Growing</h1>'+wks.map(x=>'<h2>'+E(x.title)+'</h2>'+P(x.summary)+(x.doing?'<h3>What I’m doing about it</h3>'+P(x.doing):'')).join(""):'')+
+    (refl.length?'<h1>About me</h1>'+refl.map(x=>'<h2>'+E(x.title)+'</h2>'+P(x.summary)+(x.items||[]).map(it=>'<h3>'+E(it.head)+'</h3>'+P(it.text)).join("")).join(""):'')});
+  (S.recommenders||[]).forEach(r=>{ if(!r.name) return; out.push({key:"rec:"+r.id, path:[ROOT,"Letter writers"], shareable:true, name:fname("Summary for "+r.name), body:packet(r)}); });
+  if(S.bases.length) out.push({key:"bases", path:[ROOT], name:"Base essays", body:'<h1>Base essays</h1>'+S.bases.map(b=>{ const L=latest(b); return '<h2>'+E(b.title||FAM[b.family])+'</h2><p style="color:#555;font-size:9pt">'+E(FAM[b.family]||"")+' · v'+L.v+(L.note?' ('+E(L.note)+')':'')+' · '+words(L.text)+' words'+(unsaved(b)?' · has unsaved edits in the app':'')+'</p>'+P(L.text); }).join("")});
+  // primary applications
+  SVC_ORDER.forEach(k=>{ const a=(S.apps||[]).find(x=>x.id==="app-"+k); const es=S.essays.filter(e=>e.schoolId==="app-"+k), acts=(S.acts||[]).filter(x=>x.svc===k);
+    if(!es.length && !acts.length) return;
+    const path=[ROOT,CY+" Primary"];
+    es.forEach(e=>essayDocs(e, path, SVC[k].name+" – "+labelFor(es,e), SVC[k].name+(a&&a.submitted?" (submitted)":"")));
+    if(acts.length) out.push({key:"acts:"+k, path, cyc:CYCLE, name:SVC[k].name+" – Activities", body:'<h1>'+E(SVC[k].name)+' activities</h1>'+acts.map(x=>'<h2>'+E(x.title||"Untitled")+(x.mm?' (most meaningful)':'')+'</h2><p style="color:#555">'+E([x.type, x.org, x.dates, x.hours? x.hours+" hours":""].filter(Boolean).join(" · "))+'</p>'+P(x.desc)+(x.mm&&x.mmText?'<h3>Most meaningful</h3>'+P(x.mmText):'')).join("")}); });
+  // each school: every prompt, letters and notes in one Doc; frozen versions alongside
+  S.schools.forEach(s=>{ const es=S.essays.filter(e=>e.schoolId===s.id), main=es.filter(e=>!isLetter(e)), lets=es.filter(isLetter); const path=[ROOT,CY+" Secondaries",fname(s.name)];
+    const facts=[s.submitted?'Submitted '+(s.submittedAt?fmt(s.submittedAt):''):'Not submitted yet', s.ii?'Interview invite '+fmt(s.ii):'', s.iv?'Interview '+fmt(s.iv)+(s.ivMode?' ('+s.ivMode+')':''):'', s.outcome?(OUTCOME[s.outcome]||s.outcome)+(s.outcomeDate?' '+fmt(s.outcomeDate):''):''].filter(Boolean).join(" · ");
+    main.forEach(e=>essayDocs(e, path, labelFor(main,e), s.name)); lets.forEach(e=>essayDocs(e, path, labelFor(lets,e), s.name));
+    if((s.notes||"").trim() || (s.reflect||"").trim()) out.push({key:"notes:"+s.id, path, cyc:CYCLE, name:"Notes", body:'<h1>'+E(s.name)+'</h1><p style="color:#555">'+E(facts)+'</p>'+(s.notes?'<h2>Notes</h2>'+P(s.notes):'')+(s.reflect?'<h2>After the interview</h2>'+P(s.reflect):'')}); });
+  return out;
+}
 function packetHtml(r){
   return '<!doctype html><html><head><meta charset="utf-8"><title>Background for '+esc(r.name)+'</title><style>body{font-family:Georgia,"Times New Roman",serif; max-width:720px; margin:40px auto; padding:0 24px; line-height:1.5; color:#111} h1{font-size:24px; margin-bottom:4px} h2{font-size:18px; margin-top:28px; border-bottom:1px solid #ccc; padding-bottom:4px} h3{font-size:16px; margin:18px 0 2px} .meta{color:#555; margin-top:0; font-style:italic} .lab{font-weight:bold; margin-bottom:4px} li{margin-bottom:6px} .note{background:#f3f6f8; border-left:3px solid #0E6B66; padding:8px 12px}</style></head><body>'+packet(r,false)+'</body></html>';
 }
@@ -1496,12 +1643,37 @@ function autoSnap(e, before){
   if(before && before.length>200 && e.text.length < before.length*0.85){ if(last && last.text===before){ if(!last.label){ last.label="Before a big cut"; } } else snapEssay(e, before, "Before a big cut"); }
   else if(e.text.trim().length>=50 && (!last || (Date.now()-last.t>SNAP_EVERY && last.text!==e.text))) snapEssay(e);
 }
+// Numbered versions: "Mark v2 done" freezes the text; everything after is v3. Autosaves are only a recovery net.
+const RECOVERY_LABELS=/^(Before a big cut|Before restoring|Before starting from base|Abandoned v\d+ draft)$/;
+function vers(e){ return e.vers||[]; }
+function workingN(e){ return vers(e).length+1; }
+function lastVer(e){ const v=vers(e); return v[v.length-1]||null; }
+function freezeVer(e, note){ const t=e.text||""; if(!t.trim()) return null; const l=lastVer(e); if(l && l.text===t){ if(note && !l.note) l.note=note; return l; } e.vers=vers(e).concat([{n:workingN(e), text:t, at:Date.now(), note:note||""}]); return lastVer(e); }
+// older named saves become numbered versions, in order; automatic ones stay as recovery copies
+function migrateVers(e){ if(e.vers || !(e.hist||[]).some(h=>h.label && !RECOVERY_LABELS.test(h.label))) return false; e.vers=[]; e.hist.filter(h=>h.label && !RECOVERY_LABELS.test(h.label)).forEach(h=>e.vers.push({n:e.vers.length+1, text:h.text, at:h.t, note:h.label})); e.hist=e.hist.filter(h=>!h.label || RECOVERY_LABELS.test(h.label)); return true; }
+function versionsHtml(e, compact){
+  const V=vers(e), n=workingN(e), l=lastVer(e), changed=!l || l.text!==e.text;
+  let h='<div class="vstrip" role="group" aria-label="Versions"><span class="small muted" style="margin-right:4px">Versions</span>'+
+    V.map(v=>'<button class="vchip'+(ui.verSel===v.n?' on':'')+'" data-act="ver-see" data-n="'+v.n+'" title="'+esc((v.note?v.note+" · ":"")+new Date(v.at).toLocaleDateString(undefined,{month:"short",day:"numeric"}))+'">v'+v.n+(v.note?' · '+esc(v.note.length>18?v.note.slice(0,17)+"…":v.note):'')+'</button>').join("")+
+    '<span class="vchip work'+(ui.verSel?'':' on')+'">v'+n+' · working</span>'+
+    (ui.verDone? '' : '<button class="ghost small" data-act="ver-done"'+(e.text.trim()&&changed?'':' disabled')+'>Mark v'+n+' done</button>')+
+    ((e.hist||[]).length?'<button class="ghost small" data-act="panel" data-p="'+(ui.panel==="hist"?'':'hist')+'" style="margin-left:auto">Recovery copies ('+e.hist.length+')</button>':'')+'</div>';
+  if(ui.verDone) h+='<div class="row" style="margin-top:6px"><input id="ver-note" placeholder="Note for v'+n+' (optional), e.g. Sent to Dr. Shah" style="flex:1; min-width:160px"><button class="primary" data-act="ver-save">Save v'+n+'</button><button class="ghost" data-act="ver-cancel">Cancel</button></div>';
+  const sel=ui.verSel && V.find(v=>v.n===ui.verSel);
+  if(sel){
+    h+='<div class="panel" style="margin-top:8px"><div class="ph" style="flex-wrap:wrap"><h3 style="flex:1">v'+sel.n+(sel.note?' · '+esc(sel.note):'')+' <span class="small muted" style="font-weight:400">'+new Date(sel.at).toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})+' · '+words(sel.text)+' words</span></h3>'+
+      '<button class="ghost small" data-act="ver-cmp">'+(ui.verCmp?'Show text':'Compare with v'+n)+'</button><button class="ghost small" data-act="ver-copy" data-n="'+sel.n+'">Copy text</button>'+(sel.text!==e.text?'<button class="small" data-act="ver-over" data-n="'+sel.n+'">Start v'+n+' over from v'+sel.n+'</button>':'')+'<button class="ghost small" data-act="ver-see" data-n="">Close</button></div>'+
+      '<div class="pb">'+(ui.verCmp? '<div class="legend small"><span><del>v'+sel.n+'</del></span><span><ins>v'+n+' (working)</ins></span></div><div class="diff" style="font-size:14px; max-height:'+(compact?260:380)+'px; overflow:auto">'+diff(sel.text, e.text).map(x=>x.type==="eq"?esc(x.a.join("")):'<del>'+esc(x.a.join(""))+'</del><ins>'+esc(x.b.join(""))+'</ins>').join("")+'</div>'
+        : '<div class="small" style="white-space:pre-wrap; font-family:var(--f-essay, Georgia, serif); font-size:15px; line-height:1.6; max-height:'+(compact?260:380)+'px; overflow:auto; user-select:text">'+esc(sel.text)+'</div><p class="small muted" style="margin:6px 0 0">Select any passage to copy it into your draft.</p>')+'</div></div>';
+  }
+  return h;
+}
 function when(t){ const d=new Date(t), n=Date.now()-t; if(n<60e3) return "just now"; if(n<36e5) return Math.round(n/6e4)+" min ago"; return d.toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}); }
 function historyHtml(e){
   const H=(e.hist||[]).map((h,i)=>({h,i})).reverse();
-  let h='<div class="stack" style="gap:10px"><div class="row"><input id="snap-label" placeholder="Name this version (optional)" style="flex:1; min-width:160px"><button class="primary" data-act="snap-save">Save a version</button></div>';
-  if(!H.length) return h+'<p class="small muted" style="margin:0">Versions are saved automatically every 15 minutes while you write, and before you cut a big chunk. You can also save one by name.</p></div>';
-  h+='<ul class="list">'+H.map(({h:v,i})=>'<li><div class="main"><div class="small" style="font-weight:600">'+(v.label?esc(v.label):'Saved automatically')+'</div><div class="small muted">'+when(v.t)+' · '+words(v.text)+' words'+(v.text===e.text?' · same as now':'')+'</div></div><div class="row" style="flex-wrap:nowrap"><button class="ghost small" data-act="hist-see" data-i="'+i+'">'+(ui.histSel===i?'Hide':'Compare')+'</button>'+(v.text!==e.text?'<button class="small" data-act="hist-restore" data-i="'+i+'">Restore</button>':'')+'</div></li>'+
+  let h='<div class="stack" style="gap:10px"><p class="small muted" style="margin:0">Saved automatically every 15 minutes while you write, before a big cut, and before you restore or start over. They’re a safety net; your numbered versions are above the essay.</p>';
+  if(!H.length) return h+'</div>';
+  h+='<ul class="list">'+H.map(({h:v,i})=>'<li><div class="main"><div class="small" style="font-weight:600">'+(v.label?esc(v.label):'Autosave')+'</div><div class="small muted">'+when(v.t)+' · '+words(v.text)+' words'+(v.text===e.text?' · same as now':'')+'</div></div><div class="row" style="flex-wrap:nowrap"><button class="ghost small" data-act="hist-see" data-i="'+i+'">'+(ui.histSel===i?'Hide':'Compare')+'</button>'+(v.text!==e.text?'<button class="small" data-act="hist-restore" data-i="'+i+'">Restore</button>':'')+'</div></li>'+
     (ui.histSel===i? '<li style="display:block"><div class="legend small"><span><del>this version</del></span><span><ins>now</ins></span></div><div class="diff" style="font-size:14px; max-height:340px; overflow:auto">'+diff(v.text, e.text).map(x=>x.type==="eq"?esc(x.a.join("")):'<del>'+esc(x.a.join(""))+'</del><ins>'+esc(x.b.join(""))+'</ins>').join("")+'</div></li>' : '')).join("")+'</ul>';
   return h+'<p class="small muted" style="margin:0">Restoring keeps your current text as a version too, so nothing is lost.</p></div>';
 }
@@ -1572,7 +1744,7 @@ function vFocus(e){
     else if(rail==="base") h+= b? '<div class="panel"><div class="ph"><h3 style="flex:1">'+esc(b.title)+' · v'+latest(b).v+'</h3><button class="ghost small" data-act="open-base" data-id="'+b.id+'">Open</button></div><div class="pb" style="white-space:pre-wrap; font-family:var(--f-essay); font-size:15px; line-height:1.6">'+esc(latest(b).text||"(empty)")+'</div></div>' : '<p class="small muted">No base linked. Leave focus to link one or make this the base.</p>';
     else if(rail==="notes") h+='<label class="f">Notes for this essay<textarea id="scratch-'+e.id+'" rows="14" data-bind="essay:'+e.id+':scratch" placeholder="Outline, lines to keep, ideas to try. Only you see this.">'+esc(e.scratch||"")+'</textarea></label>';
     else if(rail==="checks") h+='<div id="checks-slot">'+checksHtml(e)+'</div>';
-    else if(rail==="hist") h+='<div class="panel"><div class="ph"><h3>History</h3></div><div class="pb">'+historyHtml(e)+'</div></div>';
+    else if(rail==="hist") h+='<div class="panel"><div class="ph"><h3>Versions</h3></div><div class="pb">'+versionsHtml(e, true)+(ui.panel==="hist"?'<div style="margin-top:10px">'+historyHtml(e)+'</div>':'')+'</div></div>';
     h+='</aside>';
   }
   h+='</div><div class="fstatus">'+meter(e)+'<span class="row" style="gap:8px"><label class="chk small">Status <select id="st3-'+e.id+'" data-bind="essay:'+e.id+':status">'+statusOpts(e)+'</select></label><button class="primary" data-act="copy-portal" data-id="'+e.id+'">Copy for portal</button><span class="small muted" id="copy-note-'+e.id+'"></span></span></div></div>';
@@ -2002,11 +2174,12 @@ function vEssay(e){
   if(e.prev && e.prev.length) h += '<div class="banner info"><div class="grow small"><strong>This essay was edited on two computers at once.</strong> The version shown is the newer one. The other '+(e.prev.length===1?'version is':e.prev.length+' versions are')+' kept here:'+e.prev.map((p,i)=>'<details style="margin-top:6px"><summary style="cursor:pointer">Version from '+new Date(p.at).toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})+' ('+words(p.text)+' words)</summary><div style="white-space:pre-wrap; font-family:var(--f-essay); margin:6px 0">'+esc(p.text)+'</div><button class="small" data-act="prev-use" data-i="'+i+'">Use this version</button> <button class="ghost small" data-act="prev-drop" data-i="'+i+'">Discard it</button></details>').join("")+'</div></div>';
   if(ui.panel==="review" && b) h += reviewPanel(e,b);
   if(ui.panel==="compare" && b) h += comparePanel(e,b);
-  if(ui.panel==="hist") h += '<div class="panel"><div class="ph"><h2 style="flex:1">Version history</h2><button class="ghost" data-act="panel" data-p="">Close</button></div><div class="pb">'+historyHtml(e)+'</div></div>';
+  h += versionsHtml(e);
+  if(ui.panel==="hist") h += '<div class="panel"><div class="ph"><h2 style="flex:1">Recovery copies</h2><button class="ghost" data-act="panel" data-p="">Close</button></div><div class="pb">'+historyHtml(e)+'</div></div>';
   h += '<textarea class="page" id="essay-text" data-bind="essay:'+e.id+':text" aria-label="Essay for '+esc(s.name)+'" placeholder="Write or paste this school’s version here.">'+esc(e.text)+'</textarea>';
   h += '<div id="names-slot">'+namesBanner(e)+'</div>';
   if(isLetter(e)) h += '<div class="row"><label class="chk small">Send by <input type="date" id="due-'+e.id+'" data-bind="essay:'+e.id+':due" value="'+esc(e.due||"")+'"></label><span class="small muted">Shows up on Do next and the Cycle tab, and in your calendar file.</span></div>';
-  h += '<div class="row" style="gap:10px"><button class="primary" data-act="copy-portal" data-id="'+e.id+'">Copy for portal</button><button data-act="focus-on">Focus</button><button class="ghost" data-act="panel" data-p="'+(ui.panel==="hist"?'':'hist')+'">History'+((e.hist||[]).length?' ('+e.hist.length+')':'')+'</button><span class="small muted" id="copy-note-'+e.id+'">Cleans up curly quotes and extra spaces, then copies.</span></div>';
+  h += '<div class="row" style="gap:10px"><button class="primary" data-act="copy-portal" data-id="'+e.id+'">Copy for portal</button><button data-act="focus-on">Focus</button>'+(Sync.docLink("essay:"+e.id)?'<a class="small" href="'+Sync.docLink("essay:"+e.id)+'" target="_blank" rel="noopener">Open in Drive</a>':'')+'<span class="small muted" id="copy-note-'+e.id+'">Cleans up curly quotes and extra spaces, then copies.</span></div>';
   h += '<div class="row" style="justify-content:space-between">'+meter(e)+'<label class="chk small">Status <select id="st2-'+e.id+'" data-bind="essay:'+e.id+':status">'+statusOpts(e)+'</select></label></div>';
   h += '</div><aside class="stack">';
   h += '<div id="checks-slot">'+checksHtml(e)+'</div>';
@@ -2248,6 +2421,7 @@ function vFoot(){
   const since = S.lastBackup ? daysUntil(S.lastBackup) : null;
   let h='';
   if(hasWork && !S.demo && !Sync.state().connected && (since==null || since<=-7)) h += '<div class="banner warn" style="margin-bottom:12px"><div class="grow small"><strong>'+(since==null?'You haven’t saved a backup yet.':'Last backup was '+Math.abs(since)+' days ago.')+'</strong> Your essays live only in this browser. Clearing site data or losing this device erases them.</div><button data-act="backup">Download backup</button></div>';
+  if(Sync.state().connected && !S.demo) h += '<div id="mirror-slot" style="margin-bottom:10px">'+Sync.mirrorHtml()+'</div>';
   h += '<div class="stack" style="gap:10px"><div class="row" style="justify-content:space-between"><span>'+(Sync.state().connected? 'Saved to your Google Drive'+(Sync.state().email?' ('+esc(Sync.state().email)+')':'')+' and in this browser. <button class="ghost small" data-act="sync-disconnect" style="padding:0">Disconnect</button>' : 'Your entries are saved only in this browser.'+(Sync.available()?' <button class="ghost small" data-act="sync-connect" style="padding:0">Save to Google Drive</button>':''))+(S.lastBackup?' Last backup '+fmt(S.lastBackup)+'.':'')+'</span><span class="row"><button class="ghost" data-act="backup">Download backup</button><button class="ghost" data-act="restore">Restore backup</button>'+(S.demo?'<button data-act="exit-sample">Back to my data</button>':'<button class="ghost" data-act="try-examples">Explore with sample data</button>'+confirmBtn("clear","Erase everything",Sync.state().connected?"Erase all schools and essays here and in Google Drive":"Erase all schools and essays on this device"))+'</span></div>'+
     '<div class="row" style="justify-content:space-between"><span>Student-built tool. Not affiliated with AMCAS, the AAMC, or any medical school. Always check prompts, limits and deadlines in each school’s portal.</span><span class="row"><a class="small" href="about.html">About</a><a class="small" href="privacy.html">Privacy</a><button class="ghost" data-act="tour">How to use this app</button>'+(logMode()?'<button class="ghost" data-act="applying-on">Show the application tools</button>':'')+'</span></div></div>';
   return h;
@@ -2324,6 +2498,13 @@ document.addEventListener("click", ev=>{
     case "focus-off": ui.focus=false; render(); break;
     case "rail": ui.rail = ui.rail===d.v? "" : d.v; render(); break;
     case "snap-save": { const x=essay(ui.essayId); if(!x) break; if(!x.text.trim()){ toast("Nothing to save yet."); break; } const lab=(document.getElementById("snap-label")||{}).value||""; snapEssay(x, null, lab.trim()||"Saved version"); save(); render(); toast("Version saved"); break; }
+    case "ver-see": ui.verSel = d.n? +d.n : null; ui.verCmp=false; render(); break;
+    case "ver-cmp": ui.verCmp=!ui.verCmp; render(); break;
+    case "ver-done": ui.verDone=true; render(); setTimeout(()=>{ const n=document.getElementById("ver-note"); if(n) n.focus(); },0); break;
+    case "ver-cancel": ui.verDone=false; render(); break;
+    case "ver-save": { const x=essay(ui.essayId); if(!x) break; const note=((document.getElementById("ver-note")||{}).value||"").trim(); const v=freezeVer(x, note); ui.verDone=false; save(); render(); if(v) toast("v"+v.n+" saved. You’re now working on v"+workingN(x)+"."); break; }
+    case "ver-copy": { const x=essay(ui.essayId); const v=x&&vers(x).find(z=>z.n===+d.n); if(!v) break; try{ navigator.clipboard.writeText(v.text).then(()=>toast("v"+v.n+" copied."),()=>toast("Couldn’t copy. Select the text instead.")); }catch(err){ toast("Couldn’t copy. Select the text instead."); } break; }
+    case "ver-over": { const x=essay(ui.essayId); const v=x&&vers(x).find(z=>z.n===+d.n); if(!v) break; const l=lastVer(x); if(x.text.trim() && (!l || l.text!==x.text)) snapEssay(x, x.text, "Abandoned v"+workingN(x)+" draft"); x.text=v.text; ui.verSel=null; save(); render(); toast("v"+workingN(x)+" now starts from v"+v.n+". Your unfinished draft is in Recovery copies."); break; }
     case "hist-see": ui.histSel = ui.histSel===+d.i? null : +d.i; render(); break;
     case "hist-restore": { const x=essay(ui.essayId); const v=x&&(x.hist||[])[+d.i]; if(!v) break; snapEssay(x, x.text, "Before restoring"); x.text=v.text; if(x.baseId && x.basedOnV) x.localEdit=true; ui.histSel=null; save(); render(); toast("Restored. Your previous text is saved in History."); break; }
     case "chk-show": { const ta=document.getElementById("essay-text"); if(!ta) break; const a=+d.a, b2=+d.b; ta.focus(); ta.setSelectionRange(a, Math.min(b2, ta.value.length)); const ratio=a/Math.max(1,ta.value.length); ta.scrollTop=Math.max(0, ratio*ta.scrollHeight - ta.clientHeight/3); ta.scrollIntoView({block:"center"}); break; }
@@ -2376,6 +2557,12 @@ document.addEventListener("click", ev=>{
     case "sync-connect": Sync.connect(); break;
     case "sync-resume": Sync.resume(); break;
     case "sync-run": Sync.retry(); break;
+    case "mirror-on": Sync.mirrorOn(); break;
+    case "mirror-off": Sync.mirrorOff(); break;
+    case "mirror-now": Sync.mirrorRun(true); break;
+    case "mirror-fix": Sync.mirrorFix(d.k, d.how); break;
+    case "mirror-close": ui.mirrorText=null; render(); break;
+    case "mirror-weak": prefs().mirrorWeak=!prefs().mirrorWeak; save(); Sync.paintMirror(); break;
     case "sync-info": { const ss=Sync.state(); toast("Saved to Google Drive"+(ss.email?" ("+ss.email+")":"")+". Open this site on any computer and sign in to pick up where you left off."); break; }
     case "sync-disconnect": Sync.disconnect(); break;
     case "sync-snooze": try{ localStorage.setItem("secondaries-drive-nudge", String(Date.now()+7*864e5)); }catch(e){} render(); break;
@@ -2558,7 +2745,7 @@ document.addEventListener("input", ev=>{
   const [kind,idv,field]=bnd.split(":");
   if(el.type==="checkbox"||el.tagName==="SELECT"||el.type==="date"||el.type==="number"||el.type==="time") return; // handled on change
   if(kind==="school"){ const sc=school(idv); if(sc){ sc[field]=el.value; save(); } return; }
-  if(kind==="essay"){ const x=essay(idv); const before=x[field]; x[field]=el.value; if(field==="text"){ autoSnap(x, before); clearTimeout(window.__chkT); window.__chkT=setTimeout(()=>{ const cs=document.getElementById("checks-slot"); if(cs) cs.innerHTML=checksHtml(x); },700); const mb=document.querySelector('[data-act="make-base"]'); if(mb) mb.disabled=!x.text.trim(); if(x.baseId && x.basedOnV) x.localEdit=true; if(x.status==="todo" && x.text.trim()) x.status="drafting"; const m=document.getElementById("m-"+x.id); if(m) m.outerHTML=meter(x); clearTimeout(namesT); namesT=setTimeout(()=>{ const slot=document.getElementById("names-slot"); if(slot) slot.innerHTML=namesBanner(x); }, 600); } save(); }
+  if(kind==="essay"){ const x=essay(idv); const before=x[field]; x[field]=el.value; if(field==="text"){ autoSnap(x, before); clearTimeout(window.__chkT); window.__chkT=setTimeout(()=>{ const cs=document.getElementById("checks-slot"); if(cs) cs.innerHTML=checksHtml(x); },700); const mb=document.querySelector('[data-act="make-base"]'); if(mb) mb.disabled=!x.text.trim(); const vd=document.querySelector('[data-act="ver-done"]'); if(vd){ const lv=lastVer(x); vd.disabled=!(x.text.trim() && (!lv || lv.text!==x.text)); } if(x.baseId && x.basedOnV) x.localEdit=true; if(x.status==="todo" && x.text.trim()) x.status="drafting"; const m=document.getElementById("m-"+x.id); if(m) m.outerHTML=meter(x); clearTimeout(namesT); namesT=setTimeout(()=>{ const slot=document.getElementById("names-slot"); if(slot) slot.innerHTML=namesBanner(x); }, 600); } save(); }
   if(kind==="base"){ const b=base(idv); b[field]=el.value; if(field==="draft"){ document.getElementById("bmeter").textContent=words(b.draft)+" words · "+b.draft.length.toLocaleString()+" characters"; document.getElementById("bstate").innerHTML = unsaved(b)?'<span class="chip warn">Unsaved edits since v'+latest(b).v+'</span>':'<span class="chip">Matches v'+latest(b).v+'</span>'; } save(); }
 });
 document.addEventListener("change", ev=>{
@@ -2582,6 +2769,8 @@ document.addEventListener("change", ev=>{
   if(!obj) return;
   if(el.tagName==="TEXTAREA"||(el.tagName==="INPUT"&&el.type==="text")) return;
   obj[field]=val;
+  if(kind==="essay" && field==="status" && val==="pasted") freezeVer(obj, isLetter(obj)?"Sent":"Submitted");
+  if(kind==="school" && field==="submitted" && val) S.essays.filter(x=>x.schoolId===obj.id && (x.text||"").trim()).forEach(x=>{ if(x.status!=="pasted") x.status="pasted"; freezeVer(x, "Submitted"); });
   if(kind==="essay" && field==="status" && (val==="ready"||val==="pasted")){ const w=wrongNames(obj); if(w.length) setTimeout(()=>toast("Heads up: this essay still mentions "+w.map(x=>x.alias).join(", ")+"."),50); }
   if(kind==="school" && field==="submitted") obj.submittedAt = val ? (obj.submittedAt||iso(today())) : null;
   if(kind==="school" && field==="submittedAt" && val) obj.submitted = true;
@@ -2629,6 +2818,7 @@ document.addEventListener("keydown", ev=>{
 let lastDay=iso(today());
 document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState!=="visible") return; const a=document.activeElement; if(a && (a.tagName==="TEXTAREA" || a.tagName==="INPUT")) return; if(iso(today())!==lastDay){ lastDay=iso(today()); } render(); });
 window.addEventListener("hashchange", ()=>{ const t=location.hash.slice(1); if(t==="log"){ go("experiences"); return; } if(TABS.some(x=>x[0]===t) && t!==ui.tab) go(t); });
+if(!S.demo && (S.essays||[]).map(migrateVers).some(Boolean)) save();
 const h0=location.hash.slice(1); if(TABS.some(x=>x[0]===h0)) ui.tab=h0;
 // the Experience Log front door: someone arriving at #log with nothing else here gets the log on its own
 if(h0==="log"){ ui.tab="experiences"; if(prefs().applying===undefined && !S.schools.length && !S.essays.length && !S.demo){ prefs().applying=false; save(); } try{ history.replaceState(null,"","#experiences"); }catch(e){} }

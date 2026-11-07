@@ -85,3 +85,19 @@ Each experience is written up when it ends: what I did (summary) and what I lear
 - **About me starters** (`ABOUT_STARTERS`): why medicine, career goals in medicine and research, group vs individual work, what letter writers should know.
 - **Log-only mode:** opening `#log` with nothing else saved sets `prefs.applying=false`: the app is titled "Experience Log", shows only Experiences (log, strengths & weaknesses, letter writers), and skips the tour. "I'm applying this cycle" (`applying-on`) shows everything; "Not applying yet? Show only the log" goes back. Same storage and Drive file either way. The About page links to it.
 - Older records may have `log` entries from a short-lived day-by-day version; they're ignored except that their hours count toward the total until `hours` is set.
+
+## Numbered versions
+Every essay (secondaries, primary, letters) has numbered versions (`e.vers`: [{n, text, at, note}]); the working draft is v(n+1).
+- "Mark vN done" freezes the text with an optional note; the strip above the editor shows v1 · v2 · v3 (working). Clicking a version shows it read-only, compares it with the draft, copies it, or starts the draft over from it (the unfinished draft goes to Recovery copies as "Abandoned vN draft").
+- Setting an essay to In portal (Sent, for letters) or ticking a school's Submitted freezes a "Submitted" version, so what each school received is always kept.
+- Autosaves (`e.hist`: every 15 minutes, before a big cut, before restoring or starting over) are a recovery net under "Recovery copies". Older named saves were converted to numbered versions on first load (`migrateVers`).
+- Base essays keep their own numbered versions (Save as vN), as before.
+
+## Readable copy in Drive (opt-in)
+"Readable copy in your Drive" (footer, when Drive is connected) writes Google Docs into a visible `Med App Workspace` folder. One-way: the hidden `secondaries.json` stays the source of truth.
+- **Permission:** adds `drive.file` (only files this app creates), requested when the user turns it on (`prefs.mirror`). Add `drive.file` under Data access on the Google Cloud consent screen.
+- **Layout** (`mirrorDocs()`): **Start here** (links to every current Doc, written last); Experience log; Strengths and reflections (weaknesses only with "Include weaknesses", `prefs.mirrorWeak`); Base essays; Letter writers/Summary for <name> (no header line, so it can be shared); `<2026–27> Primary/` (`AMCAS – Personal statement – current draft`, its `– vN (note)` versions, `AMCAS – Activities`); `<2026–27> Secondaries/<School>/` (`<Prompt> – current draft` next to `<Prompt> – vN (note)` for each frozen version, letters the same way, Notes if any). Each essay page has an "Open in Drive" link. The folder path is part of each Doc's hash, so changing the layout moves existing Docs instead of duplicating them; folders left empty are not deleted (they could hold the user's own files).
+- **Bookkeeping** (`S.mirror`: root, folders, files {key: id, hash, modifiedTime, folder, cyc}) syncs with the data (`mergeMirror`), and every file carries `appProperties.maw = key` (folders: a hash of their path), so a lost map finds existing files instead of duplicating them.
+- **Updates:** 2 minutes after changes or "Update now"; only Docs whose content hash changed are rewritten (same file, so shared links keep working); renames follow; Docs for things deleted in the app go to Drive's Trash, except earlier cycles' folders, which stay as an archive.
+- **Edited in Drive:** if a Doc's modifiedTime is newer than the app's last write, it's skipped and listed with See the Drive text / Replace with the app's version / Keep my Drive edits (stop updating).
+- Sample mode never writes to Drive. Turning it off leaves the folder alone.
