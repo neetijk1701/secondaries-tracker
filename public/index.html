@@ -105,6 +105,7 @@ nav.tabs a[aria-current="page"]{color:var(--ink); border-color:var(--accent)}
 .stage-opt span{font-size:13px; color:var(--muted)}
 nav.tabs .tab-more{font:inherit; background:none; border:0; border-bottom:2.5px solid transparent; padding:8px 12px 10px; color:var(--muted); font-weight:600; cursor:pointer; white-space:nowrap}
 nav.tabs .tab-more[aria-expanded="true"]{color:var(--ink)}
+nav.tabs .tab-help{margin-left:auto; color:var(--accent)}
 nav.tabs a .n{font-size:12px; margin-left:4px; color:var(--muted)}
 main{padding-block:20px 60px}
 .layout{display:grid; grid-template-columns:minmax(0,1fr); gap:20px; align-items:start}
@@ -1202,7 +1203,7 @@ function render(){
   document.title = lm? "Experience Log" : "Med App Workspace";
   document.getElementById("tabs").hidden = lm;
   const vis=new Set(visibleTabs()), hidden=TABS.filter(([k])=>!vis.has(k));
-  document.getElementById("tabs").innerHTML = lm? "" : visibleTabs().map(k=>TABS.find(t=>t[0]===k)).filter(Boolean).map(([k,l])=>'<a href="#'+k+'" data-tab="'+k+'"'+(ui.tab===k?' aria-current="page"':'')+'>'+l+(k==="schools"?'<span class="n">'+open+' open</span>':'')+(k==="cycle"&&cycleTodos().filter(t=>t.k==="iv").length?'<span class="n">'+cycleTodos().filter(t=>t.k==="iv").length+' upcoming</span>':'')+'</a>').join("")+(lm?'':'<button class="tab-more" data-act="more" aria-expanded="'+(!!ui.more)+'">More'+(ui.more?' ▴':' ▾')+'</button>');
+  document.getElementById("tabs").innerHTML = lm? "" : visibleTabs().map(k=>TABS.find(t=>t[0]===k)).filter(Boolean).map(([k,l])=>'<a href="#'+k+'" data-tab="'+k+'"'+(ui.tab===k?' aria-current="page"':'')+'>'+l+(k==="schools"?'<span class="n">'+open+' open</span>':'')+(k==="cycle"&&cycleTodos().filter(t=>t.k==="iv").length?'<span class="n">'+cycleTodos().filter(t=>t.k==="iv").length+' upcoming</span>':'')+'</a>').join("")+(lm?'':'<button class="tab-more" data-act="more" aria-expanded="'+(!!ui.more)+'">More'+(ui.more?' ▴':' ▾')+'</button><button class="tab-more tab-help" data-act="gtour-page" title="Walk through what this page does">'+(gtSection()?'? Tour this page':'? Tour')+'</button>');
   const m = document.getElementById("main");
   const fx = ui.focus && ui.essayId && essay(ui.essayId);
   document.body.classList.toggle("focus-mode", !!fx);
@@ -2648,6 +2649,7 @@ document.addEventListener("click", ev=>{
       break; }
     case "stage-pick": openTour("stage"); break;
     case "gtour": gtStart(); break;
+    case "gtour-page": gtStart(gtSection()); break;
     case "set-stage": setStage(d.k); break;
     case "exp-writer": { const x=exp(ui.expId); if(!x) break; if(!(x.contact||"").trim()){ toast("Add the supervisor’s name first."); break; } const r={id:id("r"), name:x.contact.trim(), kind:x.kind==="research"?"research":x.kind==="clinical"?"clinical":"other", role:x.contactRole||"", asked:"", agreed:false, due:"", received:"", together:x.title, highlight:"", shared:x.id, expIds:[x.id], notes:x.contactEmail?"Email: "+x.contactEmail:""}; S.recommenders=S.recommenders||[]; S.recommenders.push(r); save(); render(); toast(r.name+" added to Letter writers."); break; }
     case "applying-on": openTour("stage"); break;
@@ -2800,37 +2802,47 @@ function gtSteps(){
   const rc=n=>(S.recommenders||[]).find(r=>(r.name||"").includes(n))||{};
   const essayAt=(n,pred)=>()=>{ const e=ess(n,pred); go("schools",{schoolId:e.schoolId, essayId:e.id}); };
   return [
-    {go:()=>go("next"), sel:".brief", t:"Do next: your home base", p:"This walk-through uses an example applicant, Jordan. Every day starts here: what’s due soon, how much writing is left, and the one thing to do first."},
-    {go:()=>go("next"), sel:'[data-tour="ranked"]', t:"Schools ranked for you", p:"Open schools are ranked by due date, how much you want them and how much is left to write. <b>Start</b> opens the next essay to work on."},
-    {go:()=>go("schools"), sel:'[data-tour="schools"]', t:"Secondaries", p:"Every school, with its deadline and progress. <b>Add school</b> searches the prompt library ("+libCountText()+") and brings in the prompts and limits for you."},
-    {go:()=>go("schools",{schoolId:sch("Baylor").id}), sel:'[data-tour="school-essays"]', t:"One school’s essays", p:"Each prompt with its limit, status and word count. Prompts that ask the same thing at different schools share a <b>base essay</b>, so you write it once."},
-    {go:essayAt("Baylor", e=>/Ever since/.test(e.text||"")), sel:".vstrip", t:"Versions", p:"When a draft is done, click <b>Mark v2 done</b>; whatever you write next becomes v3. Click any earlier version to read it, compare it or start over from it. Submitting saves a “Submitted” version automatically."},
-    {go:essayAt("Baylor", e=>/Ever since/.test(e.text||"")), sel:"#checks-slot", t:"Writing checks", p:"Checks run as you type, entirely in your browser: clichés like “ever since I was young,” wording repeated from your other essays for this school, very long sentences, passive voice. Nothing is rewritten for you; <b>Show</b> highlights the spot."},
-    {go:essayAt("Baylor", e=>/Ever since/.test(e.text||"")), sel:'[data-tour="stories"]', t:"Stories that fit", p:"Lessons from your experience log that match this prompt, so you’re never starting from a blank page."},
-    {go:essayAt("Southwestern", e=>e.family==="diversity"), sel:'[data-tour="behind"]', t:"Copies stay in sync with the base", p:"This copy came from a base essay that has since improved. <b>Review changes</b> shows exactly what changed and applies it in one click."},
-    {go:essayAt("Ohio State", e=>e.family==="why"), sel:"#names-slot", t:"Wrong-school check", p:"This Ohio State essay still mentions Michigan Medicine. The app flags other schools’ names before you paste anything into a portal."},
-    {go:()=>go("essays"), sel:'[data-tour="base-fam"]', t:"Base essays", p:"Write each kind of essay once (diversity, a challenge, your gap year) and give every school its own trimmed copy. Saving a new version flags every copy that’s behind."},
-    {go:()=>go("primary"), sel:'[data-tour="primary-svc"]', t:"Your primary application", p:"Personal statement and other essays for AMCAS, TMDSAS and AACOMAS, with each service’s limits. One personal statement can be the base for all of them."},
-    {go:()=>go("primary"), sel:'[data-tour="acts"]', t:"Activities", p:"Your work and activities entries with live character counts, including the three most meaningful. Start one from an experience and its dates and hours fill in."},
-    {go:()=>go("cycle"), sel:'[data-tour="coming"]', t:"Interviews and decisions", p:"After you submit: invites to schedule, interviews coming up, thank-you notes due, update letters, letters of intent and decisions, all in one list and on your calendar."},
-    {go:()=>{ ui.expView="stories"; go("experiences"); }, sel:'[data-tour="writeups"]', t:"Your experience log", p:"Write each research, clinical or other experience up when it ends: what you did and what you learned. The app reminds you when something ended without a write-up."},
-    {go:()=>go("experiences",{expId:xp("Cardiac").id}), sel:'[data-tour="lessons"]', t:"What you learned", p:"Each lesson is a headline and the story behind it, tagged with the strengths it shows. These are the stories your essays, interviews and letter writers draw on."},
-    {go:()=>{ ui.expView="self"; go("experiences"); }, sel:'[data-tour="strengths"]', t:"Strengths and weaknesses", p:"Back each strength with moments from your experiences. Weaknesses are framed as growth and stay private unless you choose to share one."},
-    {go:()=>{ ui.expView="writers"; go("experiences",{recId:rc("Shah").id}); }, sel:'[data-tour="writer-summary"]', t:"Help your letter writers", p:"For each writer, pick what they should see, add a line about what they saw firsthand, then preview and download a summary made for them."},
-    {go:()=>go("next"), sel:'#foot [data-act="sync-connect"], #foot [data-act="backup"]', t:"Saved in your own Google Drive", p:"Your work saves in your browser as you type. Connect Google Drive (here, or at the top of the page) to keep it in your own Drive and open it on any computer, and optionally keep readable Google Docs of every essay, with each version as its own file."},
-    {go:()=>go("next"), sel:'[data-act="more"]', t:"Everything else is under More", p:"You only see the sections you need for where you are; the rest live under <b>More</b>, along with this tour."}
+    {go:()=>go("next"), sel:".brief", sec:"next", t:"Do next: your home base", p:"This walk-through uses an example applicant, Jordan. Every day starts here: what’s due soon, how much writing is left, and the one thing to do first."},
+    {go:()=>go("next"), sel:'[data-tour="ranked"]', sec:"next", t:"Schools ranked for you", p:"Open schools are ranked by due date, how much you want them and how much is left to write. <b>Start</b> opens the next essay to work on."},
+    {go:()=>go("schools"), sel:'[data-tour="schools"]', sec:"schools", t:"Secondaries", p:"Every school, with its deadline and progress. <b>Add school</b> searches the prompt library ("+libCountText()+") and brings in the prompts and limits for you."},
+    {go:()=>go("schools",{schoolId:sch("Baylor").id}), sel:'[data-tour="school-essays"]', sec:"school", t:"One school’s essays", p:"Each prompt with its limit, status and word count. Prompts that ask the same thing at different schools share a <b>base essay</b>, so you write it once."},
+    {go:essayAt("Baylor", e=>/Ever since/.test(e.text||"")), sel:".vstrip", sec:"essay", t:"Versions", p:"When a draft is done, click <b>Mark v2 done</b>; whatever you write next becomes v3. Click any earlier version to read it, compare it or start over from it. Submitting saves a “Submitted” version automatically."},
+    {go:essayAt("Baylor", e=>/Ever since/.test(e.text||"")), sel:"#checks-slot", sec:"essay", t:"Writing checks", p:"Checks run as you type, entirely in your browser: clichés like “ever since I was young,” wording repeated from your other essays for this school, very long sentences, passive voice. Nothing is rewritten for you; <b>Show</b> highlights the spot."},
+    {go:essayAt("Baylor", e=>/Ever since/.test(e.text||"")), sel:'[data-tour="stories"]', sec:"essay", t:"Stories that fit", p:"Lessons from your experience log that match this prompt, so you’re never starting from a blank page."},
+    {go:essayAt("Southwestern", e=>e.family==="diversity"), sel:'[data-tour="behind"]', sec:"essay", t:"Copies stay in sync with the base", p:"This copy came from a base essay that has since improved. <b>Review changes</b> shows exactly what changed and applies it in one click."},
+    {go:essayAt("Ohio State", e=>e.family==="why"), sel:"#names-slot", sec:"essay", t:"Wrong-school check", p:"This Ohio State essay still mentions Michigan Medicine. The app flags other schools’ names before you paste anything into a portal."},
+    {go:()=>go("essays"), sel:'[data-tour="base-fam"]', sec:"essays", t:"Base essays", p:"Write each kind of essay once (diversity, a challenge, your gap year) and give every school its own trimmed copy. Saving a new version flags every copy that’s behind."},
+    {go:()=>go("primary"), sel:'[data-tour="primary-svc"]', sec:"primary", t:"Your primary application", p:"Personal statement and other essays for AMCAS, TMDSAS and AACOMAS, with each service’s limits. One personal statement can be the base for all of them."},
+    {go:()=>go("primary"), sel:'[data-tour="acts"]', sec:"primary", t:"Activities", p:"Your work and activities entries with live character counts, including the three most meaningful. Start one from an experience and its dates and hours fill in."},
+    {go:()=>go("cycle"), sel:'[data-tour="coming"]', sec:"cycle", t:"Interviews and decisions", p:"After you submit: invites to schedule, interviews coming up, thank-you notes due, update letters, letters of intent and decisions, all in one list and on your calendar."},
+    {go:()=>{ ui.expView="stories"; go("experiences"); }, sel:'[data-tour="writeups"]', sec:"exp", t:"Your experience log", p:"Write each research, clinical or other experience up when it ends: what you did and what you learned. The app reminds you when something ended without a write-up."},
+    {go:()=>go("experiences",{expId:xp("Cardiac").id}), sel:'[data-tour="lessons"]', sec:"exp", t:"What you learned", p:"Each lesson is a headline and the story behind it, tagged with the strengths it shows. These are the stories your essays, interviews and letter writers draw on."},
+    {go:()=>{ ui.expView="self"; go("experiences"); }, sel:'[data-tour="strengths"]', sec:"exp", t:"Strengths and weaknesses", p:"Back each strength with moments from your experiences. Weaknesses are framed as growth and stay private unless you choose to share one."},
+    {go:()=>{ ui.expView="writers"; go("experiences",{recId:rc("Shah").id}); }, sel:'[data-tour="writer-summary"]', sec:"exp", t:"Help your letter writers", p:"For each writer, pick what they should see, add a line about what they saw firsthand, then preview and download a summary made for them."},
+    {go:()=>go("next"), sel:'#foot [data-act="sync-connect"], #foot [data-act="backup"]', sec:"next", t:"Saved in your own Google Drive", p:"Your work saves in your browser as you type. Connect Google Drive (here, or at the top of the page) to keep it in your own Drive and open it on any computer, and optionally keep readable Google Docs of every essay, with each version as its own file."},
+    {go:()=>go("next"), sel:'[data-act="more"]', sec:"next", t:"Everything else is under More", p:"You only see the sections you need for where you are; the rest live under <b>More</b>, along with this tour."}
   ];
 }
-function gtStart(){
+// which steps explain the page you're on
+function gtSection(){
+  if(ui.essayId) return ["essay"];
+  if(ui.schoolId) return ["school","essay"];
+  if(ui.expId || ui.recId || ui.tab==="experiences") return ["exp"];
+  return ({next:["next"], schools:["schools","school","essay"], essays:["essays"], primary:["primary"], cycle:["cycle"]})[ui.tab] || null;
+}
+function gtStart(only){
+  const back={tab:ui.tab, schoolId:ui.schoolId, essayId:ui.essayId, baseId:ui.baseId, expId:ui.expId, recId:ui.recId, expView:ui.expView};
   closeTour(); document.getElementById("tour").hidden=true;
-  GT.sample=false;
+  GT.sample=false; GT.back=only? back : null;
   if(!S.demo){ flush(); try{ localStorage.setItem(STASH, JSON.stringify(S)); }catch(e){ toast("Couldn’t set your data aside in this browser, so the tour can’t start."); return; } S=seed(); S.del={}; snapshot(); writeLocal(); GT.sample=true; }
-  GT.on=true; GT.i=0; GT.steps=gtSteps(); document.getElementById("gt").hidden=false; gtShow();
+  GT.on=true; GT.i=0; GT.steps=gtSteps(); if(only){ const f=GT.steps.filter(x=>only.includes(x.sec)); if(f.length) GT.steps=f; }
+  document.getElementById("gt").hidden=false; gtShow();
 }
 function gtEnd(keep){
   GT.on=false; document.getElementById("gt").hidden=true;
-  if(GT.sample && !keep){ S=sampleStash(); snapshot(); try{ localStorage.setItem(KEY, JSON.stringify(S)); localStorage.removeItem(STASH); }catch(e){} go("next"); toast("Tour finished. You’re back to your own data."); }
-  else { go("next"); if(keep) toast("Explore the example as long as you like. “Back to my data” is at the top."); }
+  const home=()=>{ const b=GT.back; if(b && !keep){ const ok=(!b.schoolId||school(b.schoolId)) && (!b.essayId||essay(b.essayId)) && (!b.expId||exp(b.expId)) && (!b.recId||rec(b.recId)); if(ok){ go(b.tab, {schoolId:b.schoolId, essayId:b.essayId, baseId:b.baseId, expId:b.expId, recId:b.recId}); ui.expView=b.expView; render(); return; } } go("next"); };
+  if(GT.sample && !keep){ S=sampleStash(); snapshot(); try{ localStorage.setItem(KEY, JSON.stringify(S)); localStorage.removeItem(STASH); }catch(e){} home(); toast(GT.back? "Back to your page." : "Tour finished. You’re back to your own data."); }
+  else { home(); if(keep) toast("Explore the example as long as you like. “Back to my data” is at the top."); }
 }
 function gtShow(){
   const st=GT.steps[GT.i]; if(!st) return gtEnd(false);
@@ -2842,9 +2854,9 @@ function gtPlace(){
   if(!GT.on) return;
   const st=GT.steps[GT.i], el=document.querySelector(st.sel), hole=document.querySelector("#gt .gt-hole"), pop=document.querySelector("#gt .gt-pop");
   const last=GT.i===GT.steps.length-1, n=GT.steps.length;
-  pop.innerHTML='<div class="row" style="justify-content:space-between"><span class="gt-n">Tour · '+(GT.i+1)+' of '+n+'</span><button class="ghost small" data-gt="x" aria-label="End tour">End tour</button></div><h2 id="gt-title">'+st.t+'</h2><p>'+st.p+'</p>'+
+  pop.innerHTML='<div class="row" style="justify-content:space-between"><span class="gt-n">'+(GT.back?'This page':'Tour')+' · '+(GT.i+1)+' of '+n+'</span><button class="ghost small" data-gt="x" aria-label="End tour">End tour</button></div><h2 id="gt-title">'+st.t+'</h2><p>'+st.p+'</p>'+
     '<div class="gt-acts">'+(GT.i?'<button data-gt="back">Back</button>':'')+'<span style="flex:1"></span>'+
-    (last? (GT.sample?'<button class="ghost" data-gt="keep">Keep exploring the example</button><button class="primary" data-gt="done">Back to my data</button>':'<button class="primary" data-gt="done">Finish</button>') : '<button class="primary" data-gt="next">Next</button>')+'</div>';
+    (last? (GT.back? '<button class="ghost" data-gt="full">Continue the full tour</button><button class="primary" data-gt="done">Done</button>' : GT.sample?'<button class="ghost" data-gt="keep">Keep exploring the example</button><button class="primary" data-gt="done">Back to my data</button>':'<button class="primary" data-gt="done">Finish</button>') : '<button class="primary" data-gt="next">Next</button>')+'</div>';
   const r=el && el.getBoundingClientRect(), ok=r && r.width>4 && r.height>4, pad=6, vw=window.innerWidth, vh=window.innerHeight;
   const hh=ok? Math.min(r.height+pad*2, Math.max(160, vh*0.55)) : 0;
   if(ok){ hole.classList.remove("none"); Object.assign(hole.style,{top:(r.top-pad)+"px", left:(r.left-pad)+"px", width:(r.width+pad*2)+"px", height:hh+"px"}); }
@@ -2865,6 +2877,7 @@ document.getElementById("gt").addEventListener("click", ev=>{
   const a=b.dataset.gt;
   if(a==="next"){ GT.i++; gtShow(); } else if(a==="back"){ GT.i=Math.max(0,GT.i-1); gtShow(); }
   else if(a==="x"||a==="done") gtEnd(false); else if(a==="keep") gtEnd(true);
+  else if(a==="full"){ const t=GT.steps[GT.i].t, all=gtSteps(), k=all.findIndex(x=>x.t===t); GT.steps=all; GT.back=null; GT.i=Math.min(all.length-1, k+1); gtShow(); }
 });
 document.addEventListener("keydown", ev=>{ if(!GT.on) return; if(ev.key==="Escape") gtEnd(false); else if(ev.key==="ArrowRight" && GT.i<GT.steps.length-1){ GT.i++; gtShow(); } else if(ev.key==="ArrowLeft" && GT.i>0){ GT.i--; gtShow(); } });
 window.addEventListener("resize", ()=>{ if(GT.on) gtPlace(); });
