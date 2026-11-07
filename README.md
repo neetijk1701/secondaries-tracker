@@ -1,6 +1,6 @@
 # Med App Workspace
 
-(Formerly Secondaries Tracker; the URL and repo name stay `secondaries-tracker`.)
+(Formerly Secondaries Tracker.) Live: https://medapp.nak-tools.workers.dev · Preview: https://dev-medapp.nak-tools.workers.dev. The Cloudflare Worker is `medapp` (renamed Nov 6, 2026); the GitHub repo is still `secondaries-tracker`.
 
 A web app for medical school applicants to track secondary essays. Work is saved in the applicant's browser and, if they connect it, in a hidden app folder in their own Google Drive. This site has no server, database or analytics, and never receives anyone's essays.
 

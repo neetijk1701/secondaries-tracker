@@ -2,7 +2,7 @@
 
 Each week from June through September, a scheduled task follows this guide. It refreshes the prompt library from Student Doctor Network (SDN) and from applicants' reports, puts any changes on the **dev** preview, and tells Neetij. **It never touches `main`**: Neetij says "make it live" first.
 
-Repo: `neetijk1701/secondaries-tracker` (private). Live site: https://secondaries-tracker.nak-tools.workers.dev · Preview: https://dev-secondaries-tracker.nak-tools.workers.dev
+Repo: `neetijk1701/secondaries-tracker` (private). Live site: https://medapp.nak-tools.workers.dev · Preview: https://dev-medapp.nak-tools.workers.dev
 
 ## 0. Set up
 - Attach the repo with push access (`add_repo` owner `neetijk1701`, repo `secondaries-tracker`), clone it, then `git checkout dev && git pull`. If `dev` is behind `main`, merge `main` into `dev` first.
@@ -47,7 +47,7 @@ Record schema, regular file (`data/md-prompts-<cycle>.json`, `data/do-prompts-<c
 - MD/PhD `type` adds: mdphd_why, research, research_interest.
 
 ## 4. Applicant reports
-The app's "Report a prompt change" link opens the Tally form **rD5rjo** ("Secondaries Tracker: report a prompt change").
+The app's "Report a prompt change" link opens the Tally form **rD5rjo** ("Med App Workspace: report a prompt change").
 - Fetch its submissions since `last_report_check` with the Tally tools.
 - Each report has the school, cycle, track (MD or MD/PhD), what changed, the prompt text and the limit.
 - Apply a report only if you can confirm it on SDN, Reddit or the school's site, or if two or more separate reports agree word for word. Note "applicant report, confirmed by …" in `source_note`.
@@ -63,7 +63,7 @@ The app's "Report a prompt change" link opens the Tally form **rD5rjo** ("Second
 ## 6. Commit to dev
 - Update `harvest-state.json` (`last_run`, `last_report_check`, per-school `last_checked` / `last_page` / `status`).
 - Commit the data files, `public/library.js`, `public/sw.js` and the state file to **dev** only, with the message "Weekly prompt check <date>: N newly posted, M changed". Push.
-- Wait for the Cloudflare preview build (a GitHub check run on the commit), then confirm that `https://dev-secondaries-tracker.nak-tools.workers.dev/sw.js` shows the new VERSION.
+- Wait for the Cloudflare preview build (a GitHub check run on the commit), then confirm that `https://dev-medapp.nak-tools.workers.dev/sw.js` shows the new VERSION.
 - If nothing changed, don't commit; just report "no changes".
 
 ## 7. Tell Neetij
