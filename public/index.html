@@ -754,7 +754,7 @@ const Sync = (function(){
     try{
       if(saveT) flush();
       const ms=mstate(); const docs=mirrorDocs(); const keys=new Set(docs.map(d=>d.key));
-      for(let i=0;i<docs.length;i++){ const d=docs[i]; if(d.fixed && ms.files[d.key]) continue; if(await writeDoc(d, i+1, docs.length)) wrote++; }
+      for(let i=0;i<docs.length;i++){ const d=docs[i]; if(d.fixed && ms.files[d.key] && ms.files[d.key].name===d.name) continue; if(await writeDoc(d, i+1, docs.length)) wrote++; }
       // things deleted in the app go to Drive's Trash; earlier cycles' folders stay as an archive
       for(const [k,f] of Object.entries(ms.files)){ if(keys.has(k) || f.detached) continue; if(f.cyc && f.cyc!==CYCLE) continue; try{ await api(D+"/"+f.id, {method:"PATCH", headers:{"Content-Type":"application/json"}, body:JSON.stringify({trashed:true})}); }catch(e){} delete ms.files[k]; wrote++; }
       ms.at=Date.now(); M.progress="";
@@ -1499,9 +1499,11 @@ function mirrorDocs(){
   const fname=t=>(t||"Untitled").replace(/[\/\\]/g,"-").replace(/\s+/g," ").trim().slice(0,110);
   const count=e=> e.unit==="chars"? (e.text||"").length.toLocaleString()+" characters" : words(e.text||"")+" words";
   const verLabel=e=>{ const l=lastVer(e); return (l && l.text===e.text)? 'v'+l.n+(l.note?' ('+l.note+')':'') : 'v'+workingN(e)+' (working)'; };
-  const essayBlock=e=>'<h2>'+E(isLetter(e)? (FAM[e.family]||"Letter") : (FAM[e.family]||"Essay"))+(e.optional?' (optional)':'')+'</h2>'+(isLetter(e)?'':'<p style="color:#555"><i>'+E(e.prompt)+'</i></p>')+'<p style="color:#555;font-size:9pt">'+E(limitL(e))+' · '+count(e)+' · '+E(isLetter(e)&&e.status==="pasted"?"Sent":(STATUS[e.status]||""))+' · '+verLabel(e)+'</p>'+P(e.text);
   const verDocs=(e, path, prefix)=>{ vers(e).forEach(v=>out.push({key:"ver:"+e.id+":"+v.n, path, fixed:true, cyc:CYCLE, name:fname(prefix+" – v"+v.n+(v.note?" ("+v.note+")":"")), body:'<h1>'+E(prefix)+' – v'+v.n+'</h1><p style="color:#555;font-size:9pt">'+new Date(v.at).toLocaleString(undefined,{month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit"})+(v.note?' · '+E(v.note):'')+' · '+(e.unit==="chars"?v.text.length.toLocaleString()+" characters":words(v.text)+" words")+'</p>'+(isLetter(e)?'':'<p style="color:#555"><i>'+E(e.prompt)+'</i></p>')+P(v.text)})); };
-  const labelFor=(list, e)=>{ const base=FAM[e.family]||"Essay"; const same=list.filter(x=>(FAM[x.family]||"Essay")===base); return same.length>1? base+" "+(same.indexOf(e)+1) : base; };
+  const essayDocs=(e, path, label, where)=>{
+    out.push({key:"essay:"+e.id, path, cyc:CYCLE, name:fname(label+" – current draft"), body:'<h1>'+E(where)+': '+E(label)+'</h1>'+(isLetter(e)?'':'<p style="color:#555"><i>'+E(e.prompt)+'</i></p>')+'<p style="color:#555;font-size:9pt">'+E(limitL(e))+' · '+count(e)+' · '+E(isLetter(e)&&e.status==="pasted"?"Sent":(STATUS[e.status]||""))+' · '+verLabel(e)+(vers(e).length?' · earlier versions are in this folder':'')+'</p>'+P(e.text)});
+    verDocs(e, path, label); };
+  const labelFor=(list, e)=>{ const base=isLetter(e)? (FAM[e.family]||"Letter") : (FAM[e.family]||"Essay"); const same=list.filter(x=>(FAM[x.family]||"Essay")===base); return same.length>1? base+" "+(same.indexOf(e)+1) : base; };
   // experiences
   const X=S.experiences||[], st=X.filter(x=>STORY_KINDS.includes(x.kind)).sort((a,b)=> (b.ongoing?1:0)-(a.ongoing?1:0) || (b.end||b.start||"").localeCompare(a.end||a.start||""));
   if(st.length) out.push({key:"log", path:[ROOT], name:"Experience log", body:'<h1>Experience log</h1>'+st.map(x=>'<h2>'+E(x.title||"Untitled")+'</h2><p style="color:#555">'+E([EXP_ONE[x.kind], x.org, expDates(x), expHours(x)? expHours(x).toLocaleString()+" hours":""].filter(Boolean).join(" · "))+(x.contact?'<br>Supervisor: '+E([x.contact, x.contactRole, x.contactEmail].filter(Boolean).join(", ")):'')+'</p><h3>What I did</h3>'+P(x.summary)+((x.items||[]).length?'<h3>What I learned</h3>'+x.items.map(it=>'<p><b>'+E(it.head||"")+(it.head?'.</b> ':'</b>')+E(it.text)+((it.tags||[]).length?' <span style="color:#777">(Shows: '+E(it.tags.join(", "))+')</span>':'')+'</p>').join(""):'')).join("")});
@@ -1515,13 +1517,14 @@ function mirrorDocs(){
   // primary applications
   SVC_ORDER.forEach(k=>{ const a=(S.apps||[]).find(x=>x.id==="app-"+k); const es=S.essays.filter(e=>e.schoolId==="app-"+k), acts=(S.acts||[]).filter(x=>x.svc===k);
     if(!es.length && !acts.length) return;
-    out.push({key:"app:"+k, path:[ROOT,CY,"Primary"], cyc:CYCLE, name:"Primary – "+SVC[k].name, body:'<h1>'+E(SVC[k].name)+'</h1><p style="color:#555">'+(a&&a.submitted?'Submitted':'Not submitted yet')+'</p>'+es.map(essayBlock).join("")+(acts.length?'<h1>Activities</h1>'+acts.map(x=>'<h2>'+E(x.title||"Untitled")+(x.mm?' (most meaningful)':'')+'</h2><p style="color:#555">'+E([x.type, x.org, x.dates, x.hours? x.hours+" hours":""].filter(Boolean).join(" · "))+'</p>'+P(x.desc)+(x.mm&&x.mmText?'<h3>Most meaningful</h3>'+P(x.mmText):'')).join(""):'')});
-    es.forEach(e=>verDocs(e, [ROOT,CY,"Primary","Versions"], SVC[k].name+" – "+labelFor(es,e))); });
+    const path=[ROOT,CY,"Primary",SVC[k].name];
+    es.forEach(e=>essayDocs(e, path, labelFor(es,e), SVC[k].name+(a&&a.submitted?" (submitted)":"")));
+    if(acts.length) out.push({key:"acts:"+k, path, cyc:CYCLE, name:"Activities", body:'<h1>'+E(SVC[k].name)+' activities</h1>'+acts.map(x=>'<h2>'+E(x.title||"Untitled")+(x.mm?' (most meaningful)':'')+'</h2><p style="color:#555">'+E([x.type, x.org, x.dates, x.hours? x.hours+" hours":""].filter(Boolean).join(" · "))+'</p>'+P(x.desc)+(x.mm&&x.mmText?'<h3>Most meaningful</h3>'+P(x.mmText):'')).join("")}); });
   // each school: every prompt, letters and notes in one Doc; frozen versions alongside
   S.schools.forEach(s=>{ const es=S.essays.filter(e=>e.schoolId===s.id), main=es.filter(e=>!isLetter(e)), lets=es.filter(isLetter); const path=[ROOT,CY,"Secondaries",fname(s.name)];
     const facts=[s.submitted?'Submitted '+(s.submittedAt?fmt(s.submittedAt):''):'Not submitted yet', s.ii?'Interview invite '+fmt(s.ii):'', s.iv?'Interview '+fmt(s.iv)+(s.ivMode?' ('+s.ivMode+')':''):'', s.outcome?(OUTCOME[s.outcome]||s.outcome)+(s.outcomeDate?' '+fmt(s.outcomeDate):''):''].filter(Boolean).join(" · ");
-    out.push({key:"school:"+s.id, path, cyc:CYCLE, name:fname(s.name+" – current drafts"), body:'<h1>'+E(s.name)+'</h1><p style="color:#555">'+E(facts)+'</p>'+main.map(essayBlock).join("")+(lets.length?'<h1>Letters</h1>'+lets.map(essayBlock).join(""):'')+((s.notes||s.reflect)?'<h1>Notes</h1>'+P([s.notes,s.reflect].filter(Boolean).join("\n\n")):'')});
-    main.forEach(e=>verDocs(e, path.concat(["Versions"]), labelFor(main,e))); lets.forEach(e=>verDocs(e, path.concat(["Versions"]), FAM[e.family]||"Letter")); });
+    main.forEach(e=>essayDocs(e, path, labelFor(main,e), s.name)); lets.forEach(e=>essayDocs(e, path, labelFor(lets,e), s.name));
+    if((s.notes||"").trim() || (s.reflect||"").trim()) out.push({key:"notes:"+s.id, path, cyc:CYCLE, name:"Notes", body:'<h1>'+E(s.name)+'</h1><p style="color:#555">'+E(facts)+'</p>'+(s.notes?'<h2>Notes</h2>'+P(s.notes):'')+(s.reflect?'<h2>After the interview</h2>'+P(s.reflect):'')}); });
   return out;
 }
 function packetHtml(r){
