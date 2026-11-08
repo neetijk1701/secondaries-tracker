@@ -527,7 +527,7 @@ function seed(){
   const pe = (k, key, text, b, hist)=>{ const d=SVC[k].essays.find(z=>z.k===key); const e=startPrimary(k, d); e.text=fitTo(text, d.limit, "chars"); e.status="pasted"; if(b){ e.baseId=b.id; e.basedOnV=b.versions.length; } if(hist){ e.vers=hist.filter(h=>h.label).map((h,i)=>({n:i+1, text:h.text, at:h.t, note:h.label})); e.hist=hist.filter(h=>!h.label); } return e; };
   pe("amcas","ps",PS3,bPS,[{t:ago(120), text:PS1, label:"First full draft"},{t:ago(100), text:PS2, label:""},{t:ago(92), text:PS3, label:"After Dr. Shah’s comments"}]);
   pe("tmdsas","ps",PS3,bPS); pe("tmdsas","pchar",D3,bD);
-  const A = (svc, x, o)=>{ const a=Object.assign({id:id("a"), svc, expId:x?x.id:"", title:x?x.title:"", type:x?actType(svc,x.kind):SVC[svc].act.types[0], org:x?x.org:"", dates:x?expDates(x):"", hours:x?String(expHours(x)||""):"", desc:"", mm:false, mmText:""}, o); N.acts.push(a); return a; };
+  const A = (svc, x, o)=>{ const a=Object.assign({id:id("a"), svc, expId:x?x.id:"", title:x?x.title:"", type:x?actType(svc,x.kind,x):SVC[svc].act.types[0], org:x?x.org:"", dates:x?expDates(x):"", hours:x?String(expHours(x)||""):"", desc:"", mm:false, mmText:""}, o); N.acts.push(a); return a; };
   A("amcas", xClinic, {hours:"800", desc:"Interpret between Spanish-speaking patients and volunteer physicians every Saturday. Introduced teach-back at the end of visits, wrote the one-page guide now given to every new interpreter, and added a two-question food insecurity screen to intake (140 patients screened, 52 referred to pantries).", mm:true, mmText:"A patient once told me she had stopped her blood pressure pills because the label said to take them “once” daily, and in Spanish “once” means eleven. That moment taught me that the gap in care is often not vocabulary but context and trust. I began asking every patient to repeat the plan back, and the habit has followed me into the lab and the emergency department. It is the clearest reason I want to be a physician: a plan only works if the person it is for understands it."});
   A("amcas", xLab, {hours:"2,100", desc:"Studied mechanisms of cardiac fibrosis in heart failure. Optimized an immunostaining protocol, scored tissue sections, and built the blinded scoring rubric the lab now uses to train new students. Abstract accepted for a regional cardiology meeting.", mm:true, mmText:"For eight months my staining protocol failed. Logging every variable eventually showed the antibody bound only after a longer fixation step. I learned to treat failure as information, and also that I should have asked for help much sooner, a habit I have since changed."});
   A("amcas", xScribe, {type:"Paid employment: medical/clinical", hours:"450", desc:"Document patient encounters in real time for emergency physicians two evenings a week."});
@@ -884,7 +884,7 @@ function ver(b,v){ return b.versions.find(x=>x.v===v); }
 function unsaved(b){ return b.draft !== latest(b).text; }
 function behind(e){ const b=base(e.baseId); if(!b||e.basedOnV==null) return false; const sc=school(e.schoolId); if(sc&&sc.submitted) return false; return e.basedOnV < latest(b).v; }
 function words(t){ const m=t.trim().match(/\S+/g); return m? m.length : 0; }
-function count(e){ return e.unit==="chars" ? e.text.length : words(e.text); }
+function count(e){ return e.unit==="chars" ? portalText(e.text).length : words(e.text); }
 function unitL(u, n){ return u==="chars" ? "characters" : (n===1?"word":"words"); }
 function limitL(e){ return e.limit ? e.limit.toLocaleString()+" "+(e.unit==="chars"?"chars":"words") : "No limit"; }
 function target(s){ return addDays(s.received, Number(s.turnaround)||DEFAULT_TURNAROUND); }
@@ -1233,7 +1233,7 @@ function render(){
   document.title = lm? "Experience Log" : "Med App Workspace";
   document.getElementById("tabs").hidden = lm;
   const vis=new Set(visibleTabs()), hidden=TABS.filter(([k])=>!vis.has(k));
-  document.getElementById("tabs").innerHTML = lm? "" : visibleTabs().map(k=>TABS.find(t=>t[0]===k)).filter(Boolean).map(([k,l])=>'<a href="#'+k+'" data-tab="'+k+'"'+(ui.tab===k?' aria-current="page"':'')+'>'+l+(k==="schools"?'<span class="n">'+open+' open</span>':'')+(k==="cycle"&&cycleTodos().filter(t=>t.k==="iv").length?'<span class="n">'+cycleTodos().filter(t=>t.k==="iv").length+' upcoming</span>':'')+'</a>').join("")+(lm?'':'<button class="tab-more" data-act="more" aria-expanded="'+(!!ui.more)+'">More'+(ui.more?' ▴':' ▾')+'</button><button class="tab-more tab-help" data-act="gtour-page" title="Walk through what this page does">'+(gtSection()?'? Tour this page':'? Tour')+'</button>');
+  document.getElementById("tabs").innerHTML = lm? "" : visibleTabs().map(k=>TABS.find(t=>t[0]===k)).filter(Boolean).map(([k,l])=>'<a href="#'+k+'" data-tab="'+k+'"'+(navTab()===k?' aria-current="page"':'')+'>'+l+(k==="schools"?'<span class="n">'+open+' open</span>':'')+(k==="cycle"&&cycleTodos().filter(t=>t.k==="iv").length?'<span class="n">'+cycleTodos().filter(t=>t.k==="iv").length+' upcoming</span>':'')+'</a>').join("")+(lm?'':'<button class="tab-more" data-act="more" aria-expanded="'+(!!ui.more)+'">More'+(ui.more?' ▴':' ▾')+'</button><button class="tab-more tab-help" data-act="gtour-page" title="Walk through what this page does">'+(gtSection()?'? Tour this page':'? Tour')+'</button>');
   const m = document.getElementById("main");
   const fx = ui.focus && ui.essayId && essay(ui.essayId);
   document.body.classList.toggle("focus-mode", !!fx);
@@ -1307,12 +1307,13 @@ const STAGES = {
 };
 function appStage(){ const p=prefs(); if(p.applying===false) return "log"; return STAGES[p.stage]? p.stage : "all"; }
 function logMode(){ return appStage()==="log"; }
+function navTab(){ if(ui.tab==="schools" && String(ui.schoolId||"").startsWith("app-")) return "primary"; if(ui.tab==="schools" && ui.essayId){ const e=essay(ui.essayId); if(e && isLetter(e)) return "cycle"; } return ui.tab; }
 function visibleTabs(){
   const st=appStage(); if(st==="all") return TABS.map(t=>t[0]);
   const v=new Set(STAGES[st].tabs);
   if(S.bases.length || S.schools.length>=2) v.add("essays");                          // base essays once there's something to share
   if(S.schools.some(s=>s.submitted||s.ii||s.outcome)) v.add("cycle");                 // the cycle once something is submitted
-  if(ui.tab) v.add(ui.tab);
+  if(ui.tab) v.add(navTab());
   const order=STAGES[st].tabs.concat(TABS.map(t=>t[0]).filter(k=>!STAGES[st].tabs.includes(k)));
   return order.filter(k=>v.has(k));
 }
@@ -1675,7 +1676,8 @@ function startPrimary(k, d){
   const e={id:id("e"), schoolId:a.id, pkey:d.k, prompt:d.p, limit:d.limit, unit:"chars", family:d.fam, baseId:b?b.id:null, basedOnV:null, text:"", status:"todo", localEdit:false, optional:!!d.opt, group:"", cut:false};
   S.essays.push(e); return e;
 }
-function actType(k, kind){ const t=SVC[k].act.types;
+function actType(k, kind, x){ const t=SVC[k].act.types; const blob=x? ((x.title||"")+" "+(x.org||"")+" "+(x.summary||"")) : "";
+  if(k==="amcas" && kind==="clinical" && x){ if(/shadow/i.test(blob)) return "Physician shadowing/clinical observation"; if(/\b(paid|job|employ|technician|tech\b|scribe|CNA|EMT|medical assistant|phlebotom)/i.test(blob) && !/volunteer/i.test(blob)) return "Paid employment: medical/clinical"; }
   const want={amcas:{research:"Research/lab", clinical:"Community service/volunteer: medical/clinical", activity:"Extracurricular activities"}, tmdsas:{research:"Research activities", clinical:"Healthcare activities", activity:"Extracurricular activities"}, aacomas:{research:"Experience: research", clinical:"Experience: healthcare experience", activity:"Experience: extracurricular activities"}}[k][kind];
   return t.includes(want)? want : t[0]; }
 function actMeter(n, lim){ const over=lim && n>lim; return '<span class="small" style="color:'+(over?'var(--bad)':'var(--muted)')+'">'+n.toLocaleString()+(lim?' / '+lim.toLocaleString():'')+' chars'+(over?' · '+(n-lim).toLocaleString()+' over':'')+'</span>'; }
@@ -1703,19 +1705,23 @@ function actsPanel(k){
   const X=(S.experiences||[]).filter(x=>STORY_KINDS.includes(x.kind));
   let h='<div class="pb" data-tour="acts" style="border-top:1px solid var(--line-soft)"><div class="row" style="justify-content:space-between"><h3 style="margin:0">'+c.label+'</h3><span class="small muted">'+A.length+(c.max?' of '+c.max:'')+' entries'+(c.mm?' · '+mm+' of '+c.mm+' '+c.mmLabel.toLowerCase():'')+' · '+c.desc+' characters each</span></div>';
   h+='<div class="row" style="margin:8px 0"><select id="act-from-'+k+'" aria-label="Start from an experience"><option value="">Start from an experience…</option>'+X.filter(x=>!A.some(a=>a.expId===x.id)).map(x=>'<option value="'+x.id+'">'+esc(x.title.slice(0,70))+'</option>').join("")+'</select><button data-act="act-add" data-k="'+k+'">Add</button>'+(c.max&&A.length>=c.max?'<span class="small" style="color:var(--warn)">You’ve reached '+c.max+' entries.</span>':'')+'</div>';
-  if(A.length) h+='<ul class="list">'+A.map(x=>{ const isOpen=open===x.id, n=(x.desc||"").length;
+  if(A.length) h+='<ul class="list">'+A.map(x=>{ const isOpen=open===x.id, n=portalText(x.desc||"").length;
     let li='<li style="display:block"><div class="row" style="justify-content:space-between; flex-wrap:nowrap"><div class="main"><div class="row"><b>'+esc(x.title||"Untitled")+'</b>'+(x.mm?'<span class="chip acc">'+c.mmLabel+'</span>':'')+'</div><div class="chips"><span class="chip">'+esc(x.type||"")+'</span>'+(x.hours?'<span class="chip">'+esc(x.hours)+' hrs</span>':'')+'</div>'+actMeter(n,c.desc)+'</div><button class="ghost" data-act="act-open" data-id="'+x.id+'">'+(isOpen?'Close':'Edit')+'</button></div>';
     if(isOpen){ const e=exp(x.expId);
       li+='<div class="stack" style="gap:8px; margin-top:10px"><div class="grid-f"><label class="f">Title<input id="at-'+x.id+'" data-bind="act:'+x.id+':title" value="'+esc(x.title||"")+'"></label>'+
-        '<label class="f">Type<select id="ay-'+x.id+'" data-bind="act:'+x.id+':type">'+c.types.map(t=>'<option'+(t===x.type?' selected':'')+'>'+esc(t)+'</option>').join("")+'</select></label>'+
+        '<label class="f">Type<select id="ay-'+x.id+'" data-bind="act:'+x.id+':type">'+(x.type?'':'<option value="" selected>Choose a type…</option>')+c.types.map(t=>'<option'+(t===x.type?' selected':'')+'>'+esc(t)+'</option>').join("")+'</select></label>'+
         '<label class="f">Organization<input id="ao-'+x.id+'" data-bind="act:'+x.id+':org" value="'+esc(x.org||"")+'"></label>'+
         '<label class="f">Dates<input id="ad-'+x.id+'" data-bind="act:'+x.id+':dates" value="'+esc(x.dates||"")+'"></label>'+
-        '<label class="f">Hours<input id="ah-'+x.id+'" data-bind="act:'+x.id+':hours" value="'+esc(x.hours||"")+'" placeholder="Total hours"></label></div>'+
+        '<label class="f">Hours<input id="ah-'+x.id+'" data-bind="act:'+x.id+':hours" value="'+esc(x.hours||"")+'" placeholder="Total hours"></label>'+
+        '<label class="f">City, state<input id="al-'+x.id+'" data-bind="act:'+x.id+':loc" value="'+esc(x.loc||"")+'"></label>'+
+        '<label class="f">Contact name<input id="acn-'+x.id+'" data-bind="act:'+x.id+':contact" value="'+esc(x.contact||(e&&e.contact)||"")+'"></label>'+
+        '<label class="f">Contact title<input id="act-'+x.id+'" data-bind="act:'+x.id+':contactRole" value="'+esc(x.contactRole||(e&&e.contactRole)||"")+'"></label>'+
+        '<label class="f">Contact email<input type="email" id="ace-'+x.id+'" data-bind="act:'+x.id+':contactEmail" value="'+esc(x.contactEmail||(e&&e.contactEmail)||"")+'"></label></div>'+
         '<label class="f">Description <span id="am-'+x.id+'">'+actMeter(n,c.desc)+'</span><textarea id="ax-'+x.id+'" rows="5" data-bind="act:'+x.id+':desc">'+esc(x.desc||"")+'</textarea></label>'+
         (c.mm?'<label class="chk"><input type="checkbox" id="amm-'+x.id+'" data-bind="act:'+x.id+':mm"'+(x.mm?' checked':'')+((!x.mm&&mm>=c.mm)?' disabled':'')+'> '+c.mmLabel+(!x.mm&&mm>=c.mm?' (you’ve picked '+c.mm+')':'')+'</label>':'')+
-        (c.mm&&x.mm?'<label class="f">Why it was most meaningful <span id="amt-'+x.id+'">'+actMeter((x.mmText||"").length,c.mmLimit)+'</span><textarea id="amx-'+x.id+'" rows="5" data-bind="act:'+x.id+':mmText">'+esc(x.mmText||"")+'</textarea></label>':'')+
+        (c.mm&&x.mm?'<label class="f">Why it was most meaningful <span id="amt-'+x.id+'">'+actMeter(portalText(x.mmText||"").length,c.mmLimit)+'</span><textarea id="amx-'+x.id+'" rows="5" data-bind="act:'+x.id+':mmText">'+esc(x.mmText||"")+'</textarea></label>':'')+
         (e&&(e.items||[]).length?'<details><summary class="small" style="cursor:pointer">Lessons from “'+esc(e.title.slice(0,50))+'” to draw on</summary><ul class="small" style="margin:6px 0; padding-left:18px">'+e.items.map(it=>'<li><b>'+esc(it.head||"")+'</b> '+esc((it.text||"").slice(0,160))+((it.text||"").length>160?'…':'')+'</li>').join("")+'</ul></details>':'')+
-        '<div class="row"><button class="ghost" data-act="act-copy" data-id="'+x.id+'">Copy description</button>'+confirmBtn("del-act:"+x.id,"Remove","Remove this entry")+'</div></div>'; }
+        '<div class="row"><button class="ghost" data-act="act-copy" data-id="'+x.id+'">Copy description</button>'+(c.mm&&x.mm?'<button class="ghost" data-act="act-copy" data-f="mmText" data-id="'+x.id+'">Copy most-meaningful essay</button>':'')+confirmBtn("del-act:"+x.id,"Remove","Remove this entry")+'</div></div>'; }
     return li+'</li>'; }).join("")+'</ul>';
   else h+='<p class="small muted" style="margin:0">'+(X.length?'Pick an experience to start an entry with its title, place, dates and description, then trim to '+c.desc+' characters.':'Add your experiences on the Experiences tab to start entries from them, or add one blank.')+'</p>';
   return h+'</div>';
@@ -2035,7 +2041,7 @@ function checklist(){
     step("Name a strength and back it with a moment from an experience", X.some(x=>x.kind==="strength"), "self"),
     step("Add a letter writer, even one you’ll ask years from now", (S.recommenders||[]).length, "writers")];
   else if(st==="primary") steps=[
-    step("Choose which applications you’re using (AMCAS, TMDSAS, AACOMAS)", prefs().services!==undefined, "primary"),
+    step("Choose which applications you’re using (AMCAS, TMDSAS, AACOMAS)", prefs().services!==undefined || (S.acts||[]).length>0 || S.essays.some(e=>isPrimaryE(e) && (e.text||"").trim()), "primary"),
     step("Start your personal statement", S.essays.some(e=>isPrimaryE(e) && e.family==="ps" && (e.text||"").trim()), "primary"),
     step("Write up your main experiences, so activities and essays can draw on them", story.some(writtenUp), "exp"),
     step("Add your activities (start each from an experience)", (S.acts||[]).length, "primary")];
@@ -2338,7 +2344,7 @@ function vEssay(e){
   if(ui.panel==="compare" && b) h += comparePanel(e,b);
   h += versionsHtml(e);
   if(ui.panel==="hist") h += '<div class="panel"><div class="ph"><h2 style="flex:1">Recovery copies</h2><button class="ghost" data-act="panel" data-p="">Close</button></div><div class="pb">'+historyHtml(e)+'</div></div>';
-  h += '<textarea class="page" id="essay-text" data-bind="essay:'+e.id+':text" aria-label="Essay for '+esc(s.name)+'" placeholder="Write or paste this school’s version here.">'+esc(e.text)+'</textarea>';
+  h += '<textarea class="page" id="essay-text" data-bind="essay:'+e.id+':text" aria-label="Essay for '+esc(s.name)+'" placeholder="'+(isPrimaryE(e)?'Write or paste your essay here.':isLetter(e)?'Write your letter here.':'Write or paste this school’s version here.')+'">'+esc(e.text)+'</textarea>';
   h += '<div id="names-slot">'+namesBanner(e)+'</div>';
   if(isLetter(e)) h += '<div class="row"><label class="chk small">Send by <input type="date" id="due-'+e.id+'" data-bind="essay:'+e.id+':due" value="'+esc(e.due||"")+'"></label><span class="small muted">Shows up on Do next and the Cycle tab, and in your calendar file.</span></div>';
   { const lv=lastVer(e), u=Sync.docLink("essay:"+e.id)||(lv?Sync.docLink("ver:"+e.id+":"+lv.n):"");
@@ -2644,7 +2650,7 @@ document.addEventListener("click", ev=>{
       const over = x.limit && (x.unit==="chars" ? c>x.limit : w>x.limit);
       const note=document.getElementById("copy-note-"+x.id);
       const msg=(over?'Over the limit: ':'Copied: ')+w.toLocaleString()+' words · '+c.toLocaleString()+' characters with spaces'+(x.limit?' (limit '+limitL(x)+')':'')+'.';
-      const done=()=>{ if(note){ note.textContent=msg; note.style.color= over?'var(--bad)':'var(--good)'; } const nm=wrongNames(x); toast(nm.length? 'Copied, but it still mentions '+nm.map(y=>y.alias).join(", ")+'.' : (over? 'Copied, but it’s over this school’s limit.' : 'Copied. Paste it into the portal.')); };
+      const done=()=>{ if(note){ note.textContent=msg; note.style.color= over?'var(--bad)':'var(--good)'; } const nm=wrongNames(x); toast(nm.length? 'Copied, but it still mentions '+nm.map(y=>y.alias).join(", ")+'.' : (over? (isPrimaryE(x)?'Copied, but it’s over the limit.':'Copied, but it’s over this school’s limit.') : 'Copied. Paste it into the portal.')); };
       const fallback=()=>{ const ta=document.createElement("textarea"); ta.value=clean; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); done(); }catch(err){ toast("Couldn’t copy. Select the text and copy it yourself."); } ta.remove(); };
       try{ navigator.clipboard.writeText(clean).then(done, fallback); }catch(err){ fallback(); }
       break; }
@@ -2685,10 +2691,10 @@ document.addEventListener("click", ev=>{
     case "chk-show": { const ta=document.getElementById("essay-text"); if(!ta) break; const a=+d.a, b2=+d.b; ta.focus(); ta.setSelectionRange(a, Math.min(b2, ta.value.length)); const ratio=a/Math.max(1,ta.value.length); ta.scrollTop=Math.max(0, ratio*ta.scrollHeight - ta.clientHeight/3); ta.scrollIntoView({block:"center"}); break; }
     case "prim-start": { const c=SVC[d.k], dd=c&&c.essays.find(z=>z.k===d.d); if(!dd) break; const e=primaryEssay(d.k,d.d)||startPrimary(d.k,dd); save(); go("primary",{essayId:e.id}); toast(e.baseId?"Linked to your base “"+base(e.baseId).title+"”. Start from it and trim to "+dd.limit.toLocaleString()+" characters.":"Write it here. When it’s good, use “Make this the base” so your other applications and secondaries can start from it."); break; }
     case "act-add": { const sel=document.getElementById("act-from-"+d.k), xid=sel?sel.value:"", x=xid?exp(xid):null; const c=SVC[d.k].act;
-      const a={id:id("a"), svc:d.k, expId:x?x.id:"", title:x?x.title:"", type:x?actType(d.k,x.kind):c.types[0], org:x?x.org||"":"", dates:x?expDates(x):"", hours:x&&expHours(x)?String(expHours(x)):"", desc:x?(x.summary||""):"", mm:false, mmText:""};
+      const a={id:id("a"), svc:d.k, expId:x?x.id:"", title:x?x.title:"", type:x?actType(d.k,x.kind,x):"", org:x?x.org||"":"", dates:x?expDates(x):"", hours:x&&expHours(x)?String(expHours(x)):"", desc:x?(x.summary||""):"", mm:false, mmText:""};
       S.acts=S.acts||[]; S.acts.push(a); ui.actOpen=a.id; appRec(d.k); save(); render(); if(x && a.desc.length>c.desc) toast("Started from “"+x.title.slice(0,40)+"”. Trim the description to "+c.desc+" characters."); break; }
     case "act-open": ui.actOpen = ui.actOpen===d.id? null : d.id; render(); break;
-    case "act-copy": { const a=(S.acts||[]).find(z=>z.id===d.id); if(a) copyText(portalText(a.desc||"")); break; }
+    case "act-copy": { const a=(S.acts||[]).find(z=>z.id===d.id); if(a) copyText(portalText(a[d.f==="mmText"?"mmText":"desc"]||"")); break; }
     case "exp-view": ui.expView=d.v; render(); break;
     case "exp-intro": openTour("exp"); break;
     case "more": ui.more=!ui.more; render(); break;
@@ -2895,7 +2901,9 @@ function gtStart(only){
   closeTour(); document.getElementById("tour").hidden=true;
   GT.sample=false; GT.back=only? back : null;
   if(!S.demo){ flush(); try{ localStorage.setItem(STASH, JSON.stringify(S)); }catch(e){ toast("Couldn’t set your data aside in this browser, so the tour can’t start."); return; } S=seed(); S.del={}; snapshot(); writeLocal(); GT.sample=true; }
-  GT.on=true; GT.i=0; GT.steps=gtSteps(); if(only){ const f=GT.steps.filter(x=>only.includes(x.sec)); if(f.length) GT.steps=f; }
+  GT.on=true; GT.i=0; GT.steps=gtSteps();
+  if(!only){ const first={primary:["primary","exp"], log:["exp"], interviews:["cycle"]}[appStage()]; if(first){ const a=GT.steps.filter(x=>first.includes(x.sec)), b=GT.steps.filter(x=>!first.includes(x.sec)); const intro=b.filter(x=>x.sec==="next"); GT.steps=intro.concat(a, b.filter(x=>x.sec!=="next")); } }
+  if(only){ const f=GT.steps.filter(x=>only.includes(x.sec)); if(f.length) GT.steps=f; }
   document.getElementById("gt").hidden=false; gtShow();
 }
 function gtEnd(keep){
