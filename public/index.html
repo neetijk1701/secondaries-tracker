@@ -542,7 +542,7 @@ function newLetterFor(s, fam, o){ const e=newLetter(s, fam); Object.assign(e, o|
 
 /* ---------- storage ---------- */
 let S;
-const STASH = "secondaries-stash-v1";
+const STASH = "secondaries-stash-v1", UNDO_RESTORE = "medapp-undo-restore-v1";
 function sampleStash(){ try{ const o=JSON.parse(localStorage.getItem(STASH)||"null"); if(o && o.schools){ const b=blank(); return Object.assign(b, o, {demo:false}); } }catch(e){} return blank(); }
 function blank(){ return {v:1, demo:false, schools:[], bases:[], essays:[], archives:[], experiences:[], recommenders:[], apps:[], acts:[], del:{}}; }
 function load(){ try{ const raw=localStorage.getItem(KEY); if(raw){ const o=JSON.parse(raw); if(o && o.schools){ o.del=o.del||{}; o.archives=o.archives||[]; o.experiences=o.experiences||[]; o.recommenders=o.recommenders||[]; o.apps=o.apps||[]; o.acts=o.acts||[]; return o; } } }catch(e){} return blank(); }
@@ -1667,7 +1667,7 @@ const SVC = {
     act:{label:"Work and activities", max:15, desc:700, mm:3, mmLimit:1325, mmLabel:"Most meaningful", types:AMCAS_TYPES}},
   tmdsas:{name:"TMDSAS", who:"Texas public schools", essays:[
       {k:"ps", t:"Personal statement", limit:5000, fam:"ps", p:"TMDSAS personal statement: your motivation for a medical career and the value of experiences that prepare you to be a physician."},
-      {k:"pchar", t:"Personal characteristics", limit:5000, fam:"diversity", p:"TMDSAS personal characteristics: personal qualities, characteristics or lived experiences that would enrich the educational experience of others."},
+      {k:"pchar", t:"Personal characteristics", limit:2500, fam:"diversity", p:"TMDSAS personal characteristics: personal qualities, characteristics or lived experiences that would enrich the educational experience of others."},
       {k:"opt", t:"Optional essay", limit:2500, fam:"anything", opt:true, p:"TMDSAS optional essay: unique circumstances or life experiences relevant to your application that you haven’t presented elsewhere."},
       {k:"dualA", t:"MD/PhD essay A", limit:5000, fam:"mdphd", dual:true, p:"TMDSAS MD/PhD essay A: your motivation for a dual degree, your research interests and career goals."},
       {k:"dualB", t:"MD/PhD essay B", limit:5000, fam:"research", dual:true, p:"TMDSAS MD/PhD essay B: your significant research experience, with your mentor’s name and title, your contributions, and any publications."}],
@@ -1836,7 +1836,8 @@ function essayChecks(e){
 }
 function checksHtml(e){
   const {out, stats}=essayChecks(e);
-  let h='<div class="panel"><div class="ph"><h3 style="flex:1">Writing checks</h3>'+(stats?'<span class="small muted">'+stats.W+' words · '+stats.paras+' paragraph'+(stats.paras===1?'':'s')+' · ~'+stats.read+' min read</span>':'')+'</div>';
+  const wn=(typeof wrongNames==="function" && !isPrimaryE(e))? wrongNames(e) : [];
+  let h=(wn.length?'<div class="banner warn" style="margin-bottom:10px"><div class="grow small"><strong>Mentions '+wn.map(x=>'“'+esc(x.alias)+'”').join(", ")+'</strong>, another school on your list. See the note under the essay.</div></div>':'')+'<div class="panel"><div class="ph"><h3 style="flex:1">Writing checks</h3>'+(stats?'<span class="small muted">'+stats.W+' words · '+stats.paras+' paragraph'+(stats.paras===1?'':'s')+' · ~'+stats.read+' min read</span>':'')+'</div>';
   if(!stats) return h+'<div class="pb small muted">Checks appear once you start writing. They run in your browser; nothing is sent anywhere.</div></div>';
   if(!out.length) return h+'<div class="pb small muted">Nothing flagged. These checks look for common phrases, repetition and long sentences, not quality.</div></div>';
   return h+'<ul class="list">'+out.sort((a,b)=>b.sev-a.sev).map(c=>'<li><div class="main small">'+esc(c.t)+'</div>'+(c.a!=null?'<button class="ghost small" data-act="chk-show" data-a="'+c.a+'" data-b="'+c.b+'">Show</button>':'')+'</li>').join("")+'</ul><div class="pb small muted" style="padding-top:6px">Suggestions, not rules. A common phrase can be fine if the rest is specific.</div></div>';
@@ -2085,7 +2086,8 @@ function vNext(){
   const rows = S.schools.filter(s=>!s.submitted).map(s=>({s, p:plan(s)})).sort((a,b)=>b.p.score-a.p.score);
   const done = S.schools.filter(s=>s.submitted);
   const flagged = S.essays.filter(behind);
-  let h = '<h1>Do next</h1><p class="sub">'+(appStage()==="primary"? 'Your primary application first; schools show up here once their secondaries arrive.' : 'Schools ranked by how soon they are due, how much you want them, and how much writing is left. Schools you can finish quickly move up.')+'</p>';
+  let undo=false; try{ undo=ui.undoRestore!==false && !!localStorage.getItem(UNDO_RESTORE); }catch(e){}
+  let h = (undo?'<div class="banner info" style="margin-bottom:12px"><div class="grow small"><strong>You restored a backup.</strong> What you had before is kept until you dismiss this.</div><button data-act="undo-restore">Undo restore</button><button class="ghost" data-act="dismiss-undo-restore">Dismiss</button></div>':'')+'<h1>Do next</h1><p class="sub">'+(appStage()==="primary"? 'Your primary application first; schools show up here once their secondaries arrive.' : 'Schools ranked by how soon they are due, how much you want them, and how much writing is left. Schools you can finish quickly move up.')+'</p>';
   h += stageNudge() + checklistHtml();
   { const st=appStage(); if(STAGES[st]){ const v=visibleTabs();
       if(v.includes("cycle") && !STAGES[st].tabs.includes("cycle")) h += tipHtml("cycle-tab", '<b>A Cycle tab just appeared.</b> Now that you’ve submitted, track interview invites and dates, thank-you notes, update letters and decisions there.');
@@ -2164,7 +2166,7 @@ function vSchools(){
 }
 function schoolTaken(name){ const n=(name||"").trim().toLowerCase(); return S.schools.some(s=>s.name.toLowerCase()===n); }
 // Names people actually type, for search only (the wrong-school check uses NICK alone).
-const SEARCH_NICK = {"Vanderbilt University School of Medicine":["Vandy"], "Boston University Chobanian & Avedisian School of Medicine":["BU","BUSM"], "University of Washington School of Medicine":["UW","UDub"], "University of Pennsylvania Perelman School of Medicine":["Penn"], "University of Michigan Medical School":["Michigan","UM"], "Icahn School of Medicine at Mount Sinai":["Sinai","ISMMS"], "University of Pittsburgh School of Medicine":["UPitt"], "Johns Hopkins University School of Medicine":["JHMI"], "UT Southwestern Medical School":["UTSWMC"], "Washington University in St. Louis School of Medicine":["WUSM","WUSTL"], "Northwestern University Feinberg School of Medicine":["NU","NUFSM"], "Case Western Reserve University School of Medicine":["Case"], "University of Chicago Pritzker School of Medicine":["U Chicago"], "Columbia Vagelos College of Physicians and Surgeons":["CUIMC"], "Ohio State University College of Medicine":["OSU"], "UNC Chapel Hill School of Medicine":["UNC SOM"]};
+const SEARCH_NICK = {"University of North Texas Health Science Center - Texas College of Osteopathic Medicine (UNTHSC-TCOM)":["TCOM","UNT","UNTHSC","UNT TCOM"], "Vanderbilt University School of Medicine":["Vandy"], "Boston University Chobanian & Avedisian School of Medicine":["BU","BUSM"], "University of Washington School of Medicine":["UW","UDub"], "University of Pennsylvania Perelman School of Medicine":["Penn"], "University of Michigan Medical School":["Michigan","UM"], "Icahn School of Medicine at Mount Sinai":["Sinai","ISMMS"], "University of Pittsburgh School of Medicine":["UPitt"], "Johns Hopkins University School of Medicine":["JHMI"], "UT Southwestern Medical School":["UTSWMC"], "Washington University in St. Louis School of Medicine":["WUSM","WUSTL"], "Northwestern University Feinberg School of Medicine":["NU","NUFSM"], "Case Western Reserve University School of Medicine":["Case"], "University of Chicago Pritzker School of Medicine":["U Chicago"], "Columbia Vagelos College of Physicians and Surgeons":["CUIMC"], "Ohio State University College of Medicine":["OSU"], "UNC Chapel Hill School of Medicine":["UNC SOM"]};
 function nickNorm(t){ return (t||"").toLowerCase().replace(/[^a-z0-9]/g,""); }
 function nicksOf(name){ return (NICK[name]||[]).concat(SEARCH_NICK[name]||[]); }
 function nickHit(x, q){ const n=nickNorm(q); return n.length>=2 && nicksOf(x.name).some(a=>nickNorm(a)===n); }
@@ -2207,7 +2209,7 @@ function addSchoolForm(){
   h += '<div class="chosen"><b>'+esc(L?L.name:'')+(L?' <span class="muted" style="font-weight:400">· '+esc(L.state)+(L.deg==="DO"?' · DO':'')+'</span>':'')+'</b>'+(L?'':'')+'<button type="button" class="ghost" data-act="pick-change">Change school</button></div>';
   if(!L) h += '<label class="f">School name<input id="ns-name" required value="'+esc(pk.name)+'" placeholder="Full name of the school"></label><p class="small muted" style="margin:0">This school isn’t in the prompt library, so you’ll add its prompts yourself on the next screen.</p>';
   else {
-    if(ui.pickDual==null) ui.pickDual = !!prefs().dual;
+    if(ui.pickDual==null) ui.pickDual = !!prefs().dual && hasDual(L) && L.deg!=="DO";
     const dl=dualLabel(L), dual=ui.pickDual;
     h += '<div class="row" role="group" aria-label="Applying as"><span class="small muted" style="font-weight:600">Applying as</span><span class="seg"><button type="button" data-act="pick-track" data-v="0" aria-pressed="'+(!dual)+'">'+(L.deg==="DO"?"DO":"MD")+'</button><button type="button" data-act="pick-track" data-v="1" aria-pressed="'+dual+'">'+dl+'</button></span>'+
       (dual && !hasDual(L) ? '<span class="small muted">No '+dl+' prompts were posted for this school. Add them yourself after adding it.</span>' : (dual && L.mdphd.md==="instead" ? '<span class="small muted">'+dl+' applicants answer these instead of the regular secondary.</span>' : (dual?'<span class="small muted">Regular secondary plus '+L.mdphd.prompts.length+' '+dl+' prompt'+(L.mdphd.prompts.length===1?'':'s')+'.</span>':'')))+'</div>';
@@ -2268,7 +2270,7 @@ function vSchool(s){
         '<div class="erow-m">'+meter(e)+'</div>'+
         '<select class="pill '+stClass(e)+'" aria-label="Status" id="st-'+e.id+'" data-bind="essay:'+e.id+':status">'+statusOpts(e)+'</select>'+
         '<button data-act="open-essay" data-id="'+e.id+'">Open</button>'+
-        '<details class="emenu"><summary aria-label="More for this prompt">⋯</summary><div>'+(ui.confirm==="del-essay:"+e.id? '<button class="danger" data-act="confirm" data-key="del-essay:'+e.id+'">'+(e.text.trim()?'Remove and delete text':'Yes, remove')+'</button><button data-act="cancel-confirm">Keep it</button>' : '<button class="ghost danger" data-act="ask-confirm" data-key="del-essay:'+e.id+'">Remove this prompt</button>')+'</div></details></li>';
+        '<details class="emenu"'+(ui.confirm==="del-essay:"+e.id?' open':'')+'><summary aria-label="More for this prompt">⋯</summary><div>'+(ui.confirm==="del-essay:"+e.id? '<button class="danger" data-act="confirm" data-key="del-essay:'+e.id+'">'+(e.text.trim()?'Remove and delete text':'Yes, remove')+'</button><button data-act="cancel-confirm">Keep it</button>' : '<button class="ghost danger" data-act="ask-confirm" data-key="del-essay:'+e.id+'">Remove this prompt</button>')+'</div></details></li>';
     });
     h += '</ul>';
   }
@@ -2370,7 +2372,7 @@ function vEssay(e){
     h += '<div class="ebar">'+meter(e)+'<span class="grow"></span>'+
       '<select class="pill '+stClass(e)+'" aria-label="Status" id="st2-'+e.id+'" data-bind="essay:'+e.id+':status">'+statusOpts(e)+'</select>'+
       '<button data-act="focus-on">Focus</button><button class="primary" data-act="copy-portal" data-id="'+e.id+'">Copy for portal</button>'+
-      '<details class="emenu"><summary aria-label="More actions">⋯</summary><div>'+
+      '<details class="emenu"'+(String(ui.confirm||"").startsWith("del-essay:")?' open':'')+'><summary aria-label="More actions">⋯</summary><div>'+
         (u?'<a class="small" style="padding:6px 10px" href="'+u+'" target="_blank" rel="noopener">Open in Drive</a>':'')+
         ((e.hist||[]).length?'<button class="ghost" data-act="panel" data-p="hist">Recovery copies ('+e.hist.length+')</button>':'')+
         (ui.confirm==="del-essay:"+e.id? '<button class="danger" data-act="confirm" data-key="del-essay:'+e.id+'">Yes, remove this prompt</button>' : '<button class="ghost danger" data-act="ask-confirm" data-key="del-essay:'+e.id+'">Remove this prompt</button>')+
@@ -2778,7 +2780,7 @@ document.addEventListener("click", ev=>{
       if(a==="arch-use"){ const x=essay(ui.essayId); if(x && !x.text.trim()){ x.text=old.text; x.localEdit=true; save(); render(); toast("Copied in your "+cyc(ar.cycle)+" essay. Update it for this year."); } }
       else copyText(old.text);
       break; }
-    case "backup": downloadBackup(); break;
+    case "backup": if(S.demo){ toast("You’re looking at the sample data. Click Back to my data first, then download your backup."); break; } downloadBackup(); break;
     case "sync-connect": Sync.connect(); break;
     case "sync-resume": Sync.resume(); break;
     case "sync-run": Sync.retry(); break;
@@ -2795,6 +2797,8 @@ document.addEventListener("click", ev=>{
     case "prev-drop": { const x=essay(ui.essayId); if(x&&x.prev){ x.prev.splice(+d.i,1); if(!x.prev.length) delete x.prev; save(); render(); } break; }
     case "restore": { const f=document.getElementById("restore-file"); f.value=""; f.click(); break; }
     case "try-examples": { flush(); if(!S.demo){ try{ localStorage.setItem(STASH, JSON.stringify(S)); }catch(e){ toast("Couldn’t set your data aside in this browser, so the sample wasn’t loaded."); break; } } S=seed(); S.del={}; snapshot(); writeLocal(); go("next"); toast("Sample loaded. Your own data is set aside until you click Back to my data."); break; }
+    case "undo-restore": { let o=null; try{ o=JSON.parse(localStorage.getItem(UNDO_RESTORE)||"null"); }catch(e){} if(!o){ toast("Nothing to undo."); break; } S=Object.assign(blank(), o, {demo:false}); save(); try{ localStorage.removeItem(UNDO_RESTORE); }catch(e){} ui.undoRestore=false; go("next"); toast("Back to what you had before the restore."); break; }
+    case "dismiss-undo-restore": ui.undoRestore=false; try{ localStorage.removeItem(UNDO_RESTORE); }catch(e){} render(); break;
     case "exit-sample": { S=sampleStash(); snapshot(); try{ localStorage.setItem(KEY, JSON.stringify(S)); localStorage.removeItem(STASH); }catch(e){} go("next"); toast("Back to your own data."); break; }
     case "first-school": go("schools",{addSchool:true}); setTimeout(()=>{ const n=document.getElementById("pick-q"); if(n) n.focus(); },0); break;
     case "tour": openTour(); break;
@@ -2847,7 +2851,13 @@ document.getElementById("exp-file").addEventListener("change", ev=>{
 document.getElementById("restore-file").addEventListener("change", ev=>{
   const file = ev.target.files && ev.target.files[0]; if(!file) return;
   const r = new FileReader();
-  r.onload = ()=>{ try{ const o=JSON.parse(r.result); if(!o||!Array.isArray(o.schools)||!Array.isArray(o.essays)||!Array.isArray(o.bases)) throw 0; S=o; save(); go("next"); toast("Restored "+o.schools.length+" schools and "+o.essays.length+" essays"); }catch(e){ toast("That file isn’t a backup from this app."); } };
+  r.onload = ()=>{ let o; try{ o=JSON.parse(r.result); if(!o||!Array.isArray(o.schools)||!Array.isArray(o.essays)||!Array.isArray(o.bases)) throw 0; }catch(e){ toast("That file isn’t a backup from this app."); return; }
+    if(o.demo){ toast("That file is the sample data, not your own backup, so it wasn’t restored."); return; }
+    const mine = S.demo? sampleStash() : S;
+    try{ localStorage.setItem(UNDO_RESTORE, JSON.stringify(mine)); }catch(e){}
+    if(S.demo){ try{ localStorage.removeItem(STASH); }catch(e){} }
+    S=o; S.demo=false; save(); ui.undoRestore=true; go("next");
+    toast("Restored "+o.schools.length+" schools, "+o.essays.length+" essays and "+(o.experiences||[]).length+" experiences. Changed your mind? Use Undo restore at the top of Do next.", 6000); };
   r.readAsText(file);
 });
 
