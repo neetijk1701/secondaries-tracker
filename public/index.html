@@ -906,7 +906,7 @@ function plan(s){
   const quick = work<=1 ? 1.25 : 1;
   const score = (s.submitted? -1000 : 0) + (s.pinned? 100 : 0) + urg*im*quick;
   const reasons=[];
-  if(left!=null){
+  if(left!=null && !s.submitted){
     const what = d.kind==="deadline" ? "school deadline" : "your target";
     if(left<0) reasons.push({t:Math.abs(left)+(Math.abs(left)===1?" day":" days")+" past "+what, c:"bad"});
     else if(left===0) reasons.push({t:"Due today ("+what+")", c:"bad"});
@@ -1913,7 +1913,7 @@ function cycleIcsEvents(stampv, esc2){
 function vCycle(){
   const all=S.schools;
   let h='<div class="row" style="justify-content:space-between; align-items:flex-end; margin-bottom:14px"><div><h1>Cycle</h1><p class="sub" style="margin:0">Every school from secondary to decision. Open a school to log invites, interview dates and decisions.</p></div>'+(all.length?'<button data-act="ics">Add to calendar</button>':'')+'</div>';
-  if(!all.length) return h+'<div class="panel empty">Add schools on the Secondaries tab first.</div>';
+  if(!all.length) return h+'<div class="panel empty stack" style="align-items:flex-start">No schools yet. Add the schools you’ve applied to; tick “Already submitted” for ones you’ve finished.<button class="primary" data-act="cycle-add-school">Add a school</button></div>';
   const st=all.map(s=>({s, g:stage(s)}));
   const cnt=k=>st.filter(x=>x.g.k===k).length;
   const ivDone=st.filter(x=>x.s.iv && daysUntil(x.s.iv)<0).length, ivUp=st.filter(x=>x.s.iv && daysUntil(x.s.iv)>=0 && !x.s.outcome).length;
@@ -2045,10 +2045,10 @@ function checklist(){
     step("Draft your first secondary", schoolEs.some(e=>(e.text||"").trim()), "first-school"),
     step("Add a few experiences, so each essay can suggest stories", story.length, "exp")];
   else if(st==="interviews") steps=[
-    step("Mark the schools you’ve submitted", S.schools.some(s=>s.submitted), "schools"),
+    step("Add the schools you’ve submitted (tick “Already submitted”, no essays to retype)", S.schools.some(s=>s.submitted), "add-school"),
     step("Record interview invites and dates", S.schools.some(s=>s.ii||s.iv), "cycle"),
     step("Pick the stories to have ready for each interview", S.schools.some(s=>(s.stories||[]).length), "cycle"),
-    step("Send thank-you notes and update letters", S.essays.some(isLetter), "cycle")];
+    step("Send thank-you notes and update letters", S.essays.some(e=>isLetter(e) && e.status==="pasted"), "cycle")];
   if(drive) steps.push(step("Save to Google Drive, so your work is safe and opens on any computer", Sync.state().connected, "drive"));
   return steps;
 }
@@ -2115,7 +2115,7 @@ function downloadIcs(){
   if(!n && !nx){ toast("Nothing to add yet: no open secondaries, interviews or letters with dates."); return; }
   lines.push("END:VCALENDAR");
   const blob=new Blob([lines.join("\r\n")+"\r\n"], {type:"text/calendar"});
-  const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="secondaries-due-dates.ics"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000);
+  const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="medapp-due-dates.ics"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000);
   toast("Downloaded "+(n?n+" due date"+(n===1?"":"s"):"")+(n&&nx?" and ":"")+(nx?nx+" interview and letter date"+(nx===1?"":"s"):"")+". Open the file to add them to your calendar. If dates change, download it again.");
 }
 function feeSummary(){
@@ -2136,8 +2136,8 @@ function vSchools(){
   list.forEach(({s,p})=>{
     const es=secEssays(s.id); const fin=es.filter(e=>e.status==="ready"||e.status==="pasted").length;
     h += '<li><div class="main"><div class="row"><h2>'+esc(s.name)+'</h2>'+stars(s.interest)+'</div><div class="chips">'+
-      (s.submitted? (stage(s).k==="sub"||stage(s).k==="comp" ? '<span class="chip good">'+stage(s).t+(s.fee?' · fee paid':' · fee not paid')+'</span>' : '<span class="chip '+stage(s).c+'">'+esc(stage(s).t)+'</span>') : p.reasons.slice(0,1).map(c=>'<span class="chip '+c.c+'">'+esc(c.t)+'</span>').join(""))+
-      (s.waiver?'<span class="chip">Fee waived</span>':(!s.fee && +s.feeAmt>0 && !s.submitted?'<span class="chip warn">$'+(+s.feeAmt)+' unpaid</span>':''))+(s.track==="dual"?'<span class="chip acc">'+esc(dualLabel(libFind(s.libName||s.name)))+'</span>':'')+'<span class="chip">'+fin+' of '+es.length+' essays ready</span>'+(es.some(behind)?'<span class="chip warn">Base updated</span>':'')+'</div></div><button data-act="open-school" data-id="'+s.id+'">Open</button></li>';
+      (s.submitted? (stage(s).k==="sub"||stage(s).k==="comp" ? '<span class="pill st-pasted">'+stage(s).t+(s.submittedAt?' '+fmt(s.submittedAt):'')+(+s.feeAmt>0 && !s.fee && !s.waiver?' · fee not paid':'')+'</span>' : '<span class="chip '+stage(s).c+'">'+esc(stage(s).t)+'</span>') : p.reasons.slice(0,1).map(c=>'<span class="chip '+c.c+'">'+esc(c.t)+'</span>').join(""))+
+      (s.waiver?'<span class="chip">Fee waived</span>':(!s.fee && +s.feeAmt>0 && !s.submitted?'<span class="chip warn">$'+(+s.feeAmt)+' unpaid</span>':''))+(s.track==="dual"?'<span class="chip acc">'+esc(dualLabel(libFind(s.libName||s.name)))+'</span>':'')+(es.length && !s.submitted?'<span class="chip">'+fin+' of '+es.length+' essays ready</span>':'')+(es.some(behind)?'<span class="chip warn">Base updated</span>':'')+'</div></div><button data-act="open-school" data-id="'+s.id+'">Open</button></li>';
   });
   if(!S.schools.length) h+='<li class="empty">No schools yet.</li>';
   h += '</ul></div>';
@@ -2199,6 +2199,7 @@ function addSchoolForm(){
     '<label class="f">Turnaround (days)<input id="ns-turn" type="number" min="1" max="60" value="'+esc((ui.nsDraft&&ui.nsDraft.turn)||DEFAULT_TURNAROUND)+'"></label>'+
     '<label class="f">School deadline (optional)<input id="ns-hard" type="date" value="'+esc((ui.nsDraft&&ui.nsDraft.hard)||"")+'"></label>'+
     '<label class="f">Secondary fee ($, optional)<input id="ns-fee" type="number" min="0" max="1000" step="1" placeholder="e.g. 100" value="'+esc((ui.nsDraft&&ui.nsDraft.fee)||"")+'"></label>'+
+    '<label class="f">Already submitted?<span class="row" style="gap:8px; flex-wrap:nowrap"><input type="checkbox" id="ns-sub"'+((ui.nsDraft&&ui.nsDraft.sub!=null? ui.nsDraft.sub : appStage()==="interviews")?' checked':'')+' style="width:auto"><input type="date" id="ns-subd" aria-label="Submitted on" value="'+esc((ui.nsDraft&&ui.nsDraft.subd)||"")+'" title="Submitted on (optional)"></span><span class="small muted">Tick for schools you’ve finished. Prompts aren’t added, so there’s nothing to retype.</span></label>'+
     '<label class="f">Interest<select id="ns-int">'+[[3,"Top choice"],[2,"Middle"],[1,"Lower"]].map(([v,l])=>'<option value="'+v+'"'+(+((ui.nsDraft&&ui.nsDraft.int)||2)===v?' selected':'')+'>'+l+'</option>').join("")+'</select></label>'+
     '</div><div class="row"><button class="primary" type="submit">Add school</button><button type="button" data-act="toggle-add-school">Cancel</button></div></div></form>';
   return h;
@@ -2614,6 +2615,7 @@ document.addEventListener("click", ev=>{
     case "open-school": if(String(d.id).startsWith("app-")) go("primary"); else go("schools",{schoolId:d.id}); break;
     case "open-essay": { const x=essay(d.id); ui.tab="schools"; go("schools",{schoolId:x.schoolId, essayId:d.id}); break; }
     case "open-base": go("essays",{baseId:d.id}); break;
+    case "cycle-add-school": go("schools",{addSchool:true}); setTimeout(()=>{ const q=document.getElementById("pick-q"); if(q) q.focus(); },0); break;
     case "toggle-add-school": ui.addSchool=!ui.addSchool; ui.pick=null; ui.pickQ=""; ui.pickI=0; render(); if(ui.addSchool){ const q=document.getElementById("pick-q"); if(q) q.focus(); } break;
     case "pick-change": ui.pickDual=null; ui.nsDraft=null; ui.pick=null; render(); { const q=document.getElementById("pick-q"); if(q){ q.focus(); q.select(); } } break;
     case "pick-track": { const g=id2=>{ const x=document.getElementById(id2); return x?x.value:""; }; ui.nsDraft={rec:g("ns-rec"), turn:g("ns-turn"), hard:g("ns-hard"), int:g("ns-int"), fee:g("ns-fee")}; ui.pickDual = d.v==="1"; render(); break; }
@@ -2800,7 +2802,7 @@ function downloadBackup(){
   if(!S.demo){ S.lastBackup = iso(today()); save(); }
   const blob = new Blob([JSON.stringify(S, null, 1)], {type:"application/json"});
   const url = URL.createObjectURL(blob);
-  const a = document.createElement("a"); a.href=url; a.download="secondaries-backup-"+iso(today())+".json";
+  const a = document.createElement("a"); a.href=url; a.download="medapp-backup-"+iso(today())+".json";
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(()=>URL.revokeObjectURL(url), 2000);
   render(); toast("Backup downloaded. Keep it somewhere safe, like email or cloud storage.");
@@ -2941,12 +2943,12 @@ document.addEventListener("keydown", ev=>{ if(!GT.on) return; if(ev.key==="Escap
 window.addEventListener("resize", ()=>{ if(GT.on) gtPlace(); });
 function stageCard(){
   const cur=prefs().stage===undefined && prefs().applying===undefined ? "" : appStage();
-  return '<div class="card2"><button class="x" id="tour-x" aria-label="Close">×</button><div class="step-n">'+(cur?'Change what you see':'Welcome to Med App Workspace')+'</div><h2 id="tour-title">Where are you in the process?</h2><p>We’ll show you just what you need now. You can change this anytime under <b>More</b>.</p>'+
+  return '<div class="card2"><button class="x" id="tour-x" aria-label="Close">×</button><div class="step-n">'+(cur?'Change what you see':'Welcome to Med App Workspace')+'</div><h2 id="tour-title" tabindex="-1">Where are you in the process?</h2><p>We’ll show you just what you need now. You can change this anytime under <b>More</b>.</p>'+(cur?'':'<p class="small muted" style="margin:0">Free, no account, no AI. Everything stays in this browser unless you choose to save it to your own Google Drive. <a href="about.html" target="_blank" rel="noopener">About</a> · <a href="privacy.html" target="_blank" rel="noopener">Privacy</a></p>')+
     '<div class="stack" style="gap:8px; margin:12px 0">'+Object.entries(STAGES).map(([k,v])=>'<button class="stage-opt'+(cur===k?' on':'')+'" data-stage="'+k+'"><b>'+v.label+'</b><span>'+v.sub+'</span></button>').join("")+'</div>'+
     '<div class="row" style="justify-content:space-between; flex-wrap:wrap"><button class="ghost" data-stage="gtour">New here? Take the 3-minute tour</button><button class="ghost" data-stage="sample">Just looking? See a finished example</button><button class="ghost" data-stage="all"'+(cur==="all"?' aria-pressed="true"':'')+'>Show me everything</button></div></div>';
 }
 function renderTour(){
-  if(tourMode==="stage"){ document.getElementById("tour").innerHTML=stageCard(); const f=document.querySelector("#tour .stage-opt"); if(f) f.focus(); return; }
+  if(tourMode==="stage"){ document.getElementById("tour").innerHTML=stageCard(); const f=document.querySelector("#tour .stage-opt.on")||document.getElementById("tour-title"); if(f) f.focus(); return; }
   const s=TOUR[tourStep], last=tourStep===TOUR.length-1;
   document.getElementById("tour").innerHTML='<div class="card2"><button class="x" id="tour-x" aria-label="Close">×</button>'+
     '<div class="step-n">'+(tourMode==="exp"? (tourStep===0?'The Experiences tab':'Experiences · '+tourStep+' of '+(TOUR.length-1)) : (tourStep===0?'Welcome':'How it works · '+tourStep+' of '+(TOUR.length-1)))+'</div><h2 id="tour-title">'+s.t+'</h2><p>'+s.p+'</p>'+
@@ -3005,8 +3007,9 @@ document.addEventListener("submit", ev=>{
   if(f.dataset.form==="add-school"){
     const pk=ui.pick; if(!pk) return;
     const extra={received:document.getElementById("ns-rec").value||iso(today()), turnaround:+document.getElementById("ns-turn").value||DEFAULT_TURNAROUND, hard:document.getElementById("ns-hard").value, interest:+document.getElementById("ns-int").value, feeAmt:(document.getElementById("ns-fee")||{}).value ? Math.round(+document.getElementById("ns-fee").value) : ""};
+    const subX=document.getElementById("ns-sub"); if(subX && subX.checked){ extra.submitted=true; extra.fee=true; extra.submittedAt=document.getElementById("ns-subd").value||null; }
     if(pk.kind==="lib"){
-      const keys=[...document.querySelectorAll(".pick-p")].filter(c=>c.checked).map(c=>c.value);
+      const keys=extra.submitted? [] : [...document.querySelectorAll(".pick-p")].filter(c=>c.checked).map(c=>c.value);
       addFromLibrary(pk.name, extra, keys, !!ui.pickDual);
       return;
     }
