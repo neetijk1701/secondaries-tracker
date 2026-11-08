@@ -1262,7 +1262,7 @@ function render(){
   else if(ui.tab==="experiences") h += vExperiences();
   else h += vNext();
   const essayView = !!(ui.essayId && essay(ui.essayId));
-  const showSide = S.essays.length>1 && !essayView && !((ui.tab==="cycle"||ui.tab==="experiences"||ui.tab==="primary") && !ui.schoolId && !ui.baseId);
+  const showSide = S.essays.length>1 && !essayView && !(appStage()==="interviews" && ui.tab==="next") && !((ui.tab==="cycle"||ui.tab==="experiences"||ui.tab==="primary") && !ui.schoolId && !ui.baseId);
   let side="";
   if(showSide){
     const list=suggestions();
@@ -1894,7 +1894,7 @@ function cycleTodos(){
       if(n<0 && n>=-14 && !s.thanks) out.push({s, k:"thanks", n:0, d:s.iv, t:"Thank-you notes after your "+fmt(s.iv)+" interview", c:"warn"});
     } else if(s.ii){ out.push({s, k:"sched", n:1, d:s.ii, t:"Interview invite: schedule your date", c:"warn"}); }
   });
-  S.essays.filter(e=>isLetter(e) && e.status!=="pasted").forEach(e=>{ const s=school(e.schoolId); if(!s) return; const n=e.due?daysUntil(e.due):null;
+  S.essays.filter(e=>isLetter(e) && e.status!=="pasted").forEach(e=>{ const s=school(e.schoolId); if(!s) return; if(e.family==="thanks" && s.thanks) return; const n=e.due?daysUntil(e.due):null;
     out.push({s, e, k:"letter", n:n==null?30:n, d:e.due, t:(FAM[e.family]||"Letter")+(e.due?" · send by "+fmt(e.due):"")+(e.status==="ready"?" · ready to send":""), c:n!=null&&n<=3?"warn":""}); });
   (S.recommenders||[]).forEach(r=>{ if(r.received || !r.due) return; const n=daysUntil(r.due); if(n>30) return;
     out.push({s:null, r, who:"Letter from "+(r.name||"letter writer"), k:"rec", n, d:r.due, t:(n<0?"Letter overdue since "+fmt(r.due):"Letter due "+(n===0?"today":dayLabel(r.due)))+(r.asked?"":" · not asked yet"), c:n<=7?"warn":""}); });
@@ -2087,15 +2087,15 @@ function vNext(){
   const done = S.schools.filter(s=>s.submitted);
   const flagged = S.essays.filter(behind);
   let undo=false; try{ undo=ui.undoRestore!==false && !!localStorage.getItem(UNDO_RESTORE); }catch(e){}
-  let h = (undo?'<div class="banner info" style="margin-bottom:12px"><div class="grow small"><strong>You restored a backup.</strong> What you had before is kept until you dismiss this.</div><button data-act="undo-restore">Undo restore</button><button class="ghost" data-act="dismiss-undo-restore">Dismiss</button></div>':'')+'<h1>Do next</h1><p class="sub">'+(appStage()==="primary"? 'Your primary application first; schools show up here once their secondaries arrive.' : 'Schools ranked by how soon they are due, how much you want them, and how much writing is left. Schools you can finish quickly move up.')+'</p>';
+  let h = (undo?'<div class="banner info" style="margin-bottom:12px"><div class="grow small"><strong>You restored a backup.</strong> What you had before is kept until you dismiss this.</div><button data-act="undo-restore">Undo restore</button><button class="ghost" data-act="dismiss-undo-restore">Dismiss</button></div>':'')+'<h1>Do next</h1><p class="sub">'+(appStage()==="primary"? 'Your primary application first; schools show up here once their secondaries arrive.' : appStage()==="interviews"? 'Interviews, thank-you notes, update letters and decisions first, then anything still open.' : 'Schools ranked by how soon they are due, how much you want them, and how much writing is left. Schools you can finish quickly move up.')+'</p>';
   h += stageNudge() + checklistHtml();
   { const st=appStage(); if(STAGES[st]){ const v=visibleTabs();
       if(v.includes("cycle") && !STAGES[st].tabs.includes("cycle")) h += tipHtml("cycle-tab", '<b>A Cycle tab just appeared.</b> Now that you’ve submitted, track interview invites and dates, thank-you notes, update letters and decisions there.');
-      if(v.includes("essays") && !STAGES[st].tabs.includes("essays")) h += tipHtml("base-tab", '<b>A Base essays tab just appeared.</b> Once two schools ask the same kind of question, write it once there and give each school its own trimmed copy.'); } }
+      if(st!=="interviews" && v.includes("essays") && !STAGES[st].tabs.includes("essays")) h += tipHtml("base-tab", '<b>A Base essays tab just appeared.</b> Once two schools ask the same kind of question, write it once there and give each school its own trimmed copy.'); } }
   h += vBrief(rows) + '<!--SIDE-M-->';
   { const t=cycleTodos(); if(t.length) h += '<div class="panel" style="margin-bottom:16px"><div class="ph"><h2 style="flex:1">Interviews and letters</h2><button class="ghost small" data-tab="cycle">Cycle tab</button></div><ul class="list">'+t.slice(0,5).map(x=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(x.s?x.s.name:x.who)+'</div><div class="chips"><span class="chip '+x.c+'">'+esc(x.t)+'</span></div></div>'+(x.e?'<button data-act="open-essay" data-id="'+x.e.id+'">Open</button>':x.r?'<button data-act="open-rec" data-id="'+x.r.id+'">Open</button>':'<button data-act="open-school" data-id="'+x.s.id+'">Open</button>')+'</li>').join("")+'</ul></div>'; }
   if(!S.schools.length) h += '<div class="panel hero-empty"><h2>Add a school when its secondary arrives</h2><p>Pick it from the prompt library and its prompts come with it, or paste them yourself. Prompts that ask the same thing at different schools can share one base essay, and this list will rank your schools by what to work on first.</p><div class="row"><button class="primary" data-act="first-school">Add your first school</button>'+(SHOW_LIBRARY?'<button data-act="go-library">Browse the prompt library</button>':'')+'<button data-act="try-examples">Explore with sample data</button></div><p class="small">'+(Sync.state().connected?'Your work saves in this browser and to your own Google Drive.':(Sync.available()?'Your work saves in this browser. Connect Google Drive at the top to keep it safe on any computer.':'Everything you enter stays on this device. Nothing is sent anywhere.'))+'</p></div>';
-  else if(!rows.length) h += '<div class="panel empty">Nothing open. Add a school when a secondary arrives.</div>';
+  else if(!rows.length) h += '<div class="panel empty">'+(appStage()==="interviews"? 'Every school is submitted. Interviews, letters and decisions are on the <a href="#cycle" data-tab="cycle">Cycle tab</a>.' : 'Nothing open. Add a school when a secondary arrives.')+'</div>';
   else {
     h += '<div class="panel" data-tour="ranked"><ol class="list">';
     rows.forEach((r,i)=>{
@@ -2107,7 +2107,7 @@ function vNext(){
     });
     h += '</ol></div>';
   }
-  if(done.length) h += '<p class="small muted" style="margin-top:14px">Submitted: '+done.map(s=>esc(s.name)).join(", ")+'</p>';
+  if(done.length) h += '<p class="small muted" style="margin-top:14px">'+done.length+' submitted'+(done.length<=5? ': '+done.map(s=>esc(s.name)).join(", ") : '')+'. <a href="#cycle" data-tab="cycle">See them on the Cycle tab</a>.</p>';
   h += '<details class="how"><summary>How the order works</summary><div><p>Each school gets a due date: the date you received the secondary plus your turnaround (default '+DEFAULT_TURNAROUND+' days), or the school’s own deadline if that comes first. Schools due sooner rank higher; overdue schools rank highest.</p><p>Interest multiplies that: top choice ×1.35, middle ×1, lower ×0.7. Schools with about one essay’s worth of work left get a small boost, since finishing them clears your list fastest. Essays that can start from a base count as less work than ones you write from scratch.</p><p>Pin a school on its page to keep it at the top regardless.</p></div></details>';
   return h;
 }
@@ -2342,7 +2342,7 @@ function vEssay(e){
     '<label class="f">Prompt type<select id="ep-f">'+Object.entries(FAM).map(([k,l])=>'<option value="'+k+'"'+(e.family===k?' selected':'')+'>'+l+'</option>').join("")+'</select></label>'+
     '<div class="f" style="justify-content:flex-end"><label class="chk"><input type="checkbox" id="ep-o"'+(e.optional?' checked':'')+'> Optional</label></div></div>'+
     '<div class="row"><button class="primary" type="submit">Save prompt</button><button type="button" data-act="edit-prompt">Cancel</button></div></div></form>';
-  else h += '<div class="row" style="gap:14px; margin-top:4px"><button class="ghost small" data-act="edit-prompt" style="padding-left:0">Edit prompt, limit or type</button>'+(s.libName?reportLink(s.libName, !!e.dual):'')+'</div>';
+  else h += '<div class="row" style="gap:14px; margin-top:4px"><button class="ghost small" data-act="edit-prompt" style="padding-left:0">Edit prompt, limit or type</button>'+(s.libName && !isLetter(e)?reportLink(s.libName, !!e.dual):'')+'</div>';
   { let t="";
     if(!isPrimaryE(e) && !isLetter(e) && !e.baseId && e.family!=="why" && e.family!=="other" && S.essays.some(o=>o.id!==e.id && o.family===e.family && o.schoolId!==e.schoolId && !isPrimaryE(o)))
       t=tipHtml("base", '<b>Another school asks a similar question.</b> Write this once as a base essay (<b>Make this the base</b>, beside the essay), then trim a copy for each school. When you improve the base, every copy that’s behind gets flagged.');
@@ -2371,7 +2371,7 @@ function vEssay(e){
   { const lv=lastVer(e), u=Sync.docLink("essay:"+e.id)||(lv?Sync.docLink("ver:"+e.id+":"+lv.n):"");
     h += '<div class="ebar">'+meter(e)+'<span class="grow"></span>'+
       '<select class="pill '+stClass(e)+'" aria-label="Status" id="st2-'+e.id+'" data-bind="essay:'+e.id+':status">'+statusOpts(e)+'</select>'+
-      '<button data-act="focus-on">Focus</button><button class="primary" data-act="copy-portal" data-id="'+e.id+'">Copy for portal</button>'+
+      '<button data-act="focus-on">Focus</button><button class="primary" data-act="copy-portal" data-id="'+e.id+'">'+(isLetter(e)?'Copy':'Copy for portal')+'</button>'+
       '<details class="emenu"'+(String(ui.confirm||"").startsWith("del-essay:")?' open':'')+'><summary aria-label="More actions">⋯</summary><div>'+
         (u?'<a class="small" style="padding:6px 10px" href="'+u+'" target="_blank" rel="noopener">Open in Drive</a>':'')+
         ((e.hist||[]).length?'<button class="ghost" data-act="panel" data-p="hist">Recovery copies ('+e.hist.length+')</button>':'')+
@@ -2670,12 +2670,12 @@ document.addEventListener("click", ev=>{
     case "ics": downloadIcs(); break;
     case "all-caught-up": { const b=base(d.id); if(!b) break; const v=latest(b).v; let n=0; S.essays.forEach(e=>{ if(e.baseId===b.id && behind(e)){ e.basedOnV=v; n++; } }); save(); render(); toast(n+(n===1?" copy":" copies")+" marked caught up to v"+v+". Their text wasn’t changed."); break; }
     case "hide-sub": ui.hideSub=!ui.hideSub; render(); break;
-    case "mark-portal": { const x=essay(d.id); if(!x) break; x.status="pasted"; freezeVer(x, isLetter(x)?"Sent":"Submitted"); save(); render(); toast("Marked In portal."); break; }
+    case "mark-portal": { const x=essay(d.id); if(!x) break; x.status="pasted"; if(x.family==="thanks"){ const sc=school(x.schoolId); if(sc) sc.thanks=true; } freezeVer(x, isLetter(x)?"Sent":"Submitted"); save(); render(); toast("Marked In portal."); break; }
     case "copy-portal": { const x=essay(d.id); if(!x) break; if(!x.text.trim()){ toast("Nothing to copy yet. Write the essay first."); break; } const clean=portalText(x.text); const c=clean.length, w=words(clean);
       const over = x.limit && (x.unit==="chars" ? c>x.limit : w>x.limit);
       const note=document.getElementById("copy-note-"+x.id);
       const msg=(over?'Over the limit: ':'Copied: ')+w.toLocaleString()+' words · '+c.toLocaleString()+' characters with spaces'+(x.limit?' (limit '+limitL(x)+')':'')+'.';
-      const done=()=>{ if(note){ note.textContent=msg; note.style.color= over?'var(--bad)':'var(--good)'; if(!over && x.status!=="pasted" && !isPrimaryE(x)){ const bt=document.createElement("button"); bt.className="ghost small"; bt.dataset.act="mark-portal"; bt.dataset.id=x.id; bt.textContent="Pasted it? Mark In portal"; bt.style.marginLeft="8px"; note.appendChild(bt); } } const nm=wrongNames(x); toast(nm.length? 'Copied, but it still mentions '+nm.map(y=>y.alias).join(", ")+'.' : (over? (isPrimaryE(x)?'Copied, but it’s over the limit.':'Copied, but it’s over this school’s limit.') : 'Copied. Paste it into the portal.')); };
+      const done=()=>{ if(note){ note.textContent=msg; note.style.color= over?'var(--bad)':'var(--good)'; if(!over && x.status!=="pasted" && !isPrimaryE(x)){ const bt=document.createElement("button"); bt.className="ghost small"; bt.dataset.act="mark-portal"; bt.dataset.id=x.id; bt.textContent=isLetter(x)?"Sent it? Mark sent":"Pasted it? Mark In portal"; bt.style.marginLeft="8px"; note.appendChild(bt); } } const nm=wrongNames(x); toast(nm.length? 'Copied, but it still mentions '+nm.map(y=>y.alias).join(", ")+'.' : (over? (isPrimaryE(x)?'Copied, but it’s over the limit.':'Copied, but it’s over this school’s limit.') : 'Copied. Paste it into the portal.')); };
       const fallback=()=>{ const ta=document.createElement("textarea"); ta.value=clean; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); done(); }catch(err){ toast("Couldn’t copy. Select the text and copy it yourself."); } ta.remove(); };
       try{ navigator.clipboard.writeText(clean).then(done, fallback); }catch(err){ fallback(); }
       break; }
@@ -2942,10 +2942,12 @@ function gtStart(only){
 function gtEnd(keep){
   GT.on=false; document.getElementById("gt").hidden=true;
   const home=()=>{ const b=GT.back; if(b && !keep){ const ok=(!b.schoolId||school(b.schoolId)) && (!b.essayId||essay(b.essayId)) && (!b.expId||exp(b.expId)) && (!b.recId||rec(b.recId)); if(ok){ go(b.tab, {schoolId:b.schoolId, essayId:b.essayId, baseId:b.baseId, expId:b.expId, recId:b.recId}); ui.expView=b.expView; render(); return; } } go("next"); };
+  try{ localStorage.removeItem("medapp-tour-on"); }catch(e){}
   if(GT.sample && !keep){ S=sampleStash(); snapshot(); try{ localStorage.setItem(KEY, JSON.stringify(S)); localStorage.removeItem(STASH); }catch(e){} home(); toast(GT.back? "Back to your page." : "Tour finished. You’re back to your own data."); }
   else { home(); if(keep) toast("Explore the example as long as you like. “Back to my data” is at the top."); }
 }
-function gtShow(){
+function gtMark(){ try{ if(GT.sample) localStorage.setItem("medapp-tour-on","1"); }catch(e){} }
+function gtShow(){ gtMark();
   const st=GT.steps[GT.i]; if(!st) return gtEnd(false);
   st.go();
   const el=document.querySelector(st.sel); if(el && el.scrollIntoView){ const tall=el.getBoundingClientRect().height > window.innerHeight*0.55; el.scrollIntoView({block: tall? "start":"center"}); if(tall) window.scrollBy(0,-90); }
@@ -3118,6 +3120,7 @@ document.addEventListener("change", ev=>{
   if(el.tagName==="TEXTAREA"||(el.tagName==="INPUT"&&el.type==="text")) return;
   obj[field]=val;
   if(kind==="essay" && field==="status" && val==="pasted") freezeVer(obj, isLetter(obj)?"Sent":"Submitted");
+  if(kind==="essay" && field==="status" && val==="pasted" && obj.family==="thanks"){ const sc=school(obj.schoolId); if(sc) sc.thanks=true; }
   if(kind==="school" && field==="submitted" && val) S.essays.filter(x=>x.schoolId===obj.id && (x.text||"").trim()).forEach(x=>{ if(x.status!=="pasted") x.status="pasted"; freezeVer(x, "Submitted"); });
   if(kind==="essay" && field==="status" && (val==="ready"||val==="pasted")){ const w=wrongNames(obj); if(w.length) setTimeout(()=>toast("Heads up: this essay still mentions "+w.map(x=>x.alias).join(", ")+"."),50); }
   if(kind==="school" && field==="submitted") obj.submittedAt = val ? (obj.submittedAt||iso(today())) : null;
@@ -3167,6 +3170,8 @@ document.addEventListener("keydown", ev=>{
 let lastDay=iso(today());
 document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState!=="visible") return; const a=document.activeElement; if(a && (a.tagName==="TEXTAREA" || a.tagName==="INPUT")) return; if(iso(today())!==lastDay){ lastDay=iso(today()); } render(); });
 window.addEventListener("hashchange", ()=>{ const t=location.hash.slice(1); if(t==="log"){ go("experiences"); return; } if(TABS.some(x=>x[0]===t) && t!==ui.tab) go(t); });
+// A reload in the middle of a tour shouldn't strand you in the example data.
+try{ if(localStorage.getItem("medapp-tour-on") && S.demo && localStorage.getItem(STASH)){ S=sampleStash(); localStorage.setItem(KEY, JSON.stringify(S)); localStorage.removeItem(STASH); } localStorage.removeItem("medapp-tour-on"); }catch(e){}
 if(!S.demo && (S.essays||[]).map(migrateVers).some(Boolean)) save();
 const h0=location.hash.slice(1); if(TABS.some(x=>x[0]===h0)) ui.tab=h0;
 // the Experience Log front door: someone arriving at #log with nothing else here gets the log on its own
