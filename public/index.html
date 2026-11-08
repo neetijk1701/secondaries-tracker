@@ -882,7 +882,16 @@ const lettersOf = sid=>essaysOf(sid).filter(isLetter);
 function latest(b){ return b && b.versions.length ? b.versions[b.versions.length-1] : {v:0, text:"", note:"", at:""}; }
 function ver(b,v){ return b.versions.find(x=>x.v===v); }
 function unsaved(b){ return b.draft !== latest(b).text; }
-function behind(e){ const b=base(e.baseId); if(!b||e.basedOnV==null) return false; const sc=school(e.schoolId); if(sc&&sc.submitted) return false; return e.basedOnV < latest(b).v; }
+const COND_RE=/^\s*\(?\s*(only (required |answer |complete )?if|if (applicable|you (are|have|were|did|answered|indicated|selected))|optional\b|applicants who|for applicants)/i;
+function isCond(p){ return COND_RE.test(p||""); }
+const BEHIND_MEMO=new Map();
+function behind(e){ const b=base(e.baseId); if(!b||e.basedOnV==null) return false; const sc=school(e.schoolId); if(sc&&sc.submitted) return false; if(e.basedOnV >= latest(b).v) return false;
+  // Only flag copies the base change actually reaches: some change lands in this copy's text.
+  if(!(e.text||"").trim()) return true;
+  const L=latest(b), key=e.id+"|"+e.basedOnV+"|"+L.v+"|"+e.text.length+"|"+e.text.slice(-24);
+  if(BEHIND_MEMO.has(key)) return BEHIND_MEMO.get(key);
+  let hit=false; try{ const old=ver(b,e.basedOnV); if(!old || old.text===e.text) hit=true; else { const segs=diff(old.text, L.text); for(let i=0;i<segs.length && !hit;i++) if(segs[i].type!=="eq" && locate(segs,i,e.text)) hit=true; } }catch(err){ hit=true; }
+  if(BEHIND_MEMO.size>2000) BEHIND_MEMO.clear(); BEHIND_MEMO.set(key,hit); return hit; }
 function words(t){ const m=t.trim().match(/\S+/g); return m? m.length : 0; }
 function count(e){ return e.unit==="chars" ? portalText(e.text).length : words(e.text); }
 function unitL(u, n){ return u==="chars" ? "characters" : (n===1?"word":"words"); }
@@ -1214,9 +1223,9 @@ function suggPanel(list, title, mobile){
 const ui = {tab:"next", schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, libQ:"", libState:"", libDeg:"", libOpen:null, restore:false, pick:null, pickQ:"", pickI:0, editPrompt:false, sgAll:false, sgOpen:false};
 const TABS = [["next","Do next"],["primary","Primary"],["schools","Secondaries"],["cycle","Cycle"],["essays","Base essays"],["experiences","Experiences"]].concat(SHOW_LIBRARY? [["library","Prompt library"]] : []);
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
-function stars(n){ let h=""; for(let i=1;i<=3;i++) h+= i<=n? "●" : '<span class="off">●</span>'; return '<span class="stars" aria-label="Interest '+n+' of 3">'+h+'</span>'; }
+function stars(n){ let h=""; for(let i=1;i<=3;i++) h+= i<=n? "●" : '<span class="off">●</span>'; return '<span class="stars" role="img" aria-label="Interest '+n+' of 3" title="Interest: '+(["","lower","middle","top choice"][n]||"")+'">'+h+'</span>'; }
 let toastT;
-function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, 2400); }
+function toast(msg, ms){ const t=document.getElementById("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, ms||2400); }
 function go(tab, extra){ Object.assign(ui, {more:false, editDetails:false, promptOpen:false, schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, editPrompt:false, pick:null, pickQ:"", pickI:0, focus:false, histSel:null, verSel:null, verCmp:false, verDone:false, expId:null, recId:null, recPreview:false, recOpen:null, expImport:false, expParsed:null}, extra||{}); ui.tab=tab; if(location.hash!=="#"+tab){ try{ history.replaceState(null,"","#"+tab);}catch(e){ location.hash=tab; } } render(); window.scrollTo(0,0); }
 
 function sizeEditor(){ const t=document.getElementById("essay-text"); if(!t || document.body.classList.contains("focus-mode")) return; const y=window.scrollY; t.style.height="auto"; t.style.height=Math.max(t.scrollHeight+4, 0)+"px"; window.scrollTo(0,y); }
@@ -1673,7 +1682,7 @@ function appRec(k){ S.apps=S.apps||[]; let a=S.apps.find(x=>x.id==="app-"+k); if
 function primaryEssay(k, key){ return S.essays.find(e=>e.schoolId==="app-"+k && e.pkey===key); }
 function startPrimary(k, d){
   const a=appRec(k), b=S.bases.find(x=>x.family===d.fam);
-  const e={id:id("e"), schoolId:a.id, pkey:d.k, prompt:d.p, limit:d.limit, unit:"chars", family:d.fam, baseId:b?b.id:null, basedOnV:null, text:"", status:"todo", localEdit:false, optional:!!d.opt, group:"", cut:false};
+  const e={id:id("e"), schoolId:a.id, pkey:d.k, prompt:d.p, limit:d.limit, unit:"chars", family:d.fam, baseId:b?b.id:null, basedOnV:null, text:"", status:"todo", localEdit:false, optional:!!d.opt||isCond(d.p), group:"", cut:false};
   S.essays.push(e); return e;
 }
 function actType(k, kind, x){ const t=SVC[k].act.types; const blob=x? ((x.title||"")+" "+(x.org||"")+" "+(x.summary||"")) : "";
@@ -2138,10 +2147,14 @@ function vSchools(){
   let h = '<div class="row" style="justify-content:space-between; align-items:flex-end; margin-bottom:14px"><div><h1>Secondaries</h1><p class="sub" style="margin:0">Each school’s secondary essays, sorted by due date.</p><label class="chk small" style="margin-top:8px"><input type="checkbox" id="pref-dual"'+(prefs().dual?' checked':'')+'> I’m applying MD/PhD or DO/PhD</label></div><div class="row">'+(S.schools.some(s=>!s.submitted)?'<button data-act="ics">Add due dates to calendar</button>':'')+(SHOW_LIBRARY?'<button data-act="go-library">Add from prompt library</button>':'')+'<button class="primary" data-act="toggle-add-school">Add school</button></div></div>';
   if(ui.addSchool) h += addSchoolForm();
   h += feeSummary();
+  const nSub=S.schools.filter(s=>s.submitted).length, q=(ui.schQ||"").trim();
+  if(S.schools.length>=8) h += '<div class="row" style="margin-bottom:10px; gap:12px"><input id="sch-q" type="search" data-schq="1" placeholder="Find a school" value="'+esc(ui.schQ||"")+'" style="max-width:260px">'+(nSub?'<label class="chk small"><input type="checkbox" data-act="hide-sub"'+(ui.hideSub?' checked':'')+'> Hide submitted ('+nSub+')</label>':'')+'</div>';
+  const shown=list.filter(({s})=>(!ui.hideSub || !s.submitted) && (!q || s.name.toLowerCase().includes(q.toLowerCase()) || (()=>{ const L=libFind(s.libName||s.name); return L && (nickHit(L,q) || nickHay(L).includes(q.toLowerCase())); })()));
   h += '<div class="panel" data-tour="schools"><ul class="list">';
-  list.forEach(({s,p})=>{
+  if(list.length && !shown.length) h += '<li class="empty">No schools match.</li>';
+  shown.forEach(({s,p})=>{
     const es=secEssays(s.id); const fin=es.filter(e=>e.status==="ready"||e.status==="pasted").length;
-    h += '<li><div class="main"><div class="row"><h2>'+esc(s.name)+'</h2>'+stars(s.interest)+'</div><div class="chips">'+
+    h += '<li><div class="main"><div class="row"><h2><button class="linkish" data-act="open-school" data-id="'+s.id+'" style="font:inherit; background:none; border:0; padding:0; color:inherit; cursor:pointer; text-align:left">'+esc(s.name)+'</button></h2>'+stars(s.interest)+'</div><div class="chips">'+
       (s.submitted? (stage(s).k==="sub"||stage(s).k==="comp" ? '<span class="pill st-pasted">'+stage(s).t+(s.submittedAt?' '+fmt(s.submittedAt):'')+(+s.feeAmt>0 && !s.fee && !s.waiver?' · fee not paid':'')+'</span>' : '<span class="chip '+stage(s).c+'">'+esc(stage(s).t)+'</span>') : p.reasons.slice(0,1).map(c=>'<span class="chip '+c.c+'">'+esc(c.t)+'</span>').join(""))+
       (s.waiver?'<span class="chip">Fee waived</span>':(!s.fee && +s.feeAmt>0 && !s.submitted?'<span class="chip warn">$'+(+s.feeAmt)+' unpaid</span>':''))+(s.track==="dual"?'<span class="chip acc">'+esc(dualLabel(libFind(s.libName||s.name)))+'</span>':'')+(es.length && !s.submitted?'<span class="chip">'+fin+' of '+es.length+' essays ready</span>':'')+(es.some(behind)?'<span class="chip warn">Base updated</span>':'')+'</div></div><button data-act="open-school" data-id="'+s.id+'">Open</button></li>';
   });
@@ -2150,13 +2163,19 @@ function vSchools(){
   return h;
 }
 function schoolTaken(name){ const n=(name||"").trim().toLowerCase(); return S.schools.some(s=>s.name.toLowerCase()===n); }
+// Names people actually type, for search only (the wrong-school check uses NICK alone).
+const SEARCH_NICK = {"Vanderbilt University School of Medicine":["Vandy"], "Boston University Chobanian & Avedisian School of Medicine":["BU","BUSM"], "University of Washington School of Medicine":["UW","UDub"], "University of Pennsylvania Perelman School of Medicine":["Penn"], "University of Michigan Medical School":["Michigan","UM"], "Icahn School of Medicine at Mount Sinai":["Sinai","ISMMS"], "University of Pittsburgh School of Medicine":["UPitt"], "Johns Hopkins University School of Medicine":["JHMI"], "UT Southwestern Medical School":["UTSWMC"], "Washington University in St. Louis School of Medicine":["WUSM","WUSTL"], "Northwestern University Feinberg School of Medicine":["NU","NUFSM"], "Case Western Reserve University School of Medicine":["Case"], "University of Chicago Pritzker School of Medicine":["U Chicago"], "Columbia Vagelos College of Physicians and Surgeons":["CUIMC"], "Ohio State University College of Medicine":["OSU"], "UNC Chapel Hill School of Medicine":["UNC SOM"]};
+function nickNorm(t){ return (t||"").toLowerCase().replace(/[^a-z0-9]/g,""); }
+function nicksOf(name){ return (NICK[name]||[]).concat(SEARCH_NICK[name]||[]); }
+function nickHit(x, q){ const n=nickNorm(q); return n.length>=2 && nicksOf(x.name).some(a=>nickNorm(a)===n); }
+function nickHay(x){ return nicksOf(x.name).join(" ").toLowerCase(); }
 function pickMatches(q){
   q=(q||"").trim().toLowerCase();
   const words=q.split(/\s+/).filter(Boolean);
-  const hit=x=>{ const n=(x.name+" "+x.state+" "+(x.deg||"MD")).toLowerCase(); return words.every(w=> w==="md"||w==="do" ? (x.deg||"MD").toLowerCase()===w : n.includes(w)); };
+  const hit=x=>{ if(nickHit(x,q)) return true; const n=(x.name+" "+x.state+" "+(x.deg||"MD")+" "+nickHay(x)).toLowerCase(); return words.every(w=> w==="md"||w==="do" ? (x.deg||"MD").toLowerCase()===w : n.includes(w)); };
   if(!words.length) return LIB.schools.slice(0, 60);
   // whole phrase at the start of the name first, then the phrase anywhere, then the rest
-  const rank=x=>{ const n=x.name.toLowerCase(); return n.startsWith(q)?0 : n.includes(q)?1 : 2; };
+  const rank=x=>{ const n=x.name.toLowerCase(); return nickHit(x,q)?-1 : n.startsWith(q)?0 : n.includes(q)?1 : 2; };
   return LIB.schools.filter(hit).map((x,i)=>({x,i,r:rank(x)})).sort((a,b)=>a.r-b.r||a.i-b.i).map(o=>o.x).slice(0, 60);
 }
 function pickOptions(){
@@ -2197,7 +2216,7 @@ function addSchoolForm(){
     if(dual && dualNote(L)) h += '<p class="small" style="margin:0; padding:8px 10px; border-radius:8px; background:var(--warn-soft)">'+dualNote(L)+'</p>';
     if(!list.length) h += '<p class="small muted" style="margin:0">'+esc(L.none||"No prompts posted")+' on its SDN thread. You can add prompts yourself after adding the school.</p>';
     else h += '<div class="stack" style="gap:8px"><div class="row" style="justify-content:space-between"><h3>Prompts to add</h3><span class="row"><button type="button" class="ghost small" data-act="pick-all" data-v="1">Select all</button><button type="button" class="ghost small" data-act="pick-all" data-v="0">Select none</button></span></div>'+
-      '<ul class="plist">'+list.map(o=>'<li><label><input type="checkbox" class="pick-p" value="'+o.k+'" checked><span><span>'+(o.dual?'<span class="chip acc" style="margin-right:6px">'+esc(dl)+(L.mdphd.cycle?' · '+esc(L.mdphd.cycle.slice(0,4)+"–"+L.mdphd.cycle.slice(7)):'')+'</span>':'')+esc(o.p.p)+'</span><div class="pm">'+limTxt(o.p)+' · '+esc(FAM[o.p.fam]||"Other")+(o.p.opt?' · optional':'')+(o.p.group?' · '+esc(o.p.group):'')+(!o.dual&&promptCycle(L,false)?' · '+cyc(L.pc)+' prompt':'')+'</div></span></label></li>').join("")+'</ul>'+
+      '<ul class="plist">'+list.map(o=>'<li><label><input type="checkbox" class="pick-p" value="'+o.k+'"'+(isCond(o.p.p)?'':' checked')+'><span><span>'+(o.dual?'<span class="chip acc" style="margin-right:6px">'+esc(dl)+(L.mdphd.cycle?' · '+esc(L.mdphd.cycle.slice(0,4)+"–"+L.mdphd.cycle.slice(7)):'')+'</span>':'')+esc(o.p.p)+'</span><div class="pm">'+limTxt(o.p)+' · '+esc(FAM[o.p.fam]||"Other")+(o.p.opt?' · optional':isCond(o.p.p)?' · only if it applies to you':'')+(o.p.group?' · '+esc(o.p.group):'')+(!o.dual&&promptCycle(L,false)?' · '+cyc(L.pc)+' prompt':'')+'</div></span></label></li>').join("")+'</ul>'+
       '<p class="small muted" style="margin:0">Uncheck any you won’t write. You can add or remove prompts later on the school’s page. Prompts come from the school’s <a href="'+esc(L.url)+'" target="_blank" rel="noopener">SDN thread</a>; check them against the portal. Different in the portal? '+reportLink(L.name, dual, "Tell us")+'.</p></div>';
   }
   h += '<div class="grid-f">'+
@@ -2264,7 +2283,7 @@ function confirmBtn(key, label, sure){
 function addPromptForm(s, missing){
   let lib='';
   if(missing && missing.length){
-    lib = '<div class="pb stack" style="gap:8px; border-bottom:1px solid var(--line-soft)"><h3>From the prompt library</h3><ul class="plist">'+missing.map(o=>'<li><div class="row" style="justify-content:space-between; align-items:flex-start; flex-wrap:nowrap"><span style="min-width:0">'+(o.dual?'<span class="chip acc" style="margin-right:6px">'+esc(dualLabel(libFind(s.libName||s.name)))+'</span>':'')+esc(o.p.p)+'<div class="pm">'+limTxt(o.p)+' · '+esc(FAM[o.p.fam]||"Other")+(o.p.opt?' · optional':'')+'</div></span><button type="button" data-act="lib-addback" data-k="'+o.k+'">Add</button></div></li>').join("")+'</ul></div><div class="pb" style="padding-bottom:0"><h3>Or add your own</h3></div>';
+    lib = '<div class="pb stack" style="gap:8px; border-bottom:1px solid var(--line-soft)"><h3>From the prompt library</h3><ul class="plist">'+missing.map(o=>'<li><div class="row" style="justify-content:space-between; align-items:flex-start; flex-wrap:nowrap"><span style="min-width:0">'+(o.dual?'<span class="chip acc" style="margin-right:6px">'+esc(dualLabel(libFind(s.libName||s.name)))+'</span>':'')+esc(o.p.p)+'<div class="pm">'+limTxt(o.p)+' · '+esc(FAM[o.p.fam]||"Other")+(o.p.opt?' · optional':isCond(o.p.p)?' · only if it applies to you':'')+'</div></span><button type="button" data-act="lib-addback" data-k="'+o.k+'">Add</button></div></li>').join("")+'</ul></div><div class="pb" style="padding-bottom:0"><h3>Or add your own</h3></div>';
   }
   return lib+'<form data-form="add-prompt" data-id="'+s.id+'" class="pb stack" style="border-bottom:1px solid var(--line-soft)">'+
     '<label class="f">Prompt (paste it from the school’s portal)<textarea id="np-p" rows="3" required></textarea></label>'+
@@ -2482,7 +2501,8 @@ function vBase(b){
     h += '<div class="panel"><div class="ph"><h2 style="flex:1">v'+(ui.histV-1)+' → v'+ui.histV+'</h2><button class="ghost" data-act="hist" data-v="">Close</button></div><div class="pb diff">'+segs.map(s=>s.type==="eq"?esc(s.a.join("")):'<del>'+esc(s.a.join(""))+'</del><ins>'+esc(s.b.join(""))+'</ins>').join("")+'</div></div>';
   }
   h += '</div><aside class="stack">';
-  h += '<div class="panel"><div class="ph"><h3>School versions</h3></div>'+(linked.length?'<ul class="list">'+linked.map(x=>sibRow(x,b)).join("")+'</ul>':'<div class="empty small">None linked.</div>');
+  const nBehind=linked.filter(behind).length;
+  h += '<div class="panel"><div class="ph"><h3 style="flex:1">School versions</h3>'+(nBehind>1?'<button class="ghost small" data-act="all-caught-up" data-id="'+b.id+'">Mark all '+nBehind+' caught up to v'+latest(b).v+'</button>':'')+'</div>'+(linked.length?'<ul class="list">'+linked.map(x=>sibRow(x,b)).join("")+'</ul>':'<div class="empty small">None linked.</div>');
   if(unl.length) h += '<div class="pb small" style="border-top:1px solid var(--line-soft)"><div class="muted" style="margin-bottom:6px">Same prompt type, not linked:</div>'+unl.map(x=>'<div class="row" style="justify-content:space-between; margin-bottom:4px"><span>'+esc(school(x.schoolId).name)+'</span><button class="ghost" data-act="link-from-base" data-id="'+x.id+'">Link</button></div>').join("")+'</div>';
   h += '</div>';
   h += '<div class="panel"><div class="ph"><h3>Versions</h3></div><ul class="list">'+b.versions.slice().reverse().map(x=>'<li><div class="main small"><b>v'+x.v+'</b> · '+fmt(x.at)+'<div class="muted">'+esc(x.note||"No note")+'</div></div>'+(x.v>1?'<button class="ghost" data-act="hist" data-v="'+x.v+'">Changes</button>':'')+'</li>').join("")+'</ul></div>';
@@ -2553,7 +2573,7 @@ function limTxt(p){ return p.limit ? p.limit.toLocaleString()+" "+(p.unit==="cha
 function vLibrary(){
   const q=ui.libQ.trim().toLowerCase();
   const states=[...new Set(LIB.schools.map(x=>x.state))].sort();
-  const list = LIB.schools.filter(x=>(!ui.libState || x.state===ui.libState) && (!ui.libDeg || (ui.libDeg==="DUAL" ? hasDual(x) : (x.deg||"MD")===ui.libDeg)) && (!q || x.name.toLowerCase().includes(q) || x.prompts.some(p=>p.p.toLowerCase().includes(q))));
+  const list = LIB.schools.filter(x=>(!ui.libState || x.state===ui.libState) && (!ui.libDeg || (ui.libDeg==="DUAL" ? hasDual(x) : (x.deg||"MD")===ui.libDeg)) && (!q || x.name.toLowerCase().includes(q) || nickHit(x,q) || nickHay(x).includes(q) || x.prompts.some(p=>p.p.toLowerCase().includes(q))));
   const withP = LIB.schools.filter(x=>x.prompts.length).length, fresh = LIB.schools.filter(x=>x.prompts.length && !x.pc).length;
   let h='<h1>Prompt library</h1><p class="sub">'+libCountText()+', with prompts for '+withP+'. Add a school and its prompts, limits and prompt types come with it, already linked to your matching base essays.</p>';
   h += '<div class="banner info small" style="margin-bottom:14px"><div class="grow">'+(LIB.prev ? '<strong>The '+cyc(CYCLE)+' prompts are coming in: '+fresh+' of '+LIB.schools.length+' schools so far.</strong> Schools without this year’s prompts yet show last cycle’s ('+cyc(LIB.prev)+'), marked as such. ' : 'Prompts are from the '+esc(CYCLE)+' cycle. ')+'They’re collected from each school’s Student Doctor Network thread (updated '+fmt(LIB.updated)+'). Schools can change wording and limits, so check each one in the school’s portal. Spotted a difference? '+reportLink("", false, "Report a prompt change")+'.</div></div>';
@@ -2646,11 +2666,14 @@ document.addEventListener("click", ev=>{
     case "link-from-base": { const x=essay(d.id); const b=base(ui.baseId); x.baseId=b.id; if(x.text.trim()){ x.basedOnV=latest(b).v; x.localEdit=true; } save(); render(); break; }
     case "lib-add": go("schools",{addSchool:true, pick:{kind:"lib", name:d.school}}); break;
     case "ics": downloadIcs(); break;
+    case "all-caught-up": { const b=base(d.id); if(!b) break; const v=latest(b).v; let n=0; S.essays.forEach(e=>{ if(e.baseId===b.id && behind(e)){ e.basedOnV=v; n++; } }); save(); render(); toast(n+(n===1?" copy":" copies")+" marked caught up to v"+v+". Their text wasn’t changed."); break; }
+    case "hide-sub": ui.hideSub=!ui.hideSub; render(); break;
+    case "mark-portal": { const x=essay(d.id); if(!x) break; x.status="pasted"; freezeVer(x, isLetter(x)?"Sent":"Submitted"); save(); render(); toast("Marked In portal."); break; }
     case "copy-portal": { const x=essay(d.id); if(!x) break; if(!x.text.trim()){ toast("Nothing to copy yet. Write the essay first."); break; } const clean=portalText(x.text); const c=clean.length, w=words(clean);
       const over = x.limit && (x.unit==="chars" ? c>x.limit : w>x.limit);
       const note=document.getElementById("copy-note-"+x.id);
       const msg=(over?'Over the limit: ':'Copied: ')+w.toLocaleString()+' words · '+c.toLocaleString()+' characters with spaces'+(x.limit?' (limit '+limitL(x)+')':'')+'.';
-      const done=()=>{ if(note){ note.textContent=msg; note.style.color= over?'var(--bad)':'var(--good)'; } const nm=wrongNames(x); toast(nm.length? 'Copied, but it still mentions '+nm.map(y=>y.alias).join(", ")+'.' : (over? (isPrimaryE(x)?'Copied, but it’s over the limit.':'Copied, but it’s over this school’s limit.') : 'Copied. Paste it into the portal.')); };
+      const done=()=>{ if(note){ note.textContent=msg; note.style.color= over?'var(--bad)':'var(--good)'; if(!over && x.status!=="pasted" && !isPrimaryE(x)){ const bt=document.createElement("button"); bt.className="ghost small"; bt.dataset.act="mark-portal"; bt.dataset.id=x.id; bt.textContent="Pasted it? Mark In portal"; bt.style.marginLeft="8px"; note.appendChild(bt); } } const nm=wrongNames(x); toast(nm.length? 'Copied, but it still mentions '+nm.map(y=>y.alias).join(", ")+'.' : (over? (isPrimaryE(x)?'Copied, but it’s over the limit.':'Copied, but it’s over this school’s limit.') : 'Copied. Paste it into the portal.')); };
       const fallback=()=>{ const ta=document.createElement("textarea"); ta.value=clean; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); done(); }catch(err){ toast("Couldn’t copy. Select the text and copy it yourself."); } ta.remove(); };
       try{ navigator.clipboard.writeText(clean).then(done, fallback); }catch(err){ fallback(); }
       break; }
@@ -2993,7 +3016,7 @@ document.addEventListener("keydown", ev=>{
   else if(ev.key==="ArrowLeft" && tourStep>0){ tourStep--; renderTour(); }
 });
 function libEssays(L, sid, dual, pc){
-  return L.prompts.map(p=>{ const b=S.bases.find(x=>x.family===p.fam); const e={id:id("e"), schoolId:sid, prompt:p.p, lib:p.p, libLimit:p.limit||0, limit:p.limit||0, unit:p.unit, family:p.fam, baseId:(b && p.fam!=="why")? b.id : null, basedOnV:null, text:"", status:"todo", localEdit:false, optional:!!p.opt, group:p.group||"", cut:!!p.cut}; if(dual) e.dual=true; if(pc) e.pc=pc; return e; });
+  return L.prompts.map(p=>{ const b=S.bases.find(x=>x.family===p.fam); const e={id:id("e"), schoolId:sid, prompt:p.p, lib:p.p, libLimit:p.limit||0, limit:p.limit||0, unit:p.unit, family:p.fam, baseId:(b && p.fam!=="why")? b.id : null, basedOnV:null, text:"", status:"todo", localEdit:false, optional:!!p.opt||isCond(p.p), group:p.group||"", cut:!!p.cut}; if(dual) e.dual=true; if(pc) e.pc=pc; return e; });
 }
 function addFromLibrary(name, extra, keys, dual){
   const L=libFind(name); if(!L) return;
@@ -3050,6 +3073,7 @@ document.addEventListener("input", ev=>{
   if(el.id==="pick-q"){ ui.pickQ=el.value; ui.pickI=0; const l=document.getElementById("pick-list"); if(l) l.innerHTML=pickListHTML(); el.setAttribute("aria-activedescendant","pick-o0"); return; }
   if(el.dataset.libstate){ ui.libState=el.value; render(); return; }
   if(el.dataset.libdeg){ ui.libDeg=el.value; render(); return; }
+  if(el.dataset.schq){ ui.schQ=el.value; const pos=el.selectionStart; render(); const n=document.getElementById("sch-q"); if(n){ n.focus(); try{ n.setSelectionRange(pos,pos);}catch(e){} } return; }
   if(el.dataset.libq){ ui.libQ=el.value; const pos=el.selectionStart; render(); const n=document.getElementById("libq"); n.focus(); try{ n.setSelectionRange(pos,pos);}catch(e){} return; }
   if(el.id==="pref-name"){ prefs().name=el.value; save(); return; }
   if(el.dataset.bind && /^act:/.test(el.dataset.bind) && !(el.type==="checkbox"||el.tagName==="SELECT")){ const [,aid,f]=el.dataset.bind.split(":"); const a=(S.acts||[]).find(z=>z.id===aid); if(a){ a[f]=el.value; save(); const lim=SVC[a.svc].act; if(f==="desc"){ const m=document.getElementById("am-"+a.id); if(m) m.innerHTML=actMeter(el.value.length,lim.desc); } if(f==="mmText"){ const m=document.getElementById("amt-"+a.id); if(m) m.innerHTML=actMeter(el.value.length,lim.mmLimit); } } return; }
@@ -3087,6 +3111,7 @@ document.addEventListener("change", ev=>{
   if(kind==="school" && field==="submitted" && val) S.essays.filter(x=>x.schoolId===obj.id && (x.text||"").trim()).forEach(x=>{ if(x.status!=="pasted") x.status="pasted"; freezeVer(x, "Submitted"); });
   if(kind==="essay" && field==="status" && (val==="ready"||val==="pasted")){ const w=wrongNames(obj); if(w.length) setTimeout(()=>toast("Heads up: this essay still mentions "+w.map(x=>x.alias).join(", ")+"."),50); }
   if(kind==="school" && field==="submitted") obj.submittedAt = val ? (obj.submittedAt||iso(today())) : null;
+  if(kind==="school" && field==="submitted" && val){ const left=secEssays(obj.id).filter(e=>!e.optional && e.status!=="ready" && e.status!=="pasted"); if(left.length) toast("Marked submitted, but "+left.length+(left.length===1?" required essay isn’t":" required essays aren’t")+" marked ready or In portal. Untick Submitted if that was a mistake.", 6000); }
   if(kind==="school" && field==="submittedAt" && val) obj.submitted = true;
   if(kind==="school" && field==="outcome"){ obj.outcomeDate = val ? iso(today()) : ""; obj.hist=(obj.hist||[]).concat([{o:val, d:iso(today())}]).slice(-6); }
   if(kind==="school" && (field==="ii"||field==="iv"||field==="complete") && val && !obj.submitted){ obj.submitted=true; obj.submittedAt=obj.submittedAt||val; }
