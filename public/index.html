@@ -44,7 +44,7 @@ body{margin:0; -webkit-text-size-adjust:100%}
 [hidden]{display:none!important}
 .tour{position:fixed; inset:0; z-index:50; background:rgba(10,20,25,.55); display:flex; align-items:flex-end; justify-content:center; padding:16px max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 @media (min-width:600px){ .tour{align-items:center} }
-.tour .card2{background:var(--surface); color:var(--ink); border-radius:16px; width:100%; max-width:460px; padding:22px 20px 18px; display:flex; flex-direction:column; gap:12px; box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.tour .card2{background:var(--surface); color:var(--ink); border-radius:16px; width:100%; max-width:460px; max-height:calc(100dvh - 32px); overflow-y:auto; padding:22px 20px 18px; display:flex; flex-direction:column; gap:12px; box-shadow:0 10px 40px rgba(0,0,0,.25)}
 .tour .step-n{font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); font-weight:700}
 .tour h2{font-family:var(--f-display); font-size:21px}
 .tour p{margin:0; color:var(--muted)}
@@ -326,7 +326,7 @@ body.focus-mode #main{max-width:none; padding:0}
     <nav class="tabs" id="tabs" aria-label="Sections"></nav>
   </div>
 </header>
-<div class="wrap" id="install-wrap" hidden><div class="install small"><b>Add this to your Home Screen first.</b> In Safari, tap Share, then Add to Home Screen, and use the icon from now on. On iPhone, essays saved in Safari don’t carry over to the Home Screen app.</div></div>
+<div class="wrap" id="install-wrap" hidden><div class="install small"><b>Tip: add this to your Home Screen.</b> In Safari, tap Share, then Add to Home Screen, and use that icon from now on. On iPhone, what you save in Safari doesn’t carry over to the Home Screen app. Already started here? Tap Download backup at the bottom of the page, then Restore backup in the Home Screen app.</div></div>
 <main class="wrap" id="main"></main>
 <footer class="wrap foot" id="foot"></footer>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
@@ -1286,13 +1286,14 @@ function newItem(o){ return Object.assign({id:id("i"), head:"", text:"", tags:[]
 const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 function ym(v){ const m=/^(\d{4})-(\d{2})/.exec(v||""); return m? MONTHS[+m[2]-1]+" "+m[1] : ""; }
 function expDates(x){ if(x.start||x.end||x.ongoing){ const a=ym(x.start), b=x.ongoing?"present":ym(x.end); if(a||b) return a&&b? (a===b?a:a+" – "+b) : (a? a+(x.ongoing?" – present":"") : b); } return x.dates||""; }
-function expHours(x){ if(x.hours!==undefined && x.hours!=="") return +x.hours||0; return Math.round(((+x.hoursBefore||0) + (x.log||[]).reduce((a,e)=>a+(+e.hrs||0),0))*10)/10; }
+function weeksOf(x){ const m=/^(\d{4})-(\d{2})/.exec(x.start||""); if(!m) return 0; const a=new Date(+m[1],+m[2]-1,1); let b=new Date(); const n=/^(\d{4})-(\d{2})/.exec(x.end||""); if(!x.ongoing && n) b=new Date(+n[1],+n[2],0); return Math.max(0,(b-a)/(7*864e5)); }
+function expHours(x){ if(x.hours!==undefined && x.hours!=="") return +x.hours||0; if(+x.hpw>0 && weeksOf(x)) return Math.round(+x.hpw*weeksOf(x)); return Math.round(((+x.hoursBefore||0) + (x.log||[]).reduce((a,e)=>a+(+e.hrs||0),0))*10)/10; }
 function writtenUp(x){ return !!((x.summary||"").trim() && (x.items||[]).some(it=>(it.text||"").trim())); }
 // what this experience still needs: a write-up once it ends, or a refresh every six months while it's ongoing
 function writeupNudge(x){
   if(!STORY_KINDS.includes(x.kind)) return "";
   if(x.ongoing){ if(!writtenUp(x)) return (x.summary||"").trim()? "Add what you’ve learned so far" : "Write up what you’re doing"; const t=x.wu||0; return t && Date.now()-t>182*864e5 ? "Not updated since "+new Date(t).toLocaleDateString(undefined,{month:"short",year:"numeric"}) : ""; }
-  if(x.end && !writtenUp(x)) return "Ended "+ym(x.end)+": write it up while it’s fresh";
+  if(x.end && !writtenUp(x)){ const m=/^(\d{4})-(\d{2})/.exec(x.end); const ago=m? (Date.now()-new Date(+m[1],+m[2]-1,1))/864e5 : 0; return "Ended "+ym(x.end)+(ago>120? ": not written up yet" : ": write it up while it’s fresh"); }
   return "";
 }
 function yearOf(x){ if(x.ongoing) return "Now"; const v=x.end||x.start; if(v) return v.slice(0,4); const m=/(\d{4})(?!.*\d{4})/.exec(x.dates||""); return m? m[1] : "No dates"; }
@@ -1445,6 +1446,8 @@ function vStories(){
   if(ui.expImport) h+=importPanel();
   if(!X.some(x=>STORY_KINDS.includes(x.kind)) && !ui.expImport) h+='<div class="panel"><div class="pb stack"><h2>Start your experience log</h2><p style="margin:0">The details that make an application specific fade fast: the patient who stuck with you, the experiment that failed for months, what you did about it. Writing each experience up when it ends gets you stronger letters (your recommenders will have specifics), a much faster application summer (activities and secondaries draw on the same stories), and answers ready for interviews. Start whenever you start, even freshman year. For each research or clinical experience, and your main activities:</p><ul style="margin:0; padding-left:20px"><li><b>When it ends, write it up.</b> What you did: the project or role, in a paragraph, plus who supervised you and your hours. What you learned: two to four lessons, each with a one-line headline and the story behind it.</li><li><b>For things that run for years</b>, keep one write-up and revise it as you go (“Last spring we found… This fall I…”).</li></ul><p style="margin:0">Then add a few <b>strengths</b> with evidence from two or three experiences each, and <b>reflections</b> such as your career goals or whether you prefer group or individual work. Already have a document like this? Use <b>Import from a document</b>.</p></div></div>';
   const ST=X.filter(x=>STORY_KINDS.includes(x.kind));
+  const totH=ST.reduce((a,x)=>a+expHours(x),0);
+  if(ST.length) h+='<p class="small muted" style="margin:-4px 0 12px">'+ST.length+' experience'+(ST.length===1?'':'s')+(totH? ' · about '+totH.toLocaleString()+' hours in all' : '')+'</p>';
   const todo=ST.filter(x=>writeupNudge(x));
   if(todo.length) h+='<div class="panel" data-tour="writeups" style="margin-bottom:14px"><div class="ph"><h2 style="flex:1">Write-ups to do</h2><span class="small muted">'+todo.length+'</span></div><ul class="list">'+todo.map(x=>'<li><div class="main"><b>'+esc(x.title||"Untitled")+'</b><div class="chips"><span class="chip warn">'+esc(writeupNudge(x))+'</span></div></div><button class="primary" data-act="open-exp" data-id="'+x.id+'">Write it up</button></li>').join("")+'</ul></div>';
   if(X.some(x=>SELF_KINDS.includes(x.kind))) h+='<p class="small muted" style="margin:-4px 0 12px">Strengths, weaknesses and reflections are on the <button class="ghost small" data-act="exp-view" data-v="self" style="padding:0">Strengths &amp; weaknesses</button> tab.</p>';
@@ -1492,7 +1495,7 @@ function vExp(x){
   const k=x.kind, strengths=strengthNames().filter(t=>t!==x.title), weaknesses=weaknessNames().filter(t=>t!==x.title), selfk=SELF_KINDS.includes(k);
   let h='<button class="ghost back" data-act="'+(selfk?'back-self':'back-exp')+'">← '+(selfk?'Strengths &amp; weaknesses':'Experiences')+'</button>';
   h+='<div class="grid-f" style="margin-bottom:12px"><label class="f" style="grid-column:1/-1">Title<input id="xt-'+x.id+'" data-bind="exp:'+x.id+':title" value="'+esc(x.title)+'" style="font-weight:700; font-size:18px"></label>'+
-    (selfk?'':'<label class="f">Where<input id="xo-'+x.id+'" data-bind="exp:'+x.id+':org" value="'+esc(x.org)+'" placeholder="e.g. MD Anderson Cancer Center"></label><label class="f">Hours<input type="number" min="0" id="xh-'+x.id+'" data-bind="exp:'+x.id+':hours" value="'+esc(x.hours!==undefined&&x.hours!==""?x.hours:(expHours(x)||""))+'" placeholder="Total, roughly"></label>'+
+    (selfk?'':'<label class="f">Where<input id="xo-'+x.id+'" data-bind="exp:'+x.id+':org" value="'+esc(x.org)+'" placeholder="e.g. MD Anderson Cancer Center"></label><label class="f">Hours<input type="number" min="0" id="xh-'+x.id+'" data-bind="exp:'+x.id+':hours" value="'+esc(x.hours!==undefined&&x.hours!==""?x.hours:(expHours(x)||""))+'" placeholder="Total, roughly"></label><label class="f">Or hours per week<input type="number" min="0" step="0.5" id="xw-'+x.id+'" data-bind="exp:'+x.id+':hpw" value="'+esc(x.hpw||"")+'" placeholder="e.g. 6"><span class="small muted">'+((+x.hpw>0 && !(x.hours!==undefined&&x.hours!=="") && expHours(x))? "≈ "+expHours(x).toLocaleString()+" hours so far" : "We’ll estimate the total from your dates")+'</span></label>'+
       '<label class="f">Started<input type="month" id="xsd-'+x.id+'" data-bind="exp:'+x.id+':start" value="'+esc(x.start||"")+'"></label><label class="f">Ended<input type="month" id="xed-'+x.id+'" data-bind="exp:'+x.id+':end" value="'+esc(x.end||"")+'"'+(x.ongoing?' disabled':'')+'></label><label class="chk" style="align-self:end; padding-bottom:8px"><input type="checkbox" id="xg-'+x.id+'" data-bind="exp:'+x.id+':ongoing"'+(x.ongoing?' checked':'')+'> Still doing this</label>'+
       (!x.start && !x.end && x.dates?'<p class="small muted" style="grid-column:1/-1; margin:0">Imported dates: “'+esc(x.dates)+'”. Set the months above so it sorts on your timeline.</p>':''))+
     '<label class="f">Kind<select id="xk-'+x.id+'" data-bind="exp:'+x.id+':kind">'+EXP_ORDER.map(o=>'<option value="'+o+'"'+(o===k?' selected':'')+'>'+EXP_ONE[o]+'</option>').join("")+'</select></label></div>';
@@ -1517,7 +1520,7 @@ function vExp(x){
   });
   h+='</div></div>';
   if(k==="strength"){ const tagged=(S.experiences||[]).flatMap(y=>(y.items||[]).filter(it=>(it.tags||[]).includes(x.title)).map(it=>({y,it})));
-    h+='<div class="panel" style="margin-top:14px"><div class="ph"><h2>Tagged in your experiences</h2></div>'+(tagged.length?'<ul class="list">'+tagged.map(o=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(o.it.head||o.y.title)+'</div><div class="small muted">'+esc(o.y.title)+'</div></div><button class="ghost" data-act="open-exp" data-id="'+o.y.id+'">Open</button></li>').join("")+'</ul>':'<div class="empty small">None yet. Open an experience and tap “'+esc(x.title)+'” under a lesson that shows it.</div>')+'</div>'; }
+    h+='<div class="panel" style="margin-top:14px"><div class="ph"><h2>Tagged in your experiences</h2></div>'+(tagged.length?'<ul class="list">'+tagged.map(o=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(o.it.head||o.y.title)+'</div><div class="small muted">'+esc(o.y.title)+'</div></div><button class="ghost" data-act="open-exp" data-id="'+o.y.id+'">Open</button></li>').join("")+'</ul>':'<div class="empty small">None yet. '+((x.title||"").trim()? 'Open an experience and tap “'+esc(x.title)+'” under a lesson that shows it.' : 'Name this strength first, then tag it under a lesson in any experience.')+'</div>')+'</div>'; }
   if(k==="weakness"){ const tagged=(S.experiences||[]).flatMap(y=>(y.items||[]).filter(it=>(it.grow||[]).includes(x.title)).map(it=>({y,it})));
     h+='<div class="panel" style="margin-top:14px"><div class="ph"><h2>Lessons that show progress</h2></div>'+(tagged.length?'<ul class="list">'+tagged.map(o=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(o.it.head||o.y.title)+'</div><div class="small muted">'+esc(o.y.title)+'</div></div><button class="ghost" data-act="open-exp" data-id="'+o.y.id+'">Open</button></li>').join("")+'</ul>':'<div class="empty small">None yet. On the Experiences tab, tap “'+esc(x.title||"this weakness")+'” under “Working on” for a lesson that shows progress.</div>')+'</div>';
     const ol=weaknessOutline(x);
@@ -1540,6 +1543,7 @@ function vWriter(r){
   let h='<button class="ghost back" data-act="back-writers">← Letter writers</button>';
   h+='<div class="grid-f" style="margin-bottom:12px"><label class="f">Name<input id="rn-'+r.id+'" data-bind="rec:'+r.id+':name" value="'+esc(r.name)+'" style="font-weight:700"></label>'+
     '<label class="f">Title or role<input id="rr-'+r.id+'" data-bind="rec:'+r.id+':role" value="'+esc(r.role||"")+'" placeholder="e.g. Professor of Biology, St. Olaf"></label>'+
+    '<label class="f">Email<input type="email" id="rem-'+r.id+'" data-bind="rec:'+r.id+':email" value="'+esc(r.email||"")+'" placeholder="For your own reference"></label>'+
     '<label class="f">Relationship<select id="rk-'+r.id+'" data-bind="rec:'+r.id+':kind">'+Object.entries(REC_KINDS).map(([k,l])=>'<option value="'+k+'"'+(r.kind===k?' selected':'')+'>'+l+'</option>').join("")+'</select></label>'+
     '<label class="f">Asked<input type="date" id="ra-'+r.id+'" data-bind="rec:'+r.id+':asked" value="'+esc(r.asked||"")+'"></label>'+
     '<div class="f" style="justify-content:flex-end"><label class="chk"><input type="checkbox" id="rg-'+r.id+'" data-bind="rec:'+r.id+':agreed"'+(r.agreed?' checked':'')+'> Agreed to write</label></div>'+
@@ -2019,7 +2023,7 @@ function vBrief(rows){
 // A short, stage-specific "Getting started" list; each step ticks itself off and has one button that goes there.
 function checklist(){
   const st=appStage(); if(st==="all") return null;
-  const X=S.experiences||[], story=X.filter(x=>STORY_KINDS.includes(x.kind)), drive=Sync.available();
+  const X=S.experiences||[], story=X.filter(x=>STORY_KINDS.includes(x.kind) && ((x.title||"").trim()||(x.summary||"").trim())), drive=Sync.available();
   const schoolEs=S.essays.filter(e=>!isPrimaryE(e) && !isLetter(e));
   const fams={}; schoolEs.filter(e=>!e.baseId && e.family!=="why" && e.family!=="other").forEach(e=>{ fams[e.family]=(fams[e.family]||new Set()).add(e.schoolId); });
   const top=Object.entries(fams).sort((a,b)=>b[1].size-a[1].size)[0];
@@ -2586,12 +2590,12 @@ function topBanners(){
 }
 const GICON='<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
 function vFoot(){
-  const hasWork = S.essays.some(e=>e.text.trim()) || S.bases.length;
+  const hasWork = S.essays.some(e=>e.text.trim()) || S.bases.length || (S.experiences||[]).some(x=>(x.summary||"").trim()||(x.items||[]).some(it=>(it.text||"").trim())) || (S.recommenders||[]).length;
   const since = S.lastBackup ? daysUntil(S.lastBackup) : null;
   let h='';
-  if(hasWork && !S.demo && !Sync.state().connected && (since==null || since<=-7)) h += '<div class="banner warn" style="margin-bottom:12px"><div class="grow small"><strong>'+(since==null?'You haven’t saved a backup yet.':'Last backup was '+Math.abs(since)+' days ago.')+'</strong> Your essays live only in this browser. Clearing site data or losing this device erases them.</div><button data-act="backup">Download backup</button></div>';
+  if(hasWork && !S.demo && !Sync.state().connected && (since==null || since<=-7)) h += '<div class="banner warn" style="margin-bottom:12px"><div class="grow small"><strong>'+(since==null?'You haven’t saved a backup yet.':'Last backup was '+Math.abs(since)+' days ago.')+'</strong> Your work lives only in this browser. Clearing site data or losing this device erases it.</div><button data-act="backup">Download backup</button></div>';
   if(Sync.state().connected && !S.demo) h += '<div id="mirror-slot" style="margin-bottom:10px">'+Sync.mirrorHtml()+'</div>';
-  h += '<div class="stack" style="gap:10px"><div class="row" style="justify-content:space-between"><span>'+(Sync.state().connected? 'Saved to your Google Drive'+(Sync.state().email?' ('+esc(Sync.state().email)+')':'')+' and in this browser. <button class="ghost small" data-act="sync-disconnect" style="padding:0">Disconnect</button>' : 'Your entries are saved only in this browser.'+(Sync.available()?' <button class="ghost small" data-act="sync-connect" style="padding:0">Save to Google Drive</button>':''))+(S.lastBackup?' Last backup '+fmt(S.lastBackup)+'.':'')+'</span><span class="row"><button class="ghost" data-act="backup">Download backup</button><button class="ghost" data-act="restore">Restore backup</button>'+(S.demo?'<button data-act="exit-sample">Back to my data</button>':'<button class="ghost" data-act="try-examples">Explore with sample data</button>'+confirmBtn("clear","Erase everything",Sync.state().connected?"Erase all schools and essays here and in Google Drive":"Erase all schools and essays on this device"))+'</span></div>'+
+  h += '<div class="stack" style="gap:10px"><div class="row" style="justify-content:space-between"><span>'+(Sync.state().connected? 'Saved to your Google Drive'+(Sync.state().email?' ('+esc(Sync.state().email)+')':'')+' and in this browser. <button class="ghost small" data-act="sync-disconnect" style="padding:0">Disconnect</button>' : 'Your entries are saved only in this browser.'+(Sync.available()?' <button class="ghost small" data-act="sync-connect" style="padding:0">Save to Google Drive</button>':''))+(S.lastBackup?' Last backup '+fmt(S.lastBackup)+'.':'')+'</span><span class="row"><button class="ghost" data-act="backup">Download backup</button><button class="ghost" data-act="restore">Restore backup</button>'+(S.demo?'<button data-act="exit-sample">Back to my data</button>':'<button class="ghost" data-act="try-examples">Explore with sample data</button>'+confirmBtn("clear","Erase everything",Sync.state().connected?"Erase everything (schools, essays, experiences, letter writers) here and in Google Drive":"Erase everything (schools, essays, experiences, letter writers) on this device"))+'</span></div>'+
     '<div class="row" style="justify-content:space-between"><span>Student-built tool. Not affiliated with AMCAS, the AAMC, or any medical school. Always check prompts, limits and deadlines in each school’s portal.</span><span class="row"><a class="small" href="about.html">About</a><a class="small" href="privacy.html">Privacy</a><button class="ghost" data-act="tour">How to use this app</button><button class="ghost" data-act="gtour">Guided tour</button>'+(logMode()?'<button class="ghost" data-act="applying-on">Show the application tools</button>':'')+'</span></div></div>';
   return h;
 }
@@ -2705,7 +2709,7 @@ document.addEventListener("click", ev=>{
     case "prompt-toggle": ui.promptOpen=!ui.promptOpen; render(); break;
     case "gtour-page": gtStart(gtSection()); break;
     case "set-stage": setStage(d.k); break;
-    case "exp-writer": { const x=exp(ui.expId); if(!x) break; if(!(x.contact||"").trim()){ toast("Add the supervisor’s name first."); break; } const r={id:id("r"), name:x.contact.trim(), kind:x.kind==="research"?"research":x.kind==="clinical"?"clinical":"other", role:x.contactRole||"", asked:"", agreed:false, due:"", received:"", together:x.title, highlight:"", shared:x.id, expIds:[x.id], notes:x.contactEmail?"Email: "+x.contactEmail:""}; S.recommenders=S.recommenders||[]; S.recommenders.push(r); save(); render(); toast(r.name+" added to Letter writers."); break; }
+    case "exp-writer": { const x=exp(ui.expId); if(!x) break; if(!(x.contact||"").trim()){ toast("Add the supervisor’s name first."); break; } const r={id:id("r"), name:x.contact.trim(), kind:x.kind==="research"?"research":x.kind==="clinical"?"clinical":"other", role:x.contactRole||"", asked:"", agreed:false, due:"", received:"", together:x.title, highlight:"", shared:x.id, expIds:[x.id], email:x.contactEmail||"", notes:""}; S.recommenders=S.recommenders||[]; S.recommenders.push(r); save(); render(); toast(r.name+" added to Letter writers."); break; }
     case "applying-on": openTour("stage"); break;
     case "applying-off": setStage("log"); break;
     case "open-exp": { const x=exp(d.id); if(x) ui.expView=SELF_KINDS.includes(x.kind)?"self":"stories"; go("experiences",{expId:d.id}); break; }
@@ -2778,7 +2782,7 @@ function doConfirm(key){
   else if(k==="del-rec"){ S.recommenders=(S.recommenders||[]).filter(r=>r.id!==idv); ui.expView="writers"; save(); go("experiences"); toast("Deleted"); }
   else if(k==="del-act"){ S.acts=(S.acts||[]).filter(a=>a.id!==idv); ui.actOpen=null; save(); render(); }
   else if(k==="clear" && S.demo){ S=sampleStash(); snapshot(); try{ localStorage.setItem(KEY, JSON.stringify(S)); localStorage.removeItem(STASH); }catch(e){} go("next"); toast("Back to your own data."); }
-  else if(k==="clear"){ S=blank(); save(); go("next"); toast("Erased. This device now has no schools or essays."); }
+  else if(k==="clear"){ S=blank(); save(); go("next"); toast("Erased. Everything on this device has been cleared."); }
 }
 function copyText(t){
   const fallback=()=>{ const ta=document.createElement("textarea"); ta.value=t; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); toast("Copied"); }catch(err){ toast("Couldn’t copy. Select the text and copy it yourself."); } ta.remove(); };
@@ -3128,7 +3132,7 @@ const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform=
 const standalone = window.navigator.standalone===true || window.matchMedia("(display-mode: standalone)").matches;
 if(ios && !standalone) document.getElementById("install-wrap").hidden=false;
 let seenThisVisit=false; try{ seenThisVisit = sessionStorage.getItem("secondaries-intro-seen")==="1"; }catch(e){}
-if(!tourHidden() && !seenThisVisit && !(ios && !standalone) && !logMode()) openTour(newUser()? "stage" : "main");
+if(!tourHidden() && !seenThisVisit && !logMode()) openTour(newUser()? "stage" : "main");
 try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
 if(Sync.state().connected) setTimeout(()=>Sync.run(), 400);
 // load Google's sign-in script early, so clicking the Drive button opens the sign-in window straight away (browsers block windows opened after a delay)
