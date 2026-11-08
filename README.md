@@ -123,3 +123,17 @@ Every essay (secondaries, primary, letters) has numbered versions (`e.vers`: [{n
 - **Essay rows say what each essay is.** Each row leads with the essay type and limit ("Challenge or failure · 3,000 chars"), with the prompt on one line under it, then the count, a status pill you can change in place, Open, and ⋯.
 - **School details fold into one line.** Received · target · due · interest · fee, with Submitted and "Edit details" beside it.
 - **One status color set everywhere.** To do (gray), Drafting (amber), Ready (blue), In portal / Submitted (green), used on school pages, the primary list, Cycle letters and Base essays.
+
+## Applicant testing fixes (Nov 2026)
+
+Five simulated applicants (log-only pre-med on a phone, AMCAS writer, 25-school secondaries applicant, MD/PhD + DO + TMDSAS, interview stage) used the app; the fixes from that round:
+
+- **Adding schools:** nickname search (WashU, UTSW, JHU, Penn, Vandy, TCOM…), "Already submitted?" when adding a school, conditional "only required if…" prompts unticked by default.
+- **Secondaries list:** find box and Hide submitted once you have 8+ schools.
+- **Base essays:** "Base updated" only flags copies the change actually reaches, and "Mark all caught up" clears them.
+- **Counts and copying:** character counts match exactly what Copy for portal copies, and "Mark In portal" appears after copying.
+- **Restore:** Restore backup can be undone, and sample data can't be downloaded as a backup.
+- **Experience log:** hours per week with an estimated total, and backup reminders for log-only users.
+- **Primary activities:** shadowing and paid clinical jobs get the right AMCAS type, activities have contact and location fields, and the MME essay has its own copy button.
+- **Interview stage:** Do next leads with interviews and letters, thank-you notes link to "Thank-you notes sent", and letters use Copy / Mark sent.
+- **First run:** the welcome says "Free, no account, no AI" with About and Privacy links.

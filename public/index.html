@@ -44,7 +44,7 @@ body{margin:0; -webkit-text-size-adjust:100%}
 [hidden]{display:none!important}
 .tour{position:fixed; inset:0; z-index:50; background:rgba(10,20,25,.55); display:flex; align-items:flex-end; justify-content:center; padding:16px max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 @media (min-width:600px){ .tour{align-items:center} }
-.tour .card2{background:var(--surface); color:var(--ink); border-radius:16px; width:100%; max-width:460px; padding:22px 20px 18px; display:flex; flex-direction:column; gap:12px; box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.tour .card2{background:var(--surface); color:var(--ink); border-radius:16px; width:100%; max-width:460px; max-height:calc(100dvh - 32px); overflow-y:auto; padding:22px 20px 18px; display:flex; flex-direction:column; gap:12px; box-shadow:0 10px 40px rgba(0,0,0,.25)}
 .tour .step-n{font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); font-weight:700}
 .tour h2{font-family:var(--f-display); font-size:21px}
 .tour p{margin:0; color:var(--muted)}
@@ -326,7 +326,7 @@ body.focus-mode #main{max-width:none; padding:0}
     <nav class="tabs" id="tabs" aria-label="Sections"></nav>
   </div>
 </header>
-<div class="wrap" id="install-wrap" hidden><div class="install small"><b>Add this to your Home Screen first.</b> In Safari, tap Share, then Add to Home Screen, and use the icon from now on. On iPhone, essays saved in Safari don’t carry over to the Home Screen app.</div></div>
+<div class="wrap" id="install-wrap" hidden><div class="install small"><b>Tip: add this to your Home Screen.</b> In Safari, tap Share, then Add to Home Screen, and use that icon from now on. On iPhone, what you save in Safari doesn’t carry over to the Home Screen app. Already started here? Tap Download backup at the bottom of the page, then Restore backup in the Home Screen app.</div></div>
 <main class="wrap" id="main"></main>
 <footer class="wrap foot" id="foot"></footer>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
@@ -527,7 +527,7 @@ function seed(){
   const pe = (k, key, text, b, hist)=>{ const d=SVC[k].essays.find(z=>z.k===key); const e=startPrimary(k, d); e.text=fitTo(text, d.limit, "chars"); e.status="pasted"; if(b){ e.baseId=b.id; e.basedOnV=b.versions.length; } if(hist){ e.vers=hist.filter(h=>h.label).map((h,i)=>({n:i+1, text:h.text, at:h.t, note:h.label})); e.hist=hist.filter(h=>!h.label); } return e; };
   pe("amcas","ps",PS3,bPS,[{t:ago(120), text:PS1, label:"First full draft"},{t:ago(100), text:PS2, label:""},{t:ago(92), text:PS3, label:"After Dr. Shah’s comments"}]);
   pe("tmdsas","ps",PS3,bPS); pe("tmdsas","pchar",D3,bD);
-  const A = (svc, x, o)=>{ const a=Object.assign({id:id("a"), svc, expId:x?x.id:"", title:x?x.title:"", type:x?actType(svc,x.kind):SVC[svc].act.types[0], org:x?x.org:"", dates:x?expDates(x):"", hours:x?String(expHours(x)||""):"", desc:"", mm:false, mmText:""}, o); N.acts.push(a); return a; };
+  const A = (svc, x, o)=>{ const a=Object.assign({id:id("a"), svc, expId:x?x.id:"", title:x?x.title:"", type:x?actType(svc,x.kind,x):SVC[svc].act.types[0], org:x?x.org:"", dates:x?expDates(x):"", hours:x?String(expHours(x)||""):"", desc:"", mm:false, mmText:""}, o); N.acts.push(a); return a; };
   A("amcas", xClinic, {hours:"800", desc:"Interpret between Spanish-speaking patients and volunteer physicians every Saturday. Introduced teach-back at the end of visits, wrote the one-page guide now given to every new interpreter, and added a two-question food insecurity screen to intake (140 patients screened, 52 referred to pantries).", mm:true, mmText:"A patient once told me she had stopped her blood pressure pills because the label said to take them “once” daily, and in Spanish “once” means eleven. That moment taught me that the gap in care is often not vocabulary but context and trust. I began asking every patient to repeat the plan back, and the habit has followed me into the lab and the emergency department. It is the clearest reason I want to be a physician: a plan only works if the person it is for understands it."});
   A("amcas", xLab, {hours:"2,100", desc:"Studied mechanisms of cardiac fibrosis in heart failure. Optimized an immunostaining protocol, scored tissue sections, and built the blinded scoring rubric the lab now uses to train new students. Abstract accepted for a regional cardiology meeting.", mm:true, mmText:"For eight months my staining protocol failed. Logging every variable eventually showed the antibody bound only after a longer fixation step. I learned to treat failure as information, and also that I should have asked for help much sooner, a habit I have since changed."});
   A("amcas", xScribe, {type:"Paid employment: medical/clinical", hours:"450", desc:"Document patient encounters in real time for emergency physicians two evenings a week."});
@@ -542,7 +542,7 @@ function newLetterFor(s, fam, o){ const e=newLetter(s, fam); Object.assign(e, o|
 
 /* ---------- storage ---------- */
 let S;
-const STASH = "secondaries-stash-v1";
+const STASH = "secondaries-stash-v1", UNDO_RESTORE = "medapp-undo-restore-v1";
 function sampleStash(){ try{ const o=JSON.parse(localStorage.getItem(STASH)||"null"); if(o && o.schools){ const b=blank(); return Object.assign(b, o, {demo:false}); } }catch(e){} return blank(); }
 function blank(){ return {v:1, demo:false, schools:[], bases:[], essays:[], archives:[], experiences:[], recommenders:[], apps:[], acts:[], del:{}}; }
 function load(){ try{ const raw=localStorage.getItem(KEY); if(raw){ const o=JSON.parse(raw); if(o && o.schools){ o.del=o.del||{}; o.archives=o.archives||[]; o.experiences=o.experiences||[]; o.recommenders=o.recommenders||[]; o.apps=o.apps||[]; o.acts=o.acts||[]; return o; } } }catch(e){} return blank(); }
@@ -882,9 +882,18 @@ const lettersOf = sid=>essaysOf(sid).filter(isLetter);
 function latest(b){ return b && b.versions.length ? b.versions[b.versions.length-1] : {v:0, text:"", note:"", at:""}; }
 function ver(b,v){ return b.versions.find(x=>x.v===v); }
 function unsaved(b){ return b.draft !== latest(b).text; }
-function behind(e){ const b=base(e.baseId); if(!b||e.basedOnV==null) return false; const sc=school(e.schoolId); if(sc&&sc.submitted) return false; return e.basedOnV < latest(b).v; }
+const COND_RE=/^\s*\(?\s*(only (required |answer |complete )?if|if (applicable|you (are|have|were|did|answered|indicated|selected))|optional\b|applicants who|for applicants)/i;
+function isCond(p){ return COND_RE.test(p||""); }
+const BEHIND_MEMO=new Map();
+function behind(e){ const b=base(e.baseId); if(!b||e.basedOnV==null) return false; const sc=school(e.schoolId); if(sc&&sc.submitted) return false; if(e.basedOnV >= latest(b).v) return false;
+  // Only flag copies the base change actually reaches: some change lands in this copy's text.
+  if(!(e.text||"").trim()) return true;
+  const L=latest(b), key=e.id+"|"+e.basedOnV+"|"+L.v+"|"+e.text.length+"|"+e.text.slice(-24);
+  if(BEHIND_MEMO.has(key)) return BEHIND_MEMO.get(key);
+  let hit=false; try{ const old=ver(b,e.basedOnV); if(!old || old.text===e.text) hit=true; else { const segs=diff(old.text, L.text); for(let i=0;i<segs.length && !hit;i++) if(segs[i].type!=="eq" && locate(segs,i,e.text)) hit=true; } }catch(err){ hit=true; }
+  if(BEHIND_MEMO.size>2000) BEHIND_MEMO.clear(); BEHIND_MEMO.set(key,hit); return hit; }
 function words(t){ const m=t.trim().match(/\S+/g); return m? m.length : 0; }
-function count(e){ return e.unit==="chars" ? e.text.length : words(e.text); }
+function count(e){ return e.unit==="chars" ? portalText(e.text).length : words(e.text); }
 function unitL(u, n){ return u==="chars" ? "characters" : (n===1?"word":"words"); }
 function limitL(e){ return e.limit ? e.limit.toLocaleString()+" "+(e.unit==="chars"?"chars":"words") : "No limit"; }
 function target(s){ return addDays(s.received, Number(s.turnaround)||DEFAULT_TURNAROUND); }
@@ -906,7 +915,7 @@ function plan(s){
   const quick = work<=1 ? 1.25 : 1;
   const score = (s.submitted? -1000 : 0) + (s.pinned? 100 : 0) + urg*im*quick;
   const reasons=[];
-  if(left!=null){
+  if(left!=null && !s.submitted){
     const what = d.kind==="deadline" ? "school deadline" : "your target";
     if(left<0) reasons.push({t:Math.abs(left)+(Math.abs(left)===1?" day":" days")+" past "+what, c:"bad"});
     else if(left===0) reasons.push({t:"Due today ("+what+")", c:"bad"});
@@ -1214,9 +1223,9 @@ function suggPanel(list, title, mobile){
 const ui = {tab:"next", schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, libQ:"", libState:"", libDeg:"", libOpen:null, restore:false, pick:null, pickQ:"", pickI:0, editPrompt:false, sgAll:false, sgOpen:false};
 const TABS = [["next","Do next"],["primary","Primary"],["schools","Secondaries"],["cycle","Cycle"],["essays","Base essays"],["experiences","Experiences"]].concat(SHOW_LIBRARY? [["library","Prompt library"]] : []);
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
-function stars(n){ let h=""; for(let i=1;i<=3;i++) h+= i<=n? "●" : '<span class="off">●</span>'; return '<span class="stars" aria-label="Interest '+n+' of 3">'+h+'</span>'; }
+function stars(n){ let h=""; for(let i=1;i<=3;i++) h+= i<=n? "●" : '<span class="off">●</span>'; return '<span class="stars" role="img" aria-label="Interest '+n+' of 3" title="Interest: '+(["","lower","middle","top choice"][n]||"")+'">'+h+'</span>'; }
 let toastT;
-function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, 2400); }
+function toast(msg, ms){ const t=document.getElementById("toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, ms||2400); }
 function go(tab, extra){ Object.assign(ui, {more:false, editDetails:false, promptOpen:false, schoolId:null, essayId:null, baseId:null, panel:null, histV:null, confirm:null, addSchool:false, addPrompt:false, editPrompt:false, pick:null, pickQ:"", pickI:0, focus:false, histSel:null, verSel:null, verCmp:false, verDone:false, expId:null, recId:null, recPreview:false, recOpen:null, expImport:false, expParsed:null}, extra||{}); ui.tab=tab; if(location.hash!=="#"+tab){ try{ history.replaceState(null,"","#"+tab);}catch(e){ location.hash=tab; } } render(); window.scrollTo(0,0); }
 
 function sizeEditor(){ const t=document.getElementById("essay-text"); if(!t || document.body.classList.contains("focus-mode")) return; const y=window.scrollY; t.style.height="auto"; t.style.height=Math.max(t.scrollHeight+4, 0)+"px"; window.scrollTo(0,y); }
@@ -1233,7 +1242,7 @@ function render(){
   document.title = lm? "Experience Log" : "Med App Workspace";
   document.getElementById("tabs").hidden = lm;
   const vis=new Set(visibleTabs()), hidden=TABS.filter(([k])=>!vis.has(k));
-  document.getElementById("tabs").innerHTML = lm? "" : visibleTabs().map(k=>TABS.find(t=>t[0]===k)).filter(Boolean).map(([k,l])=>'<a href="#'+k+'" data-tab="'+k+'"'+(ui.tab===k?' aria-current="page"':'')+'>'+l+(k==="schools"?'<span class="n">'+open+' open</span>':'')+(k==="cycle"&&cycleTodos().filter(t=>t.k==="iv").length?'<span class="n">'+cycleTodos().filter(t=>t.k==="iv").length+' upcoming</span>':'')+'</a>').join("")+(lm?'':'<button class="tab-more" data-act="more" aria-expanded="'+(!!ui.more)+'">More'+(ui.more?' ▴':' ▾')+'</button><button class="tab-more tab-help" data-act="gtour-page" title="Walk through what this page does">'+(gtSection()?'? Tour this page':'? Tour')+'</button>');
+  document.getElementById("tabs").innerHTML = lm? "" : visibleTabs().map(k=>TABS.find(t=>t[0]===k)).filter(Boolean).map(([k,l])=>'<a href="#'+k+'" data-tab="'+k+'"'+(navTab()===k?' aria-current="page"':'')+'>'+l+(k==="schools"?'<span class="n">'+open+' open</span>':'')+(k==="cycle"&&cycleTodos().filter(t=>t.k==="iv").length?'<span class="n">'+cycleTodos().filter(t=>t.k==="iv").length+' upcoming</span>':'')+'</a>').join("")+(lm?'':'<button class="tab-more" data-act="more" aria-expanded="'+(!!ui.more)+'">More'+(ui.more?' ▴':' ▾')+'</button><button class="tab-more tab-help" data-act="gtour-page" title="Walk through what this page does">'+(gtSection()?'? Tour this page':'? Tour')+'</button>');
   const m = document.getElementById("main");
   const fx = ui.focus && ui.essayId && essay(ui.essayId);
   document.body.classList.toggle("focus-mode", !!fx);
@@ -1253,7 +1262,7 @@ function render(){
   else if(ui.tab==="experiences") h += vExperiences();
   else h += vNext();
   const essayView = !!(ui.essayId && essay(ui.essayId));
-  const showSide = S.essays.length>1 && !essayView && !((ui.tab==="cycle"||ui.tab==="experiences"||ui.tab==="primary") && !ui.schoolId && !ui.baseId);
+  const showSide = S.essays.length>1 && !essayView && !(appStage()==="interviews" && ui.tab==="next") && !((ui.tab==="cycle"||ui.tab==="experiences"||ui.tab==="primary") && !ui.schoolId && !ui.baseId);
   let side="";
   if(showSide){
     const list=suggestions();
@@ -1286,13 +1295,14 @@ function newItem(o){ return Object.assign({id:id("i"), head:"", text:"", tags:[]
 const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 function ym(v){ const m=/^(\d{4})-(\d{2})/.exec(v||""); return m? MONTHS[+m[2]-1]+" "+m[1] : ""; }
 function expDates(x){ if(x.start||x.end||x.ongoing){ const a=ym(x.start), b=x.ongoing?"present":ym(x.end); if(a||b) return a&&b? (a===b?a:a+" – "+b) : (a? a+(x.ongoing?" – present":"") : b); } return x.dates||""; }
-function expHours(x){ if(x.hours!==undefined && x.hours!=="") return +x.hours||0; return Math.round(((+x.hoursBefore||0) + (x.log||[]).reduce((a,e)=>a+(+e.hrs||0),0))*10)/10; }
+function weeksOf(x){ const m=/^(\d{4})-(\d{2})/.exec(x.start||""); if(!m) return 0; const a=new Date(+m[1],+m[2]-1,1); let b=new Date(); const n=/^(\d{4})-(\d{2})/.exec(x.end||""); if(!x.ongoing && n) b=new Date(+n[1],+n[2],0); return Math.max(0,(b-a)/(7*864e5)); }
+function expHours(x){ if(x.hours!==undefined && x.hours!=="") return +x.hours||0; if(+x.hpw>0 && weeksOf(x)) return Math.round(+x.hpw*weeksOf(x)); return Math.round(((+x.hoursBefore||0) + (x.log||[]).reduce((a,e)=>a+(+e.hrs||0),0))*10)/10; }
 function writtenUp(x){ return !!((x.summary||"").trim() && (x.items||[]).some(it=>(it.text||"").trim())); }
 // what this experience still needs: a write-up once it ends, or a refresh every six months while it's ongoing
 function writeupNudge(x){
   if(!STORY_KINDS.includes(x.kind)) return "";
   if(x.ongoing){ if(!writtenUp(x)) return (x.summary||"").trim()? "Add what you’ve learned so far" : "Write up what you’re doing"; const t=x.wu||0; return t && Date.now()-t>182*864e5 ? "Not updated since "+new Date(t).toLocaleDateString(undefined,{month:"short",year:"numeric"}) : ""; }
-  if(x.end && !writtenUp(x)) return "Ended "+ym(x.end)+": write it up while it’s fresh";
+  if(x.end && !writtenUp(x)){ const m=/^(\d{4})-(\d{2})/.exec(x.end); const ago=m? (Date.now()-new Date(+m[1],+m[2]-1,1))/864e5 : 0; return "Ended "+ym(x.end)+(ago>120? ": not written up yet" : ": write it up while it’s fresh"); }
   return "";
 }
 function yearOf(x){ if(x.ongoing) return "Now"; const v=x.end||x.start; if(v) return v.slice(0,4); const m=/(\d{4})(?!.*\d{4})/.exec(x.dates||""); return m? m[1] : "No dates"; }
@@ -1306,12 +1316,13 @@ const STAGES = {
 };
 function appStage(){ const p=prefs(); if(p.applying===false) return "log"; return STAGES[p.stage]? p.stage : "all"; }
 function logMode(){ return appStage()==="log"; }
+function navTab(){ if(ui.tab==="schools" && String(ui.schoolId||"").startsWith("app-")) return "primary"; if(ui.tab==="schools" && ui.essayId){ const e=essay(ui.essayId); if(e && isLetter(e)) return "cycle"; } return ui.tab; }
 function visibleTabs(){
   const st=appStage(); if(st==="all") return TABS.map(t=>t[0]);
   const v=new Set(STAGES[st].tabs);
   if(S.bases.length || S.schools.length>=2) v.add("essays");                          // base essays once there's something to share
   if(S.schools.some(s=>s.submitted||s.ii||s.outcome)) v.add("cycle");                 // the cycle once something is submitted
-  if(ui.tab) v.add(ui.tab);
+  if(ui.tab) v.add(navTab());
   const order=STAGES[st].tabs.concat(TABS.map(t=>t[0]).filter(k=>!STAGES[st].tabs.includes(k)));
   return order.filter(k=>v.has(k));
 }
@@ -1429,11 +1440,13 @@ function parseProfile(text){
   return full;
 }
 
+function undoBanner(){ let undo=false; try{ undo=ui.undoRestore!==false && !!localStorage.getItem(UNDO_RESTORE); }catch(e){}
+  return undo?'<div class="banner info" style="margin-bottom:12px"><div class="grow small"><strong>You restored a backup.</strong> What you had before is kept until you dismiss this.</div><button data-act="undo-restore">Undo restore</button><button class="ghost" data-act="dismiss-undo-restore">Dismiss</button></div>':''; }
 function vExperiences(){
   ui.expView=ui.expView||"stories";
-  let h = logMode()
+  let h = undoBanner() + (logMode()
     ? '<div class="row" style="justify-content:space-between; align-items:flex-end"><div><h1>Experience log</h1><p class="sub" style="margin-bottom:0">Write up each experience when it ends, while you still remember the details. Years from now those write-ups become specific letters of recommendation, ready-made AMCAS activities and secondary essays, and answers for interviews. When you apply, turn on the application tools and everything here is waiting.</p></div><span class="row"><button class="ghost" data-act="exp-intro">How this works</button><button data-act="applying-on">I’m applying this cycle</button></span></div><div style="height:14px"></div>'
-    : '<h1>Experiences</h1><p class="sub">What you’ve done, what it taught you, and what it shows about you. This stays with you from cycle to cycle. Essays and interview prep pull stories from here, and each letter writer can get a summary tailored to them. <button class="ghost small" data-act="exp-intro" style="padding:0">How this works</button>'+(!S.schools.length && !(S.apps||[]).some(a=>a.submitted)?' <button class="ghost small" data-act="applying-off" style="padding:0">Not applying yet? Show only the log</button>':'')+'</p>';
+    : '<h1>Experiences</h1><p class="sub">What you’ve done, what it taught you, and what it shows about you. This stays with you from cycle to cycle. Essays and interview prep pull stories from here, and each letter writer can get a summary tailored to them. <button class="ghost small" data-act="exp-intro" style="padding:0">How this works</button>'+(!S.schools.length && !(S.apps||[]).some(a=>a.submitted)?' <button class="ghost small" data-act="applying-off" style="padding:0">Not applying yet? Show only the log</button>':'')+'</p>');
   if(logMode()) h+=checklistHtml();
   h+='<div class="row" style="justify-content:space-between; margin-bottom:14px"><span class="seg" role="group" aria-label="View"><button data-act="exp-view" data-v="stories" aria-pressed="'+(ui.expView==="stories")+'">Experiences</button><button data-act="exp-view" data-v="self" aria-pressed="'+(ui.expView==="self")+'">Strengths &amp; weaknesses</button><button data-act="exp-view" data-v="writers" aria-pressed="'+(ui.expView==="writers")+'">Letter writers'+((S.recommenders||[]).length?' ('+S.recommenders.length+')':'')+'</button></span>'+
     '<label class="chk small">Your name <input id="pref-name" value="'+esc(prefs().name||"")+'" placeholder="For letter-writer summaries" style="width:200px"></label></div>';
@@ -1445,6 +1458,8 @@ function vStories(){
   if(ui.expImport) h+=importPanel();
   if(!X.some(x=>STORY_KINDS.includes(x.kind)) && !ui.expImport) h+='<div class="panel"><div class="pb stack"><h2>Start your experience log</h2><p style="margin:0">The details that make an application specific fade fast: the patient who stuck with you, the experiment that failed for months, what you did about it. Writing each experience up when it ends gets you stronger letters (your recommenders will have specifics), a much faster application summer (activities and secondaries draw on the same stories), and answers ready for interviews. Start whenever you start, even freshman year. For each research or clinical experience, and your main activities:</p><ul style="margin:0; padding-left:20px"><li><b>When it ends, write it up.</b> What you did: the project or role, in a paragraph, plus who supervised you and your hours. What you learned: two to four lessons, each with a one-line headline and the story behind it.</li><li><b>For things that run for years</b>, keep one write-up and revise it as you go (“Last spring we found… This fall I…”).</li></ul><p style="margin:0">Then add a few <b>strengths</b> with evidence from two or three experiences each, and <b>reflections</b> such as your career goals or whether you prefer group or individual work. Already have a document like this? Use <b>Import from a document</b>.</p></div></div>';
   const ST=X.filter(x=>STORY_KINDS.includes(x.kind));
+  const totH=ST.reduce((a,x)=>a+expHours(x),0);
+  if(ST.length) h+='<p class="small muted" style="margin:-4px 0 12px">'+ST.length+' experience'+(ST.length===1?'':'s')+(totH? ' · about '+totH.toLocaleString()+' hours in all' : '')+'</p>';
   const todo=ST.filter(x=>writeupNudge(x));
   if(todo.length) h+='<div class="panel" data-tour="writeups" style="margin-bottom:14px"><div class="ph"><h2 style="flex:1">Write-ups to do</h2><span class="small muted">'+todo.length+'</span></div><ul class="list">'+todo.map(x=>'<li><div class="main"><b>'+esc(x.title||"Untitled")+'</b><div class="chips"><span class="chip warn">'+esc(writeupNudge(x))+'</span></div></div><button class="primary" data-act="open-exp" data-id="'+x.id+'">Write it up</button></li>').join("")+'</ul></div>';
   if(X.some(x=>SELF_KINDS.includes(x.kind))) h+='<p class="small muted" style="margin:-4px 0 12px">Strengths, weaknesses and reflections are on the <button class="ghost small" data-act="exp-view" data-v="self" style="padding:0">Strengths &amp; weaknesses</button> tab.</p>';
@@ -1492,7 +1507,7 @@ function vExp(x){
   const k=x.kind, strengths=strengthNames().filter(t=>t!==x.title), weaknesses=weaknessNames().filter(t=>t!==x.title), selfk=SELF_KINDS.includes(k);
   let h='<button class="ghost back" data-act="'+(selfk?'back-self':'back-exp')+'">← '+(selfk?'Strengths &amp; weaknesses':'Experiences')+'</button>';
   h+='<div class="grid-f" style="margin-bottom:12px"><label class="f" style="grid-column:1/-1">Title<input id="xt-'+x.id+'" data-bind="exp:'+x.id+':title" value="'+esc(x.title)+'" style="font-weight:700; font-size:18px"></label>'+
-    (selfk?'':'<label class="f">Where<input id="xo-'+x.id+'" data-bind="exp:'+x.id+':org" value="'+esc(x.org)+'" placeholder="e.g. MD Anderson Cancer Center"></label><label class="f">Hours<input type="number" min="0" id="xh-'+x.id+'" data-bind="exp:'+x.id+':hours" value="'+esc(x.hours!==undefined&&x.hours!==""?x.hours:(expHours(x)||""))+'" placeholder="Total, roughly"></label>'+
+    (selfk?'':'<label class="f">Where<input id="xo-'+x.id+'" data-bind="exp:'+x.id+':org" value="'+esc(x.org)+'" placeholder="e.g. MD Anderson Cancer Center"></label><label class="f">Hours<input type="number" min="0" id="xh-'+x.id+'" data-bind="exp:'+x.id+':hours" value="'+esc(x.hours!==undefined&&x.hours!==""?x.hours:"")+'" placeholder="'+(expHours(x)?'≈ '+expHours(x).toLocaleString()+' estimated':'Total, roughly')+'"></label><label class="f">Or hours per week<input type="number" min="0" step="0.5" id="xw-'+x.id+'" data-bind="exp:'+x.id+':hpw" value="'+esc(x.hpw||"")+'" placeholder="e.g. 6"><span class="small muted" id="xw-hint-'+x.id+'">'+((+x.hpw>0 && !(x.hours!==undefined&&x.hours!=="") && expHours(x))? "≈ "+expHours(x).toLocaleString()+" hours so far" : "We’ll estimate the total from your dates")+'</span></label>'+
       '<label class="f">Started<input type="month" id="xsd-'+x.id+'" data-bind="exp:'+x.id+':start" value="'+esc(x.start||"")+'"></label><label class="f">Ended<input type="month" id="xed-'+x.id+'" data-bind="exp:'+x.id+':end" value="'+esc(x.end||"")+'"'+(x.ongoing?' disabled':'')+'></label><label class="chk" style="align-self:end; padding-bottom:8px"><input type="checkbox" id="xg-'+x.id+'" data-bind="exp:'+x.id+':ongoing"'+(x.ongoing?' checked':'')+'> Still doing this</label>'+
       (!x.start && !x.end && x.dates?'<p class="small muted" style="grid-column:1/-1; margin:0">Imported dates: “'+esc(x.dates)+'”. Set the months above so it sorts on your timeline.</p>':''))+
     '<label class="f">Kind<select id="xk-'+x.id+'" data-bind="exp:'+x.id+':kind">'+EXP_ORDER.map(o=>'<option value="'+o+'"'+(o===k?' selected':'')+'>'+EXP_ONE[o]+'</option>').join("")+'</select></label></div>';
@@ -1517,7 +1532,7 @@ function vExp(x){
   });
   h+='</div></div>';
   if(k==="strength"){ const tagged=(S.experiences||[]).flatMap(y=>(y.items||[]).filter(it=>(it.tags||[]).includes(x.title)).map(it=>({y,it})));
-    h+='<div class="panel" style="margin-top:14px"><div class="ph"><h2>Tagged in your experiences</h2></div>'+(tagged.length?'<ul class="list">'+tagged.map(o=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(o.it.head||o.y.title)+'</div><div class="small muted">'+esc(o.y.title)+'</div></div><button class="ghost" data-act="open-exp" data-id="'+o.y.id+'">Open</button></li>').join("")+'</ul>':'<div class="empty small">None yet. Open an experience and tap “'+esc(x.title)+'” under a lesson that shows it.</div>')+'</div>'; }
+    h+='<div class="panel" style="margin-top:14px"><div class="ph"><h2>Tagged in your experiences</h2></div>'+(tagged.length?'<ul class="list">'+tagged.map(o=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(o.it.head||o.y.title)+'</div><div class="small muted">'+esc(o.y.title)+'</div></div><button class="ghost" data-act="open-exp" data-id="'+o.y.id+'">Open</button></li>').join("")+'</ul>':'<div class="empty small">None yet. '+((x.title||"").trim()? 'Open an experience and tap “'+esc(x.title)+'” under a lesson that shows it.' : 'Name this strength first, then tag it under a lesson in any experience.')+'</div>')+'</div>'; }
   if(k==="weakness"){ const tagged=(S.experiences||[]).flatMap(y=>(y.items||[]).filter(it=>(it.grow||[]).includes(x.title)).map(it=>({y,it})));
     h+='<div class="panel" style="margin-top:14px"><div class="ph"><h2>Lessons that show progress</h2></div>'+(tagged.length?'<ul class="list">'+tagged.map(o=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(o.it.head||o.y.title)+'</div><div class="small muted">'+esc(o.y.title)+'</div></div><button class="ghost" data-act="open-exp" data-id="'+o.y.id+'">Open</button></li>').join("")+'</ul>':'<div class="empty small">None yet. On the Experiences tab, tap “'+esc(x.title||"this weakness")+'” under “Working on” for a lesson that shows progress.</div>')+'</div>';
     const ol=weaknessOutline(x);
@@ -1540,6 +1555,7 @@ function vWriter(r){
   let h='<button class="ghost back" data-act="back-writers">← Letter writers</button>';
   h+='<div class="grid-f" style="margin-bottom:12px"><label class="f">Name<input id="rn-'+r.id+'" data-bind="rec:'+r.id+':name" value="'+esc(r.name)+'" style="font-weight:700"></label>'+
     '<label class="f">Title or role<input id="rr-'+r.id+'" data-bind="rec:'+r.id+':role" value="'+esc(r.role||"")+'" placeholder="e.g. Professor of Biology, St. Olaf"></label>'+
+    '<label class="f">Email<input type="email" id="rem-'+r.id+'" data-bind="rec:'+r.id+':email" value="'+esc(r.email||"")+'" placeholder="For your own reference"></label>'+
     '<label class="f">Relationship<select id="rk-'+r.id+'" data-bind="rec:'+r.id+':kind">'+Object.entries(REC_KINDS).map(([k,l])=>'<option value="'+k+'"'+(r.kind===k?' selected':'')+'>'+l+'</option>').join("")+'</select></label>'+
     '<label class="f">Asked<input type="date" id="ra-'+r.id+'" data-bind="rec:'+r.id+':asked" value="'+esc(r.asked||"")+'"></label>'+
     '<div class="f" style="justify-content:flex-end"><label class="chk"><input type="checkbox" id="rg-'+r.id+'" data-bind="rec:'+r.id+':agreed"'+(r.agreed?' checked':'')+'> Agreed to write</label></div>'+
@@ -1653,7 +1669,7 @@ const SVC = {
     act:{label:"Work and activities", max:15, desc:700, mm:3, mmLimit:1325, mmLabel:"Most meaningful", types:AMCAS_TYPES}},
   tmdsas:{name:"TMDSAS", who:"Texas public schools", essays:[
       {k:"ps", t:"Personal statement", limit:5000, fam:"ps", p:"TMDSAS personal statement: your motivation for a medical career and the value of experiences that prepare you to be a physician."},
-      {k:"pchar", t:"Personal characteristics", limit:5000, fam:"diversity", p:"TMDSAS personal characteristics: personal qualities, characteristics or lived experiences that would enrich the educational experience of others."},
+      {k:"pchar", t:"Personal characteristics", limit:2500, fam:"diversity", p:"TMDSAS personal characteristics: personal qualities, characteristics or lived experiences that would enrich the educational experience of others."},
       {k:"opt", t:"Optional essay", limit:2500, fam:"anything", opt:true, p:"TMDSAS optional essay: unique circumstances or life experiences relevant to your application that you haven’t presented elsewhere."},
       {k:"dualA", t:"MD/PhD essay A", limit:5000, fam:"mdphd", dual:true, p:"TMDSAS MD/PhD essay A: your motivation for a dual degree, your research interests and career goals."},
       {k:"dualB", t:"MD/PhD essay B", limit:5000, fam:"research", dual:true, p:"TMDSAS MD/PhD essay B: your significant research experience, with your mentor’s name and title, your contributions, and any publications."}],
@@ -1668,10 +1684,11 @@ function appRec(k){ S.apps=S.apps||[]; let a=S.apps.find(x=>x.id==="app-"+k); if
 function primaryEssay(k, key){ return S.essays.find(e=>e.schoolId==="app-"+k && e.pkey===key); }
 function startPrimary(k, d){
   const a=appRec(k), b=S.bases.find(x=>x.family===d.fam);
-  const e={id:id("e"), schoolId:a.id, pkey:d.k, prompt:d.p, limit:d.limit, unit:"chars", family:d.fam, baseId:b?b.id:null, basedOnV:null, text:"", status:"todo", localEdit:false, optional:!!d.opt, group:"", cut:false};
+  const e={id:id("e"), schoolId:a.id, pkey:d.k, prompt:d.p, limit:d.limit, unit:"chars", family:d.fam, baseId:b?b.id:null, basedOnV:null, text:"", status:"todo", localEdit:false, optional:!!d.opt||isCond(d.p), group:"", cut:false};
   S.essays.push(e); return e;
 }
-function actType(k, kind){ const t=SVC[k].act.types;
+function actType(k, kind, x){ const t=SVC[k].act.types; const blob=x? ((x.title||"")+" "+(x.org||"")+" "+(x.summary||"")) : "";
+  if(k==="amcas" && kind==="clinical" && x){ if(/shadow/i.test(blob)) return "Physician shadowing/clinical observation"; if(/\b(paid|job|employ|technician|tech\b|scribe|CNA|EMT|medical assistant|phlebotom)/i.test(blob) && !/volunteer/i.test(blob)) return "Paid employment: medical/clinical"; }
   const want={amcas:{research:"Research/lab", clinical:"Community service/volunteer: medical/clinical", activity:"Extracurricular activities"}, tmdsas:{research:"Research activities", clinical:"Healthcare activities", activity:"Extracurricular activities"}, aacomas:{research:"Experience: research", clinical:"Experience: healthcare experience", activity:"Experience: extracurricular activities"}}[k][kind];
   return t.includes(want)? want : t[0]; }
 function actMeter(n, lim){ const over=lim && n>lim; return '<span class="small" style="color:'+(over?'var(--bad)':'var(--muted)')+'">'+n.toLocaleString()+(lim?' / '+lim.toLocaleString():'')+' chars'+(over?' · '+(n-lim).toLocaleString()+' over':'')+'</span>'; }
@@ -1699,19 +1716,23 @@ function actsPanel(k){
   const X=(S.experiences||[]).filter(x=>STORY_KINDS.includes(x.kind));
   let h='<div class="pb" data-tour="acts" style="border-top:1px solid var(--line-soft)"><div class="row" style="justify-content:space-between"><h3 style="margin:0">'+c.label+'</h3><span class="small muted">'+A.length+(c.max?' of '+c.max:'')+' entries'+(c.mm?' · '+mm+' of '+c.mm+' '+c.mmLabel.toLowerCase():'')+' · '+c.desc+' characters each</span></div>';
   h+='<div class="row" style="margin:8px 0"><select id="act-from-'+k+'" aria-label="Start from an experience"><option value="">Start from an experience…</option>'+X.filter(x=>!A.some(a=>a.expId===x.id)).map(x=>'<option value="'+x.id+'">'+esc(x.title.slice(0,70))+'</option>').join("")+'</select><button data-act="act-add" data-k="'+k+'">Add</button>'+(c.max&&A.length>=c.max?'<span class="small" style="color:var(--warn)">You’ve reached '+c.max+' entries.</span>':'')+'</div>';
-  if(A.length) h+='<ul class="list">'+A.map(x=>{ const isOpen=open===x.id, n=(x.desc||"").length;
+  if(A.length) h+='<ul class="list">'+A.map(x=>{ const isOpen=open===x.id, n=portalText(x.desc||"").length;
     let li='<li style="display:block"><div class="row" style="justify-content:space-between; flex-wrap:nowrap"><div class="main"><div class="row"><b>'+esc(x.title||"Untitled")+'</b>'+(x.mm?'<span class="chip acc">'+c.mmLabel+'</span>':'')+'</div><div class="chips"><span class="chip">'+esc(x.type||"")+'</span>'+(x.hours?'<span class="chip">'+esc(x.hours)+' hrs</span>':'')+'</div>'+actMeter(n,c.desc)+'</div><button class="ghost" data-act="act-open" data-id="'+x.id+'">'+(isOpen?'Close':'Edit')+'</button></div>';
     if(isOpen){ const e=exp(x.expId);
       li+='<div class="stack" style="gap:8px; margin-top:10px"><div class="grid-f"><label class="f">Title<input id="at-'+x.id+'" data-bind="act:'+x.id+':title" value="'+esc(x.title||"")+'"></label>'+
-        '<label class="f">Type<select id="ay-'+x.id+'" data-bind="act:'+x.id+':type">'+c.types.map(t=>'<option'+(t===x.type?' selected':'')+'>'+esc(t)+'</option>').join("")+'</select></label>'+
+        '<label class="f">Type<select id="ay-'+x.id+'" data-bind="act:'+x.id+':type">'+(x.type?'':'<option value="" selected>Choose a type…</option>')+c.types.map(t=>'<option'+(t===x.type?' selected':'')+'>'+esc(t)+'</option>').join("")+'</select></label>'+
         '<label class="f">Organization<input id="ao-'+x.id+'" data-bind="act:'+x.id+':org" value="'+esc(x.org||"")+'"></label>'+
         '<label class="f">Dates<input id="ad-'+x.id+'" data-bind="act:'+x.id+':dates" value="'+esc(x.dates||"")+'"></label>'+
-        '<label class="f">Hours<input id="ah-'+x.id+'" data-bind="act:'+x.id+':hours" value="'+esc(x.hours||"")+'" placeholder="Total hours"></label></div>'+
+        '<label class="f">Hours<input id="ah-'+x.id+'" data-bind="act:'+x.id+':hours" value="'+esc(x.hours||"")+'" placeholder="Total hours"></label>'+
+        '<label class="f">City, state<input id="al-'+x.id+'" data-bind="act:'+x.id+':loc" value="'+esc(x.loc||"")+'"></label>'+
+        '<label class="f">Contact name<input id="acn-'+x.id+'" data-bind="act:'+x.id+':contact" value="'+esc(x.contact||(e&&e.contact)||"")+'"></label>'+
+        '<label class="f">Contact title<input id="act-'+x.id+'" data-bind="act:'+x.id+':contactRole" value="'+esc(x.contactRole||(e&&e.contactRole)||"")+'"></label>'+
+        '<label class="f">Contact email<input type="email" id="ace-'+x.id+'" data-bind="act:'+x.id+':contactEmail" value="'+esc(x.contactEmail||(e&&e.contactEmail)||"")+'"></label></div>'+
         '<label class="f">Description <span id="am-'+x.id+'">'+actMeter(n,c.desc)+'</span><textarea id="ax-'+x.id+'" rows="5" data-bind="act:'+x.id+':desc">'+esc(x.desc||"")+'</textarea></label>'+
         (c.mm?'<label class="chk"><input type="checkbox" id="amm-'+x.id+'" data-bind="act:'+x.id+':mm"'+(x.mm?' checked':'')+((!x.mm&&mm>=c.mm)?' disabled':'')+'> '+c.mmLabel+(!x.mm&&mm>=c.mm?' (you’ve picked '+c.mm+')':'')+'</label>':'')+
-        (c.mm&&x.mm?'<label class="f">Why it was most meaningful <span id="amt-'+x.id+'">'+actMeter((x.mmText||"").length,c.mmLimit)+'</span><textarea id="amx-'+x.id+'" rows="5" data-bind="act:'+x.id+':mmText">'+esc(x.mmText||"")+'</textarea></label>':'')+
+        (c.mm&&x.mm?'<label class="f">Why it was most meaningful <span id="amt-'+x.id+'">'+actMeter(portalText(x.mmText||"").length,c.mmLimit)+'</span><textarea id="amx-'+x.id+'" rows="5" data-bind="act:'+x.id+':mmText">'+esc(x.mmText||"")+'</textarea></label>':'')+
         (e&&(e.items||[]).length?'<details><summary class="small" style="cursor:pointer">Lessons from “'+esc(e.title.slice(0,50))+'” to draw on</summary><ul class="small" style="margin:6px 0; padding-left:18px">'+e.items.map(it=>'<li><b>'+esc(it.head||"")+'</b> '+esc((it.text||"").slice(0,160))+((it.text||"").length>160?'…':'')+'</li>').join("")+'</ul></details>':'')+
-        '<div class="row"><button class="ghost" data-act="act-copy" data-id="'+x.id+'">Copy description</button>'+confirmBtn("del-act:"+x.id,"Remove","Remove this entry")+'</div></div>'; }
+        '<div class="row"><button class="ghost" data-act="act-copy" data-id="'+x.id+'">Copy description</button>'+(c.mm&&x.mm?'<button class="ghost" data-act="act-copy" data-f="mmText" data-id="'+x.id+'">Copy most-meaningful essay</button>':'')+confirmBtn("del-act:"+x.id,"Remove","Remove this entry")+'</div></div>'; }
     return li+'</li>'; }).join("")+'</ul>';
   else h+='<p class="small muted" style="margin:0">'+(X.length?'Pick an experience to start an entry with its title, place, dates and description, then trim to '+c.desc+' characters.':'Add your experiences on the Experiences tab to start entries from them, or add one blank.')+'</p>';
   return h+'</div>';
@@ -1817,7 +1838,8 @@ function essayChecks(e){
 }
 function checksHtml(e){
   const {out, stats}=essayChecks(e);
-  let h='<div class="panel"><div class="ph"><h3 style="flex:1">Writing checks</h3>'+(stats?'<span class="small muted">'+stats.W+' words · '+stats.paras+' paragraph'+(stats.paras===1?'':'s')+' · ~'+stats.read+' min read</span>':'')+'</div>';
+  const wn=(typeof wrongNames==="function" && !isPrimaryE(e))? wrongNames(e) : [];
+  let h=(wn.length?'<div class="banner warn" style="margin-bottom:10px"><div class="grow small"><strong>Mentions '+wn.map(x=>'“'+esc(x.alias)+'”').join(", ")+'</strong>, another school on your list. See the note under the essay.</div></div>':'')+'<div class="panel"><div class="ph"><h3 style="flex:1">Writing checks</h3>'+(stats?'<span class="small muted">'+stats.W+' words · '+stats.paras+' paragraph'+(stats.paras===1?'':'s')+' · ~'+stats.read+' min read</span>':'')+'</div>';
   if(!stats) return h+'<div class="pb small muted">Checks appear once you start writing. They run in your browser; nothing is sent anywhere.</div></div>';
   if(!out.length) return h+'<div class="pb small muted">Nothing flagged. These checks look for common phrases, repetition and long sentences, not quality.</div></div>';
   return h+'<ul class="list">'+out.sort((a,b)=>b.sev-a.sev).map(c=>'<li><div class="main small">'+esc(c.t)+'</div>'+(c.a!=null?'<button class="ghost small" data-act="chk-show" data-a="'+c.a+'" data-b="'+c.b+'">Show</button>':'')+'</li>').join("")+'</ul><div class="pb small muted" style="padding-top:6px">Suggestions, not rules. A common phrase can be fine if the rest is specific.</div></div>';
@@ -1874,7 +1896,7 @@ function cycleTodos(){
       if(n<0 && n>=-14 && !s.thanks) out.push({s, k:"thanks", n:0, d:s.iv, t:"Thank-you notes after your "+fmt(s.iv)+" interview", c:"warn"});
     } else if(s.ii){ out.push({s, k:"sched", n:1, d:s.ii, t:"Interview invite: schedule your date", c:"warn"}); }
   });
-  S.essays.filter(e=>isLetter(e) && e.status!=="pasted").forEach(e=>{ const s=school(e.schoolId); if(!s) return; const n=e.due?daysUntil(e.due):null;
+  S.essays.filter(e=>isLetter(e) && e.status!=="pasted").forEach(e=>{ const s=school(e.schoolId); if(!s) return; if(e.family==="thanks" && s.thanks) return; const n=e.due?daysUntil(e.due):null;
     out.push({s, e, k:"letter", n:n==null?30:n, d:e.due, t:(FAM[e.family]||"Letter")+(e.due?" · send by "+fmt(e.due):"")+(e.status==="ready"?" · ready to send":""), c:n!=null&&n<=3?"warn":""}); });
   (S.recommenders||[]).forEach(r=>{ if(r.received || !r.due) return; const n=daysUntil(r.due); if(n>30) return;
     out.push({s:null, r, who:"Letter from "+(r.name||"letter writer"), k:"rec", n, d:r.due, t:(n<0?"Letter overdue since "+fmt(r.due):"Letter due "+(n===0?"today":dayLabel(r.due)))+(r.asked?"":" · not asked yet"), c:n<=7?"warn":""}); });
@@ -1909,7 +1931,7 @@ function cycleIcsEvents(stampv, esc2){
 function vCycle(){
   const all=S.schools;
   let h='<div class="row" style="justify-content:space-between; align-items:flex-end; margin-bottom:14px"><div><h1>Cycle</h1><p class="sub" style="margin:0">Every school from secondary to decision. Open a school to log invites, interview dates and decisions.</p></div>'+(all.length?'<button data-act="ics">Add to calendar</button>':'')+'</div>';
-  if(!all.length) return h+'<div class="panel empty">Add schools on the Secondaries tab first.</div>';
+  if(!all.length) return h+'<div class="panel empty stack" style="align-items:flex-start">No schools yet. Add the schools you’ve applied to; tick “Already submitted” for ones you’ve finished.<button class="primary" data-act="cycle-add-school">Add a school</button></div>';
   const st=all.map(s=>({s, g:stage(s)}));
   const cnt=k=>st.filter(x=>x.g.k===k).length;
   const ivDone=st.filter(x=>x.s.iv && daysUntil(x.s.iv)<0).length, ivUp=st.filter(x=>x.s.iv && daysUntil(x.s.iv)>=0 && !x.s.outcome).length;
@@ -2019,7 +2041,7 @@ function vBrief(rows){
 // A short, stage-specific "Getting started" list; each step ticks itself off and has one button that goes there.
 function checklist(){
   const st=appStage(); if(st==="all") return null;
-  const X=S.experiences||[], story=X.filter(x=>STORY_KINDS.includes(x.kind)), drive=Sync.available();
+  const X=S.experiences||[], story=X.filter(x=>STORY_KINDS.includes(x.kind) && ((x.title||"").trim()||(x.summary||"").trim())), drive=Sync.available();
   const schoolEs=S.essays.filter(e=>!isPrimaryE(e) && !isLetter(e));
   const fams={}; schoolEs.filter(e=>!e.baseId && e.family!=="why" && e.family!=="other").forEach(e=>{ fams[e.family]=(fams[e.family]||new Set()).add(e.schoolId); });
   const top=Object.entries(fams).sort((a,b)=>b[1].size-a[1].size)[0];
@@ -2031,7 +2053,7 @@ function checklist(){
     step("Name a strength and back it with a moment from an experience", X.some(x=>x.kind==="strength"), "self"),
     step("Add a letter writer, even one you’ll ask years from now", (S.recommenders||[]).length, "writers")];
   else if(st==="primary") steps=[
-    step("Choose which applications you’re using (AMCAS, TMDSAS, AACOMAS)", prefs().services!==undefined, "primary"),
+    step("Choose which applications you’re using (AMCAS, TMDSAS, AACOMAS)", prefs().services!==undefined || (S.acts||[]).length>0 || S.essays.some(e=>isPrimaryE(e) && (e.text||"").trim()), "primary"),
     step("Start your personal statement", S.essays.some(e=>isPrimaryE(e) && e.family==="ps" && (e.text||"").trim()), "primary"),
     step("Write up your main experiences, so activities and essays can draw on them", story.some(writtenUp), "exp"),
     step("Add your activities (start each from an experience)", (S.acts||[]).length, "primary")];
@@ -2041,10 +2063,10 @@ function checklist(){
     step("Draft your first secondary", schoolEs.some(e=>(e.text||"").trim()), "first-school"),
     step("Add a few experiences, so each essay can suggest stories", story.length, "exp")];
   else if(st==="interviews") steps=[
-    step("Mark the schools you’ve submitted", S.schools.some(s=>s.submitted), "schools"),
+    step("Add the schools you’ve submitted (tick “Already submitted”, no essays to retype)", S.schools.some(s=>s.submitted), "add-school"),
     step("Record interview invites and dates", S.schools.some(s=>s.ii||s.iv), "cycle"),
     step("Pick the stories to have ready for each interview", S.schools.some(s=>(s.stories||[]).length), "cycle"),
-    step("Send thank-you notes and update letters", S.essays.some(isLetter), "cycle")];
+    step("Send thank-you notes and update letters", S.essays.some(e=>isLetter(e) && e.status==="pasted"), "cycle")];
   if(drive) steps.push(step("Save to Google Drive, so your work is safe and opens on any computer", Sync.state().connected, "drive"));
   return steps;
 }
@@ -2066,15 +2088,15 @@ function vNext(){
   const rows = S.schools.filter(s=>!s.submitted).map(s=>({s, p:plan(s)})).sort((a,b)=>b.p.score-a.p.score);
   const done = S.schools.filter(s=>s.submitted);
   const flagged = S.essays.filter(behind);
-  let h = '<h1>Do next</h1><p class="sub">'+(appStage()==="primary"? 'Your primary application first; schools show up here once their secondaries arrive.' : 'Schools ranked by how soon they are due, how much you want them, and how much writing is left. Schools you can finish quickly move up.')+'</p>';
+  let h = undoBanner()+'<h1>Do next</h1><p class="sub">'+(appStage()==="primary"? 'Your primary application first; schools show up here once their secondaries arrive.' : appStage()==="interviews"? 'Interviews, thank-you notes, update letters and decisions first, then anything still open.' : 'Schools ranked by how soon they are due, how much you want them, and how much writing is left. Schools you can finish quickly move up.')+'</p>';
   h += stageNudge() + checklistHtml();
   { const st=appStage(); if(STAGES[st]){ const v=visibleTabs();
       if(v.includes("cycle") && !STAGES[st].tabs.includes("cycle")) h += tipHtml("cycle-tab", '<b>A Cycle tab just appeared.</b> Now that you’ve submitted, track interview invites and dates, thank-you notes, update letters and decisions there.');
-      if(v.includes("essays") && !STAGES[st].tabs.includes("essays")) h += tipHtml("base-tab", '<b>A Base essays tab just appeared.</b> Once two schools ask the same kind of question, write it once there and give each school its own trimmed copy.'); } }
+      if(st!=="interviews" && v.includes("essays") && !STAGES[st].tabs.includes("essays")) h += tipHtml("base-tab", '<b>A Base essays tab just appeared.</b> Once two schools ask the same kind of question, write it once there and give each school its own trimmed copy.'); } }
   h += vBrief(rows) + '<!--SIDE-M-->';
   { const t=cycleTodos(); if(t.length) h += '<div class="panel" style="margin-bottom:16px"><div class="ph"><h2 style="flex:1">Interviews and letters</h2><button class="ghost small" data-tab="cycle">Cycle tab</button></div><ul class="list">'+t.slice(0,5).map(x=>'<li><div class="main"><div class="small" style="font-weight:600">'+esc(x.s?x.s.name:x.who)+'</div><div class="chips"><span class="chip '+x.c+'">'+esc(x.t)+'</span></div></div>'+(x.e?'<button data-act="open-essay" data-id="'+x.e.id+'">Open</button>':x.r?'<button data-act="open-rec" data-id="'+x.r.id+'">Open</button>':'<button data-act="open-school" data-id="'+x.s.id+'">Open</button>')+'</li>').join("")+'</ul></div>'; }
   if(!S.schools.length) h += '<div class="panel hero-empty"><h2>Add a school when its secondary arrives</h2><p>Pick it from the prompt library and its prompts come with it, or paste them yourself. Prompts that ask the same thing at different schools can share one base essay, and this list will rank your schools by what to work on first.</p><div class="row"><button class="primary" data-act="first-school">Add your first school</button>'+(SHOW_LIBRARY?'<button data-act="go-library">Browse the prompt library</button>':'')+'<button data-act="try-examples">Explore with sample data</button></div><p class="small">'+(Sync.state().connected?'Your work saves in this browser and to your own Google Drive.':(Sync.available()?'Your work saves in this browser. Connect Google Drive at the top to keep it safe on any computer.':'Everything you enter stays on this device. Nothing is sent anywhere.'))+'</p></div>';
-  else if(!rows.length) h += '<div class="panel empty">Nothing open. Add a school when a secondary arrives.</div>';
+  else if(!rows.length) h += '<div class="panel empty">'+(appStage()==="interviews"? 'Every school is submitted. Interviews, letters and decisions are on the <a href="#cycle" data-tab="cycle">Cycle tab</a>.' : 'Nothing open. Add a school when a secondary arrives.')+'</div>';
   else {
     h += '<div class="panel" data-tour="ranked"><ol class="list">';
     rows.forEach((r,i)=>{
@@ -2086,7 +2108,7 @@ function vNext(){
     });
     h += '</ol></div>';
   }
-  if(done.length) h += '<p class="small muted" style="margin-top:14px">Submitted: '+done.map(s=>esc(s.name)).join(", ")+'</p>';
+  if(done.length) h += '<p class="small muted" style="margin-top:14px">'+done.length+' submitted'+(done.length<=5? ': '+done.map(s=>esc(s.name)).join(", ") : '')+'. <a href="#cycle" data-tab="cycle">See them on the Cycle tab</a>.</p>';
   h += '<details class="how"><summary>How the order works</summary><div><p>Each school gets a due date: the date you received the secondary plus your turnaround (default '+DEFAULT_TURNAROUND+' days), or the school’s own deadline if that comes first. Schools due sooner rank higher; overdue schools rank highest.</p><p>Interest multiplies that: top choice ×1.35, middle ×1, lower ×0.7. Schools with about one essay’s worth of work left get a small boost, since finishing them clears your list fastest. Essays that can start from a base count as less work than ones you write from scratch.</p><p>Pin a school on its page to keep it at the top regardless.</p></div></details>';
   return h;
 }
@@ -2111,7 +2133,7 @@ function downloadIcs(){
   if(!n && !nx){ toast("Nothing to add yet: no open secondaries, interviews or letters with dates."); return; }
   lines.push("END:VCALENDAR");
   const blob=new Blob([lines.join("\r\n")+"\r\n"], {type:"text/calendar"});
-  const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="secondaries-due-dates.ics"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000);
+  const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="medapp-due-dates.ics"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000);
   toast("Downloaded "+(n?n+" due date"+(n===1?"":"s"):"")+(n&&nx?" and ":"")+(nx?nx+" interview and letter date"+(nx===1?"":"s"):"")+". Open the file to add them to your calendar. If dates change, download it again.");
 }
 function feeSummary(){
@@ -2128,25 +2150,35 @@ function vSchools(){
   let h = '<div class="row" style="justify-content:space-between; align-items:flex-end; margin-bottom:14px"><div><h1>Secondaries</h1><p class="sub" style="margin:0">Each school’s secondary essays, sorted by due date.</p><label class="chk small" style="margin-top:8px"><input type="checkbox" id="pref-dual"'+(prefs().dual?' checked':'')+'> I’m applying MD/PhD or DO/PhD</label></div><div class="row">'+(S.schools.some(s=>!s.submitted)?'<button data-act="ics">Add due dates to calendar</button>':'')+(SHOW_LIBRARY?'<button data-act="go-library">Add from prompt library</button>':'')+'<button class="primary" data-act="toggle-add-school">Add school</button></div></div>';
   if(ui.addSchool) h += addSchoolForm();
   h += feeSummary();
+  const nSub=S.schools.filter(s=>s.submitted).length, q=(ui.schQ||"").trim();
+  if(S.schools.length>=8) h += '<div class="row" style="margin-bottom:10px; gap:12px"><input id="sch-q" type="search" data-schq="1" placeholder="Find a school" value="'+esc(ui.schQ||"")+'" style="max-width:260px">'+(nSub?'<label class="chk small"><input type="checkbox" data-act="hide-sub"'+(ui.hideSub?' checked':'')+'> Hide submitted ('+nSub+')</label>':'')+'</div>';
+  const shown=list.filter(({s})=>(!ui.hideSub || !s.submitted) && (!q || s.name.toLowerCase().includes(q.toLowerCase()) || (()=>{ const L=libFind(s.libName||s.name); return L && (nickHit(L,q) || nickHay(L).includes(q.toLowerCase())); })()));
   h += '<div class="panel" data-tour="schools"><ul class="list">';
-  list.forEach(({s,p})=>{
+  if(list.length && !shown.length) h += '<li class="empty">No schools match.</li>';
+  shown.forEach(({s,p})=>{
     const es=secEssays(s.id); const fin=es.filter(e=>e.status==="ready"||e.status==="pasted").length;
-    h += '<li><div class="main"><div class="row"><h2>'+esc(s.name)+'</h2>'+stars(s.interest)+'</div><div class="chips">'+
-      (s.submitted? (stage(s).k==="sub"||stage(s).k==="comp" ? '<span class="chip good">'+stage(s).t+(s.fee?' · fee paid':' · fee not paid')+'</span>' : '<span class="chip '+stage(s).c+'">'+esc(stage(s).t)+'</span>') : p.reasons.slice(0,1).map(c=>'<span class="chip '+c.c+'">'+esc(c.t)+'</span>').join(""))+
-      (s.waiver?'<span class="chip">Fee waived</span>':(!s.fee && +s.feeAmt>0 && !s.submitted?'<span class="chip warn">$'+(+s.feeAmt)+' unpaid</span>':''))+(s.track==="dual"?'<span class="chip acc">'+esc(dualLabel(libFind(s.libName||s.name)))+'</span>':'')+'<span class="chip">'+fin+' of '+es.length+' essays ready</span>'+(es.some(behind)?'<span class="chip warn">Base updated</span>':'')+'</div></div><button data-act="open-school" data-id="'+s.id+'">Open</button></li>';
+    h += '<li><div class="main"><div class="row"><h2><button class="linkish" data-act="open-school" data-id="'+s.id+'" style="font:inherit; background:none; border:0; padding:0; color:inherit; cursor:pointer; text-align:left">'+esc(s.name)+'</button></h2>'+stars(s.interest)+'</div><div class="chips">'+
+      (s.submitted? (stage(s).k==="sub"||stage(s).k==="comp" ? '<span class="pill st-pasted">'+stage(s).t+(s.submittedAt?' '+fmt(s.submittedAt):'')+(+s.feeAmt>0 && !s.fee && !s.waiver?' · fee not paid':'')+'</span>' : '<span class="chip '+stage(s).c+'">'+esc(stage(s).t)+'</span>') : p.reasons.slice(0,1).map(c=>'<span class="chip '+c.c+'">'+esc(c.t)+'</span>').join(""))+
+      (s.waiver?'<span class="chip">Fee waived</span>':(!s.fee && +s.feeAmt>0 && !s.submitted?'<span class="chip warn">$'+(+s.feeAmt)+' unpaid</span>':''))+(s.track==="dual"?'<span class="chip acc">'+esc(dualLabel(libFind(s.libName||s.name)))+'</span>':'')+(es.length && !s.submitted?'<span class="chip">'+fin+' of '+es.length+' essays ready</span>':'')+(es.some(behind)?'<span class="chip warn">Base updated</span>':'')+'</div></div><button data-act="open-school" data-id="'+s.id+'">Open</button></li>';
   });
   if(!S.schools.length) h+='<li class="empty">No schools yet.</li>';
   h += '</ul></div>';
   return h;
 }
 function schoolTaken(name){ const n=(name||"").trim().toLowerCase(); return S.schools.some(s=>s.name.toLowerCase()===n); }
+// Names people actually type, for search only (the wrong-school check uses NICK alone).
+const SEARCH_NICK = {"University of North Texas Health Science Center - Texas College of Osteopathic Medicine (UNTHSC-TCOM)":["TCOM","UNT","UNTHSC","UNT TCOM"], "Vanderbilt University School of Medicine":["Vandy"], "Boston University Chobanian & Avedisian School of Medicine":["BU","BUSM"], "University of Washington School of Medicine":["UW","UDub"], "University of Pennsylvania Perelman School of Medicine":["Penn"], "University of Michigan Medical School":["Michigan","UM"], "Icahn School of Medicine at Mount Sinai":["Sinai","ISMMS"], "University of Pittsburgh School of Medicine":["UPitt"], "Johns Hopkins University School of Medicine":["JHMI"], "UT Southwestern Medical School":["UTSWMC"], "Washington University in St. Louis School of Medicine":["WUSM","WUSTL"], "Northwestern University Feinberg School of Medicine":["NU","NUFSM"], "Case Western Reserve University School of Medicine":["Case"], "University of Chicago Pritzker School of Medicine":["U Chicago"], "Columbia Vagelos College of Physicians and Surgeons":["CUIMC"], "Ohio State University College of Medicine":["OSU"], "UNC Chapel Hill School of Medicine":["UNC SOM"]};
+function nickNorm(t){ return (t||"").toLowerCase().replace(/[^a-z0-9]/g,""); }
+function nicksOf(name){ return (NICK[name]||[]).concat(SEARCH_NICK[name]||[]); }
+function nickHit(x, q){ const n=nickNorm(q); return n.length>=2 && nicksOf(x.name).some(a=>nickNorm(a)===n); }
+function nickHay(x){ return nicksOf(x.name).join(" ").toLowerCase(); }
 function pickMatches(q){
   q=(q||"").trim().toLowerCase();
   const words=q.split(/\s+/).filter(Boolean);
-  const hit=x=>{ const n=(x.name+" "+x.state+" "+(x.deg||"MD")).toLowerCase(); return words.every(w=> w==="md"||w==="do" ? (x.deg||"MD").toLowerCase()===w : n.includes(w)); };
+  const hit=x=>{ if(nickHit(x,q)) return true; const n=(x.name+" "+x.state+" "+(x.deg||"MD")+" "+nickHay(x)).toLowerCase(); return words.every(w=> w==="md"||w==="do" ? (x.deg||"MD").toLowerCase()===w : n.includes(w)); };
   if(!words.length) return LIB.schools.slice(0, 60);
   // whole phrase at the start of the name first, then the phrase anywhere, then the rest
-  const rank=x=>{ const n=x.name.toLowerCase(); return n.startsWith(q)?0 : n.includes(q)?1 : 2; };
+  const rank=x=>{ const n=x.name.toLowerCase(); return nickHit(x,q)?-1 : n.startsWith(q)?0 : n.includes(q)?1 : 2; };
   return LIB.schools.filter(hit).map((x,i)=>({x,i,r:rank(x)})).sort((a,b)=>a.r-b.r||a.i-b.i).map(o=>o.x).slice(0, 60);
 }
 function pickOptions(){
@@ -2178,7 +2210,7 @@ function addSchoolForm(){
   h += '<div class="chosen"><b>'+esc(L?L.name:'')+(L?' <span class="muted" style="font-weight:400">· '+esc(L.state)+(L.deg==="DO"?' · DO':'')+'</span>':'')+'</b>'+(L?'':'')+'<button type="button" class="ghost" data-act="pick-change">Change school</button></div>';
   if(!L) h += '<label class="f">School name<input id="ns-name" required value="'+esc(pk.name)+'" placeholder="Full name of the school"></label><p class="small muted" style="margin:0">This school isn’t in the prompt library, so you’ll add its prompts yourself on the next screen.</p>';
   else {
-    if(ui.pickDual==null) ui.pickDual = !!prefs().dual;
+    if(ui.pickDual==null) ui.pickDual = !!prefs().dual && hasDual(L) && L.deg!=="DO";
     const dl=dualLabel(L), dual=ui.pickDual;
     h += '<div class="row" role="group" aria-label="Applying as"><span class="small muted" style="font-weight:600">Applying as</span><span class="seg"><button type="button" data-act="pick-track" data-v="0" aria-pressed="'+(!dual)+'">'+(L.deg==="DO"?"DO":"MD")+'</button><button type="button" data-act="pick-track" data-v="1" aria-pressed="'+dual+'">'+dl+'</button></span>'+
       (dual && !hasDual(L) ? '<span class="small muted">No '+dl+' prompts were posted for this school. Add them yourself after adding it.</span>' : (dual && L.mdphd.md==="instead" ? '<span class="small muted">'+dl+' applicants answer these instead of the regular secondary.</span>' : (dual?'<span class="small muted">Regular secondary plus '+L.mdphd.prompts.length+' '+dl+' prompt'+(L.mdphd.prompts.length===1?'':'s')+'.</span>':'')))+'</div>';
@@ -2187,7 +2219,7 @@ function addSchoolForm(){
     if(dual && dualNote(L)) h += '<p class="small" style="margin:0; padding:8px 10px; border-radius:8px; background:var(--warn-soft)">'+dualNote(L)+'</p>';
     if(!list.length) h += '<p class="small muted" style="margin:0">'+esc(L.none||"No prompts posted")+' on its SDN thread. You can add prompts yourself after adding the school.</p>';
     else h += '<div class="stack" style="gap:8px"><div class="row" style="justify-content:space-between"><h3>Prompts to add</h3><span class="row"><button type="button" class="ghost small" data-act="pick-all" data-v="1">Select all</button><button type="button" class="ghost small" data-act="pick-all" data-v="0">Select none</button></span></div>'+
-      '<ul class="plist">'+list.map(o=>'<li><label><input type="checkbox" class="pick-p" value="'+o.k+'" checked><span><span>'+(o.dual?'<span class="chip acc" style="margin-right:6px">'+esc(dl)+(L.mdphd.cycle?' · '+esc(L.mdphd.cycle.slice(0,4)+"–"+L.mdphd.cycle.slice(7)):'')+'</span>':'')+esc(o.p.p)+'</span><div class="pm">'+limTxt(o.p)+' · '+esc(FAM[o.p.fam]||"Other")+(o.p.opt?' · optional':'')+(o.p.group?' · '+esc(o.p.group):'')+(!o.dual&&promptCycle(L,false)?' · '+cyc(L.pc)+' prompt':'')+'</div></span></label></li>').join("")+'</ul>'+
+      '<ul class="plist">'+list.map(o=>'<li><label><input type="checkbox" class="pick-p" value="'+o.k+'"'+(isCond(o.p.p)?'':' checked')+'><span><span>'+(o.dual?'<span class="chip acc" style="margin-right:6px">'+esc(dl)+(L.mdphd.cycle?' · '+esc(L.mdphd.cycle.slice(0,4)+"–"+L.mdphd.cycle.slice(7)):'')+'</span>':'')+esc(o.p.p)+'</span><div class="pm">'+limTxt(o.p)+' · '+esc(FAM[o.p.fam]||"Other")+(o.p.opt?' · optional':isCond(o.p.p)?' · only if it applies to you':'')+(o.p.group?' · '+esc(o.p.group):'')+(!o.dual&&promptCycle(L,false)?' · '+cyc(L.pc)+' prompt':'')+'</div></span></label></li>').join("")+'</ul>'+
       '<p class="small muted" style="margin:0">Uncheck any you won’t write. You can add or remove prompts later on the school’s page. Prompts come from the school’s <a href="'+esc(L.url)+'" target="_blank" rel="noopener">SDN thread</a>; check them against the portal. Different in the portal? '+reportLink(L.name, dual, "Tell us")+'.</p></div>';
   }
   h += '<div class="grid-f">'+
@@ -2195,6 +2227,7 @@ function addSchoolForm(){
     '<label class="f">Turnaround (days)<input id="ns-turn" type="number" min="1" max="60" value="'+esc((ui.nsDraft&&ui.nsDraft.turn)||DEFAULT_TURNAROUND)+'"></label>'+
     '<label class="f">School deadline (optional)<input id="ns-hard" type="date" value="'+esc((ui.nsDraft&&ui.nsDraft.hard)||"")+'"></label>'+
     '<label class="f">Secondary fee ($, optional)<input id="ns-fee" type="number" min="0" max="1000" step="1" placeholder="e.g. 100" value="'+esc((ui.nsDraft&&ui.nsDraft.fee)||"")+'"></label>'+
+    '<label class="f">Already submitted?<span class="row" style="gap:8px; flex-wrap:nowrap"><input type="checkbox" id="ns-sub"'+((ui.nsDraft&&ui.nsDraft.sub!=null? ui.nsDraft.sub : appStage()==="interviews")?' checked':'')+' style="width:auto"><input type="date" id="ns-subd" aria-label="Submitted on" value="'+esc((ui.nsDraft&&ui.nsDraft.subd)||"")+'" title="Submitted on (optional)"></span><span class="small muted">Tick for schools you’ve finished. Prompts aren’t added, so there’s nothing to retype.</span></label>'+
     '<label class="f">Interest<select id="ns-int">'+[[3,"Top choice"],[2,"Middle"],[1,"Lower"]].map(([v,l])=>'<option value="'+v+'"'+(+((ui.nsDraft&&ui.nsDraft.int)||2)===v?' selected':'')+'>'+l+'</option>').join("")+'</select></label>'+
     '</div><div class="row"><button class="primary" type="submit">Add school</button><button type="button" data-act="toggle-add-school">Cancel</button></div></div></form>';
   return h;
@@ -2238,7 +2271,7 @@ function vSchool(s){
         '<div class="erow-m">'+meter(e)+'</div>'+
         '<select class="pill '+stClass(e)+'" aria-label="Status" id="st-'+e.id+'" data-bind="essay:'+e.id+':status">'+statusOpts(e)+'</select>'+
         '<button data-act="open-essay" data-id="'+e.id+'">Open</button>'+
-        '<details class="emenu"><summary aria-label="More for this prompt">⋯</summary><div>'+(ui.confirm==="del-essay:"+e.id? '<button class="danger" data-act="confirm" data-key="del-essay:'+e.id+'">'+(e.text.trim()?'Remove and delete text':'Yes, remove')+'</button><button data-act="cancel-confirm">Keep it</button>' : '<button class="ghost danger" data-act="ask-confirm" data-key="del-essay:'+e.id+'">Remove this prompt</button>')+'</div></details></li>';
+        '<details class="emenu"'+(ui.confirm==="del-essay:"+e.id?' open':'')+'><summary aria-label="More for this prompt">⋯</summary><div>'+(ui.confirm==="del-essay:"+e.id? '<button class="danger" data-act="confirm" data-key="del-essay:'+e.id+'">'+(e.text.trim()?'Remove and delete text':'Yes, remove')+'</button><button data-act="cancel-confirm">Keep it</button>' : '<button class="ghost danger" data-act="ask-confirm" data-key="del-essay:'+e.id+'">Remove this prompt</button>')+'</div></details></li>';
     });
     h += '</ul>';
   }
@@ -2253,7 +2286,7 @@ function confirmBtn(key, label, sure){
 function addPromptForm(s, missing){
   let lib='';
   if(missing && missing.length){
-    lib = '<div class="pb stack" style="gap:8px; border-bottom:1px solid var(--line-soft)"><h3>From the prompt library</h3><ul class="plist">'+missing.map(o=>'<li><div class="row" style="justify-content:space-between; align-items:flex-start; flex-wrap:nowrap"><span style="min-width:0">'+(o.dual?'<span class="chip acc" style="margin-right:6px">'+esc(dualLabel(libFind(s.libName||s.name)))+'</span>':'')+esc(o.p.p)+'<div class="pm">'+limTxt(o.p)+' · '+esc(FAM[o.p.fam]||"Other")+(o.p.opt?' · optional':'')+'</div></span><button type="button" data-act="lib-addback" data-k="'+o.k+'">Add</button></div></li>').join("")+'</ul></div><div class="pb" style="padding-bottom:0"><h3>Or add your own</h3></div>';
+    lib = '<div class="pb stack" style="gap:8px; border-bottom:1px solid var(--line-soft)"><h3>From the prompt library</h3><ul class="plist">'+missing.map(o=>'<li><div class="row" style="justify-content:space-between; align-items:flex-start; flex-wrap:nowrap"><span style="min-width:0">'+(o.dual?'<span class="chip acc" style="margin-right:6px">'+esc(dualLabel(libFind(s.libName||s.name)))+'</span>':'')+esc(o.p.p)+'<div class="pm">'+limTxt(o.p)+' · '+esc(FAM[o.p.fam]||"Other")+(o.p.opt?' · optional':isCond(o.p.p)?' · only if it applies to you':'')+'</div></span><button type="button" data-act="lib-addback" data-k="'+o.k+'">Add</button></div></li>').join("")+'</ul></div><div class="pb" style="padding-bottom:0"><h3>Or add your own</h3></div>';
   }
   return lib+'<form data-form="add-prompt" data-id="'+s.id+'" class="pb stack" style="border-bottom:1px solid var(--line-soft)">'+
     '<label class="f">Prompt (paste it from the school’s portal)<textarea id="np-p" rows="3" required></textarea></label>'+
@@ -2310,7 +2343,7 @@ function vEssay(e){
     '<label class="f">Prompt type<select id="ep-f">'+Object.entries(FAM).map(([k,l])=>'<option value="'+k+'"'+(e.family===k?' selected':'')+'>'+l+'</option>').join("")+'</select></label>'+
     '<div class="f" style="justify-content:flex-end"><label class="chk"><input type="checkbox" id="ep-o"'+(e.optional?' checked':'')+'> Optional</label></div></div>'+
     '<div class="row"><button class="primary" type="submit">Save prompt</button><button type="button" data-act="edit-prompt">Cancel</button></div></div></form>';
-  else h += '<div class="row" style="gap:14px; margin-top:4px"><button class="ghost small" data-act="edit-prompt" style="padding-left:0">Edit prompt, limit or type</button>'+(s.libName?reportLink(s.libName, !!e.dual):'')+'</div>';
+  else h += '<div class="row" style="gap:14px; margin-top:4px"><button class="ghost small" data-act="edit-prompt" style="padding-left:0">Edit prompt, limit or type</button>'+(s.libName && !isLetter(e)?reportLink(s.libName, !!e.dual):'')+'</div>';
   { let t="";
     if(!isPrimaryE(e) && !isLetter(e) && !e.baseId && e.family!=="why" && e.family!=="other" && S.essays.some(o=>o.id!==e.id && o.family===e.family && o.schoolId!==e.schoolId && !isPrimaryE(o)))
       t=tipHtml("base", '<b>Another school asks a similar question.</b> Write this once as a base essay (<b>Make this the base</b>, beside the essay), then trim a copy for each school. When you improve the base, every copy that’s behind gets flagged.');
@@ -2333,19 +2366,19 @@ function vEssay(e){
   if(ui.panel==="compare" && b) h += comparePanel(e,b);
   h += versionsHtml(e);
   if(ui.panel==="hist") h += '<div class="panel"><div class="ph"><h2 style="flex:1">Recovery copies</h2><button class="ghost" data-act="panel" data-p="">Close</button></div><div class="pb">'+historyHtml(e)+'</div></div>';
-  h += '<textarea class="page" id="essay-text" data-bind="essay:'+e.id+':text" aria-label="Essay for '+esc(s.name)+'" placeholder="Write or paste this school’s version here.">'+esc(e.text)+'</textarea>';
+  h += '<textarea class="page" id="essay-text" data-bind="essay:'+e.id+':text" aria-label="Essay for '+esc(s.name)+'" placeholder="'+(isPrimaryE(e)?'Write or paste your essay here.':isLetter(e)?'Write your letter here.':'Write or paste this school’s version here.')+'">'+esc(e.text)+'</textarea>';
   h += '<div id="names-slot">'+namesBanner(e)+'</div>';
   if(isLetter(e)) h += '<div class="row"><label class="chk small">Send by <input type="date" id="due-'+e.id+'" data-bind="essay:'+e.id+':due" value="'+esc(e.due||"")+'"></label><span class="small muted">Shows up on Do next and the Cycle tab, and in your calendar file.</span></div>';
   { const lv=lastVer(e), u=Sync.docLink("essay:"+e.id)||(lv?Sync.docLink("ver:"+e.id+":"+lv.n):"");
     h += '<div class="ebar">'+meter(e)+'<span class="grow"></span>'+
       '<select class="pill '+stClass(e)+'" aria-label="Status" id="st2-'+e.id+'" data-bind="essay:'+e.id+':status">'+statusOpts(e)+'</select>'+
-      '<button data-act="focus-on">Focus</button><button class="primary" data-act="copy-portal" data-id="'+e.id+'">Copy for portal</button>'+
-      '<details class="emenu"><summary aria-label="More actions">⋯</summary><div>'+
+      '<button data-act="focus-on">Focus</button><button class="primary" data-act="copy-portal" data-id="'+e.id+'">'+(isLetter(e)?'Copy':'Copy for portal')+'</button>'+
+      '<details class="emenu"'+(String(ui.confirm||"").startsWith("del-essay:")?' open':'')+'><summary aria-label="More actions">⋯</summary><div>'+
         (u?'<a class="small" style="padding:6px 10px" href="'+u+'" target="_blank" rel="noopener">Open in Drive</a>':'')+
         ((e.hist||[]).length?'<button class="ghost" data-act="panel" data-p="hist">Recovery copies ('+e.hist.length+')</button>':'')+
         (ui.confirm==="del-essay:"+e.id? '<button class="danger" data-act="confirm" data-key="del-essay:'+e.id+'">Yes, remove this prompt</button>' : '<button class="ghost danger" data-act="ask-confirm" data-key="del-essay:'+e.id+'">Remove this prompt</button>')+
       '</div></details></div>';
-    h += '<p class="small muted" id="copy-note-'+e.id+'" style="margin:2px 0 0">Copy for portal cleans up curly quotes and extra spaces, then copies.</p>'; }
+    h += '<p class="small muted" id="copy-note-'+e.id+'" style="margin:2px 0 0">'+(isLetter(e)?'Copy cleans up curly quotes and extra spaces, then copies.':'Copy for portal cleans up curly quotes and extra spaces, then copies.')+'</p>'; }
   h += '</div><aside class="stack">';
   const ckN=(essayChecks(e).out||[]).length, stP=storiesPanel(e), sugg=suggestions(e.id), sibs=b? S.essays.filter(x=>x.baseId===b.id && x.id!==e.id) : [];
   const side=["checks","stories","base","similar"].includes(ui.side)? ui.side : "checks";
@@ -2381,7 +2414,7 @@ function vEssay(e){
 }
 function sibRow(x,b){
   const sc=school(x.schoolId);
-  let st = sc.submitted? '<span class="pill st-pasted">Submitted</span>' : behind(x)? '<span class="chip warn">From v'+x.basedOnV+' · base is v'+latest(b).v+'</span>' : x.basedOnV? '<span class="chip">Up to date · v'+x.basedOnV+'</span>' : '<span class="chip">Not adapted yet</span>';
+  let st = sc.submitted? '<span class="pill st-pasted">Submitted</span>' : behind(x)? '<span class="chip warn">From v'+x.basedOnV+' · base is v'+latest(b).v+'</span>' : x.basedOnV? '<span class="chip">'+(x.basedOnV<latest(b).v? 'From v'+x.basedOnV+' · v'+latest(b).v+' changes don’t reach it' : 'Up to date · v'+x.basedOnV)+'</span>' : '<span class="chip">Not adapted yet</span>';
   return '<li><div class="main"><div class="small" style="font-weight:600">'+esc(sc.name)+'</div><div class="chips">'+st+'<span class="pill '+stClass(x)+'">'+statusLabel(x)+'</span><span class="chip">'+limitL(x)+'</span></div></div><button class="ghost" data-act="open-essay" data-id="'+x.id+'">Open</button></li>';
 }
 function reviewPanel(e,b){
@@ -2471,7 +2504,8 @@ function vBase(b){
     h += '<div class="panel"><div class="ph"><h2 style="flex:1">v'+(ui.histV-1)+' → v'+ui.histV+'</h2><button class="ghost" data-act="hist" data-v="">Close</button></div><div class="pb diff">'+segs.map(s=>s.type==="eq"?esc(s.a.join("")):'<del>'+esc(s.a.join(""))+'</del><ins>'+esc(s.b.join(""))+'</ins>').join("")+'</div></div>';
   }
   h += '</div><aside class="stack">';
-  h += '<div class="panel"><div class="ph"><h3>School versions</h3></div>'+(linked.length?'<ul class="list">'+linked.map(x=>sibRow(x,b)).join("")+'</ul>':'<div class="empty small">None linked.</div>');
+  const nBehind=linked.filter(behind).length;
+  h += '<div class="panel"><div class="ph"><h3 style="flex:1">School versions</h3>'+(nBehind>1?'<button class="ghost small" data-act="all-caught-up" data-id="'+b.id+'">Mark all '+nBehind+' caught up to v'+latest(b).v+'</button>':'')+'</div>'+(linked.length?'<ul class="list">'+linked.map(x=>sibRow(x,b)).join("")+'</ul>':'<div class="empty small">None linked.</div>');
   if(unl.length) h += '<div class="pb small" style="border-top:1px solid var(--line-soft)"><div class="muted" style="margin-bottom:6px">Same prompt type, not linked:</div>'+unl.map(x=>'<div class="row" style="justify-content:space-between; margin-bottom:4px"><span>'+esc(school(x.schoolId).name)+'</span><button class="ghost" data-act="link-from-base" data-id="'+x.id+'">Link</button></div>').join("")+'</div>';
   h += '</div>';
   h += '<div class="panel"><div class="ph"><h3>Versions</h3></div><ul class="list">'+b.versions.slice().reverse().map(x=>'<li><div class="main small"><b>v'+x.v+'</b> · '+fmt(x.at)+'<div class="muted">'+esc(x.note||"No note")+'</div></div>'+(x.v>1?'<button class="ghost" data-act="hist" data-v="'+x.v+'">Changes</button>':'')+'</li>').join("")+'</ul></div>';
@@ -2542,7 +2576,7 @@ function limTxt(p){ return p.limit ? p.limit.toLocaleString()+" "+(p.unit==="cha
 function vLibrary(){
   const q=ui.libQ.trim().toLowerCase();
   const states=[...new Set(LIB.schools.map(x=>x.state))].sort();
-  const list = LIB.schools.filter(x=>(!ui.libState || x.state===ui.libState) && (!ui.libDeg || (ui.libDeg==="DUAL" ? hasDual(x) : (x.deg||"MD")===ui.libDeg)) && (!q || x.name.toLowerCase().includes(q) || x.prompts.some(p=>p.p.toLowerCase().includes(q))));
+  const list = LIB.schools.filter(x=>(!ui.libState || x.state===ui.libState) && (!ui.libDeg || (ui.libDeg==="DUAL" ? hasDual(x) : (x.deg||"MD")===ui.libDeg)) && (!q || x.name.toLowerCase().includes(q) || nickHit(x,q) || nickHay(x).includes(q) || x.prompts.some(p=>p.p.toLowerCase().includes(q))));
   const withP = LIB.schools.filter(x=>x.prompts.length).length, fresh = LIB.schools.filter(x=>x.prompts.length && !x.pc).length;
   let h='<h1>Prompt library</h1><p class="sub">'+libCountText()+', with prompts for '+withP+'. Add a school and its prompts, limits and prompt types come with it, already linked to your matching base essays.</p>';
   h += '<div class="banner info small" style="margin-bottom:14px"><div class="grow">'+(LIB.prev ? '<strong>The '+cyc(CYCLE)+' prompts are coming in: '+fresh+' of '+LIB.schools.length+' schools so far.</strong> Schools without this year’s prompts yet show last cycle’s ('+cyc(LIB.prev)+'), marked as such. ' : 'Prompts are from the '+esc(CYCLE)+' cycle. ')+'They’re collected from each school’s Student Doctor Network thread (updated '+fmt(LIB.updated)+'). Schools can change wording and limits, so check each one in the school’s portal. Spotted a difference? '+reportLink("", false, "Report a prompt change")+'.</div></div>';
@@ -2586,12 +2620,12 @@ function topBanners(){
 }
 const GICON='<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
 function vFoot(){
-  const hasWork = S.essays.some(e=>e.text.trim()) || S.bases.length;
+  const hasWork = S.essays.some(e=>e.text.trim()) || S.bases.length || (S.experiences||[]).some(x=>(x.summary||"").trim()||(x.items||[]).some(it=>(it.text||"").trim())) || (S.recommenders||[]).length;
   const since = S.lastBackup ? daysUntil(S.lastBackup) : null;
   let h='';
-  if(hasWork && !S.demo && !Sync.state().connected && (since==null || since<=-7)) h += '<div class="banner warn" style="margin-bottom:12px"><div class="grow small"><strong>'+(since==null?'You haven’t saved a backup yet.':'Last backup was '+Math.abs(since)+' days ago.')+'</strong> Your essays live only in this browser. Clearing site data or losing this device erases them.</div><button data-act="backup">Download backup</button></div>';
+  if(hasWork && !S.demo && !Sync.state().connected && (since==null || since<=-7)) h += '<div class="banner warn" style="margin-bottom:12px"><div class="grow small"><strong>'+(since==null?'You haven’t saved a backup yet.':'Last backup was '+Math.abs(since)+' days ago.')+'</strong> Your work lives only in this browser. Clearing site data or losing this device erases it.</div><button data-act="backup">Download backup</button></div>';
   if(Sync.state().connected && !S.demo) h += '<div id="mirror-slot" style="margin-bottom:10px">'+Sync.mirrorHtml()+'</div>';
-  h += '<div class="stack" style="gap:10px"><div class="row" style="justify-content:space-between"><span>'+(Sync.state().connected? 'Saved to your Google Drive'+(Sync.state().email?' ('+esc(Sync.state().email)+')':'')+' and in this browser. <button class="ghost small" data-act="sync-disconnect" style="padding:0">Disconnect</button>' : 'Your entries are saved only in this browser.'+(Sync.available()?' <button class="ghost small" data-act="sync-connect" style="padding:0">Save to Google Drive</button>':''))+(S.lastBackup?' Last backup '+fmt(S.lastBackup)+'.':'')+'</span><span class="row"><button class="ghost" data-act="backup">Download backup</button><button class="ghost" data-act="restore">Restore backup</button>'+(S.demo?'<button data-act="exit-sample">Back to my data</button>':'<button class="ghost" data-act="try-examples">Explore with sample data</button>'+confirmBtn("clear","Erase everything",Sync.state().connected?"Erase all schools and essays here and in Google Drive":"Erase all schools and essays on this device"))+'</span></div>'+
+  h += '<div class="stack" style="gap:10px"><div class="row" style="justify-content:space-between"><span>'+(Sync.state().connected? 'Saved to your Google Drive'+(Sync.state().email?' ('+esc(Sync.state().email)+')':'')+' and in this browser. <button class="ghost small" data-act="sync-disconnect" style="padding:0">Disconnect</button>' : 'Your entries are saved only in this browser.'+(Sync.available()?' <button class="ghost small" data-act="sync-connect" style="padding:0">Save to Google Drive</button>':''))+(S.lastBackup?' Last backup '+fmt(S.lastBackup)+'.':'')+'</span><span class="row"><button class="ghost" data-act="backup">Download backup</button><button class="ghost" data-act="restore">Restore backup</button>'+(S.demo?'<button data-act="exit-sample">Back to my data</button>':'<button class="ghost" data-act="try-examples">Explore with sample data</button>'+confirmBtn("clear","Erase everything",Sync.state().connected?"Erase everything (schools, essays, experiences, letter writers) here and in Google Drive":"Erase everything (schools, essays, experiences, letter writers) on this device"))+'</span></div>'+
     '<div class="row" style="justify-content:space-between"><span>Student-built tool. Not affiliated with AMCAS, the AAMC, or any medical school. Always check prompts, limits and deadlines in each school’s portal.</span><span class="row"><a class="small" href="about.html">About</a><a class="small" href="privacy.html">Privacy</a><button class="ghost" data-act="tour">How to use this app</button><button class="ghost" data-act="gtour">Guided tour</button>'+(logMode()?'<button class="ghost" data-act="applying-on">Show the application tools</button>':'')+'</span></div></div>';
   return h;
 }
@@ -2610,6 +2644,7 @@ document.addEventListener("click", ev=>{
     case "open-school": if(String(d.id).startsWith("app-")) go("primary"); else go("schools",{schoolId:d.id}); break;
     case "open-essay": { const x=essay(d.id); ui.tab="schools"; go("schools",{schoolId:x.schoolId, essayId:d.id}); break; }
     case "open-base": go("essays",{baseId:d.id}); break;
+    case "cycle-add-school": go("schools",{addSchool:true}); setTimeout(()=>{ const q=document.getElementById("pick-q"); if(q) q.focus(); },0); break;
     case "toggle-add-school": ui.addSchool=!ui.addSchool; ui.pick=null; ui.pickQ=""; ui.pickI=0; render(); if(ui.addSchool){ const q=document.getElementById("pick-q"); if(q) q.focus(); } break;
     case "pick-change": ui.pickDual=null; ui.nsDraft=null; ui.pick=null; render(); { const q=document.getElementById("pick-q"); if(q){ q.focus(); q.select(); } } break;
     case "pick-track": { const g=id2=>{ const x=document.getElementById(id2); return x?x.value:""; }; ui.nsDraft={rec:g("ns-rec"), turn:g("ns-turn"), hard:g("ns-hard"), int:g("ns-int"), fee:g("ns-fee")}; ui.pickDual = d.v==="1"; render(); break; }
@@ -2634,11 +2669,14 @@ document.addEventListener("click", ev=>{
     case "link-from-base": { const x=essay(d.id); const b=base(ui.baseId); x.baseId=b.id; if(x.text.trim()){ x.basedOnV=latest(b).v; x.localEdit=true; } save(); render(); break; }
     case "lib-add": go("schools",{addSchool:true, pick:{kind:"lib", name:d.school}}); break;
     case "ics": downloadIcs(); break;
+    case "all-caught-up": { const b=base(d.id); if(!b) break; const v=latest(b).v; let n=0; S.essays.forEach(e=>{ if(e.baseId===b.id && behind(e)){ e.basedOnV=v; n++; } }); save(); render(); toast(n+(n===1?" copy":" copies")+" marked caught up to v"+v+". Their text wasn’t changed."); break; }
+    case "hide-sub": ui.hideSub=!ui.hideSub; render(); break;
+    case "mark-portal": { const x=essay(d.id); if(!x) break; x.status="pasted"; if(x.family==="thanks"){ const sc=school(x.schoolId); if(sc) sc.thanks=true; } freezeVer(x, isLetter(x)?"Sent":"Submitted"); save(); render(); toast(isLetter(x)?"Marked sent.":"Marked In portal."); break; }
     case "copy-portal": { const x=essay(d.id); if(!x) break; if(!x.text.trim()){ toast("Nothing to copy yet. Write the essay first."); break; } const clean=portalText(x.text); const c=clean.length, w=words(clean);
       const over = x.limit && (x.unit==="chars" ? c>x.limit : w>x.limit);
       const note=document.getElementById("copy-note-"+x.id);
       const msg=(over?'Over the limit: ':'Copied: ')+w.toLocaleString()+' words · '+c.toLocaleString()+' characters with spaces'+(x.limit?' (limit '+limitL(x)+')':'')+'.';
-      const done=()=>{ if(note){ note.textContent=msg; note.style.color= over?'var(--bad)':'var(--good)'; } const nm=wrongNames(x); toast(nm.length? 'Copied, but it still mentions '+nm.map(y=>y.alias).join(", ")+'.' : (over? 'Copied, but it’s over this school’s limit.' : 'Copied. Paste it into the portal.')); };
+      const done=()=>{ if(note){ note.textContent=msg; setTimeout(()=>{ try{ note.scrollIntoView({block:"center", behavior:"smooth"}); }catch(e){} },30); note.style.color= over?'var(--bad)':'var(--good)'; if(!over && x.status!=="pasted" && !isPrimaryE(x)){ const bt=document.createElement("button"); bt.className="ghost small"; bt.dataset.act="mark-portal"; bt.dataset.id=x.id; bt.textContent=isLetter(x)?"Sent it? Mark sent":"Pasted it? Mark In portal"; bt.style.marginLeft="8px"; note.appendChild(bt); } } const nm=wrongNames(x); toast(nm.length? 'Copied, but it still mentions '+nm.map(y=>y.alias).join(", ")+'.' : (over? (isPrimaryE(x)?'Copied, but it’s over the limit.':'Copied, but it’s over this school’s limit.') : (isLetter(x)?'Copied.':'Copied. Paste it into the portal.'))); };
       const fallback=()=>{ const ta=document.createElement("textarea"); ta.value=clean; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); done(); }catch(err){ toast("Couldn’t copy. Select the text and copy it yourself."); } ta.remove(); };
       try{ navigator.clipboard.writeText(clean).then(done, fallback); }catch(err){ fallback(); }
       break; }
@@ -2679,10 +2717,10 @@ document.addEventListener("click", ev=>{
     case "chk-show": { const ta=document.getElementById("essay-text"); if(!ta) break; const a=+d.a, b2=+d.b; ta.focus(); ta.setSelectionRange(a, Math.min(b2, ta.value.length)); const ratio=a/Math.max(1,ta.value.length); ta.scrollTop=Math.max(0, ratio*ta.scrollHeight - ta.clientHeight/3); ta.scrollIntoView({block:"center"}); break; }
     case "prim-start": { const c=SVC[d.k], dd=c&&c.essays.find(z=>z.k===d.d); if(!dd) break; const e=primaryEssay(d.k,d.d)||startPrimary(d.k,dd); save(); go("primary",{essayId:e.id}); toast(e.baseId?"Linked to your base “"+base(e.baseId).title+"”. Start from it and trim to "+dd.limit.toLocaleString()+" characters.":"Write it here. When it’s good, use “Make this the base” so your other applications and secondaries can start from it."); break; }
     case "act-add": { const sel=document.getElementById("act-from-"+d.k), xid=sel?sel.value:"", x=xid?exp(xid):null; const c=SVC[d.k].act;
-      const a={id:id("a"), svc:d.k, expId:x?x.id:"", title:x?x.title:"", type:x?actType(d.k,x.kind):c.types[0], org:x?x.org||"":"", dates:x?expDates(x):"", hours:x&&expHours(x)?String(expHours(x)):"", desc:x?(x.summary||""):"", mm:false, mmText:""};
+      const a={id:id("a"), svc:d.k, expId:x?x.id:"", title:x?x.title:"", type:x?actType(d.k,x.kind,x):"", org:x?x.org||"":"", dates:x?expDates(x):"", hours:x&&expHours(x)?String(expHours(x)):"", desc:x?(x.summary||""):"", mm:false, mmText:""};
       S.acts=S.acts||[]; S.acts.push(a); ui.actOpen=a.id; appRec(d.k); save(); render(); if(x && a.desc.length>c.desc) toast("Started from “"+x.title.slice(0,40)+"”. Trim the description to "+c.desc+" characters."); break; }
     case "act-open": ui.actOpen = ui.actOpen===d.id? null : d.id; render(); break;
-    case "act-copy": { const a=(S.acts||[]).find(z=>z.id===d.id); if(a) copyText(portalText(a.desc||"")); break; }
+    case "act-copy": { const a=(S.acts||[]).find(z=>z.id===d.id); if(a) copyText(portalText(a[d.f==="mmText"?"mmText":"desc"]||"")); break; }
     case "exp-view": ui.expView=d.v; render(); break;
     case "exp-intro": openTour("exp"); break;
     case "more": ui.more=!ui.more; render(); break;
@@ -2705,7 +2743,7 @@ document.addEventListener("click", ev=>{
     case "prompt-toggle": ui.promptOpen=!ui.promptOpen; render(); break;
     case "gtour-page": gtStart(gtSection()); break;
     case "set-stage": setStage(d.k); break;
-    case "exp-writer": { const x=exp(ui.expId); if(!x) break; if(!(x.contact||"").trim()){ toast("Add the supervisor’s name first."); break; } const r={id:id("r"), name:x.contact.trim(), kind:x.kind==="research"?"research":x.kind==="clinical"?"clinical":"other", role:x.contactRole||"", asked:"", agreed:false, due:"", received:"", together:x.title, highlight:"", shared:x.id, expIds:[x.id], notes:x.contactEmail?"Email: "+x.contactEmail:""}; S.recommenders=S.recommenders||[]; S.recommenders.push(r); save(); render(); toast(r.name+" added to Letter writers."); break; }
+    case "exp-writer": { const x=exp(ui.expId); if(!x) break; if(!(x.contact||"").trim()){ toast("Add the supervisor’s name first."); break; } const r={id:id("r"), name:x.contact.trim(), kind:x.kind==="research"?"research":x.kind==="clinical"?"clinical":"other", role:x.contactRole||"", asked:"", agreed:false, due:"", received:"", together:x.title, highlight:"", shared:x.id, expIds:[x.id], email:x.contactEmail||"", notes:""}; S.recommenders=S.recommenders||[]; S.recommenders.push(r); save(); render(); toast(r.name+" added to Letter writers."); break; }
     case "applying-on": openTour("stage"); break;
     case "applying-off": setStage("log"); break;
     case "open-exp": { const x=exp(d.id); if(x) ui.expView=SELF_KINDS.includes(x.kind)?"self":"stories"; go("experiences",{expId:d.id}); break; }
@@ -2743,7 +2781,7 @@ document.addEventListener("click", ev=>{
       if(a==="arch-use"){ const x=essay(ui.essayId); if(x && !x.text.trim()){ x.text=old.text; x.localEdit=true; save(); render(); toast("Copied in your "+cyc(ar.cycle)+" essay. Update it for this year."); } }
       else copyText(old.text);
       break; }
-    case "backup": downloadBackup(); break;
+    case "backup": if(S.demo){ toast("You’re looking at the sample data. Click Back to my data first, then download your backup."); break; } downloadBackup(); break;
     case "sync-connect": Sync.connect(); break;
     case "sync-resume": Sync.resume(); break;
     case "sync-run": Sync.retry(); break;
@@ -2760,6 +2798,8 @@ document.addEventListener("click", ev=>{
     case "prev-drop": { const x=essay(ui.essayId); if(x&&x.prev){ x.prev.splice(+d.i,1); if(!x.prev.length) delete x.prev; save(); render(); } break; }
     case "restore": { const f=document.getElementById("restore-file"); f.value=""; f.click(); break; }
     case "try-examples": { flush(); if(!S.demo){ try{ localStorage.setItem(STASH, JSON.stringify(S)); }catch(e){ toast("Couldn’t set your data aside in this browser, so the sample wasn’t loaded."); break; } } S=seed(); S.del={}; snapshot(); writeLocal(); go("next"); toast("Sample loaded. Your own data is set aside until you click Back to my data."); break; }
+    case "undo-restore": { let o=null; try{ o=JSON.parse(localStorage.getItem(UNDO_RESTORE)||"null"); }catch(e){} if(!o){ toast("Nothing to undo."); break; } S=Object.assign(blank(), o, {demo:false}); save(); try{ localStorage.removeItem(UNDO_RESTORE); }catch(e){} ui.undoRestore=false; go("next"); toast("Back to what you had before the restore."); break; }
+    case "dismiss-undo-restore": ui.undoRestore=false; try{ localStorage.removeItem(UNDO_RESTORE); }catch(e){} render(); break;
     case "exit-sample": { S=sampleStash(); snapshot(); try{ localStorage.setItem(KEY, JSON.stringify(S)); localStorage.removeItem(STASH); }catch(e){} go("next"); toast("Back to your own data."); break; }
     case "first-school": go("schools",{addSchool:true}); setTimeout(()=>{ const n=document.getElementById("pick-q"); if(n) n.focus(); },0); break;
     case "tour": openTour(); break;
@@ -2778,7 +2818,7 @@ function doConfirm(key){
   else if(k==="del-rec"){ S.recommenders=(S.recommenders||[]).filter(r=>r.id!==idv); ui.expView="writers"; save(); go("experiences"); toast("Deleted"); }
   else if(k==="del-act"){ S.acts=(S.acts||[]).filter(a=>a.id!==idv); ui.actOpen=null; save(); render(); }
   else if(k==="clear" && S.demo){ S=sampleStash(); snapshot(); try{ localStorage.setItem(KEY, JSON.stringify(S)); localStorage.removeItem(STASH); }catch(e){} go("next"); toast("Back to your own data."); }
-  else if(k==="clear"){ S=blank(); save(); go("next"); toast("Erased. This device now has no schools or essays."); }
+  else if(k==="clear"){ S=blank(); save(); go("next"); toast("Erased. Everything on this device has been cleared."); }
 }
 function copyText(t){
   const fallback=()=>{ const ta=document.createElement("textarea"); ta.value=t; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); toast("Copied"); }catch(err){ toast("Couldn’t copy. Select the text and copy it yourself."); } ta.remove(); };
@@ -2796,7 +2836,7 @@ function downloadBackup(){
   if(!S.demo){ S.lastBackup = iso(today()); save(); }
   const blob = new Blob([JSON.stringify(S, null, 1)], {type:"application/json"});
   const url = URL.createObjectURL(blob);
-  const a = document.createElement("a"); a.href=url; a.download="secondaries-backup-"+iso(today())+".json";
+  const a = document.createElement("a"); a.href=url; a.download="medapp-backup-"+iso(today())+".json";
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(()=>URL.revokeObjectURL(url), 2000);
   render(); toast("Backup downloaded. Keep it somewhere safe, like email or cloud storage.");
@@ -2812,7 +2852,13 @@ document.getElementById("exp-file").addEventListener("change", ev=>{
 document.getElementById("restore-file").addEventListener("change", ev=>{
   const file = ev.target.files && ev.target.files[0]; if(!file) return;
   const r = new FileReader();
-  r.onload = ()=>{ try{ const o=JSON.parse(r.result); if(!o||!Array.isArray(o.schools)||!Array.isArray(o.essays)||!Array.isArray(o.bases)) throw 0; S=o; save(); go("next"); toast("Restored "+o.schools.length+" schools and "+o.essays.length+" essays"); }catch(e){ toast("That file isn’t a backup from this app."); } };
+  r.onload = ()=>{ let o; try{ o=JSON.parse(r.result); if(!o||!Array.isArray(o.schools)||!Array.isArray(o.essays)||!Array.isArray(o.bases)) throw 0; }catch(e){ toast("That file isn’t a backup from this app."); return; }
+    if(o.demo){ toast("That file is the sample data, not your own backup, so it wasn’t restored."); return; }
+    const mine = S.demo? sampleStash() : S;
+    try{ localStorage.setItem(UNDO_RESTORE, JSON.stringify(mine)); }catch(e){}
+    if(S.demo){ try{ localStorage.removeItem(STASH); }catch(e){} }
+    S=o; S.demo=false; save(); ui.undoRestore=true; go("next");
+    const pl=(n,w)=>n+" "+w+(n===1?"":"s"); toast("Restored "+pl(o.schools.length,"school")+", "+pl(o.essays.length,"essay")+" and "+pl((o.experiences||[]).length,"experience")+". Changed your mind? Use Undo restore at the top of the page.", 6000); };
   r.readAsText(file);
 });
 
@@ -2889,16 +2935,20 @@ function gtStart(only){
   closeTour(); document.getElementById("tour").hidden=true;
   GT.sample=false; GT.back=only? back : null;
   if(!S.demo){ flush(); try{ localStorage.setItem(STASH, JSON.stringify(S)); }catch(e){ toast("Couldn’t set your data aside in this browser, so the tour can’t start."); return; } S=seed(); S.del={}; snapshot(); writeLocal(); GT.sample=true; }
-  GT.on=true; GT.i=0; GT.steps=gtSteps(); if(only){ const f=GT.steps.filter(x=>only.includes(x.sec)); if(f.length) GT.steps=f; }
+  GT.on=true; GT.i=0; GT.steps=gtSteps();
+  if(!only){ const first={primary:["primary","exp"], log:["exp"], interviews:["cycle"]}[appStage()]; if(first){ const a=GT.steps.filter(x=>first.includes(x.sec)), b=GT.steps.filter(x=>!first.includes(x.sec)); const intro=b.filter(x=>x.sec==="next"); GT.steps=intro.concat(a, b.filter(x=>x.sec!=="next")); } }
+  if(only){ const f=GT.steps.filter(x=>only.includes(x.sec)); if(f.length) GT.steps=f; }
   document.getElementById("gt").hidden=false; gtShow();
 }
 function gtEnd(keep){
   GT.on=false; document.getElementById("gt").hidden=true;
   const home=()=>{ const b=GT.back; if(b && !keep){ const ok=(!b.schoolId||school(b.schoolId)) && (!b.essayId||essay(b.essayId)) && (!b.expId||exp(b.expId)) && (!b.recId||rec(b.recId)); if(ok){ go(b.tab, {schoolId:b.schoolId, essayId:b.essayId, baseId:b.baseId, expId:b.expId, recId:b.recId}); ui.expView=b.expView; render(); return; } } go("next"); };
+  try{ localStorage.removeItem("medapp-tour-on"); }catch(e){}
   if(GT.sample && !keep){ S=sampleStash(); snapshot(); try{ localStorage.setItem(KEY, JSON.stringify(S)); localStorage.removeItem(STASH); }catch(e){} home(); toast(GT.back? "Back to your page." : "Tour finished. You’re back to your own data."); }
   else { home(); if(keep) toast("Explore the example as long as you like. “Back to my data” is at the top."); }
 }
-function gtShow(){
+function gtMark(){ try{ if(GT.sample) localStorage.setItem("medapp-tour-on","1"); }catch(e){} }
+function gtShow(){ gtMark();
   const st=GT.steps[GT.i]; if(!st) return gtEnd(false);
   st.go();
   const el=document.querySelector(st.sel); if(el && el.scrollIntoView){ const tall=el.getBoundingClientRect().height > window.innerHeight*0.55; el.scrollIntoView({block: tall? "start":"center"}); if(tall) window.scrollBy(0,-90); }
@@ -2937,12 +2987,12 @@ document.addEventListener("keydown", ev=>{ if(!GT.on) return; if(ev.key==="Escap
 window.addEventListener("resize", ()=>{ if(GT.on) gtPlace(); });
 function stageCard(){
   const cur=prefs().stage===undefined && prefs().applying===undefined ? "" : appStage();
-  return '<div class="card2"><button class="x" id="tour-x" aria-label="Close">×</button><div class="step-n">'+(cur?'Change what you see':'Welcome to Med App Workspace')+'</div><h2 id="tour-title">Where are you in the process?</h2><p>We’ll show you just what you need now. You can change this anytime under <b>More</b>.</p>'+
+  return '<div class="card2"><button class="x" id="tour-x" aria-label="Close">×</button><div class="step-n">'+(cur?'Change what you see':'Welcome to Med App Workspace')+'</div><h2 id="tour-title" tabindex="-1">Where are you in the process?</h2><p>We’ll show you just what you need now. You can change this anytime under <b>More</b>.</p>'+(cur?'':'<p class="small muted" style="margin:0">Free, no account, no AI. Everything stays in this browser unless you choose to save it to your own Google Drive. <a href="about.html" target="_blank" rel="noopener">About</a> · <a href="privacy.html" target="_blank" rel="noopener">Privacy</a></p>')+
     '<div class="stack" style="gap:8px; margin:12px 0">'+Object.entries(STAGES).map(([k,v])=>'<button class="stage-opt'+(cur===k?' on':'')+'" data-stage="'+k+'"><b>'+v.label+'</b><span>'+v.sub+'</span></button>').join("")+'</div>'+
     '<div class="row" style="justify-content:space-between; flex-wrap:wrap"><button class="ghost" data-stage="gtour">New here? Take the 3-minute tour</button><button class="ghost" data-stage="sample">Just looking? See a finished example</button><button class="ghost" data-stage="all"'+(cur==="all"?' aria-pressed="true"':'')+'>Show me everything</button></div></div>';
 }
 function renderTour(){
-  if(tourMode==="stage"){ document.getElementById("tour").innerHTML=stageCard(); const f=document.querySelector("#tour .stage-opt"); if(f) f.focus(); return; }
+  if(tourMode==="stage"){ document.getElementById("tour").innerHTML=stageCard(); const f=document.querySelector("#tour .stage-opt.on")||document.getElementById("tour-title"); if(f) f.focus(); return; }
   const s=TOUR[tourStep], last=tourStep===TOUR.length-1;
   document.getElementById("tour").innerHTML='<div class="card2"><button class="x" id="tour-x" aria-label="Close">×</button>'+
     '<div class="step-n">'+(tourMode==="exp"? (tourStep===0?'The Experiences tab':'Experiences · '+tourStep+' of '+(TOUR.length-1)) : (tourStep===0?'Welcome':'How it works · '+tourStep+' of '+(TOUR.length-1)))+'</div><h2 id="tour-title">'+s.t+'</h2><p>'+s.p+'</p>'+
@@ -2979,7 +3029,7 @@ document.addEventListener("keydown", ev=>{
   else if(ev.key==="ArrowLeft" && tourStep>0){ tourStep--; renderTour(); }
 });
 function libEssays(L, sid, dual, pc){
-  return L.prompts.map(p=>{ const b=S.bases.find(x=>x.family===p.fam); const e={id:id("e"), schoolId:sid, prompt:p.p, lib:p.p, libLimit:p.limit||0, limit:p.limit||0, unit:p.unit, family:p.fam, baseId:(b && p.fam!=="why")? b.id : null, basedOnV:null, text:"", status:"todo", localEdit:false, optional:!!p.opt, group:p.group||"", cut:!!p.cut}; if(dual) e.dual=true; if(pc) e.pc=pc; return e; });
+  return L.prompts.map(p=>{ const b=S.bases.find(x=>x.family===p.fam); const e={id:id("e"), schoolId:sid, prompt:p.p, lib:p.p, libLimit:p.limit||0, limit:p.limit||0, unit:p.unit, family:p.fam, baseId:(b && p.fam!=="why")? b.id : null, basedOnV:null, text:"", status:"todo", localEdit:false, optional:!!p.opt||isCond(p.p), group:p.group||"", cut:!!p.cut}; if(dual) e.dual=true; if(pc) e.pc=pc; return e; });
 }
 function addFromLibrary(name, extra, keys, dual){
   const L=libFind(name); if(!L) return;
@@ -2992,6 +3042,7 @@ function addFromLibrary(name, extra, keys, dual){
   const linked=es.filter(e=>e.baseId).length;
   ui.pickDual=null; ui.nsDraft=null;
   save(); go("schools",{schoolId:s.id});
+  if(s.submitted){ toast("Added "+s.name+" as submitted."); return; }
   if(!es.length){ ui.addPrompt=true; render(); }
   toast(es.length? "Added with "+es.length+(es.length===1?" prompt":" prompts")+(linked?", "+linked+" linked to your base essays":"") : (L.prompts.length||hasDual(L)? "Added with no prompts. Add the ones you need below." : "Added. No prompts were posted for this school, so add them from the portal."));
 }
@@ -3001,8 +3052,9 @@ document.addEventListener("submit", ev=>{
   if(f.dataset.form==="add-school"){
     const pk=ui.pick; if(!pk) return;
     const extra={received:document.getElementById("ns-rec").value||iso(today()), turnaround:+document.getElementById("ns-turn").value||DEFAULT_TURNAROUND, hard:document.getElementById("ns-hard").value, interest:+document.getElementById("ns-int").value, feeAmt:(document.getElementById("ns-fee")||{}).value ? Math.round(+document.getElementById("ns-fee").value) : ""};
+    const subX=document.getElementById("ns-sub"); if(subX && subX.checked){ extra.submitted=true; extra.fee=true; extra.submittedAt=document.getElementById("ns-subd").value||null; }
     if(pk.kind==="lib"){
-      const keys=[...document.querySelectorAll(".pick-p")].filter(c=>c.checked).map(c=>c.value);
+      const keys=extra.submitted? [] : [...document.querySelectorAll(".pick-p")].filter(c=>c.checked).map(c=>c.value);
       addFromLibrary(pk.name, extra, keys, !!ui.pickDual);
       return;
     }
@@ -3035,10 +3087,13 @@ document.addEventListener("input", ev=>{
   if(el.id==="pick-q"){ ui.pickQ=el.value; ui.pickI=0; const l=document.getElementById("pick-list"); if(l) l.innerHTML=pickListHTML(); el.setAttribute("aria-activedescendant","pick-o0"); return; }
   if(el.dataset.libstate){ ui.libState=el.value; render(); return; }
   if(el.dataset.libdeg){ ui.libDeg=el.value; render(); return; }
+  if(el.dataset.schq){ ui.schQ=el.value; const pos=el.selectionStart; render(); const n=document.getElementById("sch-q"); if(n){ n.focus(); try{ n.setSelectionRange(pos,pos);}catch(e){} } return; }
   if(el.dataset.libq){ ui.libQ=el.value; const pos=el.selectionStart; render(); const n=document.getElementById("libq"); n.focus(); try{ n.setSelectionRange(pos,pos);}catch(e){} return; }
   if(el.id==="pref-name"){ prefs().name=el.value; save(); return; }
-  if(el.dataset.bind && /^act:/.test(el.dataset.bind) && !(el.type==="checkbox"||el.tagName==="SELECT")){ const [,aid,f]=el.dataset.bind.split(":"); const a=(S.acts||[]).find(z=>z.id===aid); if(a){ a[f]=el.value; save(); const lim=SVC[a.svc].act; if(f==="desc"){ const m=document.getElementById("am-"+a.id); if(m) m.innerHTML=actMeter(el.value.length,lim.desc); } if(f==="mmText"){ const m=document.getElementById("amt-"+a.id); if(m) m.innerHTML=actMeter(el.value.length,lim.mmLimit); } } return; }
-  if(el.dataset.bind && /^(exp|expi|rec|recn):/.test(el.dataset.bind) && !(el.type==="checkbox"||el.tagName==="SELECT"||el.type==="date"||el.type==="month")){ bindExtra(el); return; }
+  if(el.dataset.bind && /^act:/.test(el.dataset.bind) && !(el.type==="checkbox"||el.tagName==="SELECT")){ const [,aid,f]=el.dataset.bind.split(":"); const a=(S.acts||[]).find(z=>z.id===aid); if(a){ a[f]=el.value; save(); const lim=SVC[a.svc].act; if(f==="desc"){ const m=document.getElementById("am-"+a.id); if(m) m.innerHTML=actMeter(portalText(el.value).length,lim.desc); } if(f==="mmText"){ const m=document.getElementById("amt-"+a.id); if(m) m.innerHTML=actMeter(portalText(el.value).length,lim.mmLimit); } } return; }
+  if(el.dataset.bind && /^(exp|expi|rec|recn):/.test(el.dataset.bind) && !(el.type==="checkbox"||el.tagName==="SELECT"||el.type==="date"||el.type==="month")){ bindExtra(el);
+    const hm=/^exp:([^:]+):(hpw|hours)$/.exec(el.dataset.bind); if(hm){ const x=exp(hm[1]), hint=document.getElementById("xw-hint-"+hm[1]); if(x && hint){ const typed=x.hours!==undefined&&x.hours!==""; hint.textContent=(+x.hpw>0 && !typed && expHours(x))? "≈ "+expHours(x).toLocaleString()+" hours so far" : typed&&+x.hpw>0? "Using the total you typed" : "We’ll estimate the total from your dates"; } }
+    return; }
   const bnd=el.dataset.bind; if(!bnd) return;
   const [kind,idv,field]=bnd.split(":");
   if(el.type==="checkbox"||el.tagName==="SELECT"||el.type==="date"||el.type==="number"||el.type==="time") return; // handled on change
@@ -3069,9 +3124,11 @@ document.addEventListener("change", ev=>{
   if(el.tagName==="TEXTAREA"||(el.tagName==="INPUT"&&el.type==="text")) return;
   obj[field]=val;
   if(kind==="essay" && field==="status" && val==="pasted") freezeVer(obj, isLetter(obj)?"Sent":"Submitted");
+  if(kind==="essay" && field==="status" && val==="pasted" && obj.family==="thanks"){ const sc=school(obj.schoolId); if(sc) sc.thanks=true; }
   if(kind==="school" && field==="submitted" && val) S.essays.filter(x=>x.schoolId===obj.id && (x.text||"").trim()).forEach(x=>{ if(x.status!=="pasted") x.status="pasted"; freezeVer(x, "Submitted"); });
   if(kind==="essay" && field==="status" && (val==="ready"||val==="pasted")){ const w=wrongNames(obj); if(w.length) setTimeout(()=>toast("Heads up: this essay still mentions "+w.map(x=>x.alias).join(", ")+"."),50); }
   if(kind==="school" && field==="submitted") obj.submittedAt = val ? (obj.submittedAt||iso(today())) : null;
+  if(kind==="school" && field==="submitted" && val){ const left=secEssays(obj.id).filter(e=>!e.optional && e.status!=="ready" && e.status!=="pasted"); if(left.length) toast("Marked submitted, but "+left.length+(left.length===1?" required essay isn’t":" required essays aren’t")+" marked ready or In portal. Untick Submitted if that was a mistake.", 6000); }
   if(kind==="school" && field==="submittedAt" && val) obj.submitted = true;
   if(kind==="school" && field==="outcome"){ obj.outcomeDate = val ? iso(today()) : ""; obj.hist=(obj.hist||[]).concat([{o:val, d:iso(today())}]).slice(-6); }
   if(kind==="school" && (field==="ii"||field==="iv"||field==="complete") && val && !obj.submitted){ obj.submitted=true; obj.submittedAt=obj.submittedAt||val; }
@@ -3117,6 +3174,8 @@ document.addEventListener("keydown", ev=>{
 let lastDay=iso(today());
 document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState!=="visible") return; const a=document.activeElement; if(a && (a.tagName==="TEXTAREA" || a.tagName==="INPUT")) return; if(iso(today())!==lastDay){ lastDay=iso(today()); } render(); });
 window.addEventListener("hashchange", ()=>{ const t=location.hash.slice(1); if(t==="log"){ go("experiences"); return; } if(TABS.some(x=>x[0]===t) && t!==ui.tab) go(t); });
+// A reload in the middle of a tour shouldn't strand you in the example data.
+try{ if(localStorage.getItem("medapp-tour-on") && S.demo && localStorage.getItem(STASH)){ S=sampleStash(); localStorage.setItem(KEY, JSON.stringify(S)); localStorage.removeItem(STASH); } localStorage.removeItem("medapp-tour-on"); }catch(e){}
 if(!S.demo && (S.essays||[]).map(migrateVers).some(Boolean)) save();
 const h0=location.hash.slice(1); if(TABS.some(x=>x[0]===h0)) ui.tab=h0;
 // the Experience Log front door: someone arriving at #log with nothing else here gets the log on its own
@@ -3128,7 +3187,7 @@ const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform=
 const standalone = window.navigator.standalone===true || window.matchMedia("(display-mode: standalone)").matches;
 if(ios && !standalone) document.getElementById("install-wrap").hidden=false;
 let seenThisVisit=false; try{ seenThisVisit = sessionStorage.getItem("secondaries-intro-seen")==="1"; }catch(e){}
-if(!tourHidden() && !seenThisVisit && !(ios && !standalone) && !logMode()) openTour(newUser()? "stage" : "main");
+if(!tourHidden() && !seenThisVisit && !logMode()) openTour(newUser()? "stage" : "main");
 try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
 if(Sync.state().connected) setTimeout(()=>Sync.run(), 400);
 // load Google's sign-in script early, so clicking the Drive button opens the sign-in window straight away (browsers block windows opened after a delay)
