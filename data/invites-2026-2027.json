@@ -3,8 +3,8 @@
   "school": "Baylor College of Medicine",
   "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-baylor-college-of-medicine.1517674/",
   "pages_total": 3,
-  "last_post": 122,
-  "checked": "2026-11-03",
+  "last_post": 148,
+  "checked": "2026-11-09",
   "events": [
    {
     "type": "II",
@@ -191,12 +191,36 @@
     "date": "2026-08-26",
     "post": 122,
     "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-06",
+    "post": 124,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-27",
+    "post": 142,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-11-03",
+    "post": 145,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-11-03",
+    "post": 148,
+    "res": "IS"
    }
   ],
   "exclude_posts": [
    20
   ],
-  "notes": "Post #20 (Jul 7, plural 'invites', no detail) excluded as a likely outlier; the first wave is Jul 20. Recent relative dates mapped from Nov 3."
+  "notes": "Post #20 (Jul 7, plural 'invites', no detail) excluded as a likely outlier; the first wave is Jul 20. Recent relative dates mapped from Nov 3. Nov 9: #138,#141 report Texas pre-match (not counted); #142 'got the A this morning' counted as acceptance; #123 interview completed only."
  },
  {
   "school": "University of Wisconsin School of Medicine and Public Health",
@@ -343,14 +367,14 @@
    }
   ],
   "exclude_posts": [],
-  "notes": "Invites badly under-reported (1 II vs 5 acceptances). Bare URL stale; /page-2 live."
+  "notes": "Invites badly under-reported (1 II vs 5 acceptances). Bare URL stale; /page-2 live. Nov 9: fetch returned a stale copy ending at #14; not re-read."
  },
  {
   "school": "Alice L Walton School of Medicine",
   "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-alice-l-walton-school-of-medicine.1517670/",
   "pages_total": 2,
   "last_post": 64,
-  "checked": "2026-11-03",
+  "checked": "2026-11-09",
   "events": [
    {
     "type": "hold",
@@ -538,14 +562,14 @@
    78,
    81
   ],
-  "notes": "#83 is an MSTP II. #78/#81 are interview-completed restatements by earlier II posters (#63/#60). No decisions reported yet."
+  "notes": "#83 is an MSTP II. #78/#81 are interview-completed restatements by earlier II posters (#63/#60). No decisions reported yet. Nov 9: page 2 now ends at #89 (below stored last_post 92); possibly deleted posts."
  },
  {
   "school": "ASU John Shufeldt School of Medicine and Medical Engineering",
   "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-asu-school-of-medicine-and-engineering.1517673/",
   "pages_total": 1,
   "last_post": 33,
-  "checked": "2026-11-05",
+  "checked": "2026-11-09",
   "events": [
    {
     "type": "II",
@@ -601,7 +625,7 @@
   "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-boston-university.1517675/",
   "pages_total": 2,
   "last_post": 67,
-  "checked": "2026-11-05",
+  "checked": "2026-11-09",
   "events": [
    {
     "type": "II",
@@ -775,14 +799,14 @@
    }
   ],
   "exclude_posts": [],
-  "notes": "Single page. Only one report: #24 '+1 OOS MD II' (replies ask for secondary date/LM, consistent with an II but not confirmed). Rest are secondaries."
+  "notes": "Single page. Only one report: #24 '+1 OOS MD II' (replies ask for secondary date/LM, consistent with an II but not confirmed). Rest are secondaries. Nov 9: fetch returned a stale copy ending at #29 (Aug 20); not re-read."
  },
  {
   "school": "California University of Science and Medicine",
   "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-california-university-of-science-and-medicine.1517689/",
   "pages_total": 2,
-  "last_post": 75,
-  "checked": "2026-11-05",
+  "last_post": 87,
+  "checked": "2026-11-09",
   "events": [
    {
     "type": "II",
@@ -832,14 +856,14 @@
    42,
    58
   ],
-  "notes": "Secondhand reports of IIs from 9/22 (admit.org) not counted. #39 'II 9/29' could be interview date, excluded. #42 restates #35. #58 implies an II with no date. #73 (posted Mon 11/2) says II received 10/2. Secondhand talk of acceptances starting ~10/30; no first-person decisions."
+  "notes": "Secondhand reports of IIs from 9/22 (admit.org) not counted. #39 'II 9/29' could be interview date, excluded. #42 restates #35. #58 implies an II with no date. #73 (posted Mon 11/2) says II received 10/2. Secondhand talk of acceptances starting ~10/30; no first-person decisions. Nov 9: #76 (Nov 5) reports a post-interview 'Virtual Engagement' invite email, not counted."
  },
  {
   "school": "California Northstate University College of Medicine",
   "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-california-northstate-university.1517690/",
   "pages_total": 1,
   "last_post": 23,
-  "checked": "2026-11-05",
+  "checked": "2026-11-09",
   "events": [
    {
     "type": "II",
@@ -865,14 +889,14 @@
   "checked": "2026-11-05",
   "events": [],
   "exclude_posts": [],
-  "notes": "Single page. No IIs or decisions reported. Only showcase/event invites (~11/3), not counted. Thread says decisions release Jan 20, 2027."
+  "notes": "Single page. No IIs or decisions reported. Only showcase/event invites (~11/3), not counted. Thread says decisions release Jan 20, 2027. Nov 9: page shows only #1-#18 (latest Nov 8), below stored last_post 38; possibly stale copy or deleted posts."
  },
  {
   "school": "Case Western Reserve University School of Medicine",
   "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-case-western-reserve-university.1517692/",
   "pages_total": 2,
   "last_post": 74,
-  "checked": "2026-11-05",
+  "checked": "2026-11-09",
   "events": [
    {
     "type": "II",
@@ -984,7 +1008,7 @@
   "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-central-michigan-university.1517693/",
   "pages_total": 1,
   "last_post": 22,
-  "checked": "2026-11-05",
+  "checked": "2026-11-09",
   "events": [
    {
     "type": "II",
@@ -1038,7 +1062,7 @@
   "school": "Charles R. Drew University College of Medicine",
   "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-charles-r-drew-university.1517694/",
   "pages_total": 2,
-  "last_post": 52,
+  "last_post": 71,
   "checked": "2026-11-05",
   "events": [
    {
@@ -1106,13 +1130,61 @@
     "date": "2026-09-22",
     "post": 49,
     "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-28",
+    "post": 53,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-09-21",
+    "post": 54,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-08",
+    "post": 55,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-22",
+    "post": 56,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-22",
+    "post": 57,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-24",
+    "post": 58,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-27",
+    "post": 61,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-28",
+    "post": 64,
+    "res": "IS"
    }
   ],
   "exclude_posts": [
    51,
    52
   ],
-  "notes": "Big rejection batch Sep 21-22, many pre-secondary; counted as preR (no IIs reported before). #51 (Oct 30) says they got an II and sent availability ~4 weeks ago, invite date unknown; #52 only implies same. Both excluded as undated. IIs exist but none dated."
+  "notes": "Big rejection batch Sep 21-22, many pre-secondary; counted as preR (no IIs reported before). #51 (Oct 30) says they got an II and sent availability ~4 weeks ago, invite date unknown; #52 only implies same. Both excluded as undated. IIs exist but none dated. Nov 9: Nov 5 read missed #53-#71 (stale page). Left out #60 (restates #54), #68/#70 (follow-ups by earlier invitees), #63 interview completed."
  },
  {
   "school": "Chicago Medical School at Rosalind Franklin",
@@ -3283,5 +3355,268 @@
   ],
   "exclude_posts": [],
   "notes": "#26 hold 'yesterday' from Tuesday (Nov 3) post = Nov 2; #27 posted Tuesday Nov 3."
+ },
+ {
+  "school": "UT Southwestern Medical School",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-texas-southwestern-medical-school.1517864/",
+  "pages_total": 6,
+  "last_post": 267,
+  "checked": "2026-11-09",
+  "events": [
+   {
+    "type": "hold",
+    "date": "2026-07-31",
+    "post": 79,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-03",
+    "post": 80,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-03",
+    "post": 83,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-04",
+    "post": 87,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-04",
+    "post": 88,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-04",
+    "post": 90,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-04",
+    "post": 94,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-04",
+    "post": 97,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-04",
+    "post": 104,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-05",
+    "post": 100,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-08-24",
+    "post": 127,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-24",
+    "post": 129,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-24",
+    "post": 130,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-24",
+    "post": 131,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-24",
+    "post": 133,
+    "res": "OOS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-24",
+    "post": 134,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-24",
+    "post": 140,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-24",
+    "post": 141,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-08-24",
+    "post": 142,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-11",
+    "post": 174,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-11",
+    "post": 175,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-11",
+    "post": 176,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-11",
+    "post": 177,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-11",
+    "post": 178,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-11",
+    "post": 183,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-09-12",
+    "post": 180,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-02",
+    "post": 188,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-02",
+    "post": 189,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-02",
+    "post": 191,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-10-02",
+    "post": 192,
+    "res": null
+   },
+   {
+    "type": "II",
+    "date": "2026-10-02",
+    "post": 197,
+    "res": null
+   },
+   {
+    "type": "A",
+    "date": "2026-10-19",
+    "post": 238,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-19",
+    "post": 239,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-19",
+    "post": 243,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-19",
+    "post": 248,
+    "res": "OOS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-19",
+    "post": 251,
+    "res": "IS"
+   },
+   {
+    "type": "A",
+    "date": "2026-10-19",
+    "post": 253,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-11-09",
+    "post": 259,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-11-09",
+    "post": 260,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-11-09",
+    "post": 261,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-11-09",
+    "post": 262,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-11-09",
+    "post": 263,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "#79 MSTP II stored as hold. Left out: #82 restates #80; #116 and #208 prior-cycle; #118 vague 'about a month ago' (~mid-July) II; #151 same poster as #127; #159 ambiguous; #204/#216 implied (interview scheduled, no invite post). Page 5 copy was stale (weekday labels): Thu/Mon posts dated Oct 15/Oct 19 using #251 (Oct 19) as anchor; A wave = TX prematch Oct 19. 'Today' on page 6 = Nov 9 (latest post 'a moment ago' at fetch)."
  }
 ]
