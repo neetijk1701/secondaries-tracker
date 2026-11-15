@@ -204,6 +204,9 @@ select.pill::before{display:none}
 .bar i{display:block; height:100%; background:var(--accent)}
 .bar.over i{background:var(--bad)}
 .meter.over{color:var(--bad); font-weight:600}
+.contact-card{display:flex; gap:12px; align-items:flex-start; border:1px solid var(--line); border-left:4px solid var(--accent); background:var(--surface); border-radius:var(--r); padding:12px 14px; margin:0 0 14px}
+.contact-card .cc-ico{font-size:20px; line-height:1.2; color:var(--accent)}
+.contact-card a{font-weight:600; overflow-wrap:anywhere}
 .banner{border-radius:var(--r); padding:12px 14px; display:flex; gap:12px; align-items:center; flex-wrap:wrap}
 .banner.warn{background:var(--warn-soft); color:var(--ink)}
 .banner.warn strong{color:var(--warn)}
@@ -1440,11 +1443,13 @@ function parseProfile(text){
   return full;
 }
 
+const CONTACT_EMAIL="neetijk1701@gmail.com";
+function contactCard(){ return '<div class="contact-card" role="note"><span class="cc-ico" aria-hidden="true">✉</span><div class="grow small"><strong>Questions, problems or ideas? Want advice on applying?</strong> Email Neetij, the student who built this, at <a href="mailto:'+CONTACT_EMAIL+'?subject='+encodeURIComponent("Med App Workspace")+'">'+CONTACT_EMAIL+'</a>. Complaints, suggestions and general questions about the medical school application process are all welcome. Please don’t send essays you want kept private.</div></div>'; }
 function undoBanner(){ let undo=false; try{ undo=ui.undoRestore!==false && !!localStorage.getItem(UNDO_RESTORE); }catch(e){}
   return undo?'<div class="banner info" style="margin-bottom:12px"><div class="grow small"><strong>You restored a backup.</strong> What you had before is kept until you dismiss this.</div><button data-act="undo-restore">Undo restore</button><button class="ghost" data-act="dismiss-undo-restore">Dismiss</button></div>':''; }
 function vExperiences(){
   ui.expView=ui.expView||"stories";
-  let h = undoBanner() + (logMode()
+  let h = undoBanner() + (logMode()? contactCard() : '') + (logMode()
     ? '<div class="row" style="justify-content:space-between; align-items:flex-end"><div><h1>Experience log</h1><p class="sub" style="margin-bottom:0">Write up each experience when it ends, while you still remember the details. Years from now those write-ups become specific letters of recommendation, ready-made AMCAS activities and secondary essays, and answers for interviews. When you apply, turn on the application tools and everything here is waiting.</p></div><span class="row"><button class="ghost" data-act="exp-intro">How this works</button><button data-act="applying-on">I’m applying this cycle</button></span></div><div style="height:14px"></div>'
     : '<h1>Experiences</h1><p class="sub">What you’ve done, what it taught you, and what it shows about you. This stays with you from cycle to cycle. Essays and interview prep pull stories from here, and each letter writer can get a summary tailored to them. <button class="ghost small" data-act="exp-intro" style="padding:0">How this works</button>'+(!S.schools.length && !(S.apps||[]).some(a=>a.submitted)?' <button class="ghost small" data-act="applying-off" style="padding:0">Not applying yet? Show only the log</button>':'')+'</p>');
   if(logMode()) h+=checklistHtml();
@@ -2089,7 +2094,7 @@ function vNext(){
   const done = S.schools.filter(s=>s.submitted);
   const flagged = S.essays.filter(behind);
   let h = undoBanner()+'<h1>Do next</h1><p class="sub">'+(appStage()==="primary"? 'Your primary application first; schools show up here once their secondaries arrive.' : appStage()==="interviews"? 'Interviews, thank-you notes, update letters and decisions first, then anything still open.' : 'Schools ranked by how soon they are due, how much you want them, and how much writing is left. Schools you can finish quickly move up.')+'</p>';
-  h += stageNudge() + checklistHtml();
+  h += contactCard() + stageNudge() + checklistHtml();
   { const st=appStage(); if(STAGES[st]){ const v=visibleTabs();
       if(v.includes("cycle") && !STAGES[st].tabs.includes("cycle")) h += tipHtml("cycle-tab", '<b>A Cycle tab just appeared.</b> Now that you’ve submitted, track interview invites and dates, thank-you notes, update letters and decisions there.');
       if(st!=="interviews" && v.includes("essays") && !STAGES[st].tabs.includes("essays")) h += tipHtml("base-tab", '<b>A Base essays tab just appeared.</b> Once two schools ask the same kind of question, write it once there and give each school its own trimmed copy.'); } }
@@ -2626,7 +2631,7 @@ function vFoot(){
   if(hasWork && !S.demo && !Sync.state().connected && (since==null || since<=-7)) h += '<div class="banner warn" style="margin-bottom:12px"><div class="grow small"><strong>'+(since==null?'You haven’t saved a backup yet.':'Last backup was '+Math.abs(since)+' days ago.')+'</strong> Your work lives only in this browser. Clearing site data or losing this device erases it.</div><button data-act="backup">Download backup</button></div>';
   if(Sync.state().connected && !S.demo) h += '<div id="mirror-slot" style="margin-bottom:10px">'+Sync.mirrorHtml()+'</div>';
   h += '<div class="stack" style="gap:10px"><div class="row" style="justify-content:space-between"><span>'+(Sync.state().connected? 'Saved to your Google Drive'+(Sync.state().email?' ('+esc(Sync.state().email)+')':'')+' and in this browser. <button class="ghost small" data-act="sync-disconnect" style="padding:0">Disconnect</button>' : 'Your entries are saved only in this browser.'+(Sync.available()?' <button class="ghost small" data-act="sync-connect" style="padding:0">Save to Google Drive</button>':''))+(S.lastBackup?' Last backup '+fmt(S.lastBackup)+'.':'')+'</span><span class="row"><button class="ghost" data-act="backup">Download backup</button><button class="ghost" data-act="restore">Restore backup</button>'+(S.demo?'<button data-act="exit-sample">Back to my data</button>':'<button class="ghost" data-act="try-examples">Explore with sample data</button>'+confirmBtn("clear","Erase everything",Sync.state().connected?"Erase everything (schools, essays, experiences, letter writers) here and in Google Drive":"Erase everything (schools, essays, experiences, letter writers) on this device"))+'</span></div>'+
-    '<div class="row" style="justify-content:space-between"><span>Student-built tool. Not affiliated with AMCAS, the AAMC, or any medical school. Always check prompts, limits and deadlines in each school’s portal.</span><span class="row"><a class="small" href="about.html">About</a><a class="small" href="privacy.html">Privacy</a><button class="ghost" data-act="tour">How to use this app</button><button class="ghost" data-act="gtour">Guided tour</button>'+(logMode()?'<button class="ghost" data-act="applying-on">Show the application tools</button>':'')+'</span></div></div>';
+    '<div class="row" style="justify-content:space-between"><span>Student-built tool. Not affiliated with AMCAS, the AAMC, or any medical school. Always check prompts, limits and deadlines in each school’s portal.</span><span class="row"><a class="small" href="about.html">About</a><a class="small" href="privacy.html">Privacy</a><a class="small" href="mailto:'+CONTACT_EMAIL+'">Contact: '+CONTACT_EMAIL+'</a><button class="ghost" data-act="tour">How to use this app</button><button class="ghost" data-act="gtour">Guided tour</button>'+(logMode()?'<button class="ghost" data-act="applying-on">Show the application tools</button>':'')+'</span></div></div>';
   return h;
 }
 
