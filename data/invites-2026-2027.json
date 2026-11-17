@@ -3618,5 +3618,34 @@
   ],
   "exclude_posts": [],
   "notes": "#79 MSTP II stored as hold. Left out: #82 restates #80; #116 and #208 prior-cycle; #118 vague 'about a month ago' (~mid-July) II; #151 same poster as #127; #159 ambiguous; #204/#216 implied (interview scheduled, no invite post). Page 5 copy was stale (weekday labels): Thu/Mon posts dated Oct 15/Oct 19 using #251 (Oct 19) as anchor; A wave = TX prematch Oct 19. 'Today' on page 6 = Nov 9 (latest post 'a moment ago' at fetch)."
+ },
+ {
+  "school": "UC Riverside School of Medicine",
+  "thread_url": "https://forums.studentdoctor.net/threads/2026-2027-university-of-california-riverside-school-of-medicine.1517798/",
+  "pages_total": 1,
+  "last_post": 39,
+  "checked": "2026-11-17",
+  "events": [
+   {
+    "type": "II",
+    "date": "2026-08-31",
+    "post": 15,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-08",
+    "post": 18,
+    "res": "IS"
+   },
+   {
+    "type": "II",
+    "date": "2026-09-08",
+    "post": 19,
+    "res": "IS"
+   }
+  ],
+  "exclude_posts": [],
+  "notes": "Harvested 2026-11-17 via a post permalink (single page, 39 posts). Post dates used (no receipt dates stated). Left out: #11 PRIME-track rejection (not regular MD); #14 note that PRIME rejection doesn't affect MD review; #28/#31 'complete and forwarded for review' status emails; #35-#39 (Nov 17) discussion of a Dec 22 regular-pool start date, no personal decision. Program for #15/#18/#19 not stated (likely regular MD)."
  }
 ]
