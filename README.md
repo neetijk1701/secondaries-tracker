@@ -55,7 +55,7 @@ Student-built. Not affiliated with AMCAS, the AAMC, or any medical school.
 - Services: AMCAS, TMDSAS and AACOMAS (`prefs.services`; AMCAS is on by default). MD/PhD essays appear when `prefs.dual` is on.
 - Limits (2026-2027, chars with spaces), in `SVC`:
   - AMCAS: personal comments 5,300; MD-PhD 3,000; significant research 10,000; W&A 15 × 700, with 3 most meaningful × 1,325.
-  - TMDSAS: personal statement 5,000; personal characteristics 5,000; optional 2,500; MD/PhD A and B 5,000 each; activities 500, with 3 meaningful × 500. Sources disagree on the activity length.
+  - TMDSAS (EY 2027, tmdsas.com): personal statement 5,000; personal characteristics 2,500; optional 2,500; MD/PhD A and B 5,000 each; activities 300 for academic recognition, non-academic recognition and employment, 500 for the rest; up to 3 top meaningful × 500 (at least one).
   - AACOMAS: personal statement 5,300; experiences and achievements 600.
 - Each service is an `apps` record (`app-<svc>`) that `school()` also resolves, so primary essays use the normal essay editor, bases and versions.
   - Primary essays carry `pkey` and family `ps`, `mdphd`, `research`, `diversity` or `anything`, so personal statements share one base and MD/PhD secondaries can start from the primary MD/PhD base.
@@ -137,3 +137,28 @@ Five simulated applicants (log-only pre-med on a phone, AMCAS writer, 25-school 
 - **Primary activities:** shadowing and paid clinical jobs get the right AMCAS type, activities have contact and location fields, and the MME essay has its own copy button.
 - **Interview stage:** Do next leads with interviews and letters, thank-you notes link to "Thank-you notes sent", and letters use Copy / Mark sent.
 - **First run:** the welcome says "Free, no account, no AI" with About and Privacy links.
+
+## QC audit fixes (Nov 19, 2026)
+
+An outside QC audit of sec-v43 found 23 issues. Fixed on this build:
+
+- **Saving and restoring:** a saved workspace is fully checked before it's used. A backup that doesn't fit is refused without touching your work, and a restore only goes ahead once a copy for Undo has been saved. If this browser's saved data can't be read, the unreadable copy is kept and a banner explains it.
+- **Drive:** an upload no longer marks newer edits as synced. If an experience or letter writer is edited on two computers at once, both versions are kept. A Drive Doc that couldn't be trashed stays on the list to retry. The offline cache now only stores fonts (never Drive or sign-in responses).
+- **Past cycles:** the archive keeps essay versions from another computer.
+- **Tabs:** if a tab can't use BroadcastChannel, it now locks itself when another tab saves.
+- **Experience log:**
+  - hours can't be negative;
+  - Ended before Started is flagged;
+  - turning a story into a strength, weakness or reflection removes it from letter-writer summaries;
+  - file import keeps every field;
+  - pasted profiles keep their paragraphs, and the import preview shows exactly what will come in.
+- **Cycle tab:**
+  - entering an invite, interview or complete date saves drafts as a version and says so;
+  - un-sending a thank-you note unticks the school's box;
+  - a late-night interview's calendar entry runs past midnight;
+  - date arithmetic is safe across daylight saving changes.
+- **Application guidance:**
+  - TMDSAS: per-category activity limits, the new EY 2027 personal characteristics prompt, and a Planned activities type;
+  - AMCAS: the "Community health advocacy" category (renamed from Social justice/advocacy) and the 15-entry cap;
+  - both: a note when no most-meaningful activity is marked.
+- **Accessibility:** keyboard focus stays inside the guide and tour cards.
