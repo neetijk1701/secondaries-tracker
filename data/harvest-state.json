@@ -1,1 +1,26 @@
-{"cycle": "2026-2027", "last_run": null, "last_report_check": null, "schools": {}}
+{
+ "cycle": "2026-2027",
+ "last_run": "2026-11-23",
+ "last_report_check": "2026-11-23",
+ "schools": {},
+ "invite_threads_pending": {
+  "Stanford University School of Medicine": "https://forums.studentdoctor.net/threads/2026-2027-stanford-university-school-of-medicine.1517778/",
+  "UC Davis School of Medicine": "https://forums.studentdoctor.net/threads/2026-2027-university-of-california-davis-school-of-medicine.1517796/",
+  "University of Chicago Pritzker School of Medicine": "https://forums.studentdoctor.net/threads/2026-2027-university-of-chicago-pritzker-school-of-medicine.1517802/",
+  "University of Pennsylvania Perelman School of Medicine": "https://forums.studentdoctor.net/threads/2026-2027-university-of-pennsylvania-perelman-school-of-medicine.1517841/",
+  "Ohio State University College of Medicine": "https://forums.studentdoctor.net/threads/2026-2027-ohio-state-university-college-of-medicine.1517752/",
+  "Tufts University School of Medicine": "https://forums.studentdoctor.net/threads/2026-2027-tufts-university-school-of-medicine.1517787/",
+  "Penn State College of Medicine": "https://forums.studentdoctor.net/threads/2026-2027-pennsylvania-state-university-college-of-medicine.1517755/",
+  "Tulane University School of Medicine": "https://forums.studentdoctor.net/threads/2026-2027-tulane-university-school-of-medicine.1517788/",
+  "UCSF School of Medicine": "https://forums.studentdoctor.net/threads/2026-2027-university-of-california-san-francisco-school-of-medicine.1517800/",
+  "University of Michigan Medical School": "https://forums.studentdoctor.net/threads/2026-2027-university-of-michigan-medical-school.1517829/",
+  "University of Utah School of Medicine": "https://forums.studentdoctor.net/threads/2026-2027-university-of-utah-school-of-medicine.1517867/",
+  "Yale School of Medicine": "https://forums.studentdoctor.net/threads/2026-2027-yale-school-of-medicine.1517885/",
+  "Rush Medical College": "https://forums.studentdoctor.net/threads/2026-2027-rush-medical-college.1517760/",
+  "University of Alabama at Birmingham Heersink School of Medicine": "https://forums.studentdoctor.net/threads/2026-2027-university-of-alabama-birmingham-heersink.1518238/",
+  "UCLA David Geffen School of Medicine": "https://forums.studentdoctor.net/threads/2026-2027-university-of-california-los-angeles-david-geffen-school-of-medicine.1517801/",
+  "University of Minnesota Medical School": "https://forums.studentdoctor.net/threads/2026-2027-university-of-minnesota-medical-school.1517831/",
+  "University of Virginia School of Medicine": "https://forums.studentdoctor.net/threads/2026-2027-university-of-virginia-school-of-medicine.1517869/",
+  "Sidney Kimmel Medical College at Thomas Jefferson University": "https://forums.studentdoctor.net/threads/2026-2027-sidney-kimmel-medical-college-at-thomas-jefferson.1517764/"
+ }
+}
